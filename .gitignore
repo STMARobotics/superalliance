@@ -1,0 +1,7 @@
+reconapi/node_modules
+reconapp/node_modules
+
+reconapp/package-lock.json
+reconapi/package-lock.json
+
+reconapi/.env

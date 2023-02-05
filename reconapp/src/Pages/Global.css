@@ -1,0 +1,252 @@
+.App-main {
+    padding: calc(10px + 2vmin);
+}
+
+.HeadingContainer {
+    color: "#0066b3" !important;
+    padding-bottom: calc(7px + 2vmin);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.HeaderActionIcon {
+    display: inline-block !important;
+}
+
+.mantine-NumberInput-disabled {
+    font-weight: 700;
+}
+
+.ActionIconGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.LoginForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .CommentsTextBox {
+        width: 100% !important;
+    }
+
+    .TeleopScoreBox {
+        flex-direction: column !important;
+    }
+
+    .SelfSlider {
+        width: 80% !important;
+    }
+
+    .RecentSubmissions {
+        width: 100% !important;
+    }
+
+    .SortingSelectGroup {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+}
+
+.no-decoration {
+    text-decoration: none;
+    color: inherit;
+}
+
+.AnalyzedAveragesHome {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+.SelfSlider {
+    width: 35%;
+}
+
+.CommentsTextBox {
+    width: 45%;
+}
+
+.SubmissionsContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.SubmissionsHomeSection {
+    display: flex;
+    flex-direction: row;
+}
+
+.SubmissionMatchBox {
+    -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+}
+
+.SubmissionsNavbar {
+    position: sticky;
+    top: 0;
+}
+
+.AggregationsNavbar {
+    position: sticky;
+    top: 0;
+}
+
+.SortingSelectGroup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.SubmissionsNavbarMobile {
+    padding: 16px;
+}
+
+.SubmissionsHomeContent {
+    width: 100%;
+    padding: calc(20px + 2vmin);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.AnalyzedAveragesHome {
+    width: 100%;
+    padding: calc(20px + 2vmin);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.AnalysisContent {
+    width: 100%;
+    padding: calc(20px + 2vmin);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.SubmissionsFormsContent {
+    width: 100%;
+    padding: calc(20px + 2vmin);
+}
+
+.SubmissionsFormDataContent {
+    width: 100%;
+    padding: calc(5px + 2vmin);
+    text-align: center;
+}
+
+.SubmissionsFormDataTeamText {
+    font-size: calc(25px + 2vmin);
+}
+
+.SubmissionsEventMatchesText {
+    font-size: calc(25px + 2vmin);
+    padding-bottom: calc(25px + 2vmin);
+}
+
+.HomePageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.NewFormButton {
+    padding-bottom: calc(15px + 2vmin);
+}
+
+.RecentSubmissions {
+    width: calc(35% + 2vmin);
+}
+
+.FourOhFourContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.FormSubmittedContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 50px;
+    padding-top: calc(85px + 2vmin);
+}
+
+.AverageStats {
+    padding-top: calc(50px + 2vmin);
+}
+
+.ReconFormContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 25px;
+    padding-top: 50px;
+    text-align: center;
+    padding-bottom: calc(250px + 2vmin);
+}
+
+.SubmissionsEventCard {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+}
+
+.TeleopScoreBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 25px;
+}
+
+.FormSubmitButton {
+    padding-top: calc(35px + 2vmin);
+}
+
+.AutoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.FourOhFourText {
+    font-size: calc(60px + 2vmin);
+    ;
+}
+
+.FormSubmittedText {
+    font-size: calc(25px + 2vmin);
+    ;
+}
+
+.FormText {
+    font-size: calc(12px + 2vmin);
+}
+
+.FormSubheader {
+    font-size: calc(12px + 2vmin);
+}
+
+.FormSubheader2 {
+    font-size: calc(5px + 2vmin);
+}

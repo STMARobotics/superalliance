@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reconapp
+  namespace: reconplane
+  labels:
+    app: reconapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: reconapp
+  template:
+    metadata:
+      labels:
+        app: reconapp
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+        - name: reconapp-app
+          image: cyanide1x/reconapp_app
+          ports:
+            - name: http
+              containerPort: 3000

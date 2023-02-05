@@ -1,0 +1,8 @@
+{
+  "short_name": "Super Alliance",
+  "name": "7028 Recon Scouting App",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
