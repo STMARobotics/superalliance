@@ -8045,6 +8045,11 @@
   dependencies:
     "find-up" "^3.0.0"
 
+"pocketbase@^0.10.1":
+  "integrity" "sha512-FMBhF+9o2AmdKJYbfz2qunnk4Q5/efYMRcukdQF49UfhsIuaSYl39fSPN1l880bYI4XAvDDeySAjK1MlxrK37A=="
+  "resolved" "https://registry.npmjs.org/pocketbase/-/pocketbase-0.10.1.tgz"
+  "version" "0.10.1"
+
 "postcss-attribute-case-insensitive@^5.0.2":
   "integrity" "sha512-XIidXV8fDr0kKt28vqki84fRK8VW8eTuIa4PChv2MqKuT6C9UjmSKzen6KaWhWEoYvwxFCa7n/tC1SZ3tyq4SQ=="
   "resolved" "https://registry.npmjs.org/postcss-attribute-case-insensitive/-/postcss-attribute-case-insensitive-5.0.2.tgz"

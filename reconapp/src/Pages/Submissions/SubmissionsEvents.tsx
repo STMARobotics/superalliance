@@ -24,7 +24,8 @@ function SubmissionsEvents() {
     const images = [
         "https://www.chiefdelphi.com/uploads/default/original/3X/4/c/4c5a3191b92e28e4ca4db2fbeda030b397a5363e.jpeg",
         "https://www.firstinspires.org/sites/all/themes/first/assets/images/2020/frc/event-experience.jpg",
-        "https://www.chiefdelphi.com/uploads/default/original/3X/0/8/085dafe27377e80fe5a63cdbadc5637a9fc51679.jpeg"
+        "https://www.chiefdelphi.com/uploads/default/original/3X/0/8/085dafe27377e80fe5a63cdbadc5637a9fc51679.jpeg",
+        "https://www.chiefdelphi.com/uploads/default/optimized/3X/7/9/799271e72f8deda288015298086af1323155cfdb_2_690x388.jpeg"
     ]
 
     useEffect(() => {
@@ -38,13 +39,19 @@ function SubmissionsEvents() {
                 event_code: "testing"
 
             })
+            eventArray.push({
+                name: "Week 0 Event",
+                city: "Wisconsin",
+                event_type_string: "Testing",
+                event_code: "week0"
+
+            })
             const eventdata = await GetTeamData.getTeamEventData(7028, 2023)
             eventdata.data.map((event: any) => {
                 eventArray.push(event)
             })
             setEventData(eventArray)
             setVisible(false)
-            completeNavigationProgress()
         })()
     }, [])
 

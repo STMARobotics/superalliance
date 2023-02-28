@@ -1,6 +1,6 @@
 import { AggregationsNavbar } from "../Components/AggregationsNavbar"
 import { UpdatedHeader } from "../Components/UpdatedHeader"
-import { Button, Grid, Paper, Select, Text, ThemeIcon } from '@mantine/core'
+import { Button, Grid, Paper, Select, Text, ThemeIcon, useMantineTheme } from '@mantine/core'
 import { useEffect, useState } from "react"
 import GetTeamData from "../Utils/GetTeamData"
 import moment from "moment"
@@ -8,6 +8,7 @@ import EventSelectStyles from "../Styles/EventSelectStyles"
 import { IconRobot } from "@tabler/icons"
 import sortTeamCardStyles from "../Styles/SortTeamCardStyles"
 import { SortingTeamTable } from "../Components/SortingTeamTable"
+import { useLocalStorage } from "@mantine/hooks"
 
 interface SubmissionActionProps {
     submissionNumber: number;
@@ -36,7 +37,7 @@ function UserInfoAction({ matchNumber, author, time, link, teamNumber, win, rank
                 Team #{teamNumber} - Match #{matchNumber}
             </Text>
             <Text align="center" size="sm" color="white">
-                {author} • {time} • +{rankPoints} RP
+                {author} • +{rankPoints} RP
             </Text>
 
             <Button
@@ -66,6 +67,13 @@ function AnalyzedSorting() {
     const [teamAvatars, setTeamAvatars] = useState<any[]>([])
 
     const eventSelectClasses = EventSelectStyles().classes
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
+
+    const theme = useMantineTheme()
 
     interface CardGradientProps {
         title: string;
@@ -206,17 +214,6 @@ function AnalyzedSorting() {
 
     useEffect(() => {
         (async function () {
-            const submissionData = await GetTeamData.getAllFormSorting()
-            setFormData(submissionData.data)
-
-            const teamsData = await GetTeamData.getAggregationData()
-            setAverageData(teamsData.data)
-
-        })()
-    }, [])
-
-    useEffect(() => {
-        (async function () {
             if (window.localStorage !== undefined) {
                 const teamD = window.localStorage.getItem('teamNames');
                 if (teamD) {
@@ -233,12 +230,45 @@ function AnalyzedSorting() {
                 const teamD = window.localStorage.getItem('teamAvatars');
                 if (teamD) {
                     const data = await JSON.parse(teamD)
-                    console.log(data)
                     await setTeamAvatars(data)
                 }
             }
         })()
     }, []);
+
+    useEffect(() => {
+        (async function () {
+            const teamsData = await GetTeamData.getAggregationData()
+            setAverageData(teamsData.data)
+
+            if (preferenceData.dataShow == 'all') {
+                const submissionData = await GetTeamData.getAllFormSorting()
+                return setFormData(submissionData.data)
+            }
+
+            if (preferenceData.dataShow == 'testing') {
+                const submissionData = await GetTeamData.getAllFormSorting()
+                const newData = submissionData.data.filter((e: any) => {
+                    return e.eventName == "Testing Event"
+                })
+                return setFormData(newData)
+            }
+
+            if (preferenceData.dataShow == 'week0') {
+                const submissionData = await GetTeamData.getAllFormSorting()
+                const newData = submissionData.data.filter((e: any) => {
+                    return e.eventName == "Week 0 Event"
+                })
+                return setFormData(newData)
+            }
+
+            const submissionData = await GetTeamData.getAllFormSorting()
+            const newData = submissionData.data.filter((e: any) => {
+                return e.eventName == preferenceData.dataShow
+            })
+            return setFormData(newData)
+        })()
+    }, [])
 
     useEffect(() => {
         sortSubmissions()
@@ -251,7 +281,27 @@ function AnalyzedSorting() {
     const sortSubmissions = () => {
         (async function () {
             const data = await GetTeamData.getAllFormsSorted(selectedSortSubmissions, selectedDirectionSubmissions)
-            setFormData(data.data)
+            if (preferenceData.dataShow == 'all') {
+                const newData = data.data
+                return setFormData(newData)
+            }
+            if (preferenceData.dataShow == 'testing') {
+                const newData = data.data.filter((e: any) => {
+                    return e.eventName == "Testing Event"
+                })
+                return setFormData(newData)
+            }
+
+            if (preferenceData.dataShow == 'week0') {
+                const newData = data.data.filter((e: any) => {
+                    return e.eventName == "Week 0 Event"
+                })
+                return setFormData(newData)
+            }
+            const newData = data.data.filter((e: any) => {
+                return e.eventName == preferenceData.dataShow
+            })
+            setFormData(newData)
         })()
     }
 
@@ -288,7 +338,7 @@ function AnalyzedSorting() {
                 <div className="AnalyzedAveragesHome">
                     <Text
                         className="SubmissionsEventMatchesText"
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -307,10 +357,7 @@ function AnalyzedSorting() {
                             placeholder="Data Type"
                             label="Type"
                             classNames={eventSelectClasses}
-                            required
-                            searchable
                             value={selectedType}
-                            nothingFound="No params found!"
                             onFocus={() => {
 
                             }}
@@ -332,10 +379,7 @@ function AnalyzedSorting() {
                                         placeholder="Sort by..."
                                         label="Sorting Field"
                                         classNames={eventSelectClasses}
-                                        required
-                                        searchable
                                         value={selectedSortSubmissions}
-                                        nothingFound="No params found!"
                                         onChange={(event: string) => {
                                             setSelectedSortSubmissions(event)
                                         }}
@@ -350,10 +394,7 @@ function AnalyzedSorting() {
                                         placeholder="Up or down?"
                                         label="Direction"
                                         classNames={eventSelectClasses}
-                                        required
-                                        searchable
                                         value={selectedDirectionSubmissions}
-                                        nothingFound="No params found!"
                                         onChange={(event: string) => {
                                             setSelectedDirectionSubmissions(event)
                                         }}
@@ -377,10 +418,7 @@ function AnalyzedSorting() {
                                         placeholder="Sort by..."
                                         label="Sorting Field"
                                         classNames={eventSelectClasses}
-                                        required
-                                        searchable
                                         value={selectedSortTeams}
-                                        nothingFound="No params found!"
                                         onChange={(event: string) => {
                                             setSelectedSortTeams(event)
                                         }}
@@ -395,10 +433,7 @@ function AnalyzedSorting() {
                                         placeholder="Up or down?"
                                         label="Direction"
                                         classNames={eventSelectClasses}
-                                        required
-                                        searchable
                                         value={selectedDirectionTeams}
-                                        nothingFound="No params found!"
                                         onChange={(event: string) => {
                                             setSelectedDirectionTeams(event)
                                         }}
@@ -409,7 +444,7 @@ function AnalyzedSorting() {
                         }
                     </div>
 
-                    {(selectedType == "Submission") ? <Grid justify="center" grow>
+                    {(selectedType == "Submission") ? <Grid justify="center" grow w={"100%"}>
                         {formData.map((data: any, index: any) =>
                             <Grid.Col md={4} lg={3} key={index + 1}>
                                 <UserInfoAction

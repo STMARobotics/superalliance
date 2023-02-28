@@ -39,7 +39,8 @@ const FormDataSchema = new Schema({
     penalties: String,
     defenceOrCycle: Boolean,
     userRating: Number | undefined,
-    eventName: String
+    eventName: String,
+    criticals: Array | undefined
 }, { timestamps: true } );
 
 module.exports = model("FormData", FormDataSchema, "forms")

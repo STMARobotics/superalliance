@@ -41,7 +41,7 @@ const useStyles = createStyles((theme) => ({
 
   scrollArea: {
     height: 400,
-    width: "75%"
+    width: "100%"
   },
 
   scrolled: {

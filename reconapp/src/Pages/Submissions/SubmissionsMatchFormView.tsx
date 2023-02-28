@@ -1,18 +1,34 @@
 import { useParams } from "react-router-dom";
 import { SubmissionsNavbar } from "../Components/SubmissionsNavbar";
 import { UpdatedHeader } from "../Components/UpdatedHeader";
-import { ActionIcon, Box, Button, Center, Group, NumberInput, NumberInputHandlers, SegmentedControl, Select, Slider, Text, Textarea, TextInput } from '@mantine/core'
-import { useEffect, useRef, useState } from "react";
-import { useLocalStorage } from "@mantine/hooks";
+import { Box, Center, Group, MultiSelect, NumberInput, SegmentedControl, Slider, Text, Textarea, TextInput, useMantineTheme } from '@mantine/core'
+import { useEffect, useState } from "react";
 import DockedSectionStyles from "../Styles/DockedSection";
 import ScoreInputStyles from "../Styles/ScoreInputStyles";
-import { IconCheck, IconClick, IconMinus, IconPlus, IconX } from "@tabler/icons";
+import { IconCheck, IconX } from "@tabler/icons";
 import GetTeamData from "../Utils/GetTeamData";
 import EventSelectStyles from "../Styles/EventSelectStyles";
+import { useLocalStorage } from "@mantine/hooks";
 
 function SubmissionsMatchFormView() {
 
+    const [selectedPrefEvent, setSelectedPrefEvent] = useState("")
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
+
+    useEffect(() => {
+        try {
+            setSelectedPrefEvent(preferenceData.dataShow)
+        } catch {
+
+        }
+    }, [])
+
     let { eventId, matchId, submissionId } = useParams();
+    const theme = useMantineTheme()
 
     const scoreInputClasses = ScoreInputStyles().classes
     const dockedSectionClasses = DockedSectionStyles().classes
@@ -42,6 +58,7 @@ function SubmissionsMatchFormView() {
 
             var eventArray: any[] = [];
             eventArray.push("Testing Event")
+            eventArray.push("Week 0 Event")
             const eventdata = await GetTeamData.getTeamEventData(7028, 2023)
             eventdata.data.map((event: any) => {
                 eventArray.push(event.name)
@@ -68,14 +85,14 @@ function SubmissionsMatchFormView() {
             <UpdatedHeader />
             <div className="SubmissionsHomeSection">
                 <SubmissionsNavbar
-                    pageIndex={5}
+                    pageIndex={preferenceData.dataShow == 'all' ? 5 : 4}
                     eventId={eventId}
                     matchId={matchId}
                     submissionId={submissionId} />
                 <div className="SubmissionsFormDataContent">
                     <Text
                         className="SubmissionsFormDataTeamText"
-                        color="#0066b3"
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -86,7 +103,7 @@ function SubmissionsMatchFormView() {
                     <div className="ReconFormContainer">
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -96,7 +113,7 @@ function SubmissionsMatchFormView() {
                         </Text>
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="lg"
                             fw={700}
@@ -132,7 +149,7 @@ function SubmissionsMatchFormView() {
                         />
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -192,7 +209,7 @@ function SubmissionsMatchFormView() {
                                 </div>
                                 <div className="TeleopScoreCones">
                                     <Text
-                                        color="#0066b3"
+                                        color={theme.primaryColor}
                                         ta="center"
                                         fz="xl"
                                         fw={700}
@@ -250,7 +267,7 @@ function SubmissionsMatchFormView() {
                         }
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -262,7 +279,7 @@ function SubmissionsMatchFormView() {
                         <div className="TeleopScoreBox">
                             <div className="TeleopScoreCones">
                                 <Text
-                                    color="#0066b3"
+                                    color={theme.primaryColor}
                                     ta="center"
                                     fz="xl"
                                     fw={700}
@@ -309,7 +326,7 @@ function SubmissionsMatchFormView() {
 
                             <div className="TeleopScoreCubes">
                                 <Text
-                                    color="#0066b3"
+                                    color={theme.primaryColor}
                                     ta="center"
                                     fz="xl"
                                     fw={700}
@@ -356,7 +373,7 @@ function SubmissionsMatchFormView() {
                         </div>
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -377,7 +394,7 @@ function SubmissionsMatchFormView() {
                         </div>
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -442,6 +459,18 @@ function SubmissionsMatchFormView() {
                             className="CommentsTextBox"
                             value={formData.penalties}
                         />
+
+                        <MultiSelect
+                            data={['Robot Died', 'Robot Tipped', 'Red Card', 'Mechanism Broke', 'Bumper Malfunction']}
+                            label="Criticals"
+                            description="Add quick tags to your submission."
+                            placeholder="Choose Criticals"
+                            searchable
+                            value={formData.criticals}
+                            disabled
+                            nothingFound="Nothing found"
+                        />
+
 
                         <div className="DockedLevel">
                             <Text c="dimmed">Was the bot a Defense or Cycle bot?</Text>

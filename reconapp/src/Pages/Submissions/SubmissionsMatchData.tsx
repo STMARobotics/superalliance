@@ -1,4 +1,5 @@
-import { Button, Grid, Paper, Text } from "@mantine/core";
+import { Button, Grid, Paper, Text, useMantineTheme } from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -53,6 +54,23 @@ function SubmissionsMatchData() {
     const [formData, setFormData] = useState([])
     const [eventName, setEventName] = useState("")
 
+    const theme = useMantineTheme()
+
+    const [selectedPrefEvent, setSelectedPrefEvent] = useState("")
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
+
+    useEffect(() => {
+        try {
+            setSelectedPrefEvent(preferenceData.dataShow)
+        } catch {
+
+        }
+    }, [])
+
     useEffect(() => {
         (async function () {
             const data = await GetTeamData.getMatchData(eventId, matchId)
@@ -67,18 +85,18 @@ function SubmissionsMatchData() {
             <UpdatedHeader />
             <div className="SubmissionsHomeSection">
                 <SubmissionsNavbar
-                    pageIndex={4}
+                    pageIndex={preferenceData.dataShow == 'all' ? 4 : 3}
                     eventId={eventId}
                     matchId={matchId} />
                 <div className="SubmissionsFormDataContent">
                     <Text
                         className="SubmissionsFormDataTeamText"
-                        color="#0066b3"
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
                     >
-                        {eventName}
+                        {eventName} - Match #{matchId}
                     </Text>
 
                     <Grid justify="center" align="flex-start">

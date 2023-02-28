@@ -9,6 +9,7 @@ import {
     List,
     ThemeIcon,
 } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import { IconCheck } from '@tabler/icons';
 import { useSignOut } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
@@ -68,10 +69,22 @@ const useStyles = createStyles((theme) => ({
 
 export function AccessDenied() {
 
+    const [selectedUser, setSelectedUser] = useLocalStorage<any>({
+        key: 'saved-username',
+        getInitialValueInEffect: false,
+    });
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
+
     const navigate = useNavigate()
     const signOut = useSignOut();
     const logout = () => {
         signOut();
+        setSelectedUser("")
+        setPreferenceData({})
         navigate("/login");
     };
 

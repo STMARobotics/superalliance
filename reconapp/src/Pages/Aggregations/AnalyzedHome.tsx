@@ -1,4 +1,4 @@
-import { Button, Group, Text } from "@mantine/core"
+import { Button, Group, Text, useMantineTheme } from "@mantine/core"
 import { completeNavigationProgress } from "@mantine/nprogress"
 import { useNavigate } from "react-router-dom"
 import { AggregationsNavbar } from "../Components/AggregationsNavbar"
@@ -9,7 +9,7 @@ function AnalyzedHome() {
 
     const navigate = useNavigate()
     const { classes } = submissionsHomeStyles()
-    completeNavigationProgress()
+    const theme = useMantineTheme()
 
     return (
         <div className="SubmissionsContainer">
@@ -19,7 +19,7 @@ function AnalyzedHome() {
                     location={"Home"} />
                 <div className="SubmissionsHomeContent">
                     <h1 className={classes.title}>
-                        <Text component="span" fw={900} color={"#ed1c24"} inherit>
+                        <Text component="span" fw={900} color={theme.primaryColor} inherit>
                             Super Alliance
                         </Text>{' '}
                         <br />

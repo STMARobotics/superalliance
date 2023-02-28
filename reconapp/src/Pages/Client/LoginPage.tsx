@@ -2,27 +2,27 @@ import '../Global.css'
 import { useEffect, useState } from 'react';
 import HeaderComponent from '../Components/Header';
 import loginFormStyles from '../Styles/LoginFormStyles';
-import { TextInput, TextInputProps, Notification, Text, useMantineTheme, Container, Title, Anchor, Paper, PasswordInput, Group, Checkbox, Button, Modal, Loader } from '@mantine/core';
+import { TextInput, TextInputProps, Notification, Text, useMantineTheme, Container, Title, Anchor, Paper, PasswordInput, Group, Checkbox, Button, Modal, Loader, Dialog } from '@mantine/core';
 import { IconSearch, IconArrowRight, IconArrowLeft, IconX } from '@tabler/icons';
-import config from '../../Constants';
+import { config } from '../../Constants';
 
 import { useSignIn } from "react-auth-kit";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UpdatedHeader } from '../Components/UpdatedHeader';
-import { showNotification } from '@mantine/notifications';
 import { useLocalStorage } from '@mantine/hooks';
 
 function LoginPage() {
 
-    const [focused, setFocused] = useState(false);
     const [loginInputValue, setLoginInputValue] = useState('');
-    const { classes } = loginFormStyles({ floating: loginInputValue.trim().length !== 0 || focused });
     const navigate = useNavigate();
-    const theme = useMantineTheme();
 
     const [error, setError] = useState(false);
-    const [opened, setOpened] = useState(false)
+    const [opened, setOpened] = useState(false);
+    const [cookiesOpened, setCookiesOpened] = useLocalStorage<boolean>({
+        key: 'saved-cookies-accept',
+        defaultValue: true
+    });
     const [admin, setAdmin] = useLocalStorage<boolean>({
         key: 'saved-loginuser',
         defaultValue: false
@@ -50,7 +50,7 @@ function LoginPage() {
             });
 
             setLoading(false)
-            navigate("/");
+            navigate('/landing')
         } catch (err) {
             setLoginInputValue("")
             setError(true)
@@ -59,7 +59,7 @@ function LoginPage() {
     };
 
     useEffect(() => {
-        admin ? setUsername("Admin") : setUsername("7028")
+        admin ? setUsername("7028Admin") : setUsername("7028")
     }, [admin])
 
     const handleKeyPress = (event: any) => {
@@ -77,6 +77,33 @@ function LoginPage() {
         <div className="App">
 
             <UpdatedHeader />
+
+            <Dialog
+                opened={cookiesOpened}
+                onClose={() => setCookiesOpened(false)}
+                size="md"
+                withBorder
+                p="xl"
+                radius="md"
+                shadow="md"
+            >
+                <Group position="apart" mb="xs">
+                    <Text size="md" weight={500}>
+                        This website uses cookies...
+                    </Text>
+                </Group>
+                <Text color="dimmed" size="xs">
+                    So here's the deal, we want to spy on you. We want like to know what you had for breakfast
+                    today, where you live, how much do you earn and like 50 other things. To view SuperAlliance
+                    you will have to accept all cookies. That&apos;s all, and remember that we are always
+                    watching...
+                </Text>
+                <Group position="right" mt="xs">
+                    <Button variant="outline" size="xs" onClick={() => setCookiesOpened(false)}>
+                        Accept all
+                    </Button>
+                </Group>
+            </Dialog>
 
             <div className="App-main">
 

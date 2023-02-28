@@ -9,7 +9,7 @@ const DockedSectionStyles = createStyles((theme) => ({
     },
 
     active: {
-        background: "#0066b3",
+        background: theme.colors[theme.primaryColor][8],
     },
 
     control: {

@@ -1,16 +1,17 @@
-import { Anchor, Breadcrumbs, TextInput, Text, SegmentedControl, Group, Center, Box, NumberInput, ActionIcon, NumberInputHandlers, Transition, Affix, Button, Textarea, Slider, Notification, Select } from "@mantine/core";
+import { Anchor, Breadcrumbs, TextInput, Text, SegmentedControl, Group, Center, Box, NumberInput, ActionIcon, NumberInputHandlers, Transition, Affix, Button, Textarea, Slider, Notification, Select, MultiSelect, useMantineTheme } from "@mantine/core";
 import { useLocalStorage, useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp, IconCheck, IconClick, IconMinus, IconMoon, IconPlus, IconSun, IconX } from "@tabler/icons";
 import { useEffect, useRef, useState } from "react";
 import DockedSectionStyles from "../Styles/DockedSection";
 import ScoreInputStyles from "../Styles/ScoreInputStyles";
-import FormSubmit from "../Utils/FormSubmit";
-import { useAuthHeader } from 'react-auth-kit'
+import { useAuthHeader, useSignOut } from 'react-auth-kit'
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from "@mantine/notifications";
 import { UpdatedHeader } from "../Components/UpdatedHeader";
 import EventSelectStyles from "../Styles/EventSelectStyles";
 import GetTeamData from "../Utils/GetTeamData";
+import SendToAPI from "../Utils/FormSubmit";
+import { checkToken, getEventLockData } from "../Utils/ReconQueries";
 
 function ReconForm() {
 
@@ -42,7 +43,7 @@ function ReconForm() {
     const [teamNumber, setTeamNumber] = useState("");
     const [matchNumber, setMatchNumber] = useState("");
     const [userName, setUserName] = useLocalStorage<string>({
-        key: 'stored-username',
+        key: 'saved-username',
         defaultValue: ''
     });
     const [isAuto, setIsAuto] = useState("false");
@@ -59,6 +60,10 @@ function ReconForm() {
     const [defenseBot, setDefenseBot] = useState("No");
     const [eventData, setEventData] = useState<any>([])
     const [selectedEvent, setSelectedEvent] = useState("")
+    const [criticals, setCriticals] = useState<any[]>([])
+
+    const [sessionExpired, setSessionExpired] = useState<boolean>(false)
+    const [lockedEvent, setLockedEvent] = useState("")
 
     const scoreInputClasses = ScoreInputStyles().classes
     const dockedSectionClasses = DockedSectionStyles().classes
@@ -69,15 +74,53 @@ function ReconForm() {
     const authHeader = useAuthHeader()
     const navigate = useNavigate()
 
+    const [selectedUser, setSelectedUser] = useLocalStorage<any>({
+        key: 'saved-username',
+        getInitialValueInEffect: false,
+    });
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
+    const signOut = useSignOut();
+    const theme = useMantineTheme()
+
+    useEffect(() => {
+        (async function () {
+            const dbData = await getEventLockData(authHeader())
+            if(dbData.data.event == 'none') return
+            setLockedEvent(dbData.data.event)
+            if(dbData.data.event == 'week0') return setSelectedEvent("Week 0 Event")
+            if(dbData.data.event == 'testing') return setSelectedEvent("Testing Event")
+            return setSelectedEvent(dbData.data.event)
+        })()
+    }, [])
+
     useEffect(() => {
         (async function () {
             var eventArray: any[] = [];
             eventArray.push("Testing Event")
+            eventArray.push("Week 0 Event")
             const data = await GetTeamData.getTeamEventData(7028, 2023)
             data.data.map((event: any) => {
                 eventArray.push(event.name)
             })
             setEventData(eventArray)
+        })()
+    }, [])
+
+    useEffect(() => {
+        (async function () {
+            const res = await checkToken(authHeader()).catch((err) => {
+                console.log(err)
+                setSessionExpired(true)
+                return showNotification({
+                    title: 'Form Error',
+                    message: 'Your session has expired! Please re-authenticate.',
+                    color: "red",
+                })
+            })
         })()
     }, [])
 
@@ -91,6 +134,12 @@ function ReconForm() {
     ));
 
     function SubmitForm(authToken: any) {
+
+        if (!selectedEvent && !lockedEvent) return showNotification({
+            title: 'Form Error',
+            message: 'You need to select an event!',
+            color: "red",
+        })
 
         if (!matchNumber || !teamNumber || !userName || !rankPointsEarned || !rankPostMatch) return showNotification({
             title: 'Form Error',
@@ -137,6 +186,7 @@ function ReconForm() {
         var submitDefenceOrCycle = false;
         const submitUserRating = selfRankSliderValue
         const submitEventName = selectedEvent
+        const submitCriticals = criticals
 
         if (isAuto == "true") submitAuto = true
 
@@ -176,7 +226,7 @@ function ReconForm() {
 
         if (defenseBot == "Yes") submitDefenceOrCycle = true
 
-        FormSubmit({
+        SendToAPI({
             data: {
                 teamNumber: submitTeamNumber,
                 matchNumber: submitMatchNumber,
@@ -216,9 +266,16 @@ function ReconForm() {
                 penalties: submitPenalties,
                 defenceOrCycle: submitDefenceOrCycle,
                 userRating: submitUserRating,
-                eventName: submitEventName
+                eventName: submitEventName,
+                criticals: submitCriticals
             }
-        }, authToken)
+        }, authToken).catch(() => {
+            return showNotification({
+                title: 'Form Error',
+                message: 'There was an error submitting this form!',
+                color: "red",
+            })
+        })
 
         navigate('/formsubmitted')
 
@@ -240,21 +297,21 @@ function ReconForm() {
                         <Transition transition="slide-up" mounted={scroll.y > 0}>
                             {(transitionStyles) => (
                                 <Button
-                                    size="xs"
+                                    size="sm"
                                     style={transitionStyles}
                                     onClick={() => scrollTo({ y: 0 })}
                                 >
-                                    <IconArrowUp size={10} />
+                                    <IconArrowUp size={15} />
                                 </Button>
                             )}
                         </Transition>
                     </Affix>
                 </>
 
-                <div className="ReconFormContainer">
+                {sessionExpired == false ? <div className="ReconFormContainer">
 
                     <Text
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -263,7 +320,7 @@ function ReconForm() {
                         Pre-Game
                     </Text>
 
-                    <Select
+                    {!lockedEvent ? <Select
                         transition="pop-top-left"
                         transitionDuration={80}
                         transitionTimingFunction="ease"
@@ -277,7 +334,16 @@ function ReconForm() {
                         onChange={(event: string) => {
                             setSelectedEvent(event)
                         }}
-                    />
+                    /> : <TextInput
+                        type="string"
+                        placeholder="Pick one"
+                        label="Event locked in by Administrator."
+                        description="You cannot change event selection!"
+                        value={lockedEvent == 'week0' ? "Week 0 Event" : lockedEvent}
+                        disabled
+                        required
+                        classNames={{ disabled: scoreInputClasses.disabledEvent }}
+                    />}
 
                     <TextInput
                         type="number"
@@ -303,15 +369,12 @@ function ReconForm() {
                         placeholder="Rue Harvey"
                         label="Your Name"
                         description="Type out Your Name"
-                        required={true}
                         value={userName}
-                        onChange={(event) => {
-                            setUserName(event.currentTarget.value)
-                        }}
+                        disabled
                     />
 
                     <Text
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -378,7 +441,7 @@ function ReconForm() {
                             </div>
                             <div className="TeleopScoreCones">
                                 <Text
-                                    color={"#0066b3"}
+                                    color={theme.primaryColor}
                                     ta="center"
                                     fz="xl"
                                     fw={700}
@@ -508,7 +571,7 @@ function ReconForm() {
                     }
 
                     <Text
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -520,7 +583,7 @@ function ReconForm() {
                     <div className="TeleopScoreBox">
                         <div className="TeleopScoreCones">
                             <Text
-                                color={"#0066b3"}
+                                color={theme.primaryColor}
                                 ta="center"
                                 fz="xl"
                                 fw={700}
@@ -636,7 +699,7 @@ function ReconForm() {
 
                         <div className="TeleopScoreCubes">
                             <Text
-                                color={"#0066b3"}
+                                color={theme.primaryColor}
                                 ta="center"
                                 fz="xl"
                                 fw={700}
@@ -752,7 +815,7 @@ function ReconForm() {
                     </div>
 
                     <Text
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -776,7 +839,7 @@ function ReconForm() {
                     </div>
 
                     <Text
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -825,7 +888,7 @@ function ReconForm() {
                         type="number"
                         placeholder="1"
                         label="Rank Post Match"
-                        description="The number of ranking points after the match"
+                        description="The robot's post-match rank."
                         required={true}
                         value={rankPostMatch}
                         onChange={(event) => setRankPostMatch(event.currentTarget.value)}
@@ -835,7 +898,23 @@ function ReconForm() {
                     <Slider
                         step={1}
                         min={1}
-                        max={10}
+                        max={5}
+                        label={(value) => {
+                            switch (value) {
+                                case 1:
+                                    return "(1) Kill it before it lays eggs!"
+                                case 2:
+                                    return "(2) Grade C Robot"
+                                case 3:
+                                    return "(3) It's average ig."
+                                case 4:
+                                    return "(4) Exceeds expectations"
+                                case 5:
+                                    return "(5) Marry it on the spot."
+                                default:
+                                    return value
+                            }
+                        }}
                         labelAlwaysOn
                         className="SelfSlider"
                         value={selfRankSliderValue}
@@ -870,6 +949,19 @@ function ReconForm() {
                         />
                     </div>
 
+                    <MultiSelect
+                        data={['Robot Died', 'Robot Tipped', 'Red Card', 'Mechanism Broke', 'Bumper Malfunction']}
+                        label="Criticals"
+                        description="Add quick tags to your submission."
+                        placeholder="Choose Criticals"
+                        searchable
+                        value={criticals}
+                        onChange={(event) => {
+                            setCriticals(event)
+                        }}
+                        nothingFound="Nothing found"
+                    />
+
                     <div className="FormSubmitButton">
                         <Button
                             variant="light"
@@ -889,6 +981,21 @@ function ReconForm() {
                         </Button>
                     </div>
                 </div>
+                    : <div className="ReconFormContainer">
+
+                        <Notification radius={'xl'} icon={<IconX size={18} />} color="red" mt={20} disallowClose>
+                            Session Expired! Please Re-Authenticate!
+                        </Notification>
+
+                        <Button variant="filled" radius="xl" size="md" color={theme.colors[theme.primaryColor][8]} onClick={() => {
+                            signOut();
+                            setSelectedUser("")
+                            setPreferenceData({})
+                            navigate("/login");
+                        }}>
+                            Logout
+                        </Button>
+                    </div>}
 
             </div>
         </div>

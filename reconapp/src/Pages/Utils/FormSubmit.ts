@@ -1,5 +1,5 @@
 import axios from 'axios'
-import config from '../../Constants'
+import { config } from '../../Constants'
 
 interface formData {
     data: {
@@ -41,26 +41,25 @@ interface formData {
         penalties: string,
         defenceOrCycle: boolean,
         userRating: number | undefined,
-        eventName: string
+        eventName: string,
+        criticals: Array<any[]> | undefined
     }
 }
 
-const SendToAPI = async (values: formData, token: any) => {
+const SendToAPI = async (values: formData, token: string) => {
 
     const apiValues = {
         token: token,
         data: values
     }
 
-    try {
-        const response = await axios.post(
-            config.api_url + "/api/v1/submitform",
-            apiValues
-        );
-
-    } catch (err) {
-
-    }
+    await axios.post(
+        config.api_url + "/api/v1/submitform",
+        apiValues
+    ).catch(() => {
+        throw new Error("Form didn't submit.")
+    })
+    
 };
 
 function FormSubmit(data: formData, authToken: string) {
@@ -69,4 +68,4 @@ function FormSubmit(data: formData, authToken: string) {
 
 }
 
-export default FormSubmit
+export default SendToAPI

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { SubmissionsNavbar } from "../Components/SubmissionsNavbar";
 import { UpdatedHeader } from "../Components/UpdatedHeader";
-import { ActionIcon, Box, Button, Center, Group, NumberInput, NumberInputHandlers, SegmentedControl, Select, Slider, Text, Textarea, TextInput } from '@mantine/core'
+import { ActionIcon, Box, Button, Center, Group, MultiSelect, NumberInput, NumberInputHandlers, SegmentedControl, Select, Slider, Text, Textarea, TextInput, useMantineTheme } from '@mantine/core'
 import { useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "@mantine/hooks";
 import DockedSectionStyles from "../Styles/DockedSection";
@@ -13,6 +13,8 @@ import EventSelectStyles from "../Styles/EventSelectStyles";
 function SubmissionsFormView() {
 
     let { team, submissionid } = useParams();
+
+    const theme = useMantineTheme();
 
     const scoreInputClasses = ScoreInputStyles().classes
     const dockedSectionClasses = DockedSectionStyles().classes
@@ -43,6 +45,7 @@ function SubmissionsFormView() {
 
             var eventArray: any[] = [];
             eventArray.push("Testing Event")
+            eventArray.push("Week 0 Event")
             const eventdata = await GetTeamData.getTeamEventData(7028, 2023)
             eventdata.data.map((event: any) => {
                 eventArray.push(event.name)
@@ -75,7 +78,7 @@ function SubmissionsFormView() {
                 <div className="SubmissionsFormDataContent">
                     <Text
                         className="SubmissionsFormDataTeamText"
-                        color="#0066b3"
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -86,7 +89,7 @@ function SubmissionsFormView() {
                     <div className="ReconFormContainer">
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -96,7 +99,7 @@ function SubmissionsFormView() {
                         </Text>
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="lg"
                             fw={700}
@@ -132,7 +135,7 @@ function SubmissionsFormView() {
                         />
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -192,7 +195,7 @@ function SubmissionsFormView() {
                                 </div>
                                 <div className="TeleopScoreCones">
                                     <Text
-                                        color="#0066b3"
+                                        color={theme.primaryColor}
                                         ta="center"
                                         fz="xl"
                                         fw={700}
@@ -250,7 +253,7 @@ function SubmissionsFormView() {
                         }
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -262,7 +265,7 @@ function SubmissionsFormView() {
                         <div className="TeleopScoreBox">
                             <div className="TeleopScoreCones">
                                 <Text
-                                    color="#0066b3"
+                                    color={theme.primaryColor}
                                     ta="center"
                                     fz="xl"
                                     fw={700}
@@ -309,7 +312,7 @@ function SubmissionsFormView() {
 
                             <div className="TeleopScoreCubes">
                                 <Text
-                                    color="#0066b3"
+                                    color={theme.primaryColor}
                                     ta="center"
                                     fz="xl"
                                     fw={700}
@@ -356,7 +359,7 @@ function SubmissionsFormView() {
                         </div>
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -377,7 +380,7 @@ function SubmissionsFormView() {
                         </div>
 
                         <Text
-                            color="#0066b3"
+                            color={theme.primaryColor}
                             ta="center"
                             fz="xl"
                             fw={700}
@@ -442,6 +445,18 @@ function SubmissionsFormView() {
                             className="CommentsTextBox"
                             value={formData.penalties}
                         />
+
+                        <MultiSelect
+                            data={['Robot Died', 'Robot Tipped', 'Red Card', 'Mechanism Broke', 'Bumper Malfunction']}
+                            label="Criticals"
+                            description="Add quick tags to your submission."
+                            placeholder="Choose Criticals"
+                            searchable
+                            value={formData.criticals}
+                            disabled
+                            nothingFound="Nothing found"
+                        />
+
 
                         <div className="DockedLevel">
                             <Text c="dimmed">Was the bot a Defense or Cycle bot?</Text>

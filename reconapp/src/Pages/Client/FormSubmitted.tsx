@@ -1,12 +1,19 @@
 import HeaderComponent from "../Components/Header"
 import { Anchor, Breadcrumbs, Button, Text, useMantineTheme } from '@mantine/core';
 import { useNavigate } from "react-router-dom";
-import { IconClick } from "@tabler/icons";
+import { IconClick, IconForms } from "@tabler/icons";
 import { UpdatedHeader } from "../Components/UpdatedHeader";
+import { useLocalStorage } from "@mantine/hooks";
 
 function FormSubmitted() {
 
     const navigate = useNavigate()
+    const theme = useMantineTheme()
+
+    const [selectedUser, setSelectedUser] = useLocalStorage<any>({
+        key: 'saved-username',
+        getInitialValueInEffect: false,
+    });
 
     const items = [
         { title: 'Home', href: '/' },
@@ -33,7 +40,7 @@ function FormSubmitted() {
 
                     <Text
                         className="FormSubmittedText"
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
                         ta="center"
                         fz="xl"
@@ -41,6 +48,22 @@ function FormSubmitted() {
                     >
                         Form Submitted!
                     </Text>
+
+                    <Button
+                        variant="outline"
+                        rightIcon={
+                            <IconForms size={20} stroke={1.5} />
+                        }
+                        size="md"
+                        styles={{
+                            root: { paddingRight: 14, height: 48 },
+                        }}
+                        onClick={() => {
+                            navigate(`/submissions/user/${(selectedUser).replace(" ", "+")}`)
+                        }}
+                    >
+                        View all of your submissions!
+                    </Button>
 
                     <Button
                         variant="light"

@@ -16,6 +16,16 @@ function ReconApp() {
     getInitialValueInEffect: false,
   });
 
+  const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+    key: 'saved-preferences',
+    defaultValue: {
+      primaryColor: 'blue',
+      dataShow: "all",
+      landingComplete: false
+    },
+    getInitialValueInEffect: true,
+  });
+
   const actions: SpotlightAction[] = [
     {
       title: 'Home',
@@ -119,7 +129,6 @@ function ReconApp() {
         }
       }
     } catch (err) {
-      console.log(err);
     }
   })();
 
@@ -143,7 +152,6 @@ function ReconApp() {
         }
       }
     } catch (err) {
-      console.log(err);
     }
   })();
 
@@ -154,7 +162,7 @@ function ReconApp() {
 
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-      <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+      <MantineProvider theme={{ colorScheme, primaryColor: preferenceData.primaryColor }} withGlobalStyles withNormalizeCSS>
         <NotificationsProvider>
           <AuthProvider authType={'cookie'}
             authName={'_auth'}
@@ -176,7 +184,7 @@ function ReconApp() {
               transitionDuration={60}
               actionsWrapperComponent={ActionsWrapper}>
               <NavigationProgress
-                color={"red"}
+                color={preferenceData.primaryColor}
                 autoReset />
               <AppRouter />
             </SpotlightProvider>

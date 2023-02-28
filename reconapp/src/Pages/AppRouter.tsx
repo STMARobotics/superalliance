@@ -1,7 +1,8 @@
 import {
     BrowserRouter as Router,
     Route,
-    Routes
+    Routes,
+    useLocation
 } from "react-router-dom"
 import { RequireAuth } from "react-auth-kit";
 
@@ -12,6 +13,8 @@ import ReconForm from "./Client/ReconForm";
 import FormSubmitted from "./Client/FormSubmitted";
 import SubmissionsHome from "./Submissions/SubmissionsHome";
 import SubmissionsTeams from "./Submissions/SubmissionsTeams";
+import { useLocalStorage } from "@mantine/hooks";
+
 import SubmissionsFormData from "./Submissions/SubmissionsFormData";
 import SubmissionsFormView from "./Submissions/SubmissionsFormView";
 import SubmissionsEvents from "./Submissions/SubmissionsEvents";
@@ -23,9 +26,28 @@ import AnalyzedAverages from "./Aggregations/AnalyzedAverages";
 import AnalyzedSorting from "./Aggregations/AnalyzedSorting";
 import AnalyzedFiltering from "./Aggregations/AnalyzedFiltering";
 import AnalyzedFormView from "./Aggregations/AnalyzedFormView";
-import AdminPage from "./Admin/AdminPage";
+import AdminHome from "./Admin/AdminHome";
+import Landing from "./Client/Landing";
+import { useEffect } from "react";
+import UserPreferences from "./Client/UserPreferences";
+import UserSumissions from "./Client/UserSubmissions";
+import AdminAuthentication from "./Admin/AdminSettingsAuth";
+import AdminFormSettings from "./Admin/AdminSettingsForm";
+import AdminFormManagement from "./Admin/AdminManagementForm";
+import SubmissionsUserForms from "./Submissions/SubmissionsUserForms";
 
 function AppRouter() {
+
+    const [selectedUser, setSelectedUser] = useLocalStorage<any>({
+        key: 'saved-username',
+        getInitialValueInEffect: false,
+    });
+
+    useEffect(() => {
+        if(!selectedUser && window.location.pathname !== '/landing' && window.location.pathname !== '/login' ) {
+            window.location.href = '/landing'
+        }
+    }, [])
 
     return (
         <Router>
@@ -42,6 +64,21 @@ function AppRouter() {
                 <Route path="/404" element={
                     <RequireAuth loginPath="/login">
                         <FourOhFour />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/landing" element={
+                    <RequireAuth loginPath="/login">
+                        <Landing />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/user/preferences" element={
+                    <RequireAuth loginPath="/login">
+                        <UserPreferences />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/user/submissions" element={
+                    <RequireAuth loginPath="/login">
+                        <UserSumissions />
                     </RequireAuth>
                 }></Route>
                 <Route path="/newform" element={
@@ -72,6 +109,11 @@ function AppRouter() {
                 <Route path="/submissions/teams/:team/:submissionid" element={
                     <RequireAuth loginPath="/login">
                         <SubmissionsFormView />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/submissions/user/:author" element={
+                    <RequireAuth loginPath="/login">
+                        <SubmissionsUserForms />
                     </RequireAuth>
                 }></Route>
                 <Route path="/submissions/events" element={
@@ -121,7 +163,22 @@ function AppRouter() {
                 }></Route>
                 <Route path="/admin" element={
                     <RequireAuth loginPath="/login">
-                        <AdminPage />
+                        <AdminHome />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/admin/auth" element={
+                    <RequireAuth loginPath="/login">
+                        <AdminAuthentication />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/admin/formsettings" element={
+                    <RequireAuth loginPath="/login">
+                        <AdminFormSettings />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/admin/formmanagement" element={
+                    <RequireAuth loginPath="/login">
+                        <AdminFormManagement />
                     </RequireAuth>
                 }></Route>
                 <Route

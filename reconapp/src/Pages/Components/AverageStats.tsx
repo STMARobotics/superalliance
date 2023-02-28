@@ -16,8 +16,8 @@ const icons = {
     down: IconArrowDownRight,
 };
 
-export function AverageStatsRings({ data }: StatsRingProps, index: any) {
-    const stats = data.map((stat) => {
+export function AverageStatsRings({ data }: StatsRingProps) {
+    const stats = data.map((stat, index: any) => {
         const Icon = icons[stat.icon];
         return (
             <Grid.Col md={4} lg={3} key={index + 1}>

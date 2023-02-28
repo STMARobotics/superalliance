@@ -1,14 +1,11 @@
-import { Button, Card, Center, Grid, Group, LoadingOverlay, Text } from "@mantine/core";
-import { IconAlien, IconClipboardData, IconNumber } from "@tabler/icons";
+import { Card, Center, Grid, Group, LoadingOverlay, Text, useMantineTheme } from "@mantine/core";
+import { IconClipboardData } from "@tabler/icons";
 import { SubmissionsNavbar } from "../Components/SubmissionsNavbar";
 import { UpdatedHeader } from "../Components/UpdatedHeader";
 import teamCardStyles from "../Styles/TeamCardStyles";
 import GetTeamData from "../Utils/GetTeamData";
 import { useCallback, useEffect, useState } from "react";
-import { getTeamsAndNames } from "../Utils/ReconQueries";
-import { registerSpotlightActions, removeSpotlightActions } from "@mantine/spotlight";
-import { useNavigate } from "react-router-dom";
-import { completeNavigationProgress } from "@mantine/nprogress";
+import { useLocalStorage } from "@mantine/hooks";
 
 interface TeamCardProps {
     link: string;
@@ -19,7 +16,9 @@ interface TeamCardProps {
 
 function ImageCard({ title, number, views, link }: TeamCardProps) {
 
-    const { classes, theme } = teamCardStyles();
+    const { classes } = teamCardStyles();
+
+    const theme = useMantineTheme()
 
     return (
         <Card
@@ -35,7 +34,7 @@ function ImageCard({ title, number, views, link }: TeamCardProps) {
             <div className={classes.content}>
                 <div>
                     <Text size="lg" className={classes.title} weight={500}>
-                        Team {number}
+                        #{number}
                     </Text>
 
                     <Group position="apart" spacing="xs">
@@ -45,7 +44,7 @@ function ImageCard({ title, number, views, link }: TeamCardProps) {
 
                         <Group spacing="lg">
                             <Center>
-                                <IconClipboardData size={16} stroke={1.5} color="white" />
+                                <IconClipboardData size={16} stroke={1.5} color={theme.colorScheme === 'dark' ? theme.white : theme.black} />
                                 <Text size="sm" className={classes.bodyText}>
                                     {views}
                                 </Text>
@@ -63,6 +62,7 @@ function SubmissionsTeams() {
     const [teams, setTeams] = useState([])
     const [teamNames, setTeamNames] = useState<any>([])
     const [visible, setVisible] = useState(true);
+    const theme = useMantineTheme()
 
     const handleChange = useCallback(() => {
         (async function () {
@@ -74,13 +74,22 @@ function SubmissionsTeams() {
         })()
     }, [])
 
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
+
     useEffect(() => {
         (async function () {
             setVisible(true)
-            const data = await GetTeamData.getTeamsFromAPI()
-            setTeams(data.data.teams)
+            if (preferenceData.dataShow == 'all') {
+                const data = await GetTeamData.getTeamsFromAPI()
+                setTeams(data.data.teams)
+            } else {
+                const data = await GetTeamData.getTeamsInEventFromAPI(preferenceData.dataShow)
+                setTeams(data.data.teams)
+            }
             setVisible(false)
-            completeNavigationProgress()
 
             if (window.localStorage.getItem('teamNames')) {
                 const teamD = window.localStorage.getItem('teamNames');
@@ -96,7 +105,7 @@ function SubmissionsTeams() {
 
     const getName = (team: any) => {
         try {
-            return teamNames.filter((e: any) => e.number == team.number)[0].name
+            return teamNames.filter((e: any) => e.number === team.number)[0].name
         } catch {
             return team.name
         }
@@ -112,17 +121,64 @@ function SubmissionsTeams() {
                         <SubmissionsNavbar
                             pageIndex={1} />
                         <div className="SubmissionsFormsContent">
+
+                            {preferenceData.dataShow !== "all" && !visible ?
+                                <Text
+                                    className="SubmissionsFormDataTeamText"
+                                    color={theme.primaryColor}
+                                    ta="center"
+                                    fz="xl"
+                                    fw={700}
+                                    pb={"20px"}
+                                >
+                                    Showing data for: {preferenceData.dataShow == 'week0' ? "Week 0 Event" : preferenceData.dataShow}
+                                </Text> : null}
+
                             <Grid justify="center" align="flex-start">
                                 {/** Generate an ImageCard element for every team found in the DB */}
-                                {teams.map((team: any) =>
-                                    <Grid.Col md={4} lg={3}>
-                                        <ImageCard
-                                            title={`${getName(team)}`}
-                                            link={`/submissions/teams/${team.number}`}
-                                            number={team.number}
-                                            views={team.count}
-                                        />
-                                    </Grid.Col>)}
+                                {preferenceData.dataShow == 'all' ? <>
+                                    {teams.map((team: any, index: any) =>
+                                        <Grid.Col md={4} lg={3} key={index + 1}>
+                                            <ImageCard
+                                                title={`${getName(team)}`}
+                                                link={`/submissions/teams/${team.number}`}
+                                                number={team.number}
+                                                views={team.count}
+                                            />
+                                        </Grid.Col>)}
+                                </> : <>
+                                    {teams.filter((e: any) => e.eventName == preferenceData.dataShow).map((team: any, index: any) =>
+                                        <Grid.Col md={4} lg={3} key={index + 1}>
+                                            <ImageCard
+                                                title={`${getName(team)}`}
+                                                link={`/submissions/teams/${team.number}`}
+                                                number={team.number}
+                                                views={team.count}
+                                            />
+                                        </Grid.Col>)}
+                                </>}
+                                {preferenceData.dataShow == 'testing' ? <>
+                                    {teams.filter((e: any) => e.eventName == "Testing Event").map((team: any, index: any) =>
+                                        <Grid.Col md={4} lg={3} key={index + 1}>
+                                            <ImageCard
+                                                title={`${getName(team)}`}
+                                                link={`/submissions/teams/${team.number}`}
+                                                number={team.number}
+                                                views={team.count}
+                                            />
+                                        </Grid.Col>)}
+                                </> : null}
+                                {preferenceData.dataShow == 'week0' ? <>
+                                    {teams.filter((e: any) => e.eventName == "Week 0 Event").map((team: any, index: any) =>
+                                        <Grid.Col md={4} lg={3} key={index + 1}>
+                                            <ImageCard
+                                                title={`${getName(team)}`}
+                                                link={`/submissions/teams/${team.number}`}
+                                                number={team.number}
+                                                views={team.count}
+                                            />
+                                        </Grid.Col>)}
+                                </> : null}
                             </Grid>
                         </div>
                     </div>

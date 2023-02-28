@@ -1,8 +1,13 @@
 import axios from "axios";
-import config from "../../Constants";
+import { config } from "../../Constants";
 
 const getTeamsFromAPI = async () => {
     const response = await axios.get(config.api_url + "/api/v1/teams");
+    return response
+}
+
+const getTeamsInEventFromAPI = async (event: String) => {
+    const response = await axios.get(config.api_url + `/api/v1/teamsInEvent/${event}`);
     return response
 }
 
@@ -76,6 +81,11 @@ const getTeamsAdvancedFromAPI = async () => {
     return response
 }
 
+const getTeamsInEventAdvancedFromAPI = async (event: String) => {
+    const response = axios.get(config.api_url + `/api/v1/teamsAdvancedInEvent/${event}`)
+    return response
+}
+
 const getAllTeamsSorted = async (sortOption: String | undefined, direction: String | undefined) => {
     const response = await axios.get(config.api_url + `/api/v1/aggregation/sort/${sortOption}/${direction}`)
     return response
@@ -91,7 +101,12 @@ const getAllTeamAvatars = async () => {
     return response
 }
 
-export default {
+const getTeamEventDataLanding = async (teamNumber: Number, year: Number) => {
+    const response = await axios.get(config.api_url + `/api/v1/events/${teamNumber}/${year}/landing`);
+    return response
+}
+
+const TeamFunctions = {
     /** Gets all team numbers from the API */
     getTeamsFromAPI,
     /** Grabs a team nickname fom the API by team number */
@@ -111,5 +126,10 @@ export default {
     getTeamsAdvancedFromAPI,
     getAllTeamsSorted,
     getTeamAvatar,
-    getAllTeamAvatars
+    getAllTeamAvatars,
+    getTeamEventDataLanding,
+    getTeamsInEventFromAPI,
+    getTeamsInEventAdvancedFromAPI
 }
+
+export default TeamFunctions

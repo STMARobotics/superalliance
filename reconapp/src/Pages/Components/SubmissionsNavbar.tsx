@@ -18,7 +18,7 @@ import {
 import SubmissionsNavbarStyles from '../Styles/SubmissionsNavbarStyles';
 import { useNavigate } from 'react-router-dom';
 import GetTeamData from '../Utils/GetTeamData';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import { resetNavigationProgress, startNavigationProgress } from '@mantine/nprogress';
 
 interface NavbarLinkProps {
@@ -50,6 +50,7 @@ interface SubmissionsNavbarProps {
 export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, matchId }: SubmissionsNavbarProps) {
 
     const [eventName, setEventName] = useState("")
+    const [eventData, setEventData] = useState<any>([])
     const { classes, cx, theme } = SubmissionsNavbarStyles()
 
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -60,6 +61,60 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
             setEventName(data.data.short_name)
         })()
     }, [])
+
+    useEffect(() => {
+        (async function () {
+            var eventArray: any[] = [];
+            eventArray.push({
+                label: "All Events",
+                value: "all"
+            })
+            eventArray.push({
+                label: "Testing Event",
+                value: "testing",
+                shortCode: "testing"
+            })
+            eventArray.push({
+                label: "Week 0 Event",
+                value: "week0",
+                shortCode: "week0"
+            })
+            const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
+            eventdata.data.map((event: any) => {
+                eventArray.push(event)
+            })
+            setEventData(eventArray)
+        })()
+    }, [])
+
+    const getShortName = () => {
+        try {
+            const d = eventData.filter((e: any) => {
+                return e.value == preferenceData.dataShow
+            })[0]
+            return d.label
+        } catch {
+            return ""
+        }
+    }
+
+    const getEventCode = () => {
+        try {
+            if(preferenceData.dataShow == 'testing') return 'testing'
+            if(preferenceData.dataShow == 'week0') return 'week0'
+            const d = eventData.filter((e: any) => {
+                return e.value == preferenceData.dataShow
+            })[0]
+            return d.eventcode
+        } catch {
+            return ""
+        }
+    }
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
 
     const [active, setActive] = useState(pageIndex);
 
@@ -78,9 +133,13 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
         mockdata.push({ icon: IconClipboardCheck, label: `Submission ${submissionId}`, url: `/submissions/teams/${teamName}/${submissionId}` })
     }
 
-    mockdata.push({ icon: IconCalendarEvent, label: "Events", url: `/submissions/events` })
+    if (preferenceData.dataShow !== 'all') {
+        mockdata.push({ icon: IconCalendarEvent, label: getShortName(), url: `/submissions/event/${getEventCode()}` })
+    } else {
+        mockdata.push({ icon: IconCalendarEvent, label: "Events", url: `/submissions/events` })
+    }
 
-    if (eventId) {
+    if (eventId && preferenceData.dataShow == 'all') {
         mockdata.push({ icon: IconCalendarStats, label: `${eventName}`, url: `/submissions/event/${eventId}` })
     }
 
@@ -92,17 +151,14 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
         mockdata.push({ icon: IconClipboardCheck, label: `Submission ${submissionId}`, url: `/submissions/event/${eventId}/${matchId}/${submissionId}` })
     }
 
-    mockdata.push({ icon: IconAnalyze, label: `Data Analysis`, url: `/submissions/analysis` })
-
     const links = mockdata.map((link, index) => (
         <NavbarLink
             {...link}
             key={link.label}
             active={index === active}
             onClick={() => {
-                startNavigationProgress()
                 setActive(index)
-                navigate(link.url)
+                window.location.href = link.url
             }}
         />
     ));
@@ -121,7 +177,7 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
                 </Navbar.Section>
             </Navbar>
 
-            <Affix position={{ bottom: 20, right: 20 }} className={classes.hiddenDesktop}>
+            {/* <Affix position={{ bottom: 20, right: 20 }} className={classes.hiddenDesktop}>
                 <Transition transition="slide-up" mounted={!drawerOpened}>
                     {(transitionStyles) => (
                         <Button
@@ -158,7 +214,7 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
                         </Stack>
                     </div>
                 </ScrollArea>
-            </Drawer>
+            </Drawer> */}
         </>
     );
 }

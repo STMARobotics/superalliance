@@ -18,9 +18,17 @@
     font-weight: 700;
 }
 
+.AnalyzeFilteringFlex {
+    flex-direction: row;
+}
+
 .ActionIconGroup {
     display: flex;
     gap: 10px;
+}
+
+.HeaderText {
+    font-style: italic;
 }
 
 .LoginForm {
@@ -51,11 +59,64 @@
         flex-direction: column !important;
         gap: 15px !important;
     }
+
+    .AnalyzeFilteringFlex {
+        flex-direction: column !important;
+    }
+
+    .LandingStepperTop {
+        padding-bottom: 25px !important;
+    }
+
+    .LandingStepperBottom {
+        padding-top: 50px !important;
+    }
+}
+
+.LandingPageHome {
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.LandingPageContent {
+    padding-top: 35px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .no-decoration {
     text-decoration: none;
     color: inherit;
+}
+
+.LandingStepperTop {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding-bottom: 150px;
+}
+
+.LandingStepperBottom {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding-top: 150px;
+}
+
+.LandingStepperText {
+    color: black;
+    font-weight: 700;
+    font-size: calc(15px + 2vmin);
 }
 
 .AnalyzedAveragesHome {
@@ -83,9 +144,26 @@
     flex-direction: row;
 }
 
+.AdministrationContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.AdministrationHomeSection {
+    display: flex;
+    flex-direction: row;
+}
+
+.AdminStatsContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
 .SubmissionMatchBox {
-    -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 }
 
 .SubmissionsNavbar {
@@ -94,6 +172,11 @@
 }
 
 .AggregationsNavbar {
+    position: sticky;
+    top: 0;
+}
+
+.AdministrationNavbar {
     position: sticky;
     top: 0;
 }
@@ -115,6 +198,14 @@
     padding: calc(20px + 2vmin);
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.AdministrationHomeContent {
+    width: 100%;
+    padding: calc(20px + 2vmin);
+    display: flex;
     align-items: center;
     flex-direction: column;
 }
@@ -163,7 +254,7 @@
 }
 
 .NewFormButton {
-    padding-bottom: calc(15px + 2vmin);
+    padding-top: calc(15px + 2vmin);
 }
 
 .RecentSubmissions {

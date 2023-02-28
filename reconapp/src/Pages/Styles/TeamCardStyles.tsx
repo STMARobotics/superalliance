@@ -6,9 +6,10 @@ const teamCardStyles = createStyles((theme) => {
         card: {
             position: 'relative',
             height: 100,
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2],
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.white,
             boxShadow: theme.shadows.sm,
-            color: theme.colors.blue
+            color: theme.primaryColor,
+            border: `2px solid ${theme.colors[theme.primaryColor][8]} !important`,
         },
 
         overlay: {
@@ -17,7 +18,7 @@ const teamCardStyles = createStyles((theme) => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: theme.colors.indigo,
+            background: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.white,
         },
 
         button: {
@@ -34,18 +35,18 @@ const teamCardStyles = createStyles((theme) => {
         },
 
         title: {
-            color: theme.colorScheme === 'dark' ? "white" : "white",
+            color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.dark[6],
             marginBottom: 5,
             fontSize: theme.fontSizes.xl
         },
 
         bodyText: {
-            color: theme.colorScheme === 'dark' ? "white" : "white",
+            color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.dark[6],
             marginLeft: 7,
         },
 
         number: {
-            color: theme.colorScheme === 'dark' ? "white" : "white",
+            color: theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.dark[6],
         },
     };
 });

@@ -37,7 +37,18 @@ const ScoreInputStyles = createStyles((theme) => ({
     disabled: {
         color: `${theme.colorScheme === 'dark' ? 'white' : 'black'} !important`,
         opacity: `1 !important`,
-    }
+    },
+
+    disabledCriticals: {
+        color: `red !important`,
+        opacity: `1 !important`
+    },
+
+    disabledEvent: {
+        color: `${theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[7]} !important`,
+        fontWeight: 500,
+        opacity: `1 !important`,
+    },
 }))
 
 export default ScoreInputStyles

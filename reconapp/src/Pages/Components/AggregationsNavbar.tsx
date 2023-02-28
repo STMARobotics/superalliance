@@ -71,12 +71,8 @@ export function AggregationsNavbar({ location } : AggregationsNavbarProps) {
 
     return (
         <>
-            <Navbar className={`AggregationsNavbar ${classes.hiddenMobile}`} width={{ sm: 300 }}>
+            <Navbar className={`AggregationsNavbar ${classes.hiddenMobile}`} width={{ sm: 275 }}>
                 <Navbar.Section grow className={`${classes.wrapper} ${classes.hiddenMobile}`}>
-                    <div className={classes.aside}>
-                        
-                        {mainLinks}
-                    </div>
                     <div className={classes.main}>
                         <Title order={4} className={classes.title}>
                             {active}
@@ -86,7 +82,7 @@ export function AggregationsNavbar({ location } : AggregationsNavbarProps) {
                     </div>
                 </Navbar.Section>
             </Navbar>
-            <Affix position={{ bottom: 20, right: 20 }} className={classes.hiddenDesktop}>
+            {/* <Affix position={{ bottom: 20, right: 20 }} className={classes.hiddenDesktop}>
                 <Transition transition="slide-up" mounted={!drawerOpened}>
                     {(transitionStyles) => (
                         <Button
@@ -128,7 +124,7 @@ export function AggregationsNavbar({ location } : AggregationsNavbarProps) {
                         </div>
                     </div>
                 </ScrollArea>
-            </Drawer>
+            </Drawer> */}
         </>
     );
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { AggregationsNavbar } from "../Components/AggregationsNavbar"
 import { UpdatedHeader } from "../Components/UpdatedHeader"
 import GetTeamData from "../Utils/GetTeamData"
-import { Button, Group, Select, Text } from "@mantine/core"
+import { Button, Group, Select, Text, useMantineTheme } from "@mantine/core"
 import EventSelectStyles from "../Styles/EventSelectStyles"
 import { AverageStatsRings } from "../Components/AverageStats"
 import submissionsHomeStyles from "../Styles/SubmissionsHomeStyles"
@@ -15,6 +15,8 @@ function AnalyzedAverages() {
 
     const eventSelectClasses = EventSelectStyles().classes
     const submissionsHomeClasses = submissionsHomeStyles().classes
+
+    const theme = useMantineTheme()
 
     useEffect(() => {
         (async function () {
@@ -49,7 +51,7 @@ function AnalyzedAverages() {
                 <div className="AnalyzedAveragesHome">
                     <Text
                         className="SubmissionsEventMatchesText"
-                        color={"#0066b3"}
+                        color={theme.primaryColor}
                         ta="center"
                         fz="xl"
                         fw={700}
@@ -67,7 +69,6 @@ function AnalyzedAverages() {
                         placeholder="Pick one"
                         label="Select Team"
                         classNames={eventSelectClasses}
-                        required
                         searchable
                         nothingFound="No teams found!"
                         onChange={(event: string) => {
@@ -80,10 +81,10 @@ function AnalyzedAverages() {
                             <div className="AverageStats">
                                 <AverageStatsRings
                                     data={[
-                                        { label: "Average Score", stats: `${Math.round(100 * selectedData.AvgScore) / 100}`, progress: 100, color: "blue", icon: 'up' },
+                                        { label: "Average Score", stats: `${Math.round(100 * selectedData.AvgScore) / 100}`, progress: 100, color: "cyan", icon: 'up' },
                                         { label: "Auto Score", stats: `${Math.round(100 * selectedData.AutoScore) / 100}`, progress: 100, color: "green", icon: 'up' },
                                         { label: "Teleop Score", stats: `${Math.round(100 * selectedData.TeleScore) / 100}`, progress: 100, color: "red", icon: 'up' },
-                                        { label: "Average Weight", stats: `${Math.round(100 * selectedData.AvgWeight) / 100}`, progress: 100, color: "purple", icon: 'up' },
+                                        { label: "Average Weight", stats: `${Math.round(100 * selectedData.AvgWeight) / 100}`, progress: 100, color: "indigo", icon: 'up' },
                                         { label: "Defense", stats: (selectedData.Defense == 1) ? "Yes" : "No", progress: 100, color: "yellow", icon: 'up' }
                                     ]} />
                             </div>
