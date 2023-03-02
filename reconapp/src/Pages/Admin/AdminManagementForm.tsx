@@ -52,7 +52,6 @@ function AdminFormManagement() {
                 opened: false
             })
         })
-        console.log(openedArray)
         setOpenedData(openedArray)
     }, [formData])
 

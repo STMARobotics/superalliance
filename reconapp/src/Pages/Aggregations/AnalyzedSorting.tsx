@@ -65,6 +65,7 @@ function AnalyzedSorting() {
     const [selectedType, setSelectedType] = useState("")
     const [teamData, setTeamData] = useState<any[]>([])
     const [teamAvatars, setTeamAvatars] = useState<any[]>([])
+    const [eventData, setEventData] = useState<any[]>([])
 
     const eventSelectClasses = EventSelectStyles().classes
 
@@ -224,6 +225,7 @@ function AnalyzedSorting() {
         })()
     }, []);
 
+
     useEffect(() => {
         (async function () {
             if (window.localStorage !== undefined) {
@@ -235,6 +237,31 @@ function AnalyzedSorting() {
             }
         })()
     }, []);
+
+    useEffect(() => {
+        (async function () {
+            var eventArray: any[] = [];
+            eventArray.push({
+                label: "All Events",
+                value: "all"
+            })
+            eventArray.push({
+                label: "Testing Event",
+                value: "testing",
+                shortCode: "testing"
+            })
+            eventArray.push({
+                label: "Week 0 Event",
+                value: "week0",
+                shortCode: "week0"
+            })
+            const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
+            eventdata.data.map((event: any) => {
+                eventArray.push(event)
+            })
+            setEventData(eventArray)
+        })()
+    }, [])
 
     useEffect(() => {
         (async function () {
@@ -305,10 +332,27 @@ function AnalyzedSorting() {
         })()
     }
 
+    const getEventCode = () => {
+        try {
+            if (preferenceData.dataShow == 'testing') return 'testing'
+            if (preferenceData.dataShow == 'week0') return 'week0'
+            const d = eventData.filter((e: any) => {
+                return e.value == preferenceData.dataShow
+            })[0]
+            return d.eventcode
+        } catch {
+            return ""
+        }
+    }
+
     const sortTeams = () => {
         (async function () {
+            if (preferenceData.dataShow !== 'all') {
+                const data = await GetTeamData.getAllTeamsSortedEvent(getEventCode(), selectedSortTeams, selectedDirectionTeams)
+                return setAverageData(data.data)
+            }
             const data = await GetTeamData.getAllTeamsSorted(selectedSortTeams, selectedDirectionTeams)
-            setAverageData(data.data)
+            return setAverageData(data.data)
         })()
     }
 
@@ -328,6 +372,14 @@ function AnalyzedSorting() {
         }
     }
 
+    const convertData = (number: number) => {
+        if(!number) return "None"
+        const data = Math.round(100 * number) / 100
+        if (isNaN(data)) {
+            return "None"
+        }
+        return data
+    }
 
     return (
         <div className="SubmissionsContainer">
@@ -480,11 +532,14 @@ function AnalyzedSorting() {
                                     avatar: `${getAvatar(data._id)}`,
                                     teamNumber: data._id,
                                     teamName: `${getName(data._id)}`,
-                                    averageScore: data.AvgScore,
-                                    autoScore: data.AutoScore,
-                                    teleopScore: data.TeleScore,
-                                    averageWeight: data.AvgWeight,
-                                    selectedSort: sortFieldsTeams.filter(e => e.value == selectedSortTeams)[0].label
+                                    averageScore: convertData(data.AvgScore),
+                                    bestAuto: convertData(data.BestAuto),
+                                    bestTele: convertData(data.BestTele),
+                                    averageEndgame: convertData(data.AvgEndgame),
+                                    averageAutoScore: convertData(data.AvgAutoScore),
+                                    averageTeleScore: convertData(data.TeleScore),
+                                    rankPoints: convertData(data.RP),
+                                    defense: (data.Defense == 1) ? "Yes" : "No",
                                 }
                             })
                         }

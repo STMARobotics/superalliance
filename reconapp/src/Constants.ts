@@ -1,8 +1,6 @@
-import { getUserData } from "./Pages/Utils/ReconQueries"
-
 const config = {
     version: "v1.0-alpha",
-    api_url: "https://reconapi.cynd.tech",
+    api_url: "http://localhost:9000",
     adminUsers: [
         "Blake (Admin)",
         "Zack O.",

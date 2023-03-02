@@ -106,6 +106,16 @@ const getTeamEventDataLanding = async (teamNumber: Number, year: Number) => {
     return response
 }
 
+const getAggregationDataEvent = async (eventCode: String) => {
+    const response = await axios.get(config.api_url + `/api/v1/aggregation/${eventCode}/data`)
+    return response
+}
+
+const getAllTeamsSortedEvent = async (event: String | undefined, sortOption: String | undefined, direction: String | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/aggregation/${event}/sort/${sortOption}/${direction}`)
+    return response
+}
+
 const TeamFunctions = {
     /** Gets all team numbers from the API */
     getTeamsFromAPI,
@@ -129,7 +139,9 @@ const TeamFunctions = {
     getAllTeamAvatars,
     getTeamEventDataLanding,
     getTeamsInEventFromAPI,
-    getTeamsInEventAdvancedFromAPI
+    getTeamsInEventAdvancedFromAPI,
+    getAggregationDataEvent,
+    getAllTeamsSortedEvent
 }
 
 export default TeamFunctions
