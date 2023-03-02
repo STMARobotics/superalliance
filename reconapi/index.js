@@ -919,9 +919,16 @@ const getAggregationSortedData = async (sortType, sortDirection) => {
   return data
 }
 
-app.listen(process.env.PORT, () => {
+const environment = process.env.ENVIRONMENT || 'local';
+
+// when we're running in AWS we export the express app so we can run the app in Lambda
+if(environment == 'aws') {
+  module.exports = app
+} else {
+  app.listen(process.env.PORT, () => {
   console.log(`App is now listening on port: ${process.env.PORT}`);
-});
+  });
+}
 
 app.use(cors(corsOptions));
 
