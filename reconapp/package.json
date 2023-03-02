@@ -37,7 +37,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "serve": "npx --yes serve -s build"
+    "serve": "npx --yes serve -s build",
+    "deploy": "aws s3 sync build/ s3://super-alliance-ui --profile chad-7028"
   },
   "eslintConfig": {
     "extends": [
