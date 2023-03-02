@@ -113,7 +113,6 @@ function ReconForm() {
     useEffect(() => {
         (async function () {
             const res = await checkToken(authHeader()).catch((err) => {
-                console.log(err)
                 setSessionExpired(true)
                 return showNotification({
                     title: 'Form Error',

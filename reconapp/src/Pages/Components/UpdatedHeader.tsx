@@ -497,7 +497,7 @@ export function UpdatedHeader() {
 
                                 <Menu.Label>Settings</Menu.Label>
                                 <Menu.Item onClick={() => {
-                                    navigate('/user/preferences')
+                                    window.location.href = '/user/preferences'
                                 }} icon={<IconSettings size={14} stroke={1.5} />}>Preferences</Menu.Item>
                                 <Menu.Item onClick={() => {
                                     logout()

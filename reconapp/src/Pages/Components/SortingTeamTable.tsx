@@ -54,11 +54,14 @@ interface TableReviewsProps {
     avatar: string;
     teamNumber: number;
     teamName: string;
-    averageScore: string;
-    autoScore: string;
-    teleopScore: string;
-    averageWeight: string;
-    selectedSort: string;
+    averageScore: string | number;
+    bestAuto: string | number;
+    bestTele: string | number;
+    averageEndgame: string | number;
+    averageAutoScore: string | number;
+    averageTeleScore: string | number;
+    rankPoints: string | number;
+    defense: string | number;
   }[];
 }
 
@@ -82,9 +85,13 @@ export function SortingTeamTable({ data }: TableReviewsProps) {
         </td>
         <td>{row.teamName}</td>
         <td>{row.averageScore}</td>
-        <td>{row.autoScore}</td>
-        <td>{row.teleopScore}</td>
-        <td>{row.averageWeight}</td>
+        <td>{row.averageEndgame}</td>
+        <td>{row.averageAutoScore}</td>
+        <td>{row.averageTeleScore}</td>
+        <td>{row.bestAuto}</td>
+        <td>{row.bestTele}</td>
+        <td>{row.rankPoints}</td>
+        <td>{row.defense}</td>
       </tr>
     );
   });
@@ -97,9 +104,13 @@ export function SortingTeamTable({ data }: TableReviewsProps) {
             <th className={classes.stickyColumn}>Team Number</th>
             <th>Team Name</th>
             <th>Average Score</th>
-            <th>Auto Score</th>
-            <th>Teleop Score</th>
-            <th>Average Weight</th>
+            <th>Average Endgame Score</th>
+            <th>Average Auto Score</th>
+            <th>Average Teleop Score</th>
+            <th>Best Auto Score</th>
+            <th>Best Teleop Score</th>
+            <th>Rank Points</th>
+            <th>Defense</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

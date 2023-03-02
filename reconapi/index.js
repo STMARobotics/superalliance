@@ -16,6 +16,9 @@ var cors = require("cors");
 const UsersDataSchema = require("./Schemas/UsersDataSchema");
 const EventLockSchema = require("./Schemas/EventLockSchema");
 const averageAggregation = require("./Aggregations/averageAggregation");
+const averageSortedAggregation = require("./Aggregations/averageSortedAggregation");
+const averageAggregationEvent = require("./Aggregations/averageAggregationEvent");
+const averageSortedAggregationEvent = require("./Aggregations/averageSortedAggregationEvent");
 
 require("crypto").randomBytes(48, function (ex, buf) {
   token = buf.toString("base64").replace(/\//g, "_").replace(/\+/g, "-");
@@ -530,392 +533,24 @@ const getEventSubmissionData = async (eventId, matchId, submissionId) => {
 }
 
 const getAggregationData = async () => {
-  const data = averageAggregation
+  const data = await averageAggregation
+  return data
+}
+
+const getAggregationDataEvent = async (event) => {
+  const eventName = await getEventDataById(2023, event)
+  const data = await averageAggregationEvent(eventName.name)
   return data
 }
 
 const getAggregationSortedData = async (sortType, sortDirection) => {
-  const data = FormDataSchema.aggregate(
-    [{
-      $addFields: {
-        TotalScore: {
-          $add: [{
-            $multiply: [
-              "$teleop.scored.cube.high",
-              5,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cube.mid",
-              3,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cube.low",
-              2,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cone.high",
-              5,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cone.mid",
-              3,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cone.low",
-              2,
-            ],
-          },
-          {
-            $multiply: [{
-              $cond: {
-                if: "$endgameDocked",
-                then: 1,
-                else: 0,
-              },
-            },
-              6,
-            ],
-          },
-          {
-            $multiply: [{
-              $cond: {
-                if: "$endgameEngaged",
-                then: 1,
-                else: 0,
-              },
-            },
-              4,
-            ],
-          },
-          {
-            $multiply: [{
-              $cond: {
-                if: "$autoDocked",
-                then: 1,
-                else: 0,
-              },
-            },
-              8,
-            ],
-          },
-          {
-            $multiply: [{
-              $cond: {
-                if: "$autoEngaged",
-                then: 1,
-                else: 0,
-              },
-            },
-              4,
-            ],
-          },
-          ],
-        },
-        Telescore: {
-          $add: [{
-            $multiply: [
-              "$teleop.scored.cube.high",
-              5,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cube.mid",
-              3,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cube.low",
-              2,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cone.high",
-              5,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cone.mid",
-              3,
-            ],
-          },
-          {
-            $multiply: [
-              "$teleop.scored.cone.low",
-              2,
-            ],
-          },
-          ],
-        },
-        Autoscore: {
-          $add: [{
-            $cond: {
-              if: "$autoTaxi",
-              then: 1,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: "$autoEngaged",
-              then: 4,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: "$autoDocked",
-              then: 8,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: {
-                autoScoreLevel: 3,
-              },
-              then: 6,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: {
-                autoScoreLevel: 2,
-              },
-              then: 4,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: {
-                autoScoreLevel: 1,
-              },
-              then: 3,
-              else: 0,
-            },
-          },
-          ],
-        },
-        AutoWeight: {
-          $add: [{
-            $cond: {
-              if: "$autoTaxi",
-              then: 1,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: "$autoEngaged",
-              then: 2,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: "$autoDocked",
-              then: 4,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: {
-                autoScoreLevel: 3,
-              },
-              then: 3,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: {
-                autoScoreLevel: 2,
-              },
-              then: 3,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: {
-                autoScoreLevel: 1,
-              },
-              then: 2,
-              else: 0,
-            },
-          },
-          ],
-        },
-        TeleopWeight: {
-          $add: [{
-            $cond: [{
-              $gte: [{
-                $sum: [
-                  "$teleop.scored.cone.low",
-                  "$teleop.scored.cube.low",
-                ],
-              },
-                1,
-              ],
-            },
-              1,
-              0,
-            ],
-          },
-          {
-            $cond: [{
-              $gte: [{
-                $sum: [
-                  "$teleop.scored.cone.mid",
-                  "$teleop.scored.cube.mid",
-                ],
-              },
-                1,
-              ],
-            },
-              3,
-              0,
-            ],
-          },
-          {
-            $cond: [{
-              $gte: [{
-                $sum: [
-                  "$teleop.scored.cone.high",
-                  "$teleop.scored.cube.high",
-                ],
-              },
-                1,
-              ],
-            },
-              4,
-              0,
-            ],
-          },
-          ],
-        },
-        EndgameWeight: {
-          $add: [{
-            $cond: {
-              if: "$endgameDocked",
-              then: 3,
-              else: 0,
-            },
-          },
-          {
-            $cond: {
-              if: "$endgameEngaged",
-              then: 2,
-              else: 0,
-            },
-          },
-          ],
-        },
-        Defensive: {
-          $cond: {
-            if: "$defenceOrCycle",
-            then: 1,
-            else: 0,
-          },
-        },
-      },
-    },
-    {
-      $group: {
-        _id: "$teamNumber",
-        AvgScore: {
-          $avg: "$TotalScore",
-        },
-        AvgAuto: {
-          $avg: "$AutoWeight",
-        },
-        AvgEndgame: {
-          $avg: "$EndgameWeight",
-        },
-        Matches: {
-          $sum: 1,
-        },
-        AvgTeleop: {
-          $sum: "$TeleopWeight",
-        },
-        AutoScore: {
-          $sum: "$Autoscore",
-        },
-        TeleScore: {
-          $sum: "$Telescore",
-        },
-        Defense: {
-          $sum: "$Defensive",
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        AvgAuto: {
-          $round: ["$AvgAuto", 2],
-        },
-        AvgTeleop: {
-          $round: ["$AvgTeleop", 2],
-        },
-        AvgEndgame: {
-          $round: ["$AvgEndgame", 2],
-        },
-        AutoScore: {
-          $round: ["$AutoScore", 2],
-        },
-        TeleScore: {
-          $round: ["$TeleScore", 2],
-        },
-        AvgWeight: {
-          $round: [{
-            $sum: [
-              "$AvgAuto",
-              "$AvgTeleop",
-              "$AvgEndgame",
-            ],
-          },
-            2,
-          ],
-        },
-        AvgScore: 1,
-        Defense: {
-          $cond: [{
-            $gte: ["$Defense", 4],
-          },
-            1,
-            0,
-          ],
-        },
-      },
-    },
-    {
-      $sort:
-      /**
-       * Provide any number of field/order pairs.
-       */
-      {
-        [sortType]: Number(sortDirection),
-      },
-    },
-    ]
-  )
+  const data = await averageSortedAggregation(sortType, sortDirection)
+  return data
+}
+
+const getAggregationSortedDataEvent = async (event, sortType, sortDirection) => {
+  const eventName = await getEventDataById(2023, event)
+  const data = await averageSortedAggregationEvent(eventName.name, sortType, sortDirection)
   return data
 }
 
@@ -1061,6 +696,12 @@ app.get("/api/v1/aggregation/data", async function (req, res, next) {
   res.send(aggregationData)
 })
 
+app.get("/api/v1/aggregation/:event/data", async function (req, res, next) {
+  const aggregationData = await getAggregationDataEvent(req.params.event)
+  res.status(200)
+  res.send(aggregationData)
+})
+
 app.get("/api/v1/submissions/sort/:sortOption/:direction", async function (req, res, next) {
   const sortedData = await getAllFormsSorted(req.params.sortOption, req.params.direction)
   res.status(200)
@@ -1091,6 +732,12 @@ app.get("/api/v1/teamsAdvancedInEvent/:event", async function (req, res, next) {
 
 app.get("/api/v1/aggregation/sort/:sortOption/:direction", async function (req, res, next) {
   const sortedData = await getAggregationSortedData(req.params.sortOption, req.params.direction)
+  res.status(200)
+  res.send(sortedData)
+})
+
+app.get("/api/v1/aggregation/:event/sort/:sortOption/:direction", async function (req, res, next) {
+  const sortedData = await getAggregationSortedDataEvent(req.params.event, req.params.sortOption, req.params.direction)
   res.status(200)
   res.send(sortedData)
 })
@@ -1183,9 +830,7 @@ app.post("/api/v1/admin/form/delete", async function (req, res, next) {
     await FormDataSchema.findOneAndDelete(
       { _id: requestBody.formId }
     )
-    console.log("Deleted Form")
   } catch (err) {
-    return console.log(err)
   }
 
   res.status(200)
