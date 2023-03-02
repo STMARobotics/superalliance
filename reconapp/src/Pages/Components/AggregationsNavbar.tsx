@@ -14,7 +14,6 @@ import {
     IconAnalyze,
     IconCalendarEvent,
 } from '@tabler/icons';
-import { MantineLogo } from '@mantine/ds';
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import AggregationsNavbarStyles from '../Styles/AggregationsNavbarStyles';
 import { useNavigate } from 'react-router-dom';

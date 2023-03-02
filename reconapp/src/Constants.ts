@@ -1,6 +1,6 @@
 const config = {
     version: "v1.0-alpha",
-    api_url: "https://pm40wchyxc.execute-api.us-east-2.amazonaws.com/latest/api/v1/team/7028/submissiondata",
+    api_url: "http://localhost:9000",
     adminUsers: [
         "Blake (Admin)",
         "Zack O.",

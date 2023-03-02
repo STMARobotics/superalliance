@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import GetTeamData from '../Utils/GetTeamData';
 import moment from 'moment';
 import { SuperAllianceStatus } from '../Components/SuperAllianceStatus';
-import { MantineLogo } from '@mantine/ds';
 import { config } from '../../Constants';
 
 const avatars = [
@@ -90,7 +89,6 @@ function Home() {
 
                     <Card withBorder radius="md">
                         <Group position="apart">
-                            <MantineLogo type="mark" size={28} />
                             <Badge>{Math.floor((Date.parse("2/18/2023") - Date.now()) / 86400000)} Days Left</Badge>
                         </Group>
 
