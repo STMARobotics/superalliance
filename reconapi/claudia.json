@@ -1,0 +1,10 @@
+{
+  "lambda": {
+    "role": "reconapi-executor",
+    "name": "reconapi",
+    "region": "us-east-2"
+  },
+  "api": {
+    "id": "yhyzjfxo20"
+  }
+}

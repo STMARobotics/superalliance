@@ -18,5 +18,8 @@
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "claudia": "^5.14.1"
+  }
 }
