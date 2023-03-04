@@ -7,6 +7,10 @@ mongoose.set('strictQuery', true);
 const FormDataSchema = require('./Schemas/FormDataSchema')
 const axios = require('axios')
 const moment = require('moment')
+const AWS = require('aws-sdk')
+
+const environment = process.env.ENVIRONMENT || 'local';
+const parameterStore = new AWS.SSM({region: 'us-east-2'});
 
 mongoose.connect(process.env.MONGODB_URL).then(console.log("Connected to Mongo!")).catch(console.error)
 
@@ -20,8 +24,32 @@ const averageSortedAggregation = require("./Aggregations/averageSortedAggregatio
 const averageAggregationEvent = require("./Aggregations/averageAggregationEvent");
 const averageSortedAggregationEvent = require("./Aggregations/averageSortedAggregationEvent");
 
-require("crypto").randomBytes(48, function (ex, buf) {
-  token = buf.toString("base64").replace(/\//g, "_").replace(/\+/g, "-");
+require("crypto").randomBytes(48, async function (ex, buf) {
+
+  if(environment == "aws") {
+    console.log("**** initializing token");
+    token = await getToken();
+
+    if(!token) {
+      console.log("*** no token found in parameter store, generating...");
+      token = buf.toString("base64").replace(/\//g, "_").replace(/\+/g, "-");
+
+      let param = {
+        "Name": "token", 
+        "Value": token,
+        "Overwrite": true,
+        "Type": "String"
+      };
+    
+      console.log("*** saving token to parameter store");
+      parameterStore.putParameter(param, function(err, data) {
+        if (err) console.log(err, err.stack);
+        else     console.log(data);
+      });
+    }
+  } else {
+    token = buf.toString("base64").replace(/\//g, "_").replace(/\+/g, "-");
+  } 
 });
 
 var corsOptions = {
@@ -49,7 +77,9 @@ const eventSchemaSend = async (data) => {
 
 const schemaSend = async (data) => {
 
-  const sendForm = await new FormDataSchema({
+  console.log("*** in schema send");
+
+  const sendForm = new FormDataSchema({
     _id: mongoose.Types.ObjectId(),
     teamNumber: data.teamNumber,
     matchNumber: data.matchNumber,
@@ -93,7 +123,9 @@ const schemaSend = async (data) => {
     criticals: data.criticals
   })
 
-  await sendForm.save().catch(console.error)
+  console.log("*** calling sendForm.save()");
+  await sendForm.save().catch(console.error);
+  console.log("*** sendForm complete");
 }
 
 const getTeamNickname = async (teamNumber) => {
@@ -554,8 +586,6 @@ const getAggregationSortedDataEvent = async (event, sortType, sortDirection) => 
   return data
 }
 
-const environment = process.env.ENVIRONMENT || 'local';
-
 // when we're running in AWS we export the express app so we can run the app in Lambda
 if(environment == 'aws') {
   module.exports = app
@@ -594,15 +624,17 @@ app.post("/api/v1/login", function (req, res, next) {
   }
 });
 
-app.post("/api/v1/submitform", function (req, res, next) {
+app.post("/api/v1/submitform", async function (req, res, next) {
   requestBody = req.body;
-
+  console.log("-- /submitForm");
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
     return res.send("Auth Denied");
   }
 
-  schemaSend(requestBody.data.data)
+  schemaSend(requestBody.data.data);
+  res.status(200);
+  res.send("Form Submitted!");
 });
 
 app.get("/api/v1/teams", async function (req, res, next) {
@@ -755,6 +787,7 @@ app.get("/api/v1/teamsAvatars", async function (req, res, next) {
 })
 
 app.get("/api/v1/admin/users", async function (req, res, next) {
+  console.log("-- /admin/users");
   if (req.headers['authorization'].replace('Basic Bearer ', '') !== token) {
     res.status(403)
     return res.send("Access Denied")
@@ -766,6 +799,7 @@ app.get("/api/v1/admin/users", async function (req, res, next) {
 
 app.post("/api/v1/admin/users/save", async function (req, res, next) {
   requestBody = req.body;
+  console.log("-- /admin/users/save");
 
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
@@ -787,6 +821,8 @@ app.post("/api/v1/admin/users/save", async function (req, res, next) {
 });
 
 app.get("/api/v1/admin/eventLock", async function (req, res, next) {
+  console.log("-- /admin/eventLock");
+
   if (req.headers['authorization'].replace('Basic Bearer ', '') !== token) {
     res.status(403)
     return res.send("Access Denied")
@@ -798,6 +834,7 @@ app.get("/api/v1/admin/eventLock", async function (req, res, next) {
 
 app.post("/api/v1/admin/eventLock/save", async function (req, res, next) {
   requestBody = req.body;
+  console.log("-- /admin/eventLock/save");
 
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
@@ -820,6 +857,7 @@ app.post("/api/v1/admin/eventLock/save", async function (req, res, next) {
 
 app.post("/api/v1/admin/form/delete", async function (req, res, next) {
   requestBody = req.body;
+  console.log("-- /admin/form/delete");
 
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
@@ -838,6 +876,7 @@ app.post("/api/v1/admin/form/delete", async function (req, res, next) {
 });
 
 app.get("/api/v1/util/tokenCheck", async function (req, res, next) {
+  console.log("-- /util/tokenCheck");
   if (req.headers['authorization'].replace('Basic Bearer ', '') !== token) {
     res.status(403)
     return res.send("Access Denied")
@@ -850,3 +889,19 @@ process.on('uncaughtException', (error) => {
   console.log("Error Occured")
   console.error(error)
 })
+
+const getToken = async () => {
+  console.log("***** getting token from parameter store");
+  try {
+      const data = await parameterStore.getParameter({
+          Name: "token",
+          WithDecryption: false
+      }).promise();
+      console.log("**** got token: " + data.Parameter.Value);
+
+      return data.Parameter.Value;
+  } catch (err) {
+      console.log("**** error getting token: " + err);
+      return null;
+  }
+}
