@@ -11,10 +11,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
         - uses: actions/checkout@v3
-        
-        - name: NPM update
-          run: npm update
-          working-directory: reconapp
 
         - name: Install dependencies
           run: yarn
@@ -35,4 +31,3 @@ jobs:
             delete-removed: true
             no-cache: true
             private: true
-            files-to-include: ".*/*,*/*,**"
