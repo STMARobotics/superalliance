@@ -1,9 +1,10 @@
 name: Workflow to deploy SuperAlliance UI to S3
 on: 
   push: 
-    branches: [ main ]
+    branches: 
+      - main
     paths:
-      - 'reconapp/**'
+      - reconapp
 jobs:
   run:
     runs-on: ubuntu-latest
