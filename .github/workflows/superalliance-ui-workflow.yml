@@ -22,9 +22,8 @@ jobs:
 
         - name: Deploy
           uses: reggionick/s3-deploy@v3
-          working-directory: reconapp
           with:
-            folder: build
+            folder: reconapp/build
             bucket: ${{ secrets.S3_BUCKET }}
             bucket-region: ${{ secrets.S3_BUCKET_REGION }}
             dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
