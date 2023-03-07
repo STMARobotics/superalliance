@@ -148,14 +148,14 @@ function AnalyzedAverages() {
                             <div className="AverageStats">
                                 <AverageStatsRings
                                     data={[
-                                        { label: "Average Score", stats: `${convertData(selectedData.AvgScore)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Average Endgame Score", stats: `${convertData(selectedData.AvgEndgame)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Average Auto Score", stats: `${convertData(selectedData.AvgAutoScore)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Average Teleop Score", stats: `${convertData(selectedData.AvgTeleScore)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Best Auto Score", stats: `${convertData(selectedData.BestAuto)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Best Teleop Score", stats: `${convertData(selectedData.BestTele)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Rank Points", stats: `${convertData(selectedData.RP)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' },
-                                        { label: "Defense", stats: (selectedData.Defense == 1) ? "Yes" : "No", progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 0 + 1)) + 0)].value), icon: 'up' }
+                                        { label: "Average Score", stats: `${convertData(selectedData.AvgScore)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Average Endgame Score", stats: `${convertData(selectedData.AvgEndgame)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Average Auto Score", stats: `${convertData(selectedData.AvgAutoScore)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Average Teleop Score", stats: `${convertData(selectedData.AvgTeleScore)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Best Auto Score", stats: `${convertData(selectedData.BestAuto)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Best Teleop Score", stats: `${convertData(selectedData.BestTele)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Rank Points", stats: `${convertData(selectedData.RP)}`, progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' },
+                                        { label: "Defense", stats: (selectedData.Defense == 1) ? "Yes" : "No", progress: 100, color: (config.colors[(Math.floor(Math.random() * (config.colors.length - 1 + 1)) + 0)].value), icon: 'up' }
                                     ]} />
                             </div>
                             <Group className={submissionsHomeClasses.controls}>
