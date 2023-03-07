@@ -14,12 +14,15 @@ jobs:
 
         - name: Install dependencies
           run: yarn
+          working-directory: reconapp
 
         - name: Build
           run: yarn build
+          working-directory: reconapp
 
         - name: Deploy
           uses: reggionick/s3-deploy@v3
+          working-directory: reconapp
           with:
             folder: build
             bucket: ${{ secrets.S3_BUCKET }}
