@@ -3,8 +3,6 @@ on:
   push: 
     branches: 
       - main
-    paths:
-      - reconapp
 jobs:
   run:
     runs-on: ubuntu-latest
