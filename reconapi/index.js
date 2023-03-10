@@ -10,7 +10,7 @@ const moment = require('moment')
 const AWS = require('aws-sdk')
 
 const environment = process.env.ENVIRONMENT || 'local';
-const parameterStore = new AWS.SSM({region: 'us-east-2'});
+const parameterStore = new AWS.SSM({ region: 'us-east-2' });
 
 mongoose.connect(process.env.MONGODB_URL).then(console.log("Connected to Mongo!")).catch(console.error)
 
@@ -26,30 +26,30 @@ const averageSortedAggregationEvent = require("./Aggregations/averageSortedAggre
 
 require("crypto").randomBytes(48, async function (ex, buf) {
 
-  if(environment == "aws") {
+  if (environment == "aws") {
     console.log("**** initializing token");
     token = await getToken();
 
-    if(!token) {
+    if (!token) {
       console.log("*** no token found in parameter store, generating...");
       token = buf.toString("base64").replace(/\//g, "_").replace(/\+/g, "-");
 
       let param = {
-        "Name": "token", 
+        "Name": "token",
         "Value": token,
         "Overwrite": true,
         "Type": "String"
       };
-    
+
       console.log("*** saving token to parameter store");
-      parameterStore.putParameter(param, function(err, data) {
+      parameterStore.putParameter(param, function (err, data) {
         if (err) console.log(err, err.stack);
-        else     console.log(data);
+        else console.log(data);
       });
     }
   } else {
     token = buf.toString("base64").replace(/\//g, "_").replace(/\+/g, "-");
-  } 
+  }
 });
 
 var corsOptions = {
@@ -158,8 +158,14 @@ const getTeamAvatar = async (team) => {
   }
 }
 
-const getAllFormsHomePage = async () => {
-  const formData = await FormDataSchema.find({}).sort({
+const getAllFormsHomePage = async (event) => {
+  var formData;
+  var eventName = event;
+  if (event === 'week0') eventName = "Week 0 Event"
+  if (event === 'testing') eventName = "Testing Event"
+  event === 'all' ? formData = await FormDataSchema.find({}).sort({
+    _id: -1,
+  }).limit(5) : formData = await FormDataSchema.find({ eventName: eventName }).sort({
     _id: -1
   }).limit(5)
   return formData
@@ -587,11 +593,11 @@ const getAggregationSortedDataEvent = async (event, sortType, sortDirection) => 
 }
 
 // when we're running in AWS we export the express app so we can run the app in Lambda
-if(environment == 'aws') {
+if (environment == 'aws') {
   module.exports = app
 } else {
   app.listen(process.env.PORT, () => {
-  console.log(`App is now listening on port: ${process.env.PORT}`);
+    console.log(`App is now listening on port: ${process.env.PORT}`);
   });
 }
 
@@ -692,8 +698,8 @@ app.get("/api/v1/event/:year/:eventId", async function (req, res, next) {
   res.send(eventData)
 })
 
-app.get("/api/v1/submissions", async function (req, res, next) {
-  const formData = await getAllFormsHomePage()
+app.get("/api/v1/submissions/event/:event", async function (req, res, next) {
+  const formData = await getAllFormsHomePage(req.params.event)
   res.status(200)
   res.send(formData)
 })
@@ -893,15 +899,15 @@ process.on('uncaughtException', (error) => {
 const getToken = async () => {
   console.log("***** getting token from parameter store");
   try {
-      const data = await parameterStore.getParameter({
-          Name: "token",
-          WithDecryption: false
-      }).promise();
-      console.log("**** got token: " + data.Parameter.Value);
+    const data = await parameterStore.getParameter({
+      Name: "token",
+      WithDecryption: false
+    }).promise();
+    console.log("**** got token: " + data.Parameter.Value);
 
-      return data.Parameter.Value;
+    return data.Parameter.Value;
   } catch (err) {
-      console.log("**** error getting token: " + err);
-      return null;
+    console.log("**** error getting token: " + err);
+    return null;
   }
 }

@@ -99,24 +99,26 @@ function AdminFormManagement() {
 
         const deleteForm = (formId: any) => {
             (async function () {
-                await axios.post(
-                    config.api_url + "/api/v1/admin/form/delete",
-                    {
-                        token: token,
-                        formId: formId
-                    }
-                ).catch(() => {
+                try {
+                    await axios.post(
+                        config.api_url + "/api/v1/admin/form/delete",
+                        {
+                            token: token,
+                            formId: formId
+                        }
+                    )
+                    showNotification({
+                        title: 'Success!',
+                        message: `Form ID: ${formId}, was deleted!`,
+                        color: "green",
+                    })
+                } catch {
                     showNotification({
                         title: 'Error!',
                         message: 'There was an error while attempting to delete the form!',
                         color: "red",
                     })
-                })
-                showNotification({
-                    title: 'Success!',
-                    message: `Form ID: ${formId}, was deleted!`,
-                    color: "green",
-                })
+                }
                 const submissionData = await GetTeamData.getAllFormSorting()
                 setFormData(submissionData.data)
             })()

@@ -254,7 +254,7 @@
 }
 
 .NewFormButton {
-    padding-top: calc(15px + 2vmin);
+    padding-bottom: calc(15px + 2vmin);
 }
 
 .RecentSubmissions {

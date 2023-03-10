@@ -1,5 +1,5 @@
 import '../Global.css'
-import { ActionIcon, Avatar, Badge, Button, Card, CloseButton, Dialog, Grid, Group, Paper, Progress, Text } from '@mantine/core';
+import { ActionIcon, Avatar, Badge, Button, Card, CloseButton, Dialog, Grid, Group, Paper, Progress, Text, useMantineTheme } from '@mantine/core';
 import { IconClick, IconUpload } from '@tabler/icons';
 import HeaderComponent from '../Components/Header';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import GetTeamData from '../Utils/GetTeamData';
 import moment from 'moment';
 import { SuperAllianceStatus } from '../Components/SuperAllianceStatus';
 import { config } from '../../Constants';
+import { useLocalStorage } from '@mantine/hooks';
 
 const avatars = [
     'https://avatars.githubusercontent.com/u/74215559?s=48&v=4',
@@ -20,9 +21,10 @@ interface SubmissionActionProps {
     matchNumber: number;
     win: boolean;
     rankPoints: number;
+    color: string;
 }
 
-function UserInfoAction({ teamNumber, time, matchNumber, win, rankPoints }: SubmissionActionProps) {
+function UserInfoAction({ teamNumber, time, matchNumber, win, rankPoints, color }: SubmissionActionProps) {
 
     return (
         <Paper
@@ -31,7 +33,7 @@ function UserInfoAction({ teamNumber, time, matchNumber, win, rankPoints }: Subm
             className="SubmissionMatchBox"
             p="sm"
             sx={(theme) => ({
-                backgroundColor: theme.colors.blue,
+                backgroundColor: color,
             })}
         >
             <Text align="center" size="lg" weight={500} color="white">
@@ -51,10 +53,17 @@ function Home() {
     const [formData, setFormData] = useState([])
 
     const [opened, setOpened] = useState(true);
+    
+    const theme = useMantineTheme()
+
+    const [preferenceData, setPreferenceData] = useLocalStorage<any>({
+        key: 'saved-preferences',
+        getInitialValueInEffect: false,
+    });
 
     useEffect(() => {
         (async function () {
-            const data = await GetTeamData.getAllFormData()
+            const data = await GetTeamData.getAllFormData(preferenceData.dataShow)
             setFormData(data.data)
         })()
     }, [])
@@ -72,7 +81,24 @@ function Home() {
 
                 <div className="HomePageContainer">
 
-                    {/* <div className="RecentSubmissions">
+                    <div className="NewFormButton">
+                        <Button
+                            variant="light"
+                            rightIcon={
+                                <IconClick size={20} stroke={1.5} />
+                            }
+                            radius="xl"
+                            size="md"
+                            styles={{
+                                root: { paddingRight: 14, height: 48, },
+                            }}
+                            onClick={NewForm}
+                        >
+                            New Recon Form
+                        </Button>
+                    </div>
+
+                    <div className="RecentSubmissions">
                         <Grid justify="center" align="flex-start">
                             {formData.map((data: any, index) =>
                                 <Grid.Col span={12} key={index + 1}>
@@ -82,12 +108,13 @@ function Home() {
                                         matchNumber={data.matchNumber}
                                         win={data.win}
                                         rankPoints={data.rankPointsEarned}
+                                        color={theme.colors[theme.primaryColor][6]}
                                     />
                                 </Grid.Col>)}
                         </Grid>
-                    </div> */}
+                    </div>
 
-                    <Card withBorder radius="md">
+                    {/* <Card withBorder radius="md">
                         <Group position="apart">
                             <Badge>{Math.floor((Date.parse("2/18/2023") - Date.now()) / 86400000)} Days Left</Badge>
                         </Group>
@@ -118,24 +145,8 @@ function Home() {
                                 <Avatar radius="xl">+4</Avatar>
                             </Avatar.Group>
                         </Group>
-                    </Card>
+                    </Card> */}
 
-                    <div className="NewFormButton">
-                        <Button
-                            variant="light"
-                            rightIcon={
-                                <IconClick size={20} stroke={1.5} />
-                            }
-                            radius="xl"
-                            size="md"
-                            styles={{
-                                root: { paddingRight: 14, height: 48, },
-                            }}
-                            onClick={NewForm}
-                        >
-                            New Recon Form
-                        </Button>
-                    </div>
                     {/* <div className="RecentSubmissions">
                         <Grid justify="center" align="flex-start">
                             {formData.map((data: any, index) =>

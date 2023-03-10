@@ -36,8 +36,8 @@ const getEventData = async (year:Number, eventId: String | undefined) => {
     return response
 }
 
-const getAllFormData = async () => {
-    const response = await axios.get(config.api_url + "/api/v1/submissions")
+const getAllFormData = async (event: String) => {
+    const response = await axios.get(config.api_url + `/api/v1/submissions/event/${event}`)
     return response
 }
 

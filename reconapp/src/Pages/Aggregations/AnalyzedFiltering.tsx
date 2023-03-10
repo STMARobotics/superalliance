@@ -9,6 +9,7 @@ import { IconX } from "@tabler/icons";
 import { showNotification } from "@mantine/notifications";
 import useStateWithCallback from "../Utils/useStateWithCallback";
 import { useLocalStorage } from "@mantine/hooks";
+import { SortingTeamTable } from "../Components/SortingTeamTable";
 
 interface SubmissionActionProps {
     submissionNumber: number;
@@ -55,15 +56,23 @@ function UserInfoAction({ matchNumber, author, link, teamNumber, win, rankPoints
 
 function AnalyzedFiltering() {
 
-    const [formData, setFormData] = useStateWithCallback([])
-    const [APIData, setAPIData] = useState<any[]>([])
+    const [submissionFormData, setSubmissionFormData] = useStateWithCallback([])
+    const [submissionAPIData, setSubmissionAPIData] = useState<any[]>([])
+    const [teamFormData, setTeamFormData] = useStateWithCallback([])
+    const [teamAPIData, setTeamAPIData] = useState<any[]>([])
     const [filterInput, setFilterInput] = useState("")
     const [numberInput, setNumberInput] = useState("")
     const [operatorInput, setOperatorInput] = useState("")
+    const [submissionFilterData, setSubmissionFilterData] = useStateWithCallback([])
     const [teamFilterData, setTeamFilterData] = useStateWithCallback([])
     const [selectedType, setSelectedType] = useState("")
     const [selectedSortSubmissions, setSelectedSortSubmissions] = useState("createdAt")
+    const [selectedSortTeams, setSelectedSortTeams] = useState("_id")
     const [selectedDirectionSubmissions, setSelectedDirectionSubmissions] = useState("-1")
+    const [selectedDirectionTeams, setSelectedDirectionTeams] = useState("1")
+    const [eventData, setEventData] = useState<any[]>([])
+    const [teamData, setTeamData] = useState<any[]>([])
+    const [teamAvatars, setTeamAvatars] = useState<any[]>([])
     const eventSelectClasses = EventSelectStyles().classes
 
     const [preferenceData, setPreferenceData] = useLocalStorage<any>({
@@ -156,6 +165,76 @@ function AnalyzedFiltering() {
         }
     ]
 
+    const sortFieldsTeams = [
+        {
+            label: "Team Number",
+            value: "_id"
+        },
+        {
+            label: "Average Score",
+            value: "AvgScore"
+        },
+        {
+            label: "Average Endgame Score",
+            value: "AvgEndgame"
+        },
+        {
+            label: "Average Auto Score",
+            value: "AvgAutoScore"
+        },
+        {
+            label: "Average Teleop Score",
+            value: "AvgTeleScore"
+        },
+        {
+            label: "Best Auto Score",
+            value: "BestAuto"
+        },
+        {
+            label: "Best Teleop Score",
+            value: "BestTele"
+        },
+        {
+            label: "Average RP Per Match",
+            value: "RP"
+        }
+    ]
+
+    const filterFieldsTeams = [
+        {
+            label: "Team Number",
+            value: "_id"
+        },
+        {
+            label: "Average Score",
+            value: "AvgScore"
+        },
+        {
+            label: "Average Endgame Score",
+            value: "AvgEndgame"
+        },
+        {
+            label: "Average Auto Score",
+            value: "AvgAutoScore"
+        },
+        {
+            label: "Average Teleop Score",
+            value: "AvgTeleScore"
+        },
+        {
+            label: "Best Auto Score",
+            value: "BestAuto"
+        },
+        {
+            label: "Best Teleop Score",
+            value: "BestTele"
+        },
+        {
+            label: "Average RP Per Match",
+            value: "RP"
+        }
+    ]
+
     const filterFieldsSubmissions = [
         {
             label: "Team Number",
@@ -227,7 +306,50 @@ function AnalyzedFiltering() {
         { label: "Greater than", value: ">" }
     ]
 
-    const newFilter = () => {
+    useEffect(() => {
+        (async function () {
+            var eventArray: any[] = [];
+            eventArray.push({
+                label: "All Events",
+                value: "all"
+            })
+            eventArray.push({
+                label: "Testing Event",
+                value: "testing",
+                shortCode: "testing"
+            })
+            eventArray.push({
+                label: "Week 0 Event",
+                value: "week0",
+                shortCode: "week0"
+            })
+            const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
+            eventdata.data.map((event: any) => {
+                eventArray.push(event)
+            })
+            setEventData(eventArray)
+        })()
+    }, [])
+
+    const newSubmissionFilter = () => {
+
+        if (!filterInput || !numberInput || !operatorInput) return showNotification({
+            title: 'Filtering Error',
+            message: 'Values missing or invalid!',
+            color: "red",
+        })
+        setSubmissionFilterData((oldData: any) => [...oldData, { type: filterInput, number: numberInput, operand: operatorInput }])
+        setFilterInput("")
+        setNumberInput("")
+        setOperatorInput("")
+    }
+
+    const deleteSubmissionFilter = async (num: any) => {
+        const newData = submissionFilterData.filter((e: any, index: any) => index !== num)
+        setSubmissionFilterData(newData)
+    }
+
+    const newTeamFilter = () => {
 
         if (!filterInput || !numberInput || !operatorInput) return showNotification({
             title: 'Filtering Error',
@@ -240,31 +362,42 @@ function AnalyzedFiltering() {
         setOperatorInput("")
     }
 
-    const deleteFilter = async (num: any) => {
+    const deleteTeamFilter = async (num: any) => {
         const newData = teamFilterData.filter((e: any, index: any) => index !== num)
         setTeamFilterData(newData)
     }
+
+    useEffect(() => {
+        updateSubmissionFilters(submissionFilterData)
+    }, [submissionFilterData]);
 
     useEffect(() => {
         updateTeamFilters(teamFilterData)
     }, [teamFilterData]);
 
     useEffect(() => {
-
-        updateTeamFilters(teamFilterData)
+        updateSubmissionFilters(submissionFilterData)
     }, [selectedSortSubmissions, selectedDirectionSubmissions])
 
-    const updateTeamFilters = async (data: any) => {
+    useEffect(() => {
+        updateTeamFilters(teamFilterData)
+    }, [selectedSortTeams, selectedDirectionTeams])
+
+    const updateSubmissionFilters = async (data: any) => {
         const sortData = await GetTeamData.getAllFormsSorted(selectedSortSubmissions, selectedDirectionSubmissions)
         var newSortData: any[] = sortData.data
         if (preferenceData.dataShow !== "all") {
-            if (preferenceData.dataShow == 'testing') return newSortData = sortData.data.filter((e: any) => {
-                return e.eventName == "Testing Event"
-            })
-            if (preferenceData.dataShow == 'week0') return newSortData = sortData.data.filter((e: any) => {
-                return e.eventName == "Week 0 Event"
-            })
-            return newSortData = sortData.data.filter((e: any) => {
+            if (preferenceData.dataShow == 'testing') {
+                newSortData = sortData.data.filter((e: any) => {
+                    return e.eventName == "Testing Event"
+                })
+            }
+            if (preferenceData.dataShow == 'week0') {
+                newSortData = sortData.data.filter((e: any) => {
+                    return e.eventName == "Week 0 Event"
+                })
+            }
+            else return newSortData = sortData.data.filter((e: any) => {
                 return e.eventName == preferenceData.dataShow
             })
         }
@@ -316,42 +449,138 @@ function AnalyzedFiltering() {
                 })
         })
 
-        setFormData(filtered)
+        setSubmissionFormData(filtered)
+    }
+
+    useEffect(() => {
+        (async function () {
+            if (window.localStorage !== undefined) {
+                const teamD = window.localStorage.getItem('teamNames');
+                if (teamD) {
+                    const data = await JSON.parse(teamD)
+                    await setTeamData(data.teams)
+                }
+            }
+        })()
+    }, []);
+
+
+    useEffect(() => {
+        (async function () {
+            if (window.localStorage !== undefined) {
+                const teamD = window.localStorage.getItem('teamAvatars');
+                if (teamD) {
+                    const data = await JSON.parse(teamD)
+                    await setTeamAvatars(data)
+                }
+            }
+        })()
+    }, []);
+
+    const getEventCode = () => {
+        try {
+            if (preferenceData.dataShow == 'testing') return 'testing'
+            if (preferenceData.dataShow == 'week0') return 'week0'
+            const d = eventData.filter((e: any) => {
+                return e.value == preferenceData.dataShow
+            })[0]
+            return d.eventcode
+        } catch {
+            return ""
+        }
+    }
+
+    const getAvatar = (teamNum: any) => {
+        try {
+            return teamAvatars.filter((e: any) => e.number == teamNum)[0].avatar
+        } catch {
+            return ''
+        }
+    }
+
+    const getName = (teamNum: any) => {
+        try {
+            return teamData.filter((e: any) => e.number == teamNum)[0].name
+        } catch {
+            return `Loading...`
+        }
+    }
+
+    const convertData = (number: number) => {
+        if (!number) return "None"
+        const data = Math.round(100 * number) / 100
+        if (isNaN(data)) {
+            return "None"
+        }
+        return data
+    }
+
+    const updateTeamFilters = async (data: any) => {
+        var sortData: any;
+
+        preferenceData.dataShow == 'all' ? sortData = await GetTeamData.getAllTeamsSorted(selectedSortTeams, selectedDirectionTeams) : sortData = await GetTeamData.getAllTeamsSortedEvent(getEventCode(), selectedSortTeams, selectedDirectionTeams)
+
+        var filtered: any[] = sortData.data;
+
+        data.map((data: any) => {
+            const filterMock = { type: data.type, number: data.number, operand: data.operand }
+
+            function calc(a: any, operand: any, b: any) {
+                switch (operand) {
+                    case "<":
+                        return a < b
+                    case "<=":
+                        return a <= b
+                    case "==":
+                        return a == b
+                    case ">=":
+                        return a >= b
+                    case ">":
+                        return a > b
+                }
+            }
+
+            filtered = filtered
+                .filter((e: any) => {
+                    return calc(e[filterMock.type], filterMock.operand, filterMock.number)
+                })
+        })
+
+        setTeamFormData(filtered)
     }
 
     useEffect(() => {
         (async function () {
             if (preferenceData.dataShow == 'all') {
-                const submissionData = await GetTeamData.getAllFormSorting()
-                setAPIData(submissionData.data)
-                return setFormData(submissionData.data)
+                const teamData = await GetTeamData.getAllTeamsSorted(selectedSortTeams, selectedDirectionTeams)
+                setTeamAPIData(teamData.data)
+                return setTeamFormData(teamData.data)
+            } else {
+                const teamData = await GetTeamData.getAllTeamsSortedEvent(getEventCode(), selectedSortTeams, selectedDirectionTeams)
+                setTeamAPIData(teamData.data)
+                return setTeamFormData(teamData.data)
             }
+        })()
+    }, [])
 
-            if (preferenceData.dataShow == 'testing') {
+    useEffect(() => {
+        (async function () {
+            if (preferenceData.dataShow == 'all') {
                 const submissionData = await GetTeamData.getAllFormSorting()
+                setSubmissionAPIData(submissionData.data)
+                return setSubmissionFormData(submissionData.data)
+            } else {
+                var eventName: any
+                const submissionData = await GetTeamData.getAllFormSorting()
+                eventName = preferenceData.dataShow
+                if (preferenceData.dataShow === 'week0') eventName = 'Week 0 Event'
+                if (preferenceData.dataShow === 'testing') eventName = 'Testing Event'
                 const newData = submissionData.data.filter((e: any) => {
-                    return e.eventName == "Testing Event"
+                    return e.eventName == eventName
                 })
-                setAPIData(newData)
-                return setFormData(newData)
+                setSubmissionAPIData(newData)
+                return setSubmissionFormData(newData)
             }
-
-            if (preferenceData.dataShow == 'week0') {
-                const submissionData = await GetTeamData.getAllFormSorting()
-                const newData = submissionData.data.filter((e: any) => {
-                    return e.eventName == "Week 0 Event"
-                })
-                setAPIData(newData)
-                return setFormData(newData)
-            }
-
-            const submissionData = await GetTeamData.getAllFormSorting()
-            const newData = submissionData.data.filter((e: any) => {
-                return e.eventName == preferenceData.dataShow
-            })
-            setAPIData(newData)
-            return setFormData(newData)
-
         })()
     }, [])
 
@@ -392,7 +621,7 @@ function AnalyzedFiltering() {
                     />
 
                     {selectedType == "Submission" ? <>
-                        {teamFilterData.map((e: any, index: any) =>
+                        {submissionFilterData.map((e: any, index: any) =>
                             <Flex
                                 key={index}
                                 justify="center"
@@ -438,7 +667,7 @@ function AnalyzedFiltering() {
                                 />
 
                                 <Button onClick={() => {
-                                    deleteFilter(index)
+                                    deleteSubmissionFilter(index)
                                 }}>
                                     <IconX></IconX>
                                 </Button>
@@ -501,7 +730,7 @@ function AnalyzedFiltering() {
                             />
 
                             <Button onClick={() => {
-                                newFilter()
+                                newSubmissionFilter()
                             }}>
                                 Filter
                             </Button>
@@ -546,7 +775,7 @@ function AnalyzedFiltering() {
                         </Flex>
 
                         <Grid justify="center" grow w={"100%"}>
-                            {formData.map((data: any, index: any) =>
+                            {submissionFormData.map((data: any, index: any) =>
                                 <Grid.Col md={4} lg={3} key={index + 1}>
                                     <UserInfoAction
                                         submissionNumber={index + 1}
@@ -563,6 +792,180 @@ function AnalyzedFiltering() {
                         </Grid>
                     </>
                         : null}
+                    {selectedType == 'Team' ? <>
+                        {teamFilterData.map((e: any, index: any) =>
+                            <Flex
+                                key={index}
+                                justify="center"
+                                align="center"
+                                wrap="wrap"
+                                gap={"15px"}
+                                className="AnalyzeFilteringFlex">
+                                <Select
+                                    clearable
+                                    transition="pop-top-left"
+                                    transitionDuration={80}
+                                    transitionTimingFunction="ease"
+                                    dropdownPosition="bottom"
+                                    style={{ zIndex: 40 }}
+                                    data={filterFieldsTeams}
+                                    placeholder="Data Type"
+                                    label="Filter By"
+                                    classNames={eventSelectClasses}
+                                    value={e.type}
+                                    readOnly
+                                />
+
+                                <Select
+                                    clearable
+                                    transition="pop-top-left"
+                                    transitionDuration={80}
+                                    transitionTimingFunction="ease"
+                                    dropdownPosition="bottom"
+                                    style={{ zIndex: 30 }}
+                                    data={operandData}
+                                    placeholder="Operator Type"
+                                    label="Operator"
+                                    classNames={eventSelectClasses}
+                                    value={e.operand}
+                                    readOnly
+                                />
+
+                                <TextInput
+                                    placeholder="Number Input"
+                                    value={e.number}
+                                    label={"Number"}
+                                    readOnly
+                                />
+
+                                <Button onClick={() => {
+                                    deleteTeamFilter(index)
+                                }}>
+                                    <IconX></IconX>
+                                </Button>
+                            </Flex>
+                        )}
+
+                        <Flex
+                            justify="center"
+                            align="center"
+                            wrap="wrap"
+                            gap={"15px"}
+                            className="AnalyzeFilteringFlex">
+                            <Select
+                                clearable
+                                transition="pop-top-left"
+                                transitionDuration={80}
+                                transitionTimingFunction="ease"
+                                dropdownPosition="bottom"
+                                style={{ zIndex: 40 }}
+                                data={filterFieldsTeams}
+                                placeholder="Data Type"
+                                label="Filter By"
+                                classNames={eventSelectClasses}
+                                value={filterInput}
+                                onFocus={() => {
+
+                                }}
+                                onChange={(event: string) => {
+                                    setFilterInput(event)
+                                }}
+                            />
+
+                            <Select
+                                clearable
+                                transition="pop-top-left"
+                                transitionDuration={80}
+                                transitionTimingFunction="ease"
+                                dropdownPosition="bottom"
+                                style={{ zIndex: 30 }}
+                                data={operandData}
+                                placeholder="Operator Type"
+                                label="Operator"
+                                classNames={eventSelectClasses}
+                                value={operatorInput}
+                                onFocus={() => {
+
+                                }}
+                                onChange={(event: string) => {
+                                    setOperatorInput(event)
+                                }}
+                            />
+
+                            <TextInput
+                                placeholder="Number Input"
+                                value={numberInput}
+                                label={"Number"}
+                                onChange={(event) => {
+                                    setNumberInput(event.currentTarget.value)
+                                }}
+                            />
+
+                            <Button onClick={() => {
+                                newTeamFilter()
+                            }}>
+                                Filter
+                            </Button>
+                        </Flex>
+
+                        <Flex
+                            justify="center"
+                            align="center"
+                            wrap="wrap"
+                            gap={"15px"}
+                            className="AnalyzeFilteringFlex">
+                            <Select
+                                transition="pop-top-left"
+                                transitionDuration={80}
+                                transitionTimingFunction="ease"
+                                dropdownPosition="bottom"
+                                style={{ zIndex: 20 }}
+                                data={sortFieldsTeams}
+                                placeholder="Sort by..."
+                                label="Sorting Field"
+                                classNames={eventSelectClasses}
+                                value={selectedSortTeams}
+                                onChange={(event: string) => {
+                                    setSelectedSortTeams(event)
+                                }}
+                            />
+                            <Select
+                                transition="pop-top-left"
+                                transitionDuration={80}
+                                transitionTimingFunction="ease"
+                                dropdownPosition="bottom"
+                                style={{ zIndex: 10 }}
+                                data={sortDirectionFields}
+                                placeholder="Up or down?"
+                                label="Direction"
+                                classNames={eventSelectClasses}
+                                value={selectedDirectionTeams}
+                                onChange={(event: string) => {
+                                    setSelectedDirectionTeams(event)
+                                }}
+                            />
+                        </Flex>
+
+                        <SortingTeamTable
+                            data={
+                                teamFormData.map((data: any, index: any) => {
+                                    return {
+                                        avatar: `${getAvatar(data._id)}`,
+                                        teamNumber: data._id,
+                                        teamName: `${getName(data._id)}`,
+                                        averageScore: convertData(data.AvgScore),
+                                        bestAuto: convertData(data.BestAuto),
+                                        bestTele: convertData(data.BestTele),
+                                        averageEndgame: convertData(data.AvgEndgame),
+                                        averageAutoScore: convertData(data.AvgAutoScore),
+                                        averageTeleScore: convertData(data.TeleScore),
+                                        rankPoints: convertData(data.RP),
+                                        defense: (data.Defense == 1) ? "Yes" : "No",
+                                    }
+                                })
+                            }
+                        />
+                    </> : null}
                 </div>
             </div>
         </div>

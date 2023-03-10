@@ -200,16 +200,28 @@ function AnalyzedSorting() {
             value: "AvgScore"
         },
         {
-            label: "Auto Score",
-            value: "AutoScore"
+            label: "Average Endgame Score",
+            value: "AvgEndgame"
         },
         {
-            label: "Teleop Score",
-            value: "TeleScore"
+            label: "Average Auto Score",
+            value: "AvgAutoScore"
         },
         {
-            label: "Average Weight",
-            value: "AvgWeight"
+            label: "Average Teleop Score",
+            value: "AvgTeleScore"
+        },
+        {
+            label: "Best Auto Score",
+            value: "BestAuto"
+        },
+        {
+            label: "Best Teleop Score",
+            value: "BestTele"
+        },
+        {
+            label: "Average RP Per Match",
+            value: "RP"
         }
     ]
 
@@ -267,33 +279,6 @@ function AnalyzedSorting() {
         (async function () {
             const teamsData = await GetTeamData.getAggregationData()
             setAverageData(teamsData.data)
-
-            if (preferenceData.dataShow == 'all') {
-                const submissionData = await GetTeamData.getAllFormSorting()
-                return setFormData(submissionData.data)
-            }
-
-            if (preferenceData.dataShow == 'testing') {
-                const submissionData = await GetTeamData.getAllFormSorting()
-                const newData = submissionData.data.filter((e: any) => {
-                    return e.eventName == "Testing Event"
-                })
-                return setFormData(newData)
-            }
-
-            if (preferenceData.dataShow == 'week0') {
-                const submissionData = await GetTeamData.getAllFormSorting()
-                const newData = submissionData.data.filter((e: any) => {
-                    return e.eventName == "Week 0 Event"
-                })
-                return setFormData(newData)
-            }
-
-            const submissionData = await GetTeamData.getAllFormSorting()
-            const newData = submissionData.data.filter((e: any) => {
-                return e.eventName == preferenceData.dataShow
-            })
-            return setFormData(newData)
         })()
     }, [])
 
@@ -311,24 +296,16 @@ function AnalyzedSorting() {
             if (preferenceData.dataShow == 'all') {
                 const newData = data.data
                 return setFormData(newData)
-            }
-            if (preferenceData.dataShow == 'testing') {
+            } else {
+                var eventName: any
+                eventName = preferenceData.dataShow
+                if (preferenceData.dataShow === 'week0') eventName = 'Week 0 Event'
+                if (preferenceData.dataShow === 'testing') eventName = 'Testing Event'
                 const newData = data.data.filter((e: any) => {
-                    return e.eventName == "Testing Event"
+                    return e.eventName == eventName
                 })
                 return setFormData(newData)
             }
-
-            if (preferenceData.dataShow == 'week0') {
-                const newData = data.data.filter((e: any) => {
-                    return e.eventName == "Week 0 Event"
-                })
-                return setFormData(newData)
-            }
-            const newData = data.data.filter((e: any) => {
-                return e.eventName == preferenceData.dataShow
-            })
-            setFormData(newData)
         })()
     }
 
@@ -373,7 +350,7 @@ function AnalyzedSorting() {
     }
 
     const convertData = (number: number) => {
-        if(!number) return "None"
+        if (!number) return "None"
         const data = Math.round(100 * number) / 100
         if (isNaN(data)) {
             return "None"
