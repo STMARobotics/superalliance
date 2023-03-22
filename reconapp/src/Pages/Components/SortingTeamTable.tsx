@@ -1,4 +1,4 @@
-import { Table, Anchor, Text, Group, ScrollArea, createStyles, Avatar } from '@mantine/core';
+import { Table, Anchor, Group, ScrollArea, createStyles, Avatar } from '@mantine/core';
 import { useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
@@ -39,9 +39,13 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
+  highlighted: {
+    backgroundColor: theme.colors[theme.primaryColor][5],
+    color: 'white'
+  },
+
   scrollArea: {
-    height: 400,
-    width: "100%"
+    width: '150vh'
   },
 
   scrolled: {
@@ -57,15 +61,29 @@ interface TableReviewsProps {
     averageScore: string | number;
     bestAuto: string | number;
     bestTele: string | number;
-    averageEndgame: string | number;
     averageAutoScore: string | number;
     averageTeleScore: string | number;
+    averageCones: string | number;
+    averageCubes: string | number;
+    averageHighCones: string | number;
+    averageMidCones: string | number;
+    averageLowCones: string | number;
+    averageHighCubes: string | number;
+    averageMidCubes: string | number;
+    averageLowCubes: string | number;
+    averageSinglePlayer: string | number;
+    averageDoublePlayer: string | number;
+    averageBothPlayer: string | number;
+    averageTippedCones: string | number;
+    averageFloorCones: string | number;
+    totalCrits: string | number;
     rankPoints: string | number;
     defense: string | number;
   }[];
+  selectedSort: string;
 }
 
-export function SortingTeamTable({ data }: TableReviewsProps) {
+export function SortingTeamTable({ data, selectedSort }: TableReviewsProps) {
 
   const { classes, cx } = useStyles();
   const [scrolled, setScrolled] = useState(false);
@@ -83,15 +101,28 @@ export function SortingTeamTable({ data }: TableReviewsProps) {
             </Anchor>
           </Group>
         </td>
-        <td>{row.teamName}</td>
-        <td>{row.averageScore}</td>
-        <td>{row.averageEndgame}</td>
-        <td>{row.averageAutoScore}</td>
-        <td>{row.averageTeleScore}</td>
-        <td>{row.bestAuto}</td>
-        <td>{row.bestTele}</td>
-        <td>{row.rankPoints}</td>
-        <td>{row.defense}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == '_id' })}>{row.teamName}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgScore' })}>{row.averageScore}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgAutoScore' })}>{row.averageAutoScore}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgTeleScore' })}>{row.averageTeleScore}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'BestAuto' })}>{row.bestAuto}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'BestTele' })}>{row.bestTele}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgCones' })}>{row.averageCones}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgCubes' })}>{row.averageCubes}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgHighCone' })}>{row.averageHighCones}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgMidCone' })}>{row.averageMidCones}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgLowCone' })}>{row.averageLowCones}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgHighCube' })}>{row.averageHighCubes}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgMidCube' })}>{row.averageMidCubes}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgLowCube' })}>{row.averageLowCubes}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgSinglePlayer' })}>{row.averageSinglePlayer}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgDoublePlayer' })}>{row.averageDoublePlayer}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgBothPlayer' })}>{row.averageBothPlayer}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgTippedCones' })}>{row.averageTippedCones}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgFloorCones' })}>{row.averageFloorCones}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'TotalCrit' })}>{row.totalCrits}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'RP' })}>{row.rankPoints}</td>
+        <td className={cx({ [classes.highlighted]: selectedSort == 'AvgDefense' })}>{row.defense}</td>
       </tr>
     );
   });
@@ -104,13 +135,26 @@ export function SortingTeamTable({ data }: TableReviewsProps) {
             <th className={classes.stickyColumn}>Team Number</th>
             <th>Team Name</th>
             <th>Average Score</th>
-            <th>Average Endgame Score</th>
             <th>Average Auto Score</th>
             <th>Average Teleop Score</th>
             <th>Best Auto Score</th>
             <th>Best Teleop Score</th>
-            <th>Rank Points</th>
-            <th>Defense</th>
+            <th>Average Cones</th>
+            <th>Average Cubes</th>
+            <th>Average High Cones</th>
+            <th>Average Mid Cones</th>
+            <th>Average Low Cones</th>
+            <th>Average High Cubes</th>
+            <th>Average Mid Cubes</th>
+            <th>Average Low Cubes</th>
+            <th>Average Single HP</th>
+            <th>Average Double HP</th>
+            <th>Average Both HP</th>
+            <th>Tipped Cones %</th>
+            <th>Floor Cones %</th>
+            <th>Total Criticals</th>
+            <th>RP Average</th>
+            <th>Defense %</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

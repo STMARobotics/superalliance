@@ -52,7 +52,7 @@ function SubmissionsEventData() {
             <UpdatedHeader />
             <div className="SubmissionsHomeSection">
                 <SubmissionsNavbar
-                    pageIndex={preferenceData.dataShow === "all" ? 3 : 2}
+                    pageIndex={"Matches"}
                     matchId={matchId}
                     eventId={eventId} />
                 <div className="SubmissionsFormsContent">

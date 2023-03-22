@@ -4,47 +4,46 @@ const AggregationsNavbarStyles = createStyles((theme) => ({
     wrapper: {
         display: 'flex',
         height: '100%'
-    },
-
-    aside: {
+      },
+    
+      aside: {
         flex: '0 0 60px',
         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[3]
-            }`,
-        padding: "16px"
-    },
-
-    main: {
+        borderRight: `1px solid ${
+          theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+        }`,
+      },
+    
+      main: {
         flex: 1,
         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
-        height: '100%',
-    },
-
-    mainLink: {
-        width: 50,
-        height: 50,
+      },
+    
+      mainLink: {
+        width: 44,
+        height: 44,
         borderRadius: theme.radius.md,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
-
+    
         '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0],
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0],
         },
-    },
-
-    mainLinkActive: {
+      },
+    
+      mainLinkActive: {
         '&, &:hover': {
-            backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
-            color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+          backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
+          color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
         },
-    },
-
-    title: {
+      },
+    
+      title: {
         boxSizing: 'border-box',
         fontFamily: `Greycliff CF, ${theme.fontFamily}`,
         marginBottom: theme.spacing.xl,
@@ -52,23 +51,25 @@ const AggregationsNavbarStyles = createStyles((theme) => ({
         padding: theme.spacing.md,
         paddingTop: 18,
         height: 60,
-        borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-            }`,
-    },
-
-    logo: {
+        borderBottom: `1px solid ${
+          theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+        }`,
+      },
+    
+      logo: {
         boxSizing: 'border-box',
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
         height: 60,
         paddingTop: theme.spacing.md,
-        borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-            }`,
+        borderBottom: `1px solid ${
+          theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+        }`,
         marginBottom: theme.spacing.xl,
-    },
-
-    link: {
+      },
+    
+      link: {
         boxSizing: 'border-box',
         display: 'block',
         textDecoration: 'none',
@@ -81,22 +82,22 @@ const AggregationsNavbarStyles = createStyles((theme) => ({
         fontWeight: 500,
         height: 44,
         lineHeight: '44px',
-
+    
         '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+          color: theme.colorScheme === 'dark' ? theme.white : theme.black,
         },
-    },
-
-    linkActive: {
+      },
+    
+      linkActive: {
         '&, &:hover': {
-            borderLeftColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor })
-                .background,
-            backgroundColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor })
-                .background,
-            color: theme.white,
+          borderLeftColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor })
+            .background,
+          backgroundColor: theme.fn.variant({ variant: 'filled', color: theme.primaryColor })
+            .background,
+          color: theme.white,
         },
-    },
+      },
 
     hiddenMobile: {
         [theme.fn.smallerThan('sm')]: {

@@ -1,13 +1,10 @@
-import { Button, Group, Text, useMantineTheme } from "@mantine/core"
-import { completeNavigationProgress } from "@mantine/nprogress"
-import { useNavigate } from "react-router-dom"
+import { Text, useMantineTheme } from "@mantine/core"
 import { AggregationsNavbar } from "../Components/AggregationsNavbar"
 import { UpdatedHeader } from "../Components/UpdatedHeader"
 import submissionsHomeStyles from "../Styles/SubmissionsHomeStyles"
 
 function AnalyzedHome() {
 
-    const navigate = useNavigate()
     const { classes } = submissionsHomeStyles()
     const theme = useMantineTheme()
 

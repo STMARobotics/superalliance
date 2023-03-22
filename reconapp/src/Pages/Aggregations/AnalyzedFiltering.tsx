@@ -175,10 +175,6 @@ function AnalyzedFiltering() {
             value: "AvgScore"
         },
         {
-            label: "Average Endgame Score",
-            value: "AvgEndgame"
-        },
-        {
             label: "Average Auto Score",
             value: "AvgAutoScore"
         },
@@ -195,9 +191,57 @@ function AnalyzedFiltering() {
             value: "BestTele"
         },
         {
+            label: "Average Cones",
+            value: "AvgCones"
+        },
+        {
+            label: "Average Cubes",
+            value: "AvgCubes"
+        },
+        {
+            label: "Average High Cones",
+            value: "AvgHighCone"
+        },
+        {
+            label: "Average Mid Cones",
+            value: "AvgMidCone"
+        },
+        {
+            label: "Average Low Cones",
+            value: "AvgLowCone"
+        },
+        {
+            label: "Average High Cubes",
+            value: "AvgHighCube"
+        },
+        {
+            label: "Average Mid Cubes",
+            value: "AvgMidCube"
+        },
+        {
+            label: "Average Low Cubes",
+            value: "AvgLowCube"
+        },
+        {
+            label: "Average Single HP Chosen",
+            value: "AvgSinglePlayer"
+        },
+        {
+            label: "Average Double HP Chosen",
+            value: "AvgDoublePlayer"
+        },
+        {
+            label: "Average Both HP Chosen",
+            value: "AvgBothPlayer"
+        },
+        {
+            label: "Total Criticals",
+            value: "TotalCrit"
+        },
+        {
             label: "Average RP Per Match",
             value: "RP"
-        }
+        },
     ]
 
     const filterFieldsTeams = [
@@ -210,10 +254,6 @@ function AnalyzedFiltering() {
             value: "AvgScore"
         },
         {
-            label: "Average Endgame Score",
-            value: "AvgEndgame"
-        },
-        {
             label: "Average Auto Score",
             value: "AvgAutoScore"
         },
@@ -230,9 +270,65 @@ function AnalyzedFiltering() {
             value: "BestTele"
         },
         {
+            label: "Average Cones",
+            value: "AvgCones"
+        },
+        {
+            label: "Average Cubes",
+            value: "AvgCubes"
+        },
+        {
+            label: "Average High Cones",
+            value: "AvgHighCone"
+        },
+        {
+            label: "Average Mid Cones",
+            value: "AvgMidCone"
+        },
+        {
+            label: "Average Low Cones",
+            value: "AvgLowCone"
+        },
+        {
+            label: "Average High Cubes",
+            value: "AvgHighCube"
+        },
+        {
+            label: "Average Mid Cubes",
+            value: "AvgMidCube"
+        },
+        {
+            label: "Average Low Cubes",
+            value: "AvgLowCube"
+        },
+        {
+            label: "Average Single HP Chosen",
+            value: "AvgSinglePlayer"
+        },
+        {
+            label: "Average Double HP Chosen",
+            value: "AvgDoublePlayer"
+        },
+        {
+            label: "Average Both HP Chosen",
+            value: "AvgBothPlayer"
+        },
+        {
+            label: "Tipped Cone %",
+            value: "AvgTippedCone"
+        },
+        {
+            label: "Floor Cone %",
+            value: "AvgFloorCone"
+        },
+        {
+            label: "Total Criticals",
+            value: "TotalCrit"
+        },
+        {
             label: "Average RP Per Match",
             value: "RP"
-        }
+        },
     ]
 
     const filterFieldsSubmissions = [
@@ -306,31 +402,6 @@ function AnalyzedFiltering() {
         { label: "Greater than", value: ">" }
     ]
 
-    useEffect(() => {
-        (async function () {
-            var eventArray: any[] = [];
-            eventArray.push({
-                label: "All Events",
-                value: "all"
-            })
-            eventArray.push({
-                label: "Testing Event",
-                value: "testing",
-                shortCode: "testing"
-            })
-            eventArray.push({
-                label: "Week 0 Event",
-                value: "week0",
-                shortCode: "week0"
-            })
-            const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
-            eventdata.data.map((event: any) => {
-                eventArray.push(event)
-            })
-            setEventData(eventArray)
-        })()
-    }, [])
-
     const newSubmissionFilter = () => {
 
         if (!filterInput || !numberInput || !operatorInput) return showNotification({
@@ -387,20 +458,16 @@ function AnalyzedFiltering() {
         const sortData = await GetTeamData.getAllFormsSorted(selectedSortSubmissions, selectedDirectionSubmissions)
         var newSortData: any[] = sortData.data
         if (preferenceData.dataShow !== "all") {
-            if (preferenceData.dataShow == 'testing') {
-                newSortData = sortData.data.filter((e: any) => {
-                    return e.eventName == "Testing Event"
-                })
-            }
-            if (preferenceData.dataShow == 'week0') {
-                newSortData = sortData.data.filter((e: any) => {
-                    return e.eventName == "Week 0 Event"
-                })
-            }
-            else return newSortData = sortData.data.filter((e: any) => {
-                return e.eventName == preferenceData.dataShow
+            var eventSelect: any
+            eventSelect = preferenceData.dataShow
+            if (preferenceData.dataShow == 'testing') eventSelect = 'Testing Event'
+            if (preferenceData.dataShow == 'week0') eventSelect = 'Week 0 Event'
+            newSortData = sortData.data.filter((e: any) => {
+                return e.eventName == eventSelect
             })
-        }
+        } else newSortData = sortData.data.filter((e: any) => {
+            return e.eventName == preferenceData.dataShow
+        })
 
         var filtered: any[] = newSortData;
 
@@ -477,11 +544,30 @@ function AnalyzedFiltering() {
         })()
     }, []);
 
-    const getEventCode = () => {
+    const getEventCode = async () => {
+        var eventArray: any[] = [];
+        eventArray.push({
+            label: "All Events",
+            value: "all"
+        })
+        eventArray.push({
+            label: "Testing Event",
+            value: "testing",
+            shortCode: "testing"
+        })
+        eventArray.push({
+            label: "Week 0 Event",
+            value: "week0",
+            shortCode: "week0"
+        })
+        const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
+        eventdata.data.map((event: any) => {
+            eventArray.push(event)
+        })
         try {
             if (preferenceData.dataShow == 'testing') return 'testing'
             if (preferenceData.dataShow == 'week0') return 'week0'
-            const d = eventData.filter((e: any) => {
+            const d = eventArray.filter((e: any) => {
                 return e.value == preferenceData.dataShow
             })[0]
             return d.eventcode
@@ -507,10 +593,10 @@ function AnalyzedFiltering() {
     }
 
     const convertData = (number: number) => {
-        if (!number) return "None"
+        if (!number) return "No Data"
         const data = Math.round(100 * number) / 100
         if (isNaN(data)) {
-            return "None"
+            return "No Data"
         }
         return data
     }
@@ -518,7 +604,7 @@ function AnalyzedFiltering() {
     const updateTeamFilters = async (data: any) => {
         var sortData: any;
 
-        preferenceData.dataShow == 'all' ? sortData = await GetTeamData.getAllTeamsSorted(selectedSortTeams, selectedDirectionTeams) : sortData = await GetTeamData.getAllTeamsSortedEvent(getEventCode(), selectedSortTeams, selectedDirectionTeams)
+        preferenceData.dataShow == 'all' ? sortData = await GetTeamData.getAllTeamsSorted(selectedSortTeams, selectedDirectionTeams) : sortData = await GetTeamData.getAllTeamsSortedEvent(await getEventCode(), selectedSortTeams, selectedDirectionTeams)
 
         var filtered: any[] = sortData.data;
 
@@ -556,7 +642,7 @@ function AnalyzedFiltering() {
                 setTeamAPIData(teamData.data)
                 return setTeamFormData(teamData.data)
             } else {
-                const teamData = await GetTeamData.getAllTeamsSortedEvent(getEventCode(), selectedSortTeams, selectedDirectionTeams)
+                const teamData = await GetTeamData.getAllTeamsSortedEvent(await getEventCode(), selectedSortTeams, selectedDirectionTeams)
                 setTeamAPIData(teamData.data)
                 return setTeamFormData(teamData.data)
             }
@@ -602,9 +688,9 @@ function AnalyzedFiltering() {
                     </Text>
 
                     <Select
-                        transition="pop-top-left"
+                        transition={'pop-top-left'}
                         transitionDuration={80}
-                        transitionTimingFunction="ease"
+                        transitionTimingFunction={'ease'}
                         dropdownPosition="bottom"
                         style={{ zIndex: 50 }}
                         data={sortTypeFields}
@@ -631,9 +717,9 @@ function AnalyzedFiltering() {
                                 className="AnalyzeFilteringFlex">
                                 <Select
                                     clearable
-                                    transition="pop-top-left"
+                                    transition={'pop-top-left'}
                                     transitionDuration={80}
-                                    transitionTimingFunction="ease"
+                                    transitionTimingFunction={'ease'}
                                     dropdownPosition="bottom"
                                     style={{ zIndex: 40 }}
                                     data={filterFieldsSubmissions}
@@ -646,9 +732,9 @@ function AnalyzedFiltering() {
 
                                 <Select
                                     clearable
-                                    transition="pop-top-left"
+                                    transition={'pop-top-left'}
                                     transitionDuration={80}
-                                    transitionTimingFunction="ease"
+                                    transitionTimingFunction={'ease'}
                                     dropdownPosition="bottom"
                                     style={{ zIndex: 30 }}
                                     data={operandData}
@@ -682,9 +768,9 @@ function AnalyzedFiltering() {
                             className="AnalyzeFilteringFlex">
                             <Select
                                 clearable
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 40 }}
                                 data={filterFieldsSubmissions}
@@ -702,9 +788,9 @@ function AnalyzedFiltering() {
 
                             <Select
                                 clearable
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 30 }}
                                 data={operandData}
@@ -743,9 +829,9 @@ function AnalyzedFiltering() {
                             gap={"15px"}
                             className="AnalyzeFilteringFlex">
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 20 }}
                                 data={sortFieldsSubmissions}
@@ -758,9 +844,9 @@ function AnalyzedFiltering() {
                                 }}
                             />
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 10 }}
                                 data={sortDirectionFields}
@@ -803,9 +889,9 @@ function AnalyzedFiltering() {
                                 className="AnalyzeFilteringFlex">
                                 <Select
                                     clearable
-                                    transition="pop-top-left"
+                                    transition={'pop-top-left'}
                                     transitionDuration={80}
-                                    transitionTimingFunction="ease"
+                                    transitionTimingFunction={'ease'}
                                     dropdownPosition="bottom"
                                     style={{ zIndex: 40 }}
                                     data={filterFieldsTeams}
@@ -818,9 +904,9 @@ function AnalyzedFiltering() {
 
                                 <Select
                                     clearable
-                                    transition="pop-top-left"
+                                    transition={'pop-top-left'}
                                     transitionDuration={80}
-                                    transitionTimingFunction="ease"
+                                    transitionTimingFunction={'ease'}
                                     dropdownPosition="bottom"
                                     style={{ zIndex: 30 }}
                                     data={operandData}
@@ -854,9 +940,9 @@ function AnalyzedFiltering() {
                             className="AnalyzeFilteringFlex">
                             <Select
                                 clearable
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 40 }}
                                 data={filterFieldsTeams}
@@ -874,9 +960,9 @@ function AnalyzedFiltering() {
 
                             <Select
                                 clearable
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 30 }}
                                 data={operandData}
@@ -915,9 +1001,9 @@ function AnalyzedFiltering() {
                             gap={"15px"}
                             className="AnalyzeFilteringFlex">
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 20 }}
                                 data={sortFieldsTeams}
@@ -930,9 +1016,9 @@ function AnalyzedFiltering() {
                                 }}
                             />
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 10 }}
                                 data={sortDirectionFields}
@@ -953,17 +1039,31 @@ function AnalyzedFiltering() {
                                         avatar: `${getAvatar(data._id)}`,
                                         teamNumber: data._id,
                                         teamName: `${getName(data._id)}`,
-                                        averageScore: convertData(data.AvgScore),
                                         bestAuto: convertData(data.BestAuto),
                                         bestTele: convertData(data.BestTele),
                                         averageEndgame: convertData(data.AvgEndgame),
                                         averageAutoScore: convertData(data.AvgAutoScore),
-                                        averageTeleScore: convertData(data.TeleScore),
+                                        averageTeleScore: convertData(data.AvgTeleScore),
+                                        averageCones: convertData(data.AvgCones),
+                                        averageCubes: convertData(data.AvgCubes),
+                                        averageHighCones: convertData(data.AvgHighCone),
+                                        averageMidCones: convertData(data.AvgMidCone),
+                                        averageLowCones: convertData(data.AvgLowCone),
+                                        averageHighCubes: convertData(data.AvgHighCube),
+                                        averageMidCubes: convertData(data.AvgMidCube),
+                                        averageLowCubes: convertData(data.AvgLowCube),
+                                        averageSinglePlayer: convertData(data.AvgSinglePlayer),
+                                        averageDoublePlayer: convertData(data.AvgDoublePlayer),
+                                        averageBothPlayer: convertData(data.AvgBothPlayer),
+                                        averageTippedCones: `${(data.AvgTippedCone * 100)}%`,
+                                        averageFloorCones: `${(data.AvgFloorCone * 100)}%`,
+                                        totalCrits: convertData(data.TotalCrit),
                                         rankPoints: convertData(data.RP),
-                                        defense: (data.Defense == 1) ? "Yes" : "No",
+                                        defense: `${(data.AvgDefense * 100)}%`,
                                     }
                                 })
                             }
+                            selectedSort={selectedSortTeams}
                         />
                     </> : null}
                 </div>

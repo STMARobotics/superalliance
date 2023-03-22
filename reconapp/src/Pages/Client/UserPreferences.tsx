@@ -63,9 +63,9 @@ function UserPreferences() {
 
                 <div className="LandingPageContent">
                     <Select
-                        transition="pop-top-left"
+                        transition={'pop-top-left'}
                         transitionDuration={80}
-                        transitionTimingFunction="ease"
+                        transitionTimingFunction={'ease'}
                         dropdownPosition="bottom"
                         style={{ zIndex: 20 }}
                         data={config.colors}
@@ -79,9 +79,9 @@ function UserPreferences() {
                     />
 
                     <Select
-                        transition="pop-top-left"
+                        transition={'pop-top-left'}
                         transitionDuration={80}
-                        transitionTimingFunction="ease"
+                        transitionTimingFunction={'ease'}
                         dropdownPosition="bottom"
                         style={{ zIndex: 10 }}
                         data={eventData}

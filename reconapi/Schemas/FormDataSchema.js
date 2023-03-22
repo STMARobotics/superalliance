@@ -40,7 +40,10 @@ const FormDataSchema = new Schema({
     defenceOrCycle: Boolean,
     userRating: Number | undefined,
     eventName: String,
-    criticals: Array | undefined
+    criticals: Array | undefined,
+    pickUpTippedCones: Number,
+    pickUpFloorCones: Number,
+    humanPlayerStation: Number,
 }, { timestamps: true } );
 
-module.exports = model("FormData", FormDataSchema, "forms")
+module.exports = model("PitFormData", FormDataSchema, "forms")

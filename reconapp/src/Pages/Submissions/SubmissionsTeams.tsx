@@ -119,7 +119,7 @@ function SubmissionsTeams() {
                     <LoadingOverlay visible={visible} overlayBlur={2} />
                     <div className="SubmissionsHomeSection">
                         <SubmissionsNavbar
-                            pageIndex={1} />
+                            pageIndex={"Teams"} />
                         <div className="SubmissionsFormsContent">
 
                             {preferenceData.dataShow !== "all" && !visible ?

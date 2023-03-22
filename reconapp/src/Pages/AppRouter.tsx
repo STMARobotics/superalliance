@@ -35,6 +35,13 @@ import AdminAuthentication from "./Admin/AdminSettingsAuth";
 import AdminFormSettings from "./Admin/AdminSettingsForm";
 import AdminFormManagement from "./Admin/AdminManagementForm";
 import SubmissionsUserForms from "./Submissions/SubmissionsUserForms";
+import AdminUserLookup from "./Admin/AdminUserLookup";
+import AnalyzedTeamSelection from "./Aggregations/AnalyzedTeamSelection";
+import Scouting from "./Client/Scouting";
+import PitScoutingForm from "./Client/PitScoutingForm";
+import AdminEditForm from "./Admin/AdminEditForm";
+import VisualsGraphs from "./Visuals/VisualsGraphs";
+import VisualsHome from "./Visuals/VisualsHome";
 
 function AppRouter() {
 
@@ -81,9 +88,19 @@ function AppRouter() {
                         <UserSumissions />
                     </RequireAuth>
                 }></Route>
+                <Route path="/scouting" element={
+                    <RequireAuth loginPath="/login">
+                        <Scouting />
+                    </RequireAuth>
+                }></Route>
                 <Route path="/newform" element={
                     <RequireAuth loginPath="/login">
                         <ReconForm />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/newpitform" element={
+                    <RequireAuth loginPath="/login">
+                        <PitScoutingForm />
                     </RequireAuth>
                 }></Route>
                 <Route path="/formsubmitted" element={
@@ -156,6 +173,11 @@ function AppRouter() {
                         <AnalyzedFiltering />
                     </RequireAuth>
                 }></Route>
+                <Route path="/submissions/analysis/selection" element={
+                    <RequireAuth loginPath="/login">
+                        <AnalyzedTeamSelection />
+                    </RequireAuth>
+                }></Route>
                 <Route path="/submissions/analysis/form/:submissionId" element={
                     <RequireAuth loginPath="/login">
                         <AnalyzedFormView />
@@ -164,6 +186,11 @@ function AppRouter() {
                 <Route path="/admin" element={
                     <RequireAuth loginPath="/login">
                         <AdminHome />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/admin/userlookup" element={
+                    <RequireAuth loginPath="/login">
+                        <AdminUserLookup />
                     </RequireAuth>
                 }></Route>
                 <Route path="/admin/auth" element={
@@ -179,6 +206,21 @@ function AppRouter() {
                 <Route path="/admin/formmanagement" element={
                     <RequireAuth loginPath="/login">
                         <AdminFormManagement />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/admin/form/:submissionId/edit" element={
+                    <RequireAuth loginPath="/login">
+                        <AdminEditForm />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/visuals" element={
+                    <RequireAuth loginPath="/login">
+                        <VisualsHome />
+                    </RequireAuth>
+                }></Route>
+                <Route path="/visuals/graphs" element={
+                    <RequireAuth loginPath="/login">
+                        <VisualsGraphs />
                     </RequireAuth>
                 }></Route>
                 <Route

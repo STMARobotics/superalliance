@@ -110,7 +110,7 @@ function SubmissionsEvents() {
                 <LoadingOverlay visible={visible} overlayBlur={2} />
                 <div className="SubmissionsHomeSection">
                     <SubmissionsNavbar
-                        pageIndex={2} />
+                        pageIndex={"Events"} />
                     <div className="SubmissionsFormsContent">
                         <Grid justify="center" align="flex-start">
                             {eventData.map((event: any, index: any) => (

@@ -107,12 +107,42 @@ const getTeamEventDataLanding = async (teamNumber: Number, year: Number) => {
 }
 
 const getAggregationDataEvent = async (eventCode: String) => {
-    const response = await axios.get(config.api_url + `/api/v1/aggregation/${eventCode}/data`)
+    const response = await axios.get(config.api_url + `/api/v1/aggregation/event/${eventCode}/data`)
     return response
 }
 
 const getAllTeamsSortedEvent = async (event: String | undefined, sortOption: String | undefined, direction: String | undefined) => {
     const response = await axios.get(config.api_url + `/api/v1/aggregation/${event}/sort/${sortOption}/${direction}`)
+    return response
+}
+
+const getMatchYoutubeData = async (event: String | undefined, matchNumber: Number | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/matchYoutube/${event}/${matchNumber}`)
+    return response
+}
+
+const getCriticalYoutubeData = async (event: String | undefined, teamNumber: Number | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/criticalsYoutube/${event}/${teamNumber}`)
+    return response
+}
+
+const getAllCriticalYoutubeData = async (event: String | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/allCriticalsYoutube/${event}`)
+    return response
+}
+
+const getTeamsInMatchData = async (event: String | undefined, matchNumber: String | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/matchData/${event}/${matchNumber}`)
+    return response
+}
+
+const getPitScoutingData = async (team: String | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/pitdata/${team}`)
+    return response
+}
+
+const getTeamEventStatus = async (event: String | undefined, team: String | undefined) => {
+    const response = await axios.get(config.api_url + `/api/v1/teamEventStatus/${event}/${team}`)
     return response
 }
 
@@ -141,7 +171,13 @@ const TeamFunctions = {
     getTeamsInEventFromAPI,
     getTeamsInEventAdvancedFromAPI,
     getAggregationDataEvent,
-    getAllTeamsSortedEvent
+    getAllTeamsSortedEvent,
+    getMatchYoutubeData,
+    getCriticalYoutubeData,
+    getAllCriticalYoutubeData,
+    getTeamsInMatchData,
+    getPitScoutingData,
+    getTeamEventStatus
 }
 
 export default TeamFunctions

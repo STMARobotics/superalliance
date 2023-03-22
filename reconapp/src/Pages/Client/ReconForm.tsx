@@ -1,6 +1,6 @@
 import { Anchor, Breadcrumbs, TextInput, Text, SegmentedControl, Group, Center, Box, NumberInput, ActionIcon, NumberInputHandlers, Transition, Affix, Button, Textarea, Slider, Notification, Select, MultiSelect, useMantineTheme } from "@mantine/core";
 import { useLocalStorage, useWindowScroll } from "@mantine/hooks";
-import { IconArrowUp, IconCheck, IconClick, IconMinus, IconMoon, IconPlus, IconSun, IconX } from "@tabler/icons";
+import { IconArrowUp, IconCheck, IconClick, IconMinus, IconPlus, IconX } from "@tabler/icons";
 import { useEffect, useRef, useState } from "react";
 import DockedSectionStyles from "../Styles/DockedSection";
 import ScoreInputStyles from "../Styles/ScoreInputStyles";
@@ -42,7 +42,7 @@ function ReconForm() {
 
     const [teamNumber, setTeamNumber] = useState("");
     const [matchNumber, setMatchNumber] = useState("");
-    const [userName, setUserName] = useLocalStorage<string>({
+    const [userName] = useLocalStorage<string>({
         key: 'saved-username',
         defaultValue: ''
     });
@@ -61,9 +61,13 @@ function ReconForm() {
     const [eventData, setEventData] = useState<any>([])
     const [selectedEvent, setSelectedEvent] = useState("")
     const [criticals, setCriticals] = useState<any[]>([])
+    const [pickUpTippedCones, setPickUpTippedCones] = useState<string>("none")
+    const [pickUpFloorCones, setPickUpFloorCones] = useState<string>("none")
+    const [humanPlayerStation, setHumanPlayerStation] = useState<string>("dk")
 
     const [sessionExpired, setSessionExpired] = useState<boolean>(false)
     const [lockedEvent, setLockedEvent] = useState("")
+    const [matchTeams, setMatchTeams] = useState<any>([])
 
     const scoreInputClasses = ScoreInputStyles().classes
     const dockedSectionClasses = DockedSectionStyles().classes
@@ -74,7 +78,7 @@ function ReconForm() {
     const authHeader = useAuthHeader()
     const navigate = useNavigate()
 
-    const [selectedUser, setSelectedUser] = useLocalStorage<any>({
+    const [selected, setSelectedUser] = useLocalStorage<any>({
         key: 'saved-username',
         getInitialValueInEffect: false,
     });
@@ -86,13 +90,90 @@ function ReconForm() {
     const signOut = useSignOut();
     const theme = useMantineTheme()
 
+    const numberInputOnWheelPreventChange = (e: any) => {
+        e.target.blur()
+
+        e.stopPropagation()
+        setTimeout(() => {
+            e.target.focus()
+        }, 0)
+    }
+
+    useEffect(() => {
+        if(matchNumber == '' && matchTeams.length !== 0) return setMatchTeams([])
+    }, [matchTeams])
+
+    useEffect(() => {
+        (async function () {
+            if (!selectedEvent) return
+            if (!matchNumber) return setMatchTeams([])
+            if (selectedEvent == 'Testing Event' || selectedEvent == 'Week 0 Event') return
+            try {
+                const data = await GetTeamData.getTeamsInMatchData(await getEventCode(selectedEvent), matchNumber)
+                const teamsArray: any[] = [];
+                data.data.red.map((team: any, index: any) => {
+                    const struct = {
+                        label: `Red ${index + 1} - ${team}`,
+                        value: team
+                    }
+                    teamsArray.push(struct)
+                })
+                data.data.blue.map((team: any, index: any) => {
+                    const struct = {
+                        label: `Blue ${index + 1} - ${team}`,
+                        value: team
+                    }
+                    teamsArray.push(struct)
+                })
+                return setMatchTeams(teamsArray)
+            } catch (err) {
+                showNotification({
+                    title: 'Form Error',
+                    message: 'Match not found, is this a future event?',
+                    color: "red",
+                })
+                return setMatchTeams([])
+            }
+        })()
+    }, [matchNumber])
+
+    const getEventCode = async (event: any) => {
+        var eventArray: any[] = [];
+        eventArray.push({
+            label: "All Events",
+            value: "all"
+        })
+        eventArray.push({
+            label: "Testing Event",
+            value: "testing",
+            shortCode: "testing"
+        })
+        eventArray.push({
+            label: "Week 0 Event",
+            value: "week0",
+            shortCode: "week0"
+        })
+        const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
+        eventdata.data.map((event: any) => {
+            eventArray.push(event)
+        })
+        try {
+            const d = eventArray.filter((e: any) => {
+                return e.value == event
+            })[0]
+            return d.eventcode
+        } catch {
+            return ""
+        }
+    }
+
     useEffect(() => {
         (async function () {
             const dbData = await getEventLockData(authHeader())
-            if(dbData.data.event == 'none') return
+            if (dbData.data.event == 'none') return
             setLockedEvent(dbData.data.event)
-            if(dbData.data.event == 'week0') return setSelectedEvent("Week 0 Event")
-            if(dbData.data.event == 'testing') return setSelectedEvent("Testing Event")
+            if (dbData.data.event == 'week0') return setSelectedEvent("Week 0 Event")
+            if (dbData.data.event == 'testing') return setSelectedEvent("Testing Event")
             return setSelectedEvent(dbData.data.event)
         })()
     }, [])
@@ -186,8 +267,53 @@ function ReconForm() {
         const submitUserRating = selfRankSliderValue
         const submitEventName = selectedEvent
         const submitCriticals = criticals
+        var submitPickUpTippedCones = 0
+        var submitPickUpFloorCones = 0
+        var submitHumanPlayerStation = 0
 
         if (isAuto == "true") submitAuto = true
+
+        switch (pickUpTippedCones) {
+            case "true":
+                submitPickUpTippedCones = 1
+                break;
+            case "false":
+                submitPickUpTippedCones = 0
+                break;
+            case "none":
+                submitPickUpTippedCones = 2
+                break;
+        }
+
+        switch (pickUpFloorCones) {
+            case "false":
+                submitPickUpFloorCones = 0
+                break;
+            case "true":
+                submitPickUpFloorCones = 1
+                break;
+            case "none":
+                submitPickUpFloorCones = 2
+                break;
+        }
+
+        switch (humanPlayerStation) {
+            case "none":
+                submitHumanPlayerStation = 0
+                break;
+            case "single":
+                submitHumanPlayerStation = 1
+                break;
+            case "double":
+                submitHumanPlayerStation = 2
+                break;
+            case "both":
+                submitHumanPlayerStation = 3
+                break;
+            case "dk":
+                submitHumanPlayerStation = 4
+                break;
+        }
 
         switch (dockedType) {
             case "Docked":
@@ -266,7 +392,10 @@ function ReconForm() {
                 defenceOrCycle: submitDefenceOrCycle,
                 userRating: submitUserRating,
                 eventName: submitEventName,
-                criticals: submitCriticals
+                criticals: submitCriticals,
+                pickUpTippedCones: submitPickUpTippedCones,
+                pickUpFloorCones: submitPickUpFloorCones,
+                humanPlayerStation: submitHumanPlayerStation
             }
         }, authToken).catch(() => {
             return showNotification({
@@ -320,9 +449,9 @@ function ReconForm() {
                     </Text>
 
                     {!lockedEvent ? <Select
-                        transition="pop-top-left"
+                        transition={'pop-top-left'}
                         transitionDuration={80}
-                        transitionTimingFunction="ease"
+                        transitionTimingFunction={'ease'}
                         dropdownPosition="bottom"
                         style={{ zIndex: 2 }}
                         data={eventData}
@@ -341,26 +470,62 @@ function ReconForm() {
                         value={lockedEvent == 'week0' ? "Week 0 Event" : lockedEvent}
                         disabled
                         required
-                        classNames={{ disabled: scoreInputClasses.disabledEvent }}
+                        classNames={{ input: scoreInputClasses.event }}
                     />}
 
-                    <TextInput
-                        type="number"
-                        placeholder="7028"
-                        label="Team Number"
-                        description="The number of your scouting team"
-                        required={true}
-                        value={teamNumber}
-                        onChange={(event) => setTeamNumber(event.currentTarget.value)}
-                    />
+                    {(selectedEvent !== 'Testing Event' && selectedEvent !== 'Week 0 Event' && selectedEvent) ?
+                        <>
+                            {matchTeams.length !== 0 ?
+                                <Select
+                                    transition={'pop-top-left'}
+                                    transitionDuration={80}
+                                    transitionTimingFunction={'ease'}
+                                    dropdownPosition="bottom"
+                                    style={{ zIndex: 1 }}
+                                    data={matchTeams}
+                                    placeholder="Pick one"
+                                    label="Select Team"
+                                    classNames={eventSelectClasses}
+                                    required
+                                    onChange={(event: string) => {
+                                        setTeamNumber(event)
+                                    }}
+                                /> :
+                                <Select
+                                    transition={'pop-top-left'}
+                                    transitionDuration={80}
+                                    transitionTimingFunction={'ease'}
+                                    dropdownPosition="bottom"
+                                    style={{ zIndex: 1 }}
+                                    data={["Enter a Match Number"]}
+                                    disabled
+                                    value={''}
+                                    placeholder="Enter a Match Number"
+                                    label="Select Team"
+                                    classNames={eventSelectClasses}
+                                    required
+                                />}
+                        </>
+                        : <TextInput
+                            type="number"
+                            placeholder="7028"
+                            label="Team Number"
+                            description="The number of your scouting team"
+                            required={true}
+                            value={teamNumber}
+                            onChange={(event) => setTeamNumber(event.currentTarget.value)}
+                        />}
 
                     <TextInput
+                        onWheel={numberInputOnWheelPreventChange}
                         type="number"
                         placeholder="1"
                         label="Match Number"
                         required={true}
                         value={matchNumber}
-                        onChange={(event) => setMatchNumber(event.currentTarget.value)}
+                        onChange={(event) => {
+                            setMatchNumber(event.currentTarget.value)
+                        }}
                     />
 
                     <TextInput
@@ -425,19 +590,6 @@ function ReconForm() {
                                     classNames={dockedSectionClasses}
                                 />
                             </div>
-                            <div className="AutoScorePieces">
-                                <Text c="dimmed">Auto Score Pieces</Text>
-                                <SegmentedControl
-                                    radius="xl"
-                                    size="md"
-                                    data={["None", 'Low', 'Mid', 'High']}
-                                    value={scoreLevel}
-                                    onChange={(value) => {
-                                        setScoreLevel(value)
-                                    }}
-                                    classNames={dockedSectionClasses}
-                                />
-                            </div>
                             <div className="TeleopScoreCones">
                                 <Text
                                     color={theme.primaryColor}
@@ -446,7 +598,7 @@ function ReconForm() {
                                     fw={700}
                                     className="ScoreSubHeader"
                                 >
-                                    Extra Pieces
+                                    Auto Pieces
                                 </Text>
                                 <Text c="dimmed">High Pieces</Text>
                                 <div className={scoreInputClasses.wrapper}>
@@ -860,6 +1012,62 @@ function ReconForm() {
                     />
 
                     <div className="DockedLevel">
+                        <Text c="dimmed">Did they pick up tipped cones?</Text>
+                        <SegmentedControl
+                            radius="xl"
+                            size="md"
+                            data={[
+                                { label: "I Don't Know", value: "none" },
+                                { label: "Yes", value: "true" },
+                                { label: "No", value: "false" },
+                            ]}
+                            value={pickUpTippedCones}
+                            onChange={(value) => {
+                                setPickUpTippedCones(value)
+                            }}
+                            classNames={dockedSectionClasses}
+                        />
+                    </div>
+
+                    <div className="DockedLevel">
+                        <Text c="dimmed">Did they pick cones up off the floor?</Text>
+                        <SegmentedControl
+                            radius="xl"
+                            size="md"
+                            data={[
+                                { label: "I Don't Know", value: "none" },
+                                { label: "Yes", value: "true" },
+                                { label: "No", value: "false" },
+                            ]}
+                            value={pickUpFloorCones}
+                            onChange={(value) => {
+                                setPickUpFloorCones(value)
+                            }}
+                            classNames={dockedSectionClasses}
+                        />
+                    </div>
+
+                    <div className="DockedLevel">
+                        <Text c="dimmed">Which Human Player Station did they use?</Text>
+                        <SegmentedControl
+                            radius="xl"
+                            size="md"
+                            data={[
+                                { label: "I Don't Know", value: "dk" },
+                                { label: "None", value: "none" },
+                                { label: "Single", value: "single" },
+                                { label: "Double", value: "double" },
+                                { label: "Both", value: "both" },
+                            ]}
+                            value={humanPlayerStation}
+                            onChange={(value) => {
+                                setHumanPlayerStation(value)
+                            }}
+                            classNames={dockedSectionClasses}
+                        />
+                    </div>
+
+                    <div className="DockedLevel">
                         <Text c="dimmed">Match Result</Text>
                         <SegmentedControl
                             radius="xl"
@@ -874,6 +1082,7 @@ function ReconForm() {
                     </div>
 
                     <TextInput
+                        onWheel={numberInputOnWheelPreventChange}
                         type="number"
                         placeholder="2"
                         label="Rank Points Earned"
@@ -884,6 +1093,7 @@ function ReconForm() {
                     />
 
                     <TextInput
+                        onWheel={numberInputOnWheelPreventChange}
                         type="number"
                         placeholder="1"
                         label="Rank Post Match"
@@ -988,8 +1198,6 @@ function ReconForm() {
 
                         <Button variant="filled" radius="xl" size="md" color={theme.colors[theme.primaryColor][8]} onClick={() => {
                             signOut();
-                            setSelectedUser("")
-                            setPreferenceData({})
                             navigate("/login");
                         }}>
                             Logout

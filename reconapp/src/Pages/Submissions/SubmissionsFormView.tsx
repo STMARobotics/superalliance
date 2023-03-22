@@ -27,6 +27,9 @@ function SubmissionsFormView() {
 
     const [dockedType, setDockedType] = useState("Not Docked")
     const [endDockedType, setEndDockedType] = useState("Not Docked")
+    const [tippedConesType, setTippedConesType] = useState("dk")
+    const [floorConesType, setFloorConesType] = useState("dk")
+    const [humanPlayerType, setHumanPlayerType] = useState("dk")
     const [scoreLevel, setScoreLevel] = useState("None")
     const [isTaxi, setIsTaxi] = useState("No Taxi")
 
@@ -59,6 +62,20 @@ function SubmissionsFormView() {
             if (teamData.endgameDocked) setEndDockedType("Docked")
             if (teamData.endgameEngaged) setEndDockedType("Engaged")
 
+            if (teamData.pickUpTippedCones == 0) setTippedConesType("true")
+            if (teamData.pickUpTippedCones == 1) setTippedConesType("false")
+            if (teamData.pickUpTippedCones == 2) setTippedConesType("none")
+
+            if (teamData.pickUpFloorCones == 0) setFloorConesType("true")
+            if (teamData.pickUpFloorCones == 1) setFloorConesType("false")
+            if (teamData.pickUpFloorCones == 2) setFloorConesType("none")
+
+            if (teamData.humanPlayerStation == 0) setHumanPlayerType("none")
+            if (teamData.humanPlayerStation == 1) setHumanPlayerType("single")
+            if (teamData.humanPlayerStation == 2) setHumanPlayerType("double")
+            if (teamData.humanPlayerStation == 3) setHumanPlayerType("both")
+            if (teamData.humanPlayerStation == 4) setHumanPlayerType("dk")
+
             if (teamData.autoScoreLevel == 1) setScoreLevel("Low")
             if (teamData.autoScoreLevel == 2) setScoreLevel("Mid")
             if (teamData.autoScoreLevel == 3) setScoreLevel("High")
@@ -72,7 +89,7 @@ function SubmissionsFormView() {
             <UpdatedHeader />
             <div className="SubmissionsHomeSection">
                 <SubmissionsNavbar
-                    pageIndex={3}
+                    pageIndex={`Submission ${submissionid}`}
                     teamName={team}
                     submissionId={submissionid} />
                 <div className="SubmissionsFormDataContent">
@@ -183,16 +200,6 @@ function SubmissionsFormView() {
                                         classNames={dockedSectionClasses}
                                     />
                                 </div>
-                                <div className="AutoScorePieces">
-                                    <Text c="dimmed">Auto Score Pieces</Text>
-                                    <SegmentedControl
-                                        radius="xl"
-                                        size="md"
-                                        data={["None", 'Low', 'Mid', 'High']}
-                                        value={scoreLevel}
-                                        classNames={dockedSectionClasses}
-                                    />
-                                </div>
                                 <div className="TeleopScoreCones">
                                     <Text
                                         color={theme.primaryColor}
@@ -201,7 +208,7 @@ function SubmissionsFormView() {
                                         fw={700}
                                         className="ScoreSubHeader"
                                     >
-                                        Extra Pieces
+                                        Auto Pieces
                                     </Text>
                                     <Text c="dimmed">High Pieces</Text>
                                     <div className={scoreInputClasses.wrapper}>
@@ -399,6 +406,53 @@ function SubmissionsFormView() {
                         />
 
                         <div className="DockedLevel">
+                            <Text c="dimmed">Did they pick up tipped cones?</Text>
+                            <SegmentedControl
+                                radius="xl"
+                                size="md"
+                                data={[
+                                    { label: "I Don't Know", value: "none" },
+                                    { label: "Yes", value: "true" },
+                                    { label: "No", value: "false" },
+                                ]}
+                                value={tippedConesType}
+                                classNames={dockedSectionClasses}
+                            />
+                        </div>
+
+                        <div className="DockedLevel">
+                            <Text c="dimmed">Did they pick cones up off the floor?</Text>
+                            <SegmentedControl
+                                radius="xl"
+                                size="md"
+                                data={[
+                                    { label: "I Don't Know", value: "none" },
+                                    { label: "Yes", value: "true" },
+                                    { label: "No", value: "false" },
+                                ]}
+                                value={floorConesType}
+                                classNames={dockedSectionClasses}
+                            />
+                        </div>
+
+                        <div className="DockedLevel">
+                            <Text c="dimmed">Which Human Player Station did they use?</Text>
+                            <SegmentedControl
+                                radius="xl"
+                                size="md"
+                                data={[
+                                    { label: "I Don't Know", value: "dk" },
+                                    { label: "None", value: "none" },
+                                    { label: "Single", value: "single" },
+                                    { label: "Double", value: "double" },
+                                    { label: "Both", value: "both" },
+                                ]}
+                                value={humanPlayerType}
+                                classNames={dockedSectionClasses}
+                            />
+                        </div>
+
+                        <div className="DockedLevel">
                             <Text c="dimmed">Match Result</Text>
                             <SegmentedControl
                                 radius="xl"
@@ -431,7 +485,23 @@ function SubmissionsFormView() {
                         <Slider
                             step={1}
                             min={1}
-                            max={10}
+                            max={5}
+                            label={(value) => {
+                                switch (value) {
+                                    case 1:
+                                        return "(1) Kill it before it lays eggs!"
+                                    case 2:
+                                        return "(2) Grade C Robot"
+                                    case 3:
+                                        return "(3) It's average ig."
+                                    case 4:
+                                        return "(4) Exceeds expectations"
+                                    case 5:
+                                        return "(5) Marry it on the spot."
+                                    default:
+                                        return value
+                                }
+                            }}
                             labelAlwaysOn
                             className="SelfSlider"
                             value={formData.userRating}

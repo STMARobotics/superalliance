@@ -25,7 +25,7 @@ const EventContainerStyles = createStyles((theme) => ({
 
     title: {
         color: theme.white,
-        marginBottom: theme.spacing.xs / 2,
+        marginBottom: `calc(${theme.spacing.xs} / 2)`,
     },
 
     description: {

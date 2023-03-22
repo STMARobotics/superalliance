@@ -35,14 +35,14 @@ export function AverageStatsRings({ data }: StatsRingProps) {
                             }
                         /> */}
                         <RingProgress
-                            size={80}
+                            size={60}
                             roundCaps
-                            thickness={8}
+                            thickness={5}
                             sections={[{ value: stat.progress, color: stat.color }]}
                             label={
                                 <Center>
                                     <ThemeIcon color={stat.color} variant="light" radius="xl" size="xl">
-                                        <IconGraph size={22} stroke={1.5} />
+                                        <IconGraph size={24} stroke={1.5} />
                                     </ThemeIcon>
                                 </Center>
                             }
@@ -52,7 +52,7 @@ export function AverageStatsRings({ data }: StatsRingProps) {
                             <Text color="dimmed" size="xs" transform="uppercase" weight={700}>
                                 {stat.label}
                             </Text>
-                            <Text weight={700} size="xl">
+                            <Text weight={700} size="lg">
                                 {stat.stats}
                             </Text>
                         </div>

@@ -3,7 +3,6 @@ import { UpdatedHeader } from "../Components/UpdatedHeader";
 import { Button, Group, Text, useMantineTheme } from "@mantine/core";
 import submissionsHomeStyles from "../Styles/SubmissionsHomeStyles";
 import { useNavigate } from "react-router-dom";
-import { completeNavigationProgress } from "@mantine/nprogress";
 
 function SubmissionsHome() {
 
@@ -17,7 +16,7 @@ function SubmissionsHome() {
             <UpdatedHeader />
             <div className="SubmissionsHomeSection">
                 <SubmissionsNavbar
-                    pageIndex={0} />
+                    pageIndex={"Home"} />
                 <div className="SubmissionsHomeContent">
                     <h1 className={classes.title}>
                         <Text component="span" color={theme.primaryColor} inherit>

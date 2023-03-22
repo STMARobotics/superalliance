@@ -28,8 +28,8 @@ const ScoreInputStyles = createStyles((theme) => ({
 
     input: {
         textAlign: 'center',
-        paddingRight: `${theme.spacing.sm}px !important`,
-        paddingLeft: `${theme.spacing.sm}px !important`,
+        paddingRight: `${theme.spacing.sm} !important`,
+        paddingLeft: `${theme.spacing.sm} !important`,
         height: 28,
         flex: 1,
     },
@@ -39,15 +39,12 @@ const ScoreInputStyles = createStyles((theme) => ({
         opacity: `1 !important`,
     },
 
-    disabledCriticals: {
-        color: `red !important`,
-        opacity: `1 !important`
-    },
-
-    disabledEvent: {
-        color: `${theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[7]} !important`,
-        fontWeight: 500,
-        opacity: `1 !important`,
+    event: {
+        '&[data-disabled]': {
+            color: `${theme.colorScheme === 'dark' ? theme.white : theme.colors.dark[7]} !important`,
+            fontWeight: 500,
+            opacity: `1 !important`,
+        }
     },
 }))
 

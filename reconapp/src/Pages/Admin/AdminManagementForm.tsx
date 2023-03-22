@@ -1,6 +1,6 @@
 import { useAuthHeader, useAuthUser } from "react-auth-kit"
 import { UpdatedHeader } from "../Components/UpdatedHeader"
-import { Button, createStyles, Flex, Grid, Menu, Modal, MultiSelect, Paper, Select, Text, useMantineTheme } from '@mantine/core'
+import { Button, createStyles, Flex, Grid, LoadingOverlay, Menu, Modal, MultiSelect, Paper, Select, Text, useMantineTheme } from '@mantine/core'
 import { AccessDenied } from "../Components/AccessDenied"
 import { AdministrationNavbar } from "../Components/AdministrationNavbar"
 import { config } from "../../Constants"
@@ -17,43 +17,25 @@ interface SubmissionActionProps {
     formId: string;
     submissionNumber: number;
     author: string;
-    time: string;
     link: string;
     teamNumber: number;
     win: boolean;
     rankPoints: number;
     matchNumber: number;
     eventName: string;
+    deleteForm: any;
 }
 
-function AdminFormManagement() {
+function UserInfoAction({ formId, matchNumber, author, link, teamNumber, win, rankPoints, eventName, deleteForm }: SubmissionActionProps) {
+
+    const [opened, setOpened] = useState(false)
+    const [selectedFormData, setSelectedFormData] = useState<any>()
+    const [eventData, setEventData] = useState<any>([])
 
     const auth = useAuthUser()
     const theme = useMantineTheme()
     const authHeader = useAuthHeader()
     const token = authHeader()
-
-    const [formData, setFormData] = useState<any>([])
-    const [openedData, setOpenedData] = useState<any>([])
-    const [eventData, setEventData] = useState<any>([])
-
-    useEffect(() => {
-        (async function () {
-            const submissionData = await GetTeamData.getAllFormSorting()
-            setFormData(submissionData.data)
-        })()
-    }, [])
-
-    useEffect(() => {
-        var openedArray: any[] = []
-        formData.map((data: any, index: any) => {
-            openedArray.push({
-                id: data._id,
-                opened: false
-            })
-        })
-        setOpenedData(openedArray)
-    }, [formData])
 
     useEffect(() => {
         (async function () {
@@ -80,51 +62,44 @@ function AdminFormManagement() {
         })()
     }, [])
 
-    function UserInfoAction({ formId, matchNumber, author, link, teamNumber, win, rankPoints, eventName }: SubmissionActionProps) {
-
-        const theme = useMantineTheme()
-
-        const getEventCode = () => {
-            try {
-                if (eventName == 'Testing Event') return 'testing'
-                if (eventName == 'Week 0 Event') return 'week0'
-                const d = eventData.filter((e: any) => {
-                    return e.value == eventName
-                })[0]
-                return d.eventcode
-            } catch {
-                return ""
-            }
+    const getEventCode = () => {
+        try {
+            if (eventName == 'Testing Event') return 'testing'
+            if (eventName == 'Week 0 Event') return 'week0'
+            const d = eventData.filter((e: any) => {
+                return e.value == eventName
+            })[0]
+            return d.eventcode
+        } catch {
+            return ""
         }
+    }
 
-        const deleteForm = (formId: any) => {
-            (async function () {
-                try {
-                    await axios.post(
-                        config.api_url + "/api/v1/admin/form/delete",
-                        {
-                            token: token,
-                            formId: formId
-                        }
-                    )
-                    showNotification({
-                        title: 'Success!',
-                        message: `Form ID: ${formId}, was deleted!`,
-                        color: "green",
-                    })
-                } catch {
-                    showNotification({
-                        title: 'Error!',
-                        message: 'There was an error while attempting to delete the form!',
-                        color: "red",
-                    })
-                }
-                const submissionData = await GetTeamData.getAllFormSorting()
-                setFormData(submissionData.data)
-            })()
-        }
+    return (
 
-        return (
+        <>
+            {selectedFormData ? <Modal
+                zIndex={1000}
+                transition={"rotate-left"}
+                opened={opened}
+                onClose={() => setOpened(false)}
+                centered
+                title="Quick Info."
+            >
+                <QuickInfoCard
+                    title="Quick Info"
+                    author={`${selectedFormData.author}`}
+                    formId={`${selectedFormData.formId}`}
+                    eventName={`${selectedFormData.eventName}`}
+                    stats={[
+                        { title: 'Team #', value: `${selectedFormData.teamNumber}` },
+                        { title: 'Match #', value: `${selectedFormData.matchNumber}` },
+                        { title: 'RP Earned', value: `+${selectedFormData.rankPoints}` },
+                        { title: 'Win?', value: `${selectedFormData.win}` }
+                    ]}
+                />
+            </Modal> : null}
+
             <Paper
                 radius="md"
                 className="SubmissionMatchBox"
@@ -133,42 +108,6 @@ function AdminFormManagement() {
                     backgroundColor: win ? theme.colors.green : theme.colors.red,
                 })}
             >
-
-                <Modal
-                    transition="fade"
-                    transitionDuration={600}
-                    transitionTimingFunction="ease"
-                    zIndex={1500}
-                    opened={openedData.filter((e: any) => {
-                        return e.id == formId
-                    })[0]?.opened}
-                    onClose={() => {
-                        var openArray: any[] = []
-                        openedData.map((data: any) => {
-                            if (data.id == formId) return openArray.push({ id: data.id, opened: false })
-                            return openArray.push(data)
-                        })
-                        setOpenedData(openArray)
-                    }}
-                    overlayColor={theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2]}
-                    overlayOpacity={0.55}
-                    overlayBlur={3}
-                    centered
-                    title="Quick Info."
-                >
-                    <QuickInfoCard
-                        title="Quick Info"
-                        author={`${author}`}
-                        formId={`${formId}`}
-                        eventName={`${eventName}`}
-                        stats={[
-                            { title: 'Team #', value: `${teamNumber}` },
-                            { title: 'Match #', value: `${matchNumber}` },
-                            { title: 'RP Earned', value: `+${rankPoints}` },
-                            { title: 'Win?', value: `${win}` }
-                        ]}
-                    />
-                </Modal>
 
                 <Text align="center" size="lg" weight={500} color="white">
                     Team #{teamNumber} - Match #{matchNumber}
@@ -203,12 +142,8 @@ function AdminFormManagement() {
                     <Menu.Dropdown>
                         <Menu.Label>Quick Access</Menu.Label>
                         <Menu.Item onClick={() => {
-                            var openArray: any[] = []
-                            openedData.map((data: any) => {
-                                if (data.id == formId) return openArray.push({ id: data.id, opened: true })
-                                return openArray.push(data)
-                            })
-                            setOpenedData(openArray)
+                            setSelectedFormData({ formId, matchNumber, author, link, teamNumber, win, rankPoints, eventName })
+                            setOpened(true)
                         }} icon={<IconNote size={14} />}>Quick Info</Menu.Item>
                         <Menu.Item component="a" href={`/submissions/user/${(author).replace(" ", "+")}`} target={'_blank'} icon={<IconUser size={14} />}>View All From User</Menu.Item>
                         <Menu.Item component="a" href={`/submissions/event/${getEventCode()}/${matchNumber}`} target={'_blank'} icon={<IconNumber0 size={14} />}>View All From Match</Menu.Item>
@@ -217,15 +152,63 @@ function AdminFormManagement() {
                         <Menu.Divider />
 
                         <Menu.Label>Danger zone</Menu.Label>
-                        <Menu.Item disabled color="yellow" icon={<IconEdit size={14} />}>Edit Form (Coming Soon)</Menu.Item>
+                        <Menu.Item onClick={() => {
+                            window.location.href = `/admin/form/${formId}/edit`
+                        }} color="yellow" icon={<IconEdit size={14} />}>Edit Form</Menu.Item>
                         <Menu.Item onClick={() => {
                             deleteForm(formId)
                         }} color="red" icon={<IconTrash size={14} />}>Delete Form</Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
             </Paper>
-        );
+        </>
+    );
+}
+
+function AdminFormManagement() {
+
+    const auth = useAuthUser()
+    const theme = useMantineTheme()
+    const authHeader = useAuthHeader()
+    const token = authHeader()
+
+    const [formData, setFormData] = useState<any>([])
+    const [visible, setVisible] = useState(true)
+
+    const deleteForm = (formId: any) => {
+        (async function () {
+            try {
+                await axios.post(
+                    config.api_url + "/api/v1/admin/form/delete",
+                    {
+                        token: token,
+                        formId: formId
+                    }
+                )
+                showNotification({
+                    title: 'Success!',
+                    message: `Form ID: ${formId}, was deleted!`,
+                    color: "green",
+                })
+            } catch {
+                showNotification({
+                    title: 'Error!',
+                    message: 'There was an error while attempting to delete the form!',
+                    color: "red",
+                })
+            }
+            const submissionData = await GetTeamData.getAllFormSorting()
+            setFormData(submissionData.data)
+        })()
     }
+
+    useEffect(() => {
+        (async function () {
+            const submissionData = await GetTeamData.getAllFormSorting()
+            setFormData(submissionData.data)
+            setVisible(false)
+        })()
+    }, [])
 
     return (
         <>
@@ -239,7 +222,10 @@ function AdminFormManagement() {
                         <AdministrationNavbar
                             page="Form Management" />
 
-                        <div className="AdministrationHomeContent">
+                        <div className="AdministrationHomeContent" style={{ position: 'relative' }}>
+
+                            <LoadingOverlay visible={visible} overlayBlur={15} zIndex={10000} />
+
                             <Flex justify={'center'} align={'center'} direction={'column'} gap={'25px'}>
                                 <Text
                                     className="SubmissionsFormDataTeamText"
@@ -258,13 +244,13 @@ function AdminFormManagement() {
                                                 formId={data._id}
                                                 submissionNumber={index + 1}
                                                 author={data.usersName}
-                                                time={moment(data.createdAt).format("hh:mm A")}
                                                 link={`/submissions/analysis/form/${data._id}`}
                                                 teamNumber={data.teamNumber}
                                                 win={data.win}
                                                 rankPoints={data.rankPointsEarned}
                                                 matchNumber={data.matchNumber}
                                                 eventName={data.eventName}
+                                                deleteForm={deleteForm}
                                             />
                                         </Grid.Col>
                                     )}
@@ -276,7 +262,8 @@ function AdminFormManagement() {
                 </div>
             </> : <>
                 <AccessDenied />
-            </>}
+            </>
+            }
         </>
     )
 }

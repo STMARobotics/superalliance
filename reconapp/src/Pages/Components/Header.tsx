@@ -4,6 +4,7 @@ import { useSignOut } from "react-auth-kit";
 import { useNavigate, useLocation } from "react-router-dom";
 import '../Global.css'
 import { useState } from 'react';
+import EpicCoolThing from '../Modules/QuickAccess';
 
 export default function HeaderComponent() {
 

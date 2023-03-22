@@ -42,7 +42,10 @@ interface formData {
         defenceOrCycle: boolean,
         userRating: number | undefined,
         eventName: string,
-        criticals: Array<any[]> | undefined
+        criticals: Array<any[]> | undefined,
+        pickUpTippedCones: number,
+        pickUpFloorCones: number,
+        humanPlayerStation: number,
     }
 }
 
@@ -59,7 +62,7 @@ const SendToAPI = async (values: formData, token: string) => {
     ).catch(() => {
         throw new Error("Form didn't submit.")
     })
-    
+
 };
 
 function FormSubmit(data: formData, authToken: string) {

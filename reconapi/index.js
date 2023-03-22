@@ -23,6 +23,7 @@ const averageAggregation = require("./Aggregations/averageAggregation");
 const averageSortedAggregation = require("./Aggregations/averageSortedAggregation");
 const averageAggregationEvent = require("./Aggregations/averageAggregationEvent");
 const averageSortedAggregationEvent = require("./Aggregations/averageSortedAggregationEvent");
+const PitFormDataSchema = require("./Schemas/PitFormDataSchema");
 
 require("crypto").randomBytes(48, async function (ex, buf) {
 
@@ -77,9 +78,7 @@ const eventSchemaSend = async (data) => {
 
 const schemaSend = async (data) => {
 
-  console.log("*** in schema send");
-
-  const sendForm = new FormDataSchema({
+  const sendForm = await new FormDataSchema({
     _id: mongoose.Types.ObjectId(),
     teamNumber: data.teamNumber,
     matchNumber: data.matchNumber,
@@ -120,12 +119,62 @@ const schemaSend = async (data) => {
     defenceOrCycle: data.defenceOrCycle,
     userRating: data.userRating,
     eventName: data.eventName,
-    criticals: data.criticals
+    criticals: data.criticals,
+    pickUpTippedCones: data.pickUpTippedCones,
+    pickUpFloorCones: data.pickUpFloorCones,
+    humanPlayerStation: data.humanPlayerStation,
   })
 
-  console.log("*** calling sendForm.save()");
-  await sendForm.save().catch(console.error);
-  console.log("*** sendForm complete");
+  await sendForm.save().catch(console.error)
+}
+
+const pitSchemaSend = async (data) => {
+
+  const sendForm = await new PitFormDataSchema({
+    _id: mongoose.Types.ObjectId(),
+    teamNumber: data.teamNumber,
+    strategyOverall: data.strategyOverall,
+    strategyAprilTags: data.strategyAprilTags,
+    strategyLanguage: data.strategyLanguage,
+    mechanicalProtectedElectronics: data.mechanicalProtectedElectronics,
+    mechanicalSecuredBattery: data.mechanicalSecuredBattery,
+    mechanicalBatteryNum: data.mechanicalBatteryNum,
+    mechanicalBatteryOldest: data.mechanicalBatteryOldest,
+    mechanicalBatteryChargeNum: data.mechanicalBatteryChargeNum,
+    mechanicalHaveCameras: data.mechanicalHaveCameras,
+    mechanicalHaveAuto: data.mechanicalHaveAuto,
+    mechanicalAutoInfo: data.mechanicalAutoInfo,
+    mechanicalCubesLow: data.mechanicalCubesLow,
+    mechanicalCubesMid: data.mechanicalCubesMid,
+    mechanicalCubesHigh: data.mechanicalCubesHigh,
+    mechanicalConesLow: data.mechanicalConesLow,
+    mechanicalConesMid: data.mechanicalConesMid,
+    mechanicalConesHigh: data.mechanicalConesHigh,
+    mechanicalAutoBalancingTools: data.mechanicalAutoBalancingTools,
+    mechanicalChargeStationInches: data.mechanicalChargeStationInches,
+    mechanicalFrameDimensions: data.mechanicalFrameDimensions,
+    mechanicalRobotIssues: data.mechanicalRobotIssues,
+    generalStudentNum: data.generalStudentNum,
+    generalMentorNum: data.generalMentorNum,
+    generalRobotNum: data.generalRobotNum,
+    generalCameraUsage: data.generalCameraUsage,
+    generalDriveTrain: data.generalDriveTrain,
+    generalDriveTrainBrand: data.generalDriveTrainBrand,
+    generalSwerveYears: data.generalSwerveYears,
+    generalSwerveFixLoctite: data.generalSwerveFixLoctite,
+    generalSwerveFixShafts: data.generalSwerveFixShafts,
+    driveteamRobotCompliments: data.driveteamRobotCompliments,
+    driveteamChanges: data.driveteamChanges,
+    driveteamSameTeamMatch: data.driveteamSameTeamMatch,
+    driveteamManipulationMech: data.driveteamManipulationMech,
+    driveteamStrongestValue: data.driveteamStrongestValue,
+    driveteamWeakestValue: data.driveteamWeakestValue,
+    driveteamExtraComments: data.driveteamExtraComments,
+    driveteamDirectContact: data.driveteamDirectContact,
+    robotImage: data.robotImage,
+  })
+
+  await sendForm.save().catch(console.error)
 }
 
 const getTeamNickname = async (teamNumber) => {
@@ -147,14 +196,16 @@ const getTeamNickname = async (teamNumber) => {
 
 const getTeamAvatar = async (team) => {
   try {
-    const data = await axios.get(`https://frc-api.firstinspires.org/v3.0/2020/avatars?teamNumber=${team}`, {
+    const data = await axios.get(`https://frc-api.firstinspires.org/v3.0/2023/avatars?teamNumber=${team}`, {
       headers: {
         'Authorization': `Basic ${process.env.FRC_API_KEY}`,
       }
     })
     return `data:image/png;base64, ${data.data.teams[0].encodedAvatar}`
   } catch {
-    return "https://i0.wp.com/coderedrobotics.com/wp-content/uploads/2013/04/First-Robotics-Logo.jpg"
+    const nick = await getTeamNickname(team)
+    const svg = await (await import('./Utils/createAvatar.mjs')).create(nick)
+    return `${svg}`
   }
 }
 
@@ -271,7 +322,10 @@ const getForms = async (teamNumber) => {
       matchNumber: data.matchNumber,
       rankPointsEarned: data.rankPointsEarned,
       eventName: data.eventName,
-      criticals: data.criticals
+      criticals: data.criticals,
+      totalCubes: (data.teleop.scored.cube.high + data.teleop.scored.cube.mid + data.teleop.scored.cube.low),
+      totalCones: (data.teleop.scored.cone.high + data.teleop.scored.cone.mid + data.teleop.scored.cone.low),
+      totalTeleop: (data.teleop.scored.cube.high + data.teleop.scored.cube.mid + data.teleop.scored.cube.low) + (data.teleop.scored.cone.high + data.teleop.scored.cone.mid + data.teleop.scored.cone.low)
     })
   }))
   return dataArray
@@ -337,13 +391,23 @@ const getTeamsInEvent = async (event) => {
     }
   },
   {
+    $match:
+    /**
+     * query: The query in MQL.
+     */
+    {
+      eventName:
+        event,
+    },
+  },
+  {
     $group: {
       _id: {
         teamNumber: "$teamNumber"
       },
       teamNum: {
         $first: '$teamNumber'
-      }
+      },
     },
   },
   {
@@ -359,16 +423,12 @@ const getTeamsInEvent = async (event) => {
       teamNumber: data._id.teamNumber,
       eventName: event
     }).count()
-    const forms = await FormDataSchema.find({
-      teamNumber: data._id.teamNumber,
-      eventName: event
-    })
     try {
       teamsArray.push({
         number: data._id.teamNumber,
         name: "Loading...",
         count: formCount,
-        eventName: forms[0].eventName == event ? event : null
+        eventName: event,
       })
     } catch {
       teamsArray.push({
@@ -592,6 +652,108 @@ const getAggregationSortedDataEvent = async (event, sortType, sortDirection) => 
   return data
 }
 
+const getMatchYoutubeVideo = async (event, matchNumber) => {
+  try {
+    const data = await axios.get(`https://www.thebluealliance.com/api/v3/match/2023${event}_qm${matchNumber}`, {
+      headers: {
+        'X-TBA-Auth-Key': `${process.env.BLUEALLIANCE_KEY}`,
+        'accept': 'application/json'
+      }
+    })
+    return `https://youtube.com/watch?v=${data.data.videos[0].key}`
+  } catch (err) {
+    return "Unknown"
+  }
+}
+
+const getCriticalsYoutubeVideo = async (event, teamNumber) => {
+  if (!teamNumber) return
+  if (!event) return
+  const teamForms = await getFormData(teamNumber)
+  var criticalYoutubeArray = [];
+
+  try {
+    await Promise.each(teamForms, async (form) => {
+      if (form.criticals.length == 0) return
+      const youtubeLink = await getMatchYoutubeVideo(event, form.matchNumber)
+      const struct = {
+        matchNumber: form.matchNumber,
+        youtubeLink: youtubeLink,
+        criticals: form.criticals,
+        submissionId: form._id
+      }
+      criticalYoutubeArray.push(struct)
+    })
+  } catch {
+    return
+  }
+  return criticalYoutubeArray
+}
+
+const getAllCriticalsYoutubeVideo = async (event) => {
+  if (!event) return
+  const eventData = await getEventDataById(2023, event)
+  const teamForms = await FormDataSchema.find({ eventName: eventData.name, criticals: { $not: { $size: 0 } } }).sort({
+    _id: -1,
+  })
+  var criticalYoutubeArray = [];
+  await Promise.each(teamForms, async (form) => {
+    const youtubeLink = await getMatchYoutubeVideo(event, form.matchNumber)
+    const struct = {
+      teamNumber: form.teamNumber,
+      matchNumber: form.matchNumber,
+      youtubeLink: youtubeLink,
+      criticals: form.criticals,
+      submissionId: form._id
+    }
+    criticalYoutubeArray.push(struct)
+  })
+  return criticalYoutubeArray
+}
+
+const getMatchDataAPI = async (event, matchNumber) => {
+  try {
+    const data = await axios.get(`https://www.thebluealliance.com/api/v3/match/2023${event}_qm${matchNumber}`, {
+      headers: {
+        'X-TBA-Auth-Key': `${process.env.BLUEALLIANCE_KEY}`,
+        'accept': 'application/json'
+      }
+    })
+    const teamStruct = {
+      red: data.data.alliances.red.team_keys.map((team) => {
+        return team.replace("frc", "")
+      }),
+      blue: data.data.alliances.blue.team_keys.map((team) => {
+        return team.replace("frc", "")
+      })
+    }
+    return teamStruct
+  } catch (err) {
+    return "Unknown"
+  }
+}
+
+const getTeamEventAPI = async (event, teamNumber) => {
+  try {
+    const data = await axios.get(`https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2023${event}/status`, {
+      headers: {
+        'X-TBA-Auth-Key': `${process.env.BLUEALLIANCE_KEY}`,
+        'accept': 'application/json'
+      }
+    })
+    return data.data
+  } catch (err) {
+    return {}
+  }
+}
+
+const getPitScoutTeam = async (team) => {
+  const teamForms = await PitFormDataSchema.find({
+    teamNumber: team
+  })
+  return teamForms[0]
+}
+
 // when we're running in AWS we export the express app so we can run the app in Lambda
 if (environment == 'aws') {
   module.exports = app
@@ -608,6 +770,8 @@ app.use(express.urlencoded());
 
 app.options("/api/v1/login", cors());
 app.options("/api/v1/submitform", cors());
+app.options("/api/v1/editform", cors());
+app.options("/api/v1/submitpitform", cors());
 app.options("/api/v1/teams", cors());
 app.post("/api/v1/login", function (req, res, next) {
   requestBody = req.body;
@@ -643,12 +807,29 @@ app.post("/api/v1/submitform", async function (req, res, next) {
   res.send("Form Submitted!");
 });
 
+app.post("/api/v1/submitpitform", async function (req, res, next) {
+  requestBody = req.body;
+
+  if (requestBody.token.replace('Bearer ', '') !== token) {
+    res.status(403);
+    return res.send("Auth Denied");
+  }
+
+  pitSchemaSend(requestBody.data.data)
+});
+
 app.get("/api/v1/teams", async function (req, res, next) {
   const teams = await getTeams()
   res.status(200);
   res.send({
     teams: teams
   })
+});
+
+app.get("/api/v1/pitdata/:team", async function (req, res, next) {
+  const teamData = await getPitScoutTeam(req.params.team)
+  res.status(200);
+  res.send(teamData)
 });
 
 app.get("/api/v1/teamsInEvent/:event", async function (req, res, next) {
@@ -734,7 +915,7 @@ app.get("/api/v1/aggregation/data", async function (req, res, next) {
   res.send(aggregationData)
 })
 
-app.get("/api/v1/aggregation/:event/data", async function (req, res, next) {
+app.get("/api/v1/aggregation/event/:event/data", async function (req, res, next) {
   const aggregationData = await getAggregationDataEvent(req.params.event)
   res.status(200)
   res.send(aggregationData)
@@ -792,8 +973,35 @@ app.get("/api/v1/teamsAvatars", async function (req, res, next) {
   res.send(avatars)
 })
 
+app.get("/api/v1/matchYoutube/:event/:matchNumber", async function (req, res, next) {
+  const matchData = await getMatchYoutubeVideo(req.params.event, req.params.matchNumber)
+  res.status(200)
+  res.send(matchData)
+})
+
+app.get("/api/v1/criticalsYoutube/:event/:teamNumber", async function (req, res, next) {
+  const matchData = await getCriticalsYoutubeVideo(req.params.event, req.params.teamNumber)
+  res.status(200)
+  res.send(matchData)
+})
+
+app.get("/api/v1/allCriticalsYoutube/:event", async function (req, res, next) {
+  const matchData = await getAllCriticalsYoutubeVideo(req.params.event)
+  res.status(200)
+  res.send(matchData)
+})
+
+app.get("/api/v1/matchData/:event/:matchNumber", async function (req, res, next) {
+  if (!req.params.matchNumber) {
+    res.status(404)
+    return res.send("Not Found!")
+  }
+  const matchData = await getMatchDataAPI(req.params.event, req.params.matchNumber)
+  res.status(200)
+  res.send(matchData)
+})
+
 app.get("/api/v1/admin/users", async function (req, res, next) {
-  console.log("-- /admin/users");
   if (req.headers['authorization'].replace('Basic Bearer ', '') !== token) {
     res.status(403)
     return res.send("Access Denied")
@@ -805,7 +1013,6 @@ app.get("/api/v1/admin/users", async function (req, res, next) {
 
 app.post("/api/v1/admin/users/save", async function (req, res, next) {
   requestBody = req.body;
-  console.log("-- /admin/users/save");
 
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
@@ -827,8 +1034,6 @@ app.post("/api/v1/admin/users/save", async function (req, res, next) {
 });
 
 app.get("/api/v1/admin/eventLock", async function (req, res, next) {
-  console.log("-- /admin/eventLock");
-
   if (req.headers['authorization'].replace('Basic Bearer ', '') !== token) {
     res.status(403)
     return res.send("Access Denied")
@@ -840,7 +1045,6 @@ app.get("/api/v1/admin/eventLock", async function (req, res, next) {
 
 app.post("/api/v1/admin/eventLock/save", async function (req, res, next) {
   requestBody = req.body;
-  console.log("-- /admin/eventLock/save");
 
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
@@ -863,7 +1067,6 @@ app.post("/api/v1/admin/eventLock/save", async function (req, res, next) {
 
 app.post("/api/v1/admin/form/delete", async function (req, res, next) {
   requestBody = req.body;
-  console.log("-- /admin/form/delete");
 
   if (requestBody.token.replace('Bearer ', '') !== token) {
     res.status(403);
@@ -882,13 +1085,18 @@ app.post("/api/v1/admin/form/delete", async function (req, res, next) {
 });
 
 app.get("/api/v1/util/tokenCheck", async function (req, res, next) {
-  console.log("-- /util/tokenCheck");
   if (req.headers['authorization'].replace('Basic Bearer ', '') !== token) {
     res.status(403)
     return res.send("Access Denied")
   }
   res.status(200)
   res.send("Token Verified")
+})
+
+app.get("/api/v1/teamEventStatus/:event/:teamNumber", async function (req, res, next) {
+  const eventData = await getTeamEventAPI(req.params.event, req.params.teamNumber)
+  res.status(200)
+  res.send(eventData)
 })
 
 process.on('uncaughtException', (error) => {

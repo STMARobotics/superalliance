@@ -45,7 +45,7 @@ const submissionsHomeStyles = createStyles((theme) => ({
   },
 
   controls: {
-    marginTop: theme.spacing.xl * 2,
+    marginTop: `${theme.spacing.xl * 2}px`,
 
     [BREAKPOINT]: {
       marginTop: theme.spacing.xl,

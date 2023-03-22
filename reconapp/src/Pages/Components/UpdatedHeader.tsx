@@ -10,7 +10,6 @@ import {
     Drawer,
     ScrollArea,
     useMantineColorScheme,
-    Image,
     UnstyledButton,
     Center,
     Collapse,
@@ -19,30 +18,15 @@ import {
     Avatar
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
-import { completeNavigationProgress, startNavigationProgress } from '@mantine/nprogress';
-import { registerSpotlightActions, removeSpotlightActions, useSpotlight } from '@mantine/spotlight';
 import {
-    IconAnalyze,
-    IconBook,
     IconCalendarEvent,
     IconChartBar,
-    IconCode,
-    IconCoin,
-    IconDashboard,
     IconFilter,
-    IconFingerprint,
     IconForms,
     IconGraph,
-    IconHome,
-    IconHome2,
-    IconHeart,
     IconStar,
-    IconMessage,
     IconSettings,
-    IconPlayerPause,
-    IconTrash,
-    IconSwitchHorizontal,
-    IconChevronDown, IconLogout, IconMoonStars, IconNumber, IconSortAZ, IconSun, Icon2fa
+    IconChevronDown, IconLogout, IconMoonStars, IconNumber, IconSortAZ, IconSun, Icon2fa, IconUser, IconChartBubble
 } from '@tabler/icons';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuthUser, useSignOut } from 'react-auth-kit';
@@ -138,8 +122,6 @@ export function UpdatedHeader() {
         setPreferenceData({})
         navigate("/login");
     };
-    const location = useLocation();
-
     const [preferenceData, setPreferenceData] = useLocalStorage<any>({
         key: 'saved-preferences',
         getInitialValueInEffect: false,
@@ -198,6 +180,12 @@ export function UpdatedHeader() {
 
     const adminMobileMockdata = [
         {
+            icon: IconUser,
+            title: 'User Lookup',
+            description: 'Lookup forms from a specific user.',
+            link: '/admin/userlookup'
+        },
+        {
             icon: IconSettings,
             title: 'Form Settings',
             description: 'Settings for forms.',
@@ -216,79 +204,30 @@ export function UpdatedHeader() {
             link: '/admin/auth'
         }
     ];
-
+    const visualsMobileMockdata = [
+        {
+            icon: IconChartBubble,
+            title: 'Teams Graph',
+            description: 'Lookup teams in graph form.',
+            link: '/visuals/graphs'
+        }
+    ];
 
     const auth = useAuthUser()
 
-    var isOnLoginPage = false;
-
-    if (location.pathname == "/login") {
-        isOnLoginPage = true;
-    }
+    const [isOnLoginPage, setIsOnLoginPage] = useState(false);
 
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
-
-    const handleChange = useCallback(() => {
-        (async function () {
-            const teamD = window.localStorage.getItem('teamNames');
-            if (teamD) {
-                const data = await JSON.parse(teamD)
-                removeSpotlightActions(data.teams.map((team: any) => {
-                    return `${team.number}`
-                }))
-                registerSpotlightActions(data.teams.map((team: any) => {
-                    return {
-                        id: `${team.number}`,
-                        title: `Team #${team.number}`,
-                        description: `${team.name}`,
-                        icon: <IconNumber size={18} />,
-                        group: `Team`,
-                        onTrigger: () => window.location.href = `/submissions/teams/${team.number}`,
-                    }
-                }));
-            }
-        })();
-    }, [])
+    const location = useLocation();
 
     useEffect(() => {
-        if (!isOnLoginPage) {
-            (async function () {
-                if (window.localStorage.getItem('teamNames')) {
-                    const teamD = window.localStorage.getItem('teamNames');
-                    if (teamD) {
-                        const data = await JSON.parse(teamD)
-                        removeSpotlightActions(data.teams.map((team: any) => {
-                            return `${team.number}`
-                        }))
-                        registerSpotlightActions(data.teams.map((team: any) => {
-                            return {
-                                id: `${team.number}`,
-                                title: `Team #${team.number}`,
-                                description: `${team.name}`,
-                                icon: <IconNumber size={18} />,
-                                group: `Team`,
-                                onTrigger: () => window.location.href = `/submissions/teams/${team.number}`,
-                            }
-                        }));
-                    }
-                } else {
-                    const data = await GetTeamData.getTeamsFromAPI()
-                    const registerData = data.data.teams.map((team: any) => {
-                        return {
-                            id: `${team.number}`,
-                            title: `Team #${team.number}`,
-                            description: `${team.name}`,
-                            icon: <IconNumber size={18} />,
-                            group: `Team`,
-                            onTrigger: () => window.location.href = `/submissions/teams/${team.number}`,
-                        }
-                    })
-                    registerSpotlightActions(registerData);
-                }
-            })()
-        }
-    }, [handleChange])
+        (async function () {
+            if (location.pathname === "/login") {
+                setIsOnLoginPage(true);
+            }
+        })()
+    }, [location])
 
     const [eventData, setEventData] = useState<any>([])
 
@@ -309,18 +248,17 @@ export function UpdatedHeader() {
             })
             const eventdata = await GetTeamData.getTeamEventDataLanding(7028, 2023)
             eventdata.data.map((event: any) => {
-                eventArray.push(event)
+                return eventArray.push(event)
             })
             setEventData(eventArray)
         })()
     }, [])
 
-    window.addEventListener('storage', handleChange)
-
     const [submissionsLinksOpened, { toggle: toggleSubmissionsLinks }] = useDisclosure(false);
     const [analysisLinksOpened, { toggle: toggleAnalysisLinks }] = useDisclosure(false);
     const [userMobileOpened, { toggle: toggleUserMobileOpened }] = useDisclosure(false)
     const [adminMobileOpened, { toggle: toggleAdminMobileOpened }] = useDisclosure(false)
+    const [visualsMobileOpened, { toggle: toggleVisualsMobileOpened }] = useDisclosure(false)
     const [userMenuOpened, setUserMenuOpened] = useState(false);
 
     const [selectedUser, setSelectedUser] = useLocalStorage<any>({
@@ -400,9 +338,27 @@ export function UpdatedHeader() {
         </UnstyledButton>
     ));
 
+    const visualsMobileLink = visualsMobileMockdata.map((item) => (
+        <UnstyledButton className={classes.subLink} key={item.title} onClick={() => window.location.href = `${item.link}`}>
+            <Group noWrap align="flex-start">
+                <ThemeIcon size={34} variant="default" radius="md">
+                    <item.icon size={22} color={theme.fn.primaryColor()} />
+                </ThemeIcon>
+                <div>
+                    <Text size="sm" weight={500}>
+                        {item.title}
+                    </Text>
+                    <Text size="xs" color="dimmed">
+                        {item.description}
+                    </Text>
+                </div>
+            </Group>
+        </UnstyledButton>
+    ));
+
     const getEventLabel = (num: any) => {
         try {
-            const e = eventData.filter((e: any) => e.value == preferenceData.dataShow)[0]
+            const e = eventData.filter((e: any) => e.value === preferenceData.dataShow)[0]
             return e["label"]
         } catch {
             return "Unknown"
@@ -422,7 +378,7 @@ export function UpdatedHeader() {
                         className={"HeaderText"}
                     >
                         <a href='/' className='no-decoration'>
-                            <Text component="span" color={theme.primaryColor} inherit>
+                            <Text component="span" color={theme.colors.red[6]} inherit>
                                 super
                             </Text>
                             alliance
@@ -432,16 +388,19 @@ export function UpdatedHeader() {
                         <a href="/" className={classes.link}>
                             Home
                         </a>
-                        <a href="/newform" className={classes.link}>
-                            New Form
+                        <a href="/scouting" className={classes.link}>
+                            Scouting
                         </a>
                         <a href="/submissions" className={classes.link}>
                             Submissions
                         </a>
+                        <a href="/visuals" className={classes.link}>
+                            Visuals
+                        </a>
                         <a href="/submissions/analysis" className={classes.link}>
                             Analysis
                         </a>
-                        {auth()?.user == "7028Admin" ? <a href="/admin" className={classes.link}>
+                        {auth()?.user === "7028Admin" ? <a href="/admin" className={classes.link}>
                             Admin
                         </a> : null}
                     </Group>}
@@ -455,7 +414,7 @@ export function UpdatedHeader() {
                         <Menu
                             width={260}
                             position="bottom-end"
-                            transition="pop-top-right"
+                            transition={'pop-top-right'}
                             onClose={() => setUserMenuOpened(false)}
                             onOpen={() => setUserMenuOpened(true)}
                         >
@@ -526,8 +485,8 @@ export function UpdatedHeader() {
                     <a href="/" className={classes.link}>
                         Home
                     </a>
-                    <a href="/newform" className={classes.link}>
-                        New Form
+                    <a href="/scouting" className={classes.link}>
+                        Scouting
                     </a>
                     <UnstyledButton className={classes.link} onClick={toggleSubmissionsLinks}>
                         <Center inline>
@@ -538,6 +497,15 @@ export function UpdatedHeader() {
                         </Center>
                     </UnstyledButton>
                     <Collapse in={submissionsLinksOpened}>{submissionsLinks}</Collapse>
+                    <UnstyledButton className={classes.link} onClick={toggleVisualsMobileOpened}>
+                        <Center inline>
+                            <Box component="span" mr={5}>
+                                Visuals
+                            </Box>
+                            <IconChevronDown size={16} color={theme.fn.primaryColor()} />
+                        </Center>
+                    </UnstyledButton>
+                    <Collapse in={visualsMobileOpened}>{visualsMobileLink}</Collapse>
                     <UnstyledButton className={classes.link} onClick={toggleAnalysisLinks}>
                         <Center inline>
                             <Box component="span" mr={5}>
@@ -548,7 +516,7 @@ export function UpdatedHeader() {
                     </UnstyledButton>
                     <Collapse in={analysisLinksOpened}>{analysisLinks}</Collapse>
 
-                    {auth()?.user == "7028Admin" ?
+                    {auth()?.user === "7028Admin" ?
                         <>
                             <UnstyledButton className={classes.link} onClick={toggleAdminMobileOpened}>
                                 <Center inline>

@@ -11,7 +11,8 @@ import {
     IconSwitchHorizontal,
     IconLogout,
     IconHome2,
-    IconForms
+    IconForms,
+    IconUser
 } from '@tabler/icons';
 import { config } from '../../Constants';
 import { useNavigate } from 'react-router-dom';
@@ -86,6 +87,7 @@ interface AdminNavbarProps {
 
 const data = [
     { link: '/admin', label: 'Home', icon: IconHome2 },
+    { link: '/admin/userlookup', label: 'User Lookup', icon: IconUser },
     { link: '/admin/formsettings', label: 'Form Settings', icon: IconSettings },
     { link: '/admin/formmanagement', label: 'Form Management', icon: IconForms },
     // { link: '#', label: 'Security', icon: IconFingerprint },

@@ -7,7 +7,7 @@ const sortTeamCardStyles = createStyles((theme) => ({
         overflow: 'hidden',
         transition: 'transform 150ms ease, box-shadow 100ms ease',
         padding: theme.spacing.xl,
-        paddingLeft: theme.spacing.xl * 2,
+        paddingLeft: `calc(${theme.spacing.xl} * 2)`,
         background: theme.colorScheme === 'dark' ? theme.colors.gray[9] : theme.colors.gray[1],
 
         '&:hover': {

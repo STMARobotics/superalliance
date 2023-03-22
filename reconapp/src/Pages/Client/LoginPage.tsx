@@ -8,11 +8,17 @@ import { config } from '../../Constants';
 
 import { useSignIn } from "react-auth-kit";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { UpdatedHeader } from '../Components/UpdatedHeader';
 import { useLocalStorage } from '@mantine/hooks';
 
 function LoginPage() {
+
+    const test = useParams()
+    
+    useEffect(() => {
+        console.log(test)
+    }, [])
 
     const [loginInputValue, setLoginInputValue] = useState('');
     const navigate = useNavigate();

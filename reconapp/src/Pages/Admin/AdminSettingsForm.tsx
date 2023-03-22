@@ -99,9 +99,9 @@ function AdminFormSettings() {
                                 </Text>
 
                                 <Select
-                                    transition="pop-top-left"
+                                    transition={'pop-top-left'}
                                     transitionDuration={80}
-                                    transitionTimingFunction="ease"
+                                    transitionTimingFunction={'ease'}
                                     dropdownPosition="bottom"
                                     style={{ zIndex: 2 }}
                                     data={eventData}

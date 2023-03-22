@@ -117,9 +117,9 @@ function Landing() {
                         </h1>
                         {auth()?.user == '7028Admin' ? <div className="LandingPageContent">
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 2 }}
                                 data={config.adminUsers}
@@ -133,9 +133,9 @@ function Landing() {
                             />
                         </div> : <div className="LandingPageContent">
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 2 }}
                                 data={userData}
@@ -161,9 +161,9 @@ function Landing() {
 
                         <div className="LandingPageContent">
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 20 }}
                                 data={config.colors}
@@ -179,9 +179,9 @@ function Landing() {
                             <br />
 
                             <Select
-                                transition="pop-top-left"
+                                transition={'pop-top-left'}
                                 transitionDuration={80}
-                                transitionTimingFunction="ease"
+                                transitionTimingFunction={'ease'}
                                 dropdownPosition="bottom"
                                 style={{ zIndex: 10 }}
                                 data={eventData}

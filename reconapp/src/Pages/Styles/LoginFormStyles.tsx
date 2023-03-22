@@ -19,7 +19,7 @@ const loginFormStyles = createStyles((theme, { floating }: { floating: boolean }
                 ? theme.colors.dark[3]
                 : theme.colors.gray[5],
         transition: 'transform 150ms ease, color 150ms ease, font-size 150ms ease',
-        transform: floating ? `translate(-${theme.spacing.sm}px, -28px)` : 'none',
+        transform: floating ? `translate(-${theme.spacing.sm}, -28px)` : 'none',
         fontSize: floating ? theme.fontSizes.xs : theme.fontSizes.sm,
         fontWeight: floating ? 500 : 400,
     },

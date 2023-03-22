@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Navbar, Tooltip, UnstyledButton, Stack, Affix, Transition, Button, Drawer, ScrollArea } from '@mantine/core';
+import { Navbar, Tooltip, UnstyledButton, Stack, Affix, Transition, Button, Drawer, ScrollArea, Title } from '@mantine/core';
 import {
-    TablerIcon,
     IconHome2,
     IconGauge,
     IconFolder,
@@ -14,6 +13,7 @@ import {
     IconAnalyze,
     IconRadar,
     IconMenu2,
+    TablerIcon,
 } from '@tabler/icons';
 import SubmissionsNavbarStyles from '../Styles/SubmissionsNavbarStyles';
 import { useNavigate } from 'react-router-dom';
@@ -28,19 +28,8 @@ interface NavbarLinkProps {
     onClick?(): void;
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
-    const { classes, cx } = SubmissionsNavbarStyles()
-    return (
-        <Tooltip label={label} position="right" transitionDuration={0}>
-            <UnstyledButton onClick={onClick} className={cx(classes.link, { [classes.active]: active })}>
-                <Icon stroke={1.5} />
-            </UnstyledButton>
-        </Tooltip>
-    );
-}
-
 interface SubmissionsNavbarProps {
-    pageIndex: number;
+    pageIndex: string;
     teamName?: string;
     submissionId?: string;
     eventId?: string;
@@ -53,7 +42,13 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
     const [eventData, setEventData] = useState<any>([])
     const { classes, cx, theme } = SubmissionsNavbarStyles()
 
+    const [eventCode, setEventCode] = useState("#")
+
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+
+    const [active, setActive] = useState("Submissions");
+    const [activeLink, setActiveLink] = useState(pageIndex);
+    const navigate = useNavigate()
 
     useEffect(() => {
         (async function () {
@@ -100,25 +95,27 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
 
     const getEventCode = () => {
         try {
-            if(preferenceData.dataShow == 'testing') return 'testing'
-            if(preferenceData.dataShow == 'week0') return 'week0'
+            if (preferenceData.dataShow == 'testing') return setEventCode(`/submissions/event/testing`)
+            if (preferenceData.dataShow == 'week0') return setEventCode(`/submissions/event/week0`)
             const d = eventData.filter((e: any) => {
                 return e.value == preferenceData.dataShow
             })[0]
-            return d.eventcode
+            return setEventCode(`/submissions/event/${d.eventcode}`)
         } catch {
             return ""
         }
     }
 
+    useEffect(() => {
+        if (preferenceData.dataShow !== 'all') {
+            getEventCode()
+        }
+    }, [eventData])
+
     const [preferenceData, setPreferenceData] = useLocalStorage<any>({
         key: 'saved-preferences',
         getInitialValueInEffect: false,
     });
-
-    const [active, setActive] = useState(pageIndex);
-
-    const navigate = useNavigate()
 
     const mockdata = [
         { icon: IconHome2, label: 'Home', url: "/submissions" },
@@ -126,7 +123,7 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
     ];
 
     if (teamName) {
-        mockdata.push({ icon: IconFolder, label: teamName, url: `/submissions/teams/${teamName}` })
+        mockdata.push({ icon: IconFolder, label: `Team ${teamName}`, url: `/submissions/teams/${teamName}` })
     }
 
     if (submissionId && !eventId) {
@@ -134,7 +131,7 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
     }
 
     if (preferenceData.dataShow !== 'all') {
-        mockdata.push({ icon: IconCalendarEvent, label: getShortName(), url: `/submissions/event/${getEventCode()}` })
+        mockdata.push({ icon: IconCalendarEvent, label: "Matches", url: `${eventCode}` })
     } else {
         mockdata.push({ icon: IconCalendarEvent, label: "Events", url: `/submissions/events` })
     }
@@ -151,29 +148,31 @@ export function SubmissionsNavbar({ pageIndex, teamName, submissionId, eventId, 
         mockdata.push({ icon: IconClipboardCheck, label: `Submission ${submissionId}`, url: `/submissions/event/${eventId}/${matchId}/${submissionId}` })
     }
 
-    const links = mockdata.map((link, index) => (
-        <NavbarLink
-            {...link}
-            key={link.label}
-            active={index === active}
-            onClick={() => {
-                setActive(index)
+    const links = mockdata.map((link) => (
+        <a
+            className={cx(classes.link, { [classes.linkActive]: activeLink === link.label })}
+            href={link.url}
+            onClick={(event) => {
+                event.preventDefault();
                 window.location.href = link.url
             }}
-        />
+            key={link.label}
+        >
+            {link.label}
+        </a>
     ));
 
     return (
         <>
-            <Navbar
-                className={`SubmissionsNavbar ${classes.hiddenMobile}`}
-                width={{ base: 80 }}
-                p="md"
-            >
-                <Navbar.Section grow>
-                    <Stack justify="center" spacing={0}>
+            <Navbar className={`AggregationsNavbar ${classes.hiddenMobile}`} width={{ sm: 275 }}>
+                <Navbar.Section grow className={`${classes.wrapper} ${classes.hiddenMobile}`}>
+                    <div className={classes.main}>
+                        <Title order={4} className={classes.title}>
+                            {active}
+                        </Title>
+
                         {links}
-                    </Stack>
+                    </div>
                 </Navbar.Section>
             </Navbar>
 
