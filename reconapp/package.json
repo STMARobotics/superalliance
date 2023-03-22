@@ -12,6 +12,7 @@
     "@mantine/nprogress": "^5.10.3",
     "@mantine/spotlight": "^5.10.1",
     "@nivo/bar": "^0.80.0",
+    "@nivo/core": "^0.80.0",
     "@nivo/line": "^0.80.0",
     "@tabler/icons": "^1.119.0",
     "@testing-library/jest-dom": "^5.16.5",
