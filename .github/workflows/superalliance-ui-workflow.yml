@@ -13,11 +13,11 @@ jobs:
         - uses: actions/checkout@v3
 
         - name: Install dependencies
-          run: yarn
+          run: npm install
           working-directory: reconapp
 
         - name: Build
-          run: yarn build
+          run: npm run build
           working-directory: reconapp
 
         - name: Deploy
