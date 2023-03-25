@@ -99,11 +99,7 @@ function ReconForm() {
         }, 0)
     }
 
-    useEffect(() => {
-        if(matchNumber == '' && matchTeams.length !== 0) return setMatchTeams([])
-    }, [matchTeams])
-
-    useEffect(() => {
+    const getMatchTeamsData = () => {
         (async function () {
             if (!selectedEvent) return
             if (!matchNumber) return setMatchTeams([])
@@ -135,7 +131,7 @@ function ReconForm() {
                 return setMatchTeams([])
             }
         })()
-    }, [matchNumber])
+    }
 
     const getEventCode = async (event: any) => {
         var eventArray: any[] = [];
@@ -475,58 +471,77 @@ function ReconForm() {
 
                     {(selectedEvent !== 'Testing Event' && selectedEvent !== 'Week 0 Event' && selectedEvent) ?
                         <>
+                            <TextInput
+                                onWheel={numberInputOnWheelPreventChange}
+                                type="number"
+                                placeholder="1"
+                                label="Match Number"
+                                required={true}
+                                value={matchNumber}
+                                onChange={(event) => {
+                                    setMatchNumber(event.currentTarget.value)
+                                }}
+                            />
+                            <Button size="xs" leftIcon={<IconCheck size="1rem" />} onClick={() => getMatchTeamsData()}>
+                                Load Teams
+                            </Button>
                             {matchTeams.length !== 0 ?
-                                <Select
-                                    transition={'pop-top-left'}
-                                    transitionDuration={80}
-                                    transitionTimingFunction={'ease'}
-                                    dropdownPosition="bottom"
-                                    style={{ zIndex: 1 }}
-                                    data={matchTeams}
-                                    placeholder="Pick one"
-                                    label="Select Team"
-                                    classNames={eventSelectClasses}
-                                    required
-                                    onChange={(event: string) => {
-                                        setTeamNumber(event)
-                                    }}
-                                /> :
-                                <Select
-                                    transition={'pop-top-left'}
-                                    transitionDuration={80}
-                                    transitionTimingFunction={'ease'}
-                                    dropdownPosition="bottom"
-                                    style={{ zIndex: 1 }}
-                                    data={["Enter a Match Number"]}
-                                    disabled
-                                    value={''}
-                                    placeholder="Enter a Match Number"
-                                    label="Select Team"
-                                    classNames={eventSelectClasses}
-                                    required
-                                />}
+                                <>
+                                    <Select
+                                        transition={'pop-top-left'}
+                                        transitionDuration={80}
+                                        transitionTimingFunction={'ease'}
+                                        dropdownPosition="bottom"
+                                        style={{ zIndex: 10 }}
+                                        data={matchTeams}
+                                        placeholder="Pick one"
+                                        label="Select Team"
+                                        classNames={eventSelectClasses}
+                                        required
+                                        onChange={(event: string) => {
+                                            setTeamNumber(event)
+                                        }}
+                                    />
+                                </> :
+                                <>
+                                    <Select
+                                        transition={'pop-top-left'}
+                                        transitionDuration={80}
+                                        transitionTimingFunction={'ease'}
+                                        dropdownPosition="bottom"
+                                        style={{ zIndex: 10 }}
+                                        data={["Enter a Match Number"]}
+                                        disabled
+                                        value={''}
+                                        placeholder="Enter a Match Number"
+                                        label="Select Team"
+                                        classNames={eventSelectClasses}
+                                        required
+                                    />
+                                </>}
                         </>
-                        : <TextInput
-                            type="number"
-                            placeholder="7028"
-                            label="Team Number"
-                            description="The number of your scouting team"
-                            required={true}
-                            value={teamNumber}
-                            onChange={(event) => setTeamNumber(event.currentTarget.value)}
-                        />}
-
-                    <TextInput
-                        onWheel={numberInputOnWheelPreventChange}
-                        type="number"
-                        placeholder="1"
-                        label="Match Number"
-                        required={true}
-                        value={matchNumber}
-                        onChange={(event) => {
-                            setMatchNumber(event.currentTarget.value)
-                        }}
-                    />
+                        : <>
+                            <TextInput
+                                type="number"
+                                placeholder="7028"
+                                label="Team Number"
+                                description="The number of your scouting team"
+                                required={true}
+                                value={teamNumber}
+                                onChange={(event) => setTeamNumber(event.currentTarget.value)}
+                            />
+                            <TextInput
+                                onWheel={numberInputOnWheelPreventChange}
+                                type="number"
+                                placeholder="1"
+                                label="Match Number"
+                                required={true}
+                                value={matchNumber}
+                                onChange={(event) => {
+                                    setMatchNumber(event.currentTarget.value)
+                                }}
+                            />
+                        </>}
 
                     <TextInput
                         type="string"
