@@ -1,1 +1,0 @@
-export { EpicCoolProvider, useEpicCool } from './epic/EpicCoolProvider.js';
