@@ -8,6 +8,8 @@ import { MantineProvider } from "@mantine/core";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/header";
 import { dark } from "@clerk/themes";
+import { Toaster } from "@/components/ui/sonner";
+import { SuperAllianceProvider } from "@/contexts/SuperAllianceProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -56,33 +58,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-      }}
-    >
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable
-          )}
-        >
-          <div className="relative flex min-h-screen flex-col bg-background text-white">
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <div className="relative flex min-h-screen flex-col bg-background text-white">
+          <ClerkProvider
+            appearance={{
+              baseTheme: dark,
+            }}
+          >
             <ThemeProvider
               attribute="class"
               defaultTheme="dark"
               disableTransitionOnChange
             >
+              <Toaster richColors theme="dark" />
               <MantineProvider theme={{ primaryColor: "red" }}>
-                <Header />
-                <main className="flex-1">{children}</main>
+                <SuperAllianceProvider>
+                  <Header />
+                  <main className="flex-1">{children}</main>
+                </SuperAllianceProvider>
               </MantineProvider>
             </ThemeProvider>
-          </div>
-        </body>
-      </html>
-    </ClerkProvider>
+          </ClerkProvider>
+        </div>
+      </body>
+    </html>
   );
 }

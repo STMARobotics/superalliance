@@ -24,7 +24,7 @@ export default function Home() {
         </PageHeaderDescription>
         <PageActions>
           <Link
-            href="/form/stand"
+            href="/new/stand"
             className={cn(
               buttonVariants(),
               "bg-red-600 text-white hover:bg-red-800"

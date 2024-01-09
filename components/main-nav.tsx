@@ -24,10 +24,10 @@ export function MainNav() {
       {userId && (
         <nav className="flex items-center gap-6 text-sm">
           <Link
-            href="/form/stand"
+            href="/new/stand"
             className={cn(
               "transition-colors hover:text-foreground/80",
-              pathname?.startsWith("/form/stand")
+              pathname?.startsWith("/new/stand")
                 ? "text-foreground"
                 : "text-foreground/60"
             )}
@@ -35,10 +35,10 @@ export function MainNav() {
             Stand Form
           </Link>
           <Link
-            href="/form/pit"
+            href="/new/pit"
             className={cn(
               "transition-colors hover:text-foreground/80",
-              pathname?.startsWith("/form/pit")
+              pathname?.startsWith("/new/pit")
                 ? "text-foreground"
                 : "text-foreground/60"
             )}
@@ -60,7 +60,7 @@ export function MainNav() {
             href="/analysis"
             className={cn(
               "transition-colors hover:text-foreground/80",
-              pathname?.startsWith("/data")
+              pathname?.startsWith("/analysis")
                 ? "text-foreground"
                 : "text-foreground/60"
             )}

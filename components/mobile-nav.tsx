@@ -79,10 +79,10 @@ export function MobileNav() {
           </MobileLink>
           <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
             <div className="flex flex-col space-y-3">
-              <MobileLink href={"/form/stand"} onOpenChange={setOpen}>
+              <MobileLink href={"/new/stand"} onOpenChange={setOpen}>
                 Stand Form
               </MobileLink>
-              <MobileLink href={"/form/pit"} onOpenChange={setOpen}>
+              <MobileLink href={"/new/pit"} onOpenChange={setOpen}>
                 Pit Form
               </MobileLink>
               <MobileLink href={"/data"} onOpenChange={setOpen}>
