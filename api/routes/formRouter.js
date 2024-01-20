@@ -1,8 +1,27 @@
-const app = require("../../index");
-const StandFormSchema = require("../../models/StandFormSchema");
+const { Router } = require("express");
+
+const formRouter = Router();
+
+const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 
-app.post("/api/form/stand/submit", async (req, res) => {
+formRouter.get("/api/form/stand/:formId", async (req, res) => {
+  const formId = req.params?.formId;
+  const data = await StandFormSchema.find({
+    _id: formId,
+  }).catch((err) => null);
+  if (!data) return res.status(404).json({ error: "Form not found" });
+  return res.send(data[0]);
+});
+
+formRouter.get("/api/forms/stand", async (req, res) => {
+  const forms = await StandFormSchema.find({}).sort({
+    _id: -1,
+  });
+  return res.send(forms);
+});
+
+formRouter.post("/api/form/stand/submit", async (req, res) => {
   const data = req.body;
   const sendForm = await new StandFormSchema({
     _id: new mongoose.Types.ObjectId(),
@@ -35,3 +54,5 @@ app.post("/api/form/stand/submit", async (req, res) => {
 
   return res.send("Submitted Form!");
 });
+
+module.exports = formRouter;

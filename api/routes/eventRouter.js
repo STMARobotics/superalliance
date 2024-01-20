@@ -1,9 +1,11 @@
-const app = require("../../index");
-const StandFormSchema = require("../../models/StandFormSchema");
+const { Router } = require("express");
+
+const eventRouter = Router();
+
 const mongoose = require("mongoose");
 const axios = require("axios");
 
-app.get("/api/listEvents/:team/:year", async (req, res) => {
+eventRouter.get("/api/listEvents/:team/:year", async (req, res) => {
   const { team, year } = req.params;
   if (!team || !year)
     return res.status(500).json({ error: "Missing team or year" });
@@ -21,3 +23,5 @@ app.get("/api/listEvents/:team/:year", async (req, res) => {
   if (!response) return res.status(404).json({ error: "Form not found!" });
   return res.send(response);
 });
+
+module.exports = eventRouter;

@@ -14,46 +14,24 @@ var corsOptions = {
 };
 
 const app = express();
-const PORT = 3000;
 const bodyParser = require("body-parser");
+const eventRouter = require("./routes/eventRouter");
+const formRouter = require("./routes/formRouter");
+const pitFormRouter = require("./routes/pitFormRouter");
+const teamRouter = require("./routes/teamRouter");
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(eventRouter);
+app.use(formRouter);
+app.use(pitFormRouter);
+app.use(teamRouter);
 
 app.options("/api/*", cors());
-
-const requireRoutes = () => {
-  const foldersPath = path.join(__dirname, "routes");
-  const routeFolders = fs.readdirSync(foldersPath);
-
-  for (const folder of routeFolders) {
-    const routesPath = path.join(foldersPath, folder);
-    const routesFiles = fs
-      .readdirSync(routesPath)
-      .filter((file) => file.endsWith(".js"));
-    for (const file of routesFiles) {
-      const filePath = path.join(routesPath, file);
-      require(filePath);
-    }
-  }
-};
 
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(console.log("Connected to Mongo!"))
   .catch(console.error);
 
-if (environment == "aws") {
-  requireRoutes();
-  module.exports = app;
-} else {
-  app.listen(PORT, (error) => {
-    module.exports = app;
-    requireRoutes();
-    if (!error)
-      console.log(
-        "Server is Successfully Running, and App is listening on port " + PORT
-      );
-    else console.log("Error occurred, server can't start", error);
-  });
-}
+module.exports = app;

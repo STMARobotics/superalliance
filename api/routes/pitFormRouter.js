@@ -1,8 +1,11 @@
-const app = require("../../index");
-const PitFormSchema = require("../../models/PitFormSchema");
+const { Router } = require("express");
+
+const pitFormRouter = Router();
+
+const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 
-app.post("/api/form/pit/submit", async (req, res) => {
+pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
   const data = req.body;
   const sendForm = await new PitFormSchema({
     _id: new mongoose.Types.ObjectId(),
@@ -53,3 +56,14 @@ app.post("/api/form/pit/submit", async (req, res) => {
 
   return res.send("Submitted Form!");
 });
+
+pitFormRouter.get("/api/form/pit/:teamNumber", async (req, res) => {
+  const teamNumber = req.params?.teamNumber;
+  const data = await PitFormSchema.find({
+    teamNumber: teamNumber,
+  }).catch((err) => null);
+  if (!data) return res.status(404).json({ error: "Form not found" });
+  return res.send(data[0]);
+});
+
+module.exports = pitFormRouter;

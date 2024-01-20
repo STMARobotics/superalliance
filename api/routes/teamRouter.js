@@ -1,9 +1,27 @@
-const app = require("../../index");
-const StandFormSchema = require("../../models/StandFormSchema");
+const { Router } = require("express");
+
+const teamRouter = Router();
+
+const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 const axios = require("axios");
 
-app.get("/api/listTeams", async (req, res) => {
+teamRouter.get("/api/team/:teamNumber", async (req, res) => {
+  const { teamNumber } = req.params;
+  const response = await axios
+    .get(`https://www.thebluealliance.com/api/v3/team/frc${teamNumber}`, {
+      method: "GET",
+      headers: {
+        "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+        accept: "application/json",
+      },
+    })
+    .catch(() => "Error");
+  if (response === "Error") return res.send("");
+  return res.send(response.data);
+});
+
+teamRouter.get("/api/listTeams", async (req, res) => {
   const teamList = await StandFormSchema.aggregate([
     {
       $group: {
@@ -34,3 +52,5 @@ app.get("/api/listTeams", async (req, res) => {
 
   res.send(teamArray);
 });
+
+module.exports = teamRouter;
