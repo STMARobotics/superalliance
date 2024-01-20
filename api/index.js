@@ -43,12 +43,12 @@ mongoose
   .then(console.log("Connected to Mongo!"))
   .catch(console.error);
 
-module.exports = app;
-
 if (environment == "aws") {
   requireRoutes();
+  module.exports = app;
 } else {
   app.listen(PORT, (error) => {
+    module.exports = app;
     requireRoutes();
     if (!error)
       console.log(
