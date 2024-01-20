@@ -6,6 +6,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 var cors = require("cors");
 
+const environment = process.env.ENVIRONMENT || "local";
+
 var corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
