@@ -28,7 +28,6 @@ const Header = () => {
         </div>
         <div className="flex-1 items-center justify-between space-x-2 md:justify-end hidden sm:flex">
           <nav className="flex items-center gap-2">
-            {/* <ModeToggle /> */}
             <SignedIn>
               <div className="px-0 py-0 pt-2">
                 {user?.organizationMemberships[0]?.role == "org:admin" && (
