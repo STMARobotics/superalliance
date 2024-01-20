@@ -15,32 +15,31 @@ jobs:
       NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: ${{ secrets.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL }}
       VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-
     steps:
-        - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-        - name: Set up Node
-        - uses: actions/setup-node@v3
-          with:
-            node-version: 18.x
-            cache: 'npm'
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
 
-        - name: Install dependencies
-          run: npm install
-          working-directory: app
+      - name: Install dependencies
+        run: npm install
+        working-directory: app
 
-        - name: Build
-          run: npm run build
-          working-directory: app
+      - name: Build
+        run: npm run build
+        working-directory: app
 
-        - name: Deploy
-          uses: reggionick/s3-deploy@v3
-          with:
-            folder: app/dist
-            bucket: ${{ secrets.S3_BUCKET }}
-            bucket-region: ${{ secrets.S3_BUCKET_REGION }}
-            dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-            invalidation: /
-            delete-removed: true
-            no-cache: true
-            private: true
+      - name: Deploy
+        uses: reggionick/s3-deploy@v3
+        with:
+          folder: app/dist
+          bucket: ${{ secrets.S3_BUCKET }}
+          bucket-region: ${{ secrets.S3_BUCKET_REGION }}
+          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          invalidation: /
+          delete-removed: true
+          no-cache: true
+          private: true
