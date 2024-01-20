@@ -2,7 +2,7 @@ const { Router } = require("express");
 
 const pitFormRouter = Router();
 
-const StandFormSchema = require("../models/StandFormSchema");
+const PitFormSchema = require("../models/PitFormSchema");
 const mongoose = require("mongoose");
 
 pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
