@@ -20,14 +20,7 @@ app.use(bodyParser.json());
 
 app.options("/api/*", cors());
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(console.log("Connected to Mongo!"))
-  .catch(console.error);
-
-module.exports = app;
-
-app.listen(PORT, (error) => {
+const requireRoutes = () => {
   const foldersPath = path.join(__dirname, "routes");
   const routeFolders = fs.readdirSync(foldersPath);
 
@@ -41,9 +34,24 @@ app.listen(PORT, (error) => {
       require(filePath);
     }
   }
-  if (!error)
-    console.log(
-      "Server is Successfully Running, and App is listening on port " + PORT
-    );
-  else console.log("Error occurred, server can't start", error);
-});
+};
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(console.log("Connected to Mongo!"))
+  .catch(console.error);
+
+module.exports = app;
+
+if (environment == "aws") {
+  requireRoutes();
+} else {
+  app.listen(PORT, (error) => {
+    requireRoutes();
+    if (!error)
+      console.log(
+        "Server is Successfully Running, and App is listening on port " + PORT
+      );
+    else console.log("Error occurred, server can't start", error);
+  });
+}
