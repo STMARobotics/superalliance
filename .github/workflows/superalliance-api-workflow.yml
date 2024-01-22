@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: api
 
       - name: Deploy
         run: claudia update --region us-east-2
