@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "18.x"
 
-      - name: Install Claudia
+      - name: Install Claudia.js
         run: npm install claudia -g
 
       - name: Install dependencies
