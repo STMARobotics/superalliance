@@ -1,0 +1,30 @@
+name: Workflow to deploy SuperAlliance API to AWS Lambda & API Gateway
+on:
+  push:
+    branches:
+      - v2
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      CI: false
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - name: Install Claudia
+        run: npm install claudia -g
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy
+        run: claudia update --region us-east-2
+        working-directory: api
