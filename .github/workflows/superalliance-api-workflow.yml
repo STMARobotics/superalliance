@@ -3,13 +3,18 @@ on:
   push:
     branches:
       - v2
+
 jobs:
   run:
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       CI: false
+
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v3
@@ -25,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm install
         working-directory: api
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
+          aws-region: us-east-2
 
       - name: Deploy
         run: claudia update --region us-east-2
