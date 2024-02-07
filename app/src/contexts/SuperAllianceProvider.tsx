@@ -45,7 +45,7 @@ export function SuperAllianceProvider(props: any) {
   const [totalAggregation, setTotalAggregation] = useState<any>(null);
   const [eventAggregation, setEventAggregation] = useState<any>(null);
   const [appSettings, setAppSettings] = useState<any>(null);
-  const [selectedEvent, setSelectedEvent] = useState<any>("All Events");
+  const [selectedEvent, setSelectedEvent] = useState<any>("all");
 
   const refreshSA = {
     all: () => {
@@ -110,7 +110,7 @@ export function SuperAllianceProvider(props: any) {
 
   useEffect(() => {
     (async function () {
-      if (appSettings?.event !== "none") {
+      if (appSettings?.event && appSettings?.event !== "none") {
         const eventForms = await getForms();
         const eventTeams = await getTeams();
         const eventAggregation = await getEventAggregation(appSettings?.event);
