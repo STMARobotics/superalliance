@@ -90,6 +90,11 @@ export function MobileNav() {
               <MobileLink href={"/analysis"} onOpenChange={setOpen}>
                 Analysis
               </MobileLink>
+              {user?.organizationMemberships[0]?.role == "org:admin" && (
+                <MobileLink href={"/admin"} onOpenChange={setOpen}>
+                  Admin
+                </MobileLink>
+              )}
             </div>
           </ScrollArea>
         </SheetContent>

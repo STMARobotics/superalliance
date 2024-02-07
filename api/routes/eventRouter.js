@@ -20,6 +20,8 @@ eventRouter.get("/api/listEvents/:team/:year", async (req, res) => {
     }
   );
   const response = data.data;
+  response.unshift({ event_code: "testing", short_name: "Testing Event" });
+  response.unshift({ event_code: "week0", short_name: "Week 0" });
   if (!response) return res.status(404).json({ error: "Form not found!" });
   return res.send(response);
 });

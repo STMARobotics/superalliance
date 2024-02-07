@@ -54,3 +54,42 @@ export const getPitFormByTeam = async (team: string) => {
     throw new Error("Form not found");
   }
 };
+
+export const getTotalAggregation = async () => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/aggregation/all`,
+      { method: "GET" }
+    );
+    const data = await res.json();
+    return data;
+  } catch {
+    throw new Error("Aggregation not found");
+  }
+};
+
+export const getEventAggregation = async (eventId: String) => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/aggregation/event/${eventId}`,
+      { method: "GET" }
+    );
+    const data = await res.json();
+    return data;
+  } catch {
+    throw new Error("Aggregation not found");
+  }
+};
+
+export const getAppSettings = async () => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/settings/app`,
+      { method: "GET" }
+    );
+    const data = await res.json();
+    return data;
+  } catch {
+    throw new Error("Settings not found!");
+  }
+};

@@ -6,11 +6,12 @@ import { useLocation } from "react-router-dom";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 export function MainNav() {
   const pathname = useLocation().pathname;
   const { userId } = useAuth();
+  const { user } = useUser();
 
   return (
     <div className="mr-4 hidden md:flex">
@@ -66,6 +67,19 @@ export function MainNav() {
           >
             Analysis
           </Link>
+          {user?.organizationMemberships[0]?.role == "org:admin" && (
+            <Link
+              to="/admin"
+              className={cn(
+                "transition-colors hover:text-foreground/80",
+                pathname?.startsWith("/admin")
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              )}
+            >
+              Admin
+            </Link>
+          )}
         </nav>
       )}
     </div>

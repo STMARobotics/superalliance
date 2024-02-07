@@ -4,7 +4,9 @@ const StandFormSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
     usersName: String,
+    event: String,
     teamNumber: Number,
+    matchNumber: Number,
     autoAmpsNotes: Number,
     autoSpeakersNotes: Number,
     park: Boolean,

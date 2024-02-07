@@ -12,25 +12,42 @@ import {
   Card,
   Image,
   NumberInput,
+  Select,
 } from "@mantine/core";
 import { useForm, isNotEmpty } from "@mantine/form";
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import FormData from "form-data";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
 export default function PitForm() {
   const [scroll, scrollTo] = useWindowScroll();
   const { user } = useUser();
   const navigate = useNavigate();
+  const { events } = useSuperAlliance();
+  const [eventData, setEventData] = useState([]);
 
   const [file, setFile] = useState<File | null>(null);
 
+  useEffect(() => {
+    if (!events) return;
+    setEventData(
+      events.map((event: any) => {
+        return {
+          label: event.short_name,
+          value: event.event_code,
+        };
+      })
+    );
+  }, [events]);
+
   const pitForm = useForm({
     initialValues: {
+      event: null,
       teamNumber: null,
       overallStrategy: "",
       aprilTags: false,
@@ -71,6 +88,7 @@ export default function PitForm() {
     },
 
     validate: {
+      event: isNotEmpty("This cannot be empty"),
       teamNumber: isNotEmpty("This cannot be empty"),
     },
   });
@@ -141,6 +159,14 @@ export default function PitForm() {
         <div className="pb-8 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
           Pit Scouting Form
         </div>
+
+        <Select
+          label="Select Event"
+          placeholder="Event"
+          className="pb-4"
+          data={eventData}
+          {...pitForm.getInputProps("event")}
+        />
 
         <NumberInput
           label="Team Number"

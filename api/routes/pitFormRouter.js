@@ -9,6 +9,7 @@ pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
   const data = req.body;
   const sendForm = await new PitFormSchema({
     _id: new mongoose.Types.ObjectId(),
+    event: data.event,
     teamNumber: data.teamNumber,
     usersName: data.usersName,
     robotImage: data.robotImage,

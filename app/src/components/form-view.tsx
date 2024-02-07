@@ -24,7 +24,7 @@ const FormView = ({ formData }: { formData: any }) => {
           ` • ${
             teams?.filter(
               (team: any) => team.teamNumber == formData?.teamNumber
-            )[0].teamName
+            )[0]?.teamName
           }`}
       </div>
 

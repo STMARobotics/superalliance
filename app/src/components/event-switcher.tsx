@@ -23,7 +23,8 @@ export function EventSwitcher({ isCollapsed, events }: EventSwitcherProps) {
   const { selectedEvent, setSelectedEvent } = useSuperAlliance();
   return (
     <Select
-      defaultValue={!selectedEvent ? "All Events" : selectedEvent}
+      defaultValue={!selectedEvent ? "all" : selectedEvent}
+      value={selectedEvent}
       onValueChange={setSelectedEvent}
     >
       <SelectTrigger
@@ -38,7 +39,7 @@ export function EventSwitcher({ isCollapsed, events }: EventSwitcherProps) {
           <CalendarRange />
           <span className={cn("ml-2", isCollapsed && "hidden")}>
             {
-              events.find((event) => event.short_name === selectedEvent)
+              events.find((event) => event.event_code === selectedEvent)
                 ?.short_name
             }
           </span>
@@ -46,7 +47,7 @@ export function EventSwitcher({ isCollapsed, events }: EventSwitcherProps) {
       </SelectTrigger>
       <SelectContent>
         {events.map((event) => (
-          <SelectItem key={event.event_code} value={event.short_name}>
+          <SelectItem key={event.event_code} value={event.event_code}>
             <div className="flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-foreground">
               <CalendarRange />
               {event.short_name}

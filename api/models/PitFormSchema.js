@@ -3,6 +3,7 @@ const { Schema, model } = require("mongoose");
 const PitFormSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
+    event: String,
     teamNumber: Number,
     usersName: String,
     robotImage: String,

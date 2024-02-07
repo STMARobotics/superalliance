@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { FileDigit, Home, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Nav } from "@/components/forms/form-nav";
+import { FormNav } from "@/components/forms/form-nav";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { EventSwitcher } from "../event-switcher";
 import { useLocation } from "react-router-dom";
@@ -108,11 +108,11 @@ function TeamForms({
               )}
             </div>
             <Separator />
-            <Nav
+            <FormNav
               isCollapsed={isCollapsed}
               links={[
                 {
-                  title: "All",
+                  title: "Forms",
                   label: forms?.length,
                   icon: Home,
                   variant: pathname == "/data/forms" ? "default" : "ghost",

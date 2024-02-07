@@ -8,6 +8,8 @@ import {
   MultiSelect,
   Affix,
   Transition,
+  Select,
+  ActionIcon,
 } from "@mantine/core";
 import { useForm, isNotEmpty } from "@mantine/form";
 import { useUser } from "@clerk/clerk-react";
@@ -17,11 +19,59 @@ import { useWindowScroll } from "@mantine/hooks";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { useEffect, useState } from "react";
+import { Minus, Plus } from "lucide-react";
+
+interface StandFormValues {
+  event: null | number;
+  teamNumber: null | number;
+  autoAmpsNotes: null | number;
+  autoSpeakersNotes: null | number;
+  park: boolean;
+  teleAmpsNotes: null | number;
+  teleSpeakersNotes: null | number;
+  teleTrapsNotes: null | number;
+  timesAmpedUsed: null | number;
+  onstage: boolean;
+  onstageSpotlit: boolean;
+  harmony: boolean;
+  selfSpotlight: boolean;
+  criticals: any[];
+  comments: string;
+  rpEarned: null | number;
+  defendedAgainst: boolean;
+  defense: boolean;
+  stockpile: boolean;
+  underStage: boolean;
+  win: boolean;
+}
 
 export default function StandForm() {
   const [scroll, scrollTo] = useWindowScroll();
   const { user } = useUser();
   const navigate = useNavigate();
+  const { events, appSettings } = useSuperAlliance();
+  const [eventData, setEventData] = useState([]);
+
+  useEffect(() => {
+    if (!events) return;
+    setEventData(
+      events.map((event: any) => {
+        return {
+          label: event.short_name,
+          value: event.event_code,
+        };
+      })
+    );
+  }, [events]);
+
+  useEffect(() => {
+    if (!appSettings) return;
+    if (appSettings?.event !== "none") {
+      form.setFieldValue("event", appSettings?.event);
+    }
+  });
 
   const criticals = [
     "Robot Died",
@@ -31,8 +81,9 @@ export default function StandForm() {
     "Bumper Malfunction",
   ];
 
-  const form = useForm({
+  const form = useForm<StandFormValues>({
     initialValues: {
+      event: null,
       teamNumber: null,
       autoAmpsNotes: null,
       autoSpeakersNotes: null,
@@ -55,6 +106,7 @@ export default function StandForm() {
       win: false,
     },
     validate: {
+      event: isNotEmpty("This cannot be empty"),
       teamNumber: isNotEmpty("This cannot be empty"),
       autoAmpsNotes: isNotEmpty("This cannot be empty"),
       autoSpeakersNotes: isNotEmpty("This cannot be empty"),
@@ -118,6 +170,26 @@ export default function StandForm() {
           className="pb-4"
         />
 
+        {appSettings?.event == "none" ? (
+          <Select
+            label="Select Event"
+            placeholder="Event"
+            className="pb-4"
+            data={eventData}
+            {...form.getInputProps("event")}
+          />
+        ) : (
+          <Select
+            label="Select Event"
+            description="This event has been locked in by an Administrator!"
+            disabled
+            placeholder="Event"
+            className="pb-4"
+            data={eventData}
+            {...form.getInputProps("event")}
+          />
+        )}
+
         <NumberInput
           label="Team Number"
           placeholder="7028"
@@ -133,25 +205,87 @@ export default function StandForm() {
           Autonomous
         </div>
 
-        <NumberInput
-          label="Notes Scored in Amps"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("autoAmpsNotes")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoAmpsNotes !== null &&
+                form.values.autoAmpsNotes > 0
+              ) {
+                form.setFieldValue(
+                  "autoAmpsNotes",
+                  Number(form.values.autoAmpsNotes - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Notes Scored in Amps"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("autoAmpsNotes")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoAmpsNotes",
+                Number(form.values.autoAmpsNotes! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
-        <NumberInput
-          label="Notes Scored in Speakers"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("autoSpeakersNotes")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoSpeakersNotes !== null &&
+                form.values.autoSpeakersNotes > 0
+              ) {
+                form.setFieldValue(
+                  "autoSpeakersNotes",
+                  Number(form.values.autoSpeakersNotes - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Notes Scored in Speakers"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("autoSpeakersNotes")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoSpeakersNotes",
+                Number(form.values.autoSpeakersNotes! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
         <Checkbox
           className="pb-4"
@@ -164,45 +298,169 @@ export default function StandForm() {
           Teleop
         </div>
 
-        <NumberInput
-          label="Notes Scored in Amps"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("teleAmpsNotes")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleAmpsNotes !== null &&
+                form.values.teleAmpsNotes > 0
+              ) {
+                form.setFieldValue(
+                  "teleAmpsNotes",
+                  Number(form.values.teleAmpsNotes - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Notes Scored in Amps"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("teleAmpsNotes")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleAmpsNotes",
+                Number(form.values.teleAmpsNotes! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
-        <NumberInput
-          label="Notes Scored in Speakers"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("teleSpeakersNotes")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleSpeakersNotes !== null &&
+                form.values.teleSpeakersNotes > 0
+              ) {
+                form.setFieldValue(
+                  "teleSpeakersNotes",
+                  Number(form.values.teleSpeakersNotes! - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Notes Scored in Speakers"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("teleSpeakersNotes")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleSpeakersNotes",
+                Number(form.values.teleSpeakersNotes! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
-        <NumberInput
-          label="Notes Scored in Traps"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("teleTrapsNotes")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleTrapsNotes !== null &&
+                form.values.teleTrapsNotes > 0
+              ) {
+                form.setFieldValue(
+                  "teleTrapsNotes",
+                  Number(form.values.teleTrapsNotes! - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Notes Scored in Traps"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("teleTrapsNotes")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleTrapsNotes",
+                Number(form.values.teleTrapsNotes! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
-        <NumberInput
-          label="How many times were the notes amped?"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("timesAmpedUsed")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.timesAmpedUsed !== null &&
+                form.values.timesAmpedUsed > 0
+              ) {
+                form.setFieldValue(
+                  "timesAmpedUsed",
+                  Number(form.values.timesAmpedUsed! - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="How many times were the notes amped?"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("timesAmpedUsed")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "timesAmpedUsed",
+                Number(form.values.timesAmpedUsed! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
         <Checkbox
           className="pb-4"
@@ -257,15 +515,40 @@ export default function StandForm() {
           {...form.getInputProps("comments")}
         />
 
-        <NumberInput
-          label="How many ranking points were earned?"
-          placeholder="0"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          {...form.getInputProps("rpEarned")}
-        />
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (form.values.rpEarned !== null && form.values.rpEarned > 0) {
+                form.setFieldValue(
+                  "rpEarned",
+                  Number(form.values.rpEarned! - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="How many ranking points were earned?"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("rpEarned")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue("rpEarned", Number(form.values.rpEarned! + 1));
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
 
         <Checkbox
           className="pb-4"
@@ -305,7 +588,7 @@ export default function StandForm() {
         />
 
         <Group justify="center" mt="md">
-          <Button type="submit" fullWidth h={"3rem"}>
+          <Button type="submit" fullWidth h={"3rem"} color="white" c="black">
             Submit
           </Button>
         </Group>

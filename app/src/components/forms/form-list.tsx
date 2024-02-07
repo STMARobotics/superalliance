@@ -49,7 +49,7 @@ function FormList({
                 `${
                   teams?.filter(
                     (team: any) => team.teamNumber == item.teamNumber
-                  )[0].teamName
+                  )[0]?.teamName
                 } • `}
               {item.usersName}
             </div>

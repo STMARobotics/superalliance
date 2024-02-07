@@ -25,7 +25,9 @@ formRouter.post("/api/form/stand/submit", async (req, res) => {
   const data = req.body;
   const sendForm = await new StandFormSchema({
     _id: new mongoose.Types.ObjectId(),
+    event: data.event,
     teamNumber: data.teamNumber,
+    matchNumber: data.matchNumber,
     usersName: data.usersName,
     autoAmpsNotes: data.autoAmpsNotes,
     autoSpeakersNotes: data.autoSpeakersNotes,

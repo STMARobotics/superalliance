@@ -19,13 +19,17 @@ const eventRouter = require("./routes/eventRouter");
 const formRouter = require("./routes/formRouter");
 const pitFormRouter = require("./routes/pitFormRouter");
 const teamRouter = require("./routes/teamRouter");
+const aggregationRouter = require("./routes/aggregationRouter");
+const settingsRouter = require("./routes/settingsRouter");
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(aggregationRouter);
 app.use(eventRouter);
 app.use(formRouter);
 app.use(pitFormRouter);
 app.use(teamRouter);
+app.use(settingsRouter);
 
 app.options("/api/*", cors());
 
