@@ -56,7 +56,7 @@ const SelectionDND = ({
       id: `${team.teamNumber}`,
       columnId: "unsorted",
       teamNumber: `${team.teamNumber}`,
-      teamName: `${team.teamName.catch(() => "Name not found.")}`,
+      teamName: `${team.teamName}`,
     };
   });
 
