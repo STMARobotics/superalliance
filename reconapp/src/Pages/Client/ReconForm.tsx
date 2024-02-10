@@ -1,6 +1,6 @@
-import { Anchor, Breadcrumbs, TextInput, Text, SegmentedControl, Group, Center, Box, NumberInput, ActionIcon, NumberInputHandlers, Transition, Affix, Button, Textarea, Slider, Notification, Select, MultiSelect, useMantineTheme } from "@mantine/core";
+import { Anchor, Breadcrumbs, TextInput, Text, SegmentedControl, Group, Center, Box, NumberInput, ActionIcon, NumberInputHandlers, Transition, Affix, Button, Textarea, Slider, Notification, Select, MultiSelect, useMantineTheme, Checkbox } from "@mantine/core";
 import { useLocalStorage, useWindowScroll } from "@mantine/hooks";
-import { IconArrowUp, IconCheck, IconClick, IconMinus, IconPlus, IconX } from "@tabler/icons";
+import { IconAlignLeft, IconArrowUp, IconCheck, IconClick, IconMinus, IconPlus, IconX } from "@tabler/icons";
 import { useEffect, useRef, useState } from "react";
 import DockedSectionStyles from "../Styles/DockedSection";
 import ScoreInputStyles from "../Styles/ScoreInputStyles";
@@ -16,29 +16,23 @@ import { checkToken, getEventLockData } from "../Utils/ReconQueries";
 function ReconForm() {
 
     //All the states
-    const coneHighHandler = useRef<NumberInputHandlers>(null);
-    const coneMidHandler = useRef<NumberInputHandlers>(null);
-    const coneLowHandler = useRef<NumberInputHandlers>(null);
+    const autoAmpNotesHandler = useRef<NumberInputHandlers>(null);
+    const autoSpeakerNotesHandler = useRef<NumberInputHandlers>(null);
 
-    const cubeHighHandler = useRef<NumberInputHandlers>(null);
-    const cubeMidHandler = useRef<NumberInputHandlers>(null);
-    const cubeLowHandler = useRef<NumberInputHandlers>(null);
+    const ampNotesHandler = useRef<NumberInputHandlers>(null);
+    const speakerNotesHandler = useRef<NumberInputHandlers>(null);
 
-    const extraPieceHighHandler = useRef<NumberInputHandlers>(null);
-    const extraPieceMidHandler = useRef<NumberInputHandlers>(null);
-    const extraPieceLowHandler = useRef<NumberInputHandlers>(null);
+    const trapNotesHandler = useRef<NumberInputHandlers>(null);
 
-    const [coneHigh, setConeHigh] = useState<number | undefined>(0);
-    const [coneMid, setConeMid] = useState<number | undefined>(0);
-    const [coneLow, setConeLow] = useState<number | undefined>(0);
+    const [autoAmpNotes, setAutoAmpNotes] = useState<number | undefined>(0);
+    const [autoSpeakerNotes, setAutoSpeakerNotes] = useState<number | undefined>(0);
 
-    const [cubeHigh, setCubeHigh] = useState<number | undefined>(0);
-    const [cubeMid, setCubeMid] = useState<number | undefined>(0);
-    const [cubeLow, setCubeLow] = useState<number | undefined>(0);
+    const [ampNotes, setAmpNotes] = useState<number | undefined>(0);
+    const [speakerNotes, setSpeakerNotes] = useState<number | undefined>(0);
 
-    const [extraPieceHigh, setExtraPieceHigh] = useState<number | undefined>(0);
-    const [extraPieceMid, setExtraPieceMid] = useState<number | undefined>(0);
-    const [extraPieceLow, setExtraPieceLow] = useState<number | undefined>(0);
+    
+    const [trapNotes, setTrapNotes] = useState<number | undefined>(0);
+
 
     const [teamNumber, setTeamNumber] = useState("");
     const [matchNumber, setMatchNumber] = useState("");
@@ -62,7 +56,7 @@ function ReconForm() {
     const [selectedEvent, setSelectedEvent] = useState("")
     const [criticals, setCriticals] = useState<any[]>([])
     const [pickUpTippedCones, setPickUpTippedCones] = useState<string>("none")
-    const [pickUpFloorCones, setPickUpFloorCones] = useState<string>("none")
+    const [pickUpFloorRings, setPickUpFloorRings] = useState<string>("none")
     const [humanPlayerStation, setHumanPlayerStation] = useState<string>("dk")
 
     const [sessionExpired, setSessionExpired] = useState<boolean>(false)
@@ -209,201 +203,199 @@ function ReconForm() {
         </Anchor>
     ));
 
-    function SubmitForm(authToken: any) {
+    // function SubmitForm(authToken: any) {
 
-        if (!selectedEvent && !lockedEvent) return showNotification({
-            title: 'Form Error',
-            message: 'You need to select an event!',
-            color: "red",
-        })
+    //     if (!selectedEvent && !lockedEvent) return showNotification({
+    //         title: 'Form Error',
+    //         message: 'You need to select an event!',
+    //         color: "red",
+    //     })
 
-        if (!matchNumber || !teamNumber || !userName || !rankPointsEarned || !rankPostMatch) return showNotification({
-            title: 'Form Error',
-            message: 'You have not filled out all the required fields!',
-            color: "red",
-        })
+    //     if (!matchNumber || !teamNumber || !userName || !rankPointsEarned || !rankPostMatch) return showNotification({
+    //         title: 'Form Error',
+    //         message: 'You have not filled out all the required fields!',
+    //         color: "red",
+    //     })
 
-        if (Number(matchNumber) < 0 || Number(teamNumber) < 0 || Number(rankPointsEarned) < 0 || Number(rankPostMatch) < 0) return showNotification({
-            title: 'Form Error',
-            message: 'No value can be less than 0!',
-            color: "red",
-        })
+    //     if (Number(matchNumber) < 0 || Number(teamNumber) < 0 || Number(rankPointsEarned) < 0 || Number(rankPostMatch) < 0) return showNotification({
+    //         title: 'Form Error',
+    //         message: 'No value can be less than 0!',
+    //         color: "red",
+    //     })
 
-        if (Number(rankPointsEarned) > 4) return showNotification({
-            title: 'Form Error',
-            message: 'The robot cannot earn above 4 ranking points!',
-            color: "red",
-        })
+    //     if (Number(rankPointsEarned) > 4) return showNotification({
+    //         title: 'Form Error',
+    //         message: 'The robot cannot earn above 4 ranking points!',
+    //         color: "red",
+    //     })
 
-        const submitTeamNumber = Number(teamNumber)
-        const submitMatchNumber = Number(matchNumber)
-        const submitUsersName = userName
-        var submitAuto = false
-        var submitAutoEngaged = false
-        var submitAutoDocked = false
-        var submitAutoScore = 0
-        var submitAutoTaxi = false
-        const submitTeleopScoreCubeHigh = cubeHigh
-        const submitTeleopScoreCubeMid = cubeMid
-        const submitTeleopScoreCubeLow = cubeLow
-        const submitTeleopScoreConeHigh = coneHigh
-        const submitTeleopScoreConeMid = coneMid
-        const submitTeleopScoreConeLow = coneLow
-        const submitAutoExtraScoreHigh = extraPieceHigh
-        const submitAutoExtraScoreMid = extraPieceMid
-        const submitAutoExtraScoreLow = extraPieceLow
-        var submitEndgameEngaged = false
-        var submitEndgameDocked = false
-        const submitComments = matchComments
-        const submitRankPostMatch = Number(rankPostMatch)
-        var submitWin = false;
-        const submitRankPointsEarned = Number(rankPointsEarned)
-        const submitPenalties = matchPenalties
-        var submitDefenceOrCycle = false;
-        const submitUserRating = selfRankSliderValue
-        const submitEventName = selectedEvent
-        const submitCriticals = criticals
-        var submitPickUpTippedCones = 0
-        var submitPickUpFloorCones = 0
-        var submitHumanPlayerStation = 0
+    //     const submitTeamNumber = Number(teamNumber)
+    //     const submitMatchNumber = Number(matchNumber)
+    //     const submitUsersName = userName
+    //     var submitAuto = false
+    //     var submitAutoEngaged = false
+    //     var submitAutoDocked = false
+    //     var submitAutoScore = 0
+    //     var submitAutoTaxi = false
+    //     const submitTeleopScoreCubeHigh = cubeHigh
+    //     const submitAutoAmpsScore = autoAmpsScore
+    //     const submitAutoSpeakerScore = autoSpeakerScore
+    //     const submitTeleopScoreConeHigh = coneHigh
+    //     const submitTeleopScoreConeMid = coneMid
+    //     const submitTeleopScoreConeLow = coneLow
+    //     const submitAutoExtraScoreHigh = extraPieceHigh
+    //     const submitAutoExtraScoreMid = extraPieceMid
+    //     const submitAutoExtraScoreLow = extraPieceLow
+    //     var submitEndgameEngaged = false
+    //     var submitEndgameDocked = false
+    //     const submitComments = matchComments
+    //     const submitRankPostMatch = Number(rankPostMatch)
+    //     var submitWin = false;
+    //     const submitRankPointsEarned = Number(rankPointsEarned)
+    //     const submitPenalties = matchPenalties
+    //     var submitDefenceOrCycle = false;
+    //     const submitUserRating = selfRankSliderValue
+    //     const submitEventName = selectedEvent
+    //     const submitCriticals = criticals
+    //     var submitPickUpTippedCones = 0
+    //     var submitPickUpFloorCones = 0
+    //     var submitHumanPlayerStation = 0
 
-        if (isAuto == "true") submitAuto = true
+    //     if (isAuto == "true") submitAuto = true
 
-        switch (pickUpTippedCones) {
-            case "true":
-                submitPickUpTippedCones = 1
-                break;
-            case "false":
-                submitPickUpTippedCones = 0
-                break;
-            case "none":
-                submitPickUpTippedCones = 2
-                break;
-        }
+    //     switch (pickUpTippedCones) {
+    //         case "true":
+    //             submitPickUpTippedCones = 1
+    //             break;
+    //         case "false":
+    //             submitPickUpTippedCones = 0
+    //             break;
+    //         case "none":
+    //             submitPickUpTippedCones = 2
+    //             break;
+    //     }
 
-        switch (pickUpFloorCones) {
-            case "false":
-                submitPickUpFloorCones = 0
-                break;
-            case "true":
-                submitPickUpFloorCones = 1
-                break;
-            case "none":
-                submitPickUpFloorCones = 2
-                break;
-        }
+    //     switch (pickUpFloorCones) {
+    //         case "false":
+    //             submitPickUpFloorCones = 0
+    //             break;
+    //         case "true":
+    //             submitPickUpFloorCones = 1
+    //             break;
+    //         case "none":
+    //             submitPickUpFloorCones = 2
+    //             break;
+    //     }
 
-        switch (humanPlayerStation) {
-            case "none":
-                submitHumanPlayerStation = 0
-                break;
-            case "single":
-                submitHumanPlayerStation = 1
-                break;
-            case "double":
-                submitHumanPlayerStation = 2
-                break;
-            case "both":
-                submitHumanPlayerStation = 3
-                break;
-            case "dk":
-                submitHumanPlayerStation = 4
-                break;
-        }
+    //     switch (humanPlayerStation) {
+    //         case "none":
+    //             submitHumanPlayerStation = 0
+    //             break;
+    //         case "single":
+    //             submitHumanPlayerStation = 1
+    //             break;
+    //         case "double":
+    //             submitHumanPlayerStation = 2
+    //             break;
+    //         case "both":
+    //             submitHumanPlayerStation = 3
+    //             break;
+    //         case "dk":
+    //             submitHumanPlayerStation = 4
+    //             break;
+    //     }
 
-        switch (dockedType) {
-            case "Docked":
-                submitAutoDocked = true
-                break;
-            case "Engaged":
-                submitAutoEngaged = true
-                break;
-        }
+    //     switch (dockedType) {
+    //         case "Docked":
+    //             submitAutoDocked = true
+    //             break;
+    //         case "Engaged":
+    //             submitAutoEngaged = true
+    //             break;
+    //     }
 
-        switch (scoreLevel) {
-            case "Low":
-                submitAutoScore = 1
-                break;
-            case "Mid":
-                submitAutoScore = 2
-                break;
-            case "High":
-                submitAutoScore = 3
-                break;
-        }
+    //     switch (scoreLevel) {
+    //         case "Low":
+    //             submitAutoScore = 1
+    //             break;
+    //         case "Mid":
+    //             submitAutoScore = 2
+    //             break;
+    //         case "High":
+    //             submitAutoScore = 3
+    //             break;
+    //     }
 
-        if (taxiOption == "Taxi") submitAutoTaxi = true
+    //     if (taxiOption == "Taxi") submitAutoTaxi = true
 
-        switch (dockedTypeEndgame) {
-            case "Docked":
-                submitEndgameDocked = true
-                break;
-            case "Engaged":
-                submitEndgameEngaged = true
-                break;
-        }
+    //     switch (dockedTypeEndgame) {
+    //         case "Docked":
+    //             submitEndgameDocked = true
+    //             break;
+    //         case "Engaged":
+    //             submitEndgameEngaged = true
+    //             break;
+    //     }
 
-        if (gameWin == "Win") submitWin = true
+    //     if (gameWin == "Win") submitWin = true
 
-        if (defenseBot == "Yes") submitDefenceOrCycle = true
+    //     if (defenseBot == "Yes") submitDefenceOrCycle = true
 
-        SendToAPI({
-            data: {
-                teamNumber: submitTeamNumber,
-                matchNumber: submitMatchNumber,
-                usersName: submitUsersName,
-                auto: submitAuto,
-                autoEngaged: submitAutoEngaged,
-                autoDocked: submitAutoDocked,
-                autoScoreLevel: submitAutoScore,
-                autoExtraPiece: {
-                    scored: {
-                        high: submitAutoExtraScoreHigh,
-                        mid: submitAutoExtraScoreMid,
-                        low: submitAutoExtraScoreLow
-                    }
-                },
-                autoTaxi: submitAutoTaxi,
-                teleop: {
-                    scored: {
-                        cube: {
-                            high: submitTeleopScoreCubeHigh,
-                            mid: submitTeleopScoreCubeMid,
-                            low: submitTeleopScoreCubeLow
-                        },
-                        cone: {
-                            high: submitTeleopScoreConeHigh,
-                            mid: submitTeleopScoreConeMid,
-                            low: submitTeleopScoreConeLow
-                        }
-                    }
-                },
-                endgameEngaged: submitEndgameEngaged,
-                endgameDocked: submitEndgameDocked,
-                comments: submitComments,
-                rankPostMatch: submitRankPostMatch,
-                win: submitWin,
-                rankPointsEarned: submitRankPointsEarned,
-                penalties: submitPenalties,
-                defenceOrCycle: submitDefenceOrCycle,
-                userRating: submitUserRating,
-                eventName: submitEventName,
-                criticals: submitCriticals,
-                pickUpTippedCones: submitPickUpTippedCones,
-                pickUpFloorCones: submitPickUpFloorCones,
-                humanPlayerStation: submitHumanPlayerStation
-            }
-        }, authToken).catch(() => {
-            return showNotification({
-                title: 'Form Error',
-                message: 'There was an error submitting this form!',
-                color: "red",
-            })
-        })
+    //     // SendToAPI({
+    //     //     data: {
+    //     //         teamNumber: submitTeamNumber,
+    //     //         matchNumber: submitMatchNumber,
+    //     //         usersName: submitUsersName,
+    //     //         auto: submitAuto,
+    //     //         autoScoreLevel: submitAutoScore,
+    //     //         autoExtraPiece: {
+    //     //             scored: {
+    //     //                 amp: submitAutoAmpsScore,
+    //     //                 speaker: submitAutoSpeakerScore,
+    //     //                 low: submitAutoExtraScoreLow
+    //     //             }
+    //     //         },
+    //     //         autoTaxi: submitAutoTaxi,
+    //     //         teleop: {
+    //     //             scored: {
+    //     //                 cube: {
+    //     //                     high: submitTeleopScoreCubeHigh,
+    //     //                     mid: submitTeleopScoreCubeMid,
+    //     //                     low: submitTeleopScoreCubeLow
+    //     //                 },
+    //     //                 cone: {
+    //     //                     high: submitTeleopScoreConeHigh,
+    //     //                     mid: submitTeleopScoreConeMid,
+    //     //                     low: submitTeleopScoreConeLow
+    //     //                 }
+    //     //             }
+    //     //         },
+    //     //         endgameEngaged: submitEndgameEngaged,
+    //     //         endgameDocked: submitEndgameDocked,
+    //     //         comments: submitComments,
+    //     //         rankPostMatch: submitRankPostMatch,
+    //     //         win: submitWin,
+    //     //         rankPointsEarned: submitRankPointsEarned,
+    //     //         penalties: submitPenalties,
+    //     //         defenceOrCycle: submitDefenceOrCycle,
+    //     //         userRating: submitUserRating,
+    //     //         eventName: submitEventName,
+    //     //         criticals: submitCriticals,
+    //     //         pickUpTippedCones: submitPickUpTippedCones,
+    //     //         pickUpFloorCones: submitPickUpFloorCones,
+    //     //         humanPlayerStation: submitHumanPlayerStation
+    //     //     }
+    //     // }, authToken).catch(() => {
+    //     //     return showNotification({
+    //     //         title: 'Form Error',
+    //     //         message: 'There was an error submitting this form!',
+    //     //         color: "red",
+    //     //     })
+    //     // })
 
-        navigate('/formsubmitted')
+    //     // navigate('/formsubmitted')
 
-    }
+    // }
 
     return (
         <div className="App">
@@ -561,181 +553,84 @@ function ReconForm() {
                     >
                         Autonomous
                     </Text>
-
-                    <Group position="center" my="xl">
-                        <SegmentedControl
-                            value={isAuto}
-                            onChange={(value: "true" | "false") => setIsAuto(value)}
-                            data={[
-                                {
-                                    value: 'false',
-                                    label: (
-                                        <Center>
-                                            <IconX size={16} stroke={1.5} />
-                                            <Box ml={10}>No Auto</Box>
-                                        </Center>
-                                    ),
-                                },
-                                {
-                                    value: 'true',
-                                    label: (
-                                        <Center>
-                                            <IconCheck size={16} stroke={1.5} />
-                                            <Box ml={10}>Auto</Box>
-                                        </Center>
-                                    ),
-                                },
-                            ]}
-                        />
-                    </Group>
-
-                    {isAuto == "true" &&
-                        <div className="AutoContainer">
-
-                            <div className="DockedLevel">
-                                <Text c="dimmed">Robot Dock Level</Text>
-                                <SegmentedControl
-                                    radius="xl"
-                                    size="md"
-                                    data={['Not Docked', 'Docked', 'Engaged']}
-                                    value={dockedType}
-                                    onChange={(value) => {
-                                        setDockedType(value)
-                                    }}
-                                    classNames={dockedSectionClasses}
-                                />
-                            </div>
-                            <div className="TeleopScoreCones">
-                                <Text
-                                    color={theme.primaryColor}
-                                    ta="center"
-                                    fz="xl"
-                                    fw={700}
-                                    className="ScoreSubHeader"
+                                    
+                    <div>                
+                    <Text c="dimmed">Notes Scored in Amp (auto)</Text>
+                            <div className={scoreInputClasses.wrapper}>
+                                <ActionIcon<'button'>
+                                    size={28}
+                                    variant="transparent"
+                                    onClick={() => autoAmpNotesHandler.current?.decrement()}
+                                    disabled={autoAmpNotes === 0}
+                                    className={scoreInputClasses.control}
+                                    onMouseDown={(event) => event.preventDefault()}
                                 >
-                                    Auto Pieces
-                                </Text>
-                                <Text c="dimmed">High Pieces</Text>
-                                <div className={scoreInputClasses.wrapper}>
-                                    <ActionIcon<'button'>
-                                        size={28}
-                                        variant="transparent"
-                                        onClick={() => extraPieceHighHandler.current?.decrement()}
-                                        disabled={extraPieceHigh === 0}
-                                        className={scoreInputClasses.control}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        <IconMinus size={16} stroke={1.5} />
-                                    </ActionIcon>
+                                    <IconMinus size={16} stroke={1.5} />
+                                </ActionIcon>
 
-                                    <NumberInput
-                                        variant="unstyled"
-                                        min={0}
-                                        max={50}
-                                        handlersRef={extraPieceHighHandler}
-                                        value={extraPieceHigh}
-                                        onChange={setExtraPieceHigh}
-                                        classNames={{ input: scoreInputClasses.input }}
-                                    />
-
-                                    <ActionIcon<'button'>
-                                        size={28}
-                                        variant="transparent"
-                                        onClick={() => extraPieceHighHandler.current?.increment()}
-                                        disabled={extraPieceHigh === 50}
-                                        className={scoreInputClasses.control}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        <IconPlus size={16} stroke={1.5} />
-                                    </ActionIcon>
-                                </div>
-
-                                <Text c="dimmed">Mid Pieces</Text>
-                                <div className={scoreInputClasses.wrapper}>
-                                    <ActionIcon<'button'>
-                                        size={28}
-                                        variant="transparent"
-                                        onClick={() => extraPieceMidHandler.current?.decrement()}
-                                        disabled={extraPieceMid === 0}
-                                        className={scoreInputClasses.control}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        <IconMinus size={16} stroke={1.5} />
-                                    </ActionIcon>
-
-                                    <NumberInput
-                                        variant="unstyled"
-                                        min={0}
-                                        max={50}
-                                        handlersRef={extraPieceMidHandler}
-                                        value={extraPieceMid}
-                                        onChange={setExtraPieceMid}
-                                        classNames={{ input: scoreInputClasses.input }}
-                                    />
-
-                                    <ActionIcon<'button'>
-                                        size={28}
-                                        variant="transparent"
-                                        onClick={() => extraPieceMidHandler.current?.increment()}
-                                        disabled={extraPieceMid === 50}
-                                        className={scoreInputClasses.control}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        <IconPlus size={16} stroke={1.5} />
-                                    </ActionIcon>
-                                </div>
-
-                                <Text c="dimmed">Low Pieces</Text>
-                                <div className={scoreInputClasses.wrapper}>
-                                    <ActionIcon<'button'>
-                                        size={28}
-                                        variant="transparent"
-                                        onClick={() => extraPieceLowHandler.current?.decrement()}
-                                        disabled={extraPieceLow === 0}
-                                        className={scoreInputClasses.control}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        <IconMinus size={16} stroke={1.5} />
-                                    </ActionIcon>
-
-                                    <NumberInput
-                                        variant="unstyled"
-                                        min={0}
-                                        max={50}
-                                        handlersRef={extraPieceLowHandler}
-                                        value={extraPieceLow}
-                                        onChange={setExtraPieceLow}
-                                        classNames={{ input: scoreInputClasses.input }}
-                                    />
-
-                                    <ActionIcon<'button'>
-                                        size={28}
-                                        variant="transparent"
-                                        onClick={() => extraPieceLowHandler.current?.increment()}
-                                        disabled={extraPieceLow === 50}
-                                        className={scoreInputClasses.control}
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        <IconPlus size={16} stroke={1.5} />
-                                    </ActionIcon>
-                                </div>
-                            </div>
-                            <div className="Taxi">
-                                <Text c="dimmed">Did they leave the community during auto?</Text>
-                                <SegmentedControl
-                                    radius="xl"
-                                    size="md"
-                                    data={[{ label: "No", value: "No Taxi" }, { label: "Yes", value: "Taxi" }]}
-                                    value={taxiOption}
-                                    onChange={(value) => {
-                                        setTaxiOption(value)
-                                    }}
-                                    classNames={dockedSectionClasses}
+                                <NumberInput
+                                    variant="unstyled"
+                                    min={0}
+                                    max={50}
+                                    handlersRef={autoAmpNotesHandler}
+                                    value={autoAmpNotes}
+                                    onChange={setAutoAmpNotes}
+                                    classNames={{ input: scoreInputClasses.input }}
                                 />
+
+                                <ActionIcon<'button'>
+                                    size={28}
+                                    variant="transparent"
+                                    onClick={() => autoAmpNotesHandler.current?.increment()}
+                                    disabled={autoAmpNotes === 50}
+                                    className={scoreInputClasses.control}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                >
+                                    <IconPlus size={16} stroke={1.5} />
+                                </ActionIcon>
+                            </div>
+                            </div>
+                            
+                            <div>
+                            <Text c="dimmed">Notes Scored in Speaker (auto)</Text>
+                            <div className={scoreInputClasses.wrapper}>
+                                <ActionIcon<'button'>
+                                    size={28}
+                                    variant="transparent"
+                                    onClick={() => autoSpeakerNotesHandler.current?.decrement()}
+                                    disabled={autoSpeakerNotes === 0}
+                                    className={scoreInputClasses.control}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                >
+                                    <IconMinus size={16} stroke={1.5} />
+                                </ActionIcon>
+
+                                <NumberInput
+                                    variant="unstyled"
+                                    min={0}
+                                    max={50}
+                                    handlersRef={autoSpeakerNotesHandler}
+                                    value={autoSpeakerNotes}
+                                    onChange={setAutoSpeakerNotes}
+                                    classNames={{ input: scoreInputClasses.input }}
+                                />
+
+                                <ActionIcon<'button'>
+                                    size={28}
+                                    variant="transparent"
+                                    onClick={() => autoSpeakerNotesHandler.current?.increment()}
+                                    disabled={autoSpeakerNotes === 50}
+                                    className={scoreInputClasses.control}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                >
+                                    <IconPlus size={16} stroke={1.5} />
+                                </ActionIcon>
                             </div>
                         </div>
-                    }
 
+                <div>
+                    <Checkbox label="Did the robot park?"></Checkbox>
+                </div>
                     <Text
                         color={theme.primaryColor}
                         ta="center"
@@ -745,25 +640,14 @@ function ReconForm() {
                     >
                         Teleop
                     </Text>
-
-                    <div className="TeleopScoreBox">
-                        <div className="TeleopScoreCones">
-                            <Text
-                                color={theme.primaryColor}
-                                ta="center"
-                                fz="xl"
-                                fw={700}
-                                className="ScoreSubHeader"
-                            >
-                                Cones
-                            </Text>
-                            <Text c="dimmed">High Cones</Text>
+                    <div>                
+                    <Text c="dimmed">Notes Scored in Amp (teleop)</Text>
                             <div className={scoreInputClasses.wrapper}>
                                 <ActionIcon<'button'>
                                     size={28}
                                     variant="transparent"
-                                    onClick={() => coneHighHandler.current?.decrement()}
-                                    disabled={coneHigh === 0}
+                                    onClick={() => ampNotesHandler.current?.decrement()}
+                                    disabled={ampNotes === 0}
                                     className={scoreInputClasses.control}
                                     onMouseDown={(event) => event.preventDefault()}
                                 >
@@ -774,31 +658,33 @@ function ReconForm() {
                                     variant="unstyled"
                                     min={0}
                                     max={50}
-                                    handlersRef={coneHighHandler}
-                                    value={coneHigh}
-                                    onChange={setConeHigh}
+                                    handlersRef={ampNotesHandler}
+                                    value={ampNotes}
+                                    onChange={setAmpNotes}
                                     classNames={{ input: scoreInputClasses.input }}
                                 />
 
                                 <ActionIcon<'button'>
                                     size={28}
                                     variant="transparent"
-                                    onClick={() => coneHighHandler.current?.increment()}
-                                    disabled={coneHigh === 50}
+                                    onClick={() => ampNotesHandler.current?.increment()}
+                                    disabled={ampNotes === 50}
                                     className={scoreInputClasses.control}
                                     onMouseDown={(event) => event.preventDefault()}
                                 >
                                     <IconPlus size={16} stroke={1.5} />
                                 </ActionIcon>
                             </div>
-
-                            <Text c="dimmed">Mid Cones</Text>
+                        </div>
+                            
+                            <div>
+                            <Text c="dimmed">Notes Scored in Speaker (teleop)</Text>
                             <div className={scoreInputClasses.wrapper}>
                                 <ActionIcon<'button'>
                                     size={28}
                                     variant="transparent"
-                                    onClick={() => coneMidHandler.current?.decrement()}
-                                    disabled={coneMid === 0}
+                                    onClick={() => speakerNotesHandler.current?.decrement()}
+                                    disabled={speakerNotes === 0}
                                     className={scoreInputClasses.control}
                                     onMouseDown={(event) => event.preventDefault()}
                                 >
@@ -809,52 +695,17 @@ function ReconForm() {
                                     variant="unstyled"
                                     min={0}
                                     max={50}
-                                    handlersRef={coneMidHandler}
-                                    value={coneMid}
-                                    onChange={setConeMid}
+                                    handlersRef={speakerNotesHandler}
+                                    value={speakerNotes}
+                                    onChange={setSpeakerNotes}
                                     classNames={{ input: scoreInputClasses.input }}
                                 />
 
                                 <ActionIcon<'button'>
                                     size={28}
                                     variant="transparent"
-                                    onClick={() => coneMidHandler.current?.increment()}
-                                    disabled={coneMid === 50}
-                                    className={scoreInputClasses.control}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                >
-                                    <IconPlus size={16} stroke={1.5} />
-                                </ActionIcon>
-                            </div>
-
-                            <Text c="dimmed">Low Cones</Text>
-                            <div className={scoreInputClasses.wrapper}>
-                                <ActionIcon<'button'>
-                                    size={28}
-                                    variant="transparent"
-                                    onClick={() => coneLowHandler.current?.decrement()}
-                                    disabled={coneLow === 0}
-                                    className={scoreInputClasses.control}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                >
-                                    <IconMinus size={16} stroke={1.5} />
-                                </ActionIcon>
-
-                                <NumberInput
-                                    variant="unstyled"
-                                    min={0}
-                                    max={50}
-                                    handlersRef={coneLowHandler}
-                                    value={coneLow}
-                                    onChange={setConeLow}
-                                    classNames={{ input: scoreInputClasses.input }}
-                                />
-
-                                <ActionIcon<'button'>
-                                    size={28}
-                                    variant="transparent"
-                                    onClick={() => coneLowHandler.current?.increment()}
-                                    disabled={coneLow === 50}
+                                    onClick={() => speakerNotesHandler.current?.increment()}
+                                    disabled={speakerNotes === 50}
                                     className={scoreInputClasses.control}
                                     onMouseDown={(event) => event.preventDefault()}
                                 >
@@ -863,23 +714,14 @@ function ReconForm() {
                             </div>
                         </div>
 
-                        <div className="TeleopScoreCubes">
-                            <Text
-                                color={theme.primaryColor}
-                                ta="center"
-                                fz="xl"
-                                fw={700}
-                                className="ScoreSubHeader"
-                            >
-                                Cubes
-                            </Text>
-                            <Text c="dimmed">High Cubes</Text>
+                        <div>                
+                    <Text c="dimmed">Notes Scored in Trap</Text>
                             <div className={scoreInputClasses.wrapper}>
                                 <ActionIcon<'button'>
                                     size={28}
                                     variant="transparent"
-                                    onClick={() => cubeHighHandler.current?.decrement()}
-                                    disabled={cubeHigh === 0}
+                                    onClick={() => trapNotesHandler.current?.decrement()}
+                                    disabled={trapNotes === 0}
                                     className={scoreInputClasses.control}
                                     onMouseDown={(event) => event.preventDefault()}
                                 >
@@ -890,87 +732,17 @@ function ReconForm() {
                                     variant="unstyled"
                                     min={0}
                                     max={50}
-                                    handlersRef={cubeHighHandler}
-                                    value={cubeHigh}
-                                    onChange={setCubeHigh}
+                                    handlersRef={trapNotesHandler}
+                                    value={trapNotes}
+                                    onChange={setTrapNotes}
                                     classNames={{ input: scoreInputClasses.input }}
                                 />
 
                                 <ActionIcon<'button'>
                                     size={28}
                                     variant="transparent"
-                                    onClick={() => cubeHighHandler.current?.increment()}
-                                    disabled={cubeHigh === 50}
-                                    className={scoreInputClasses.control}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                >
-                                    <IconPlus size={16} stroke={1.5} />
-                                </ActionIcon>
-                            </div>
-
-                            <Text c="dimmed">Mid Cubes</Text>
-                            <div className={scoreInputClasses.wrapper}>
-                                <ActionIcon<'button'>
-                                    size={28}
-                                    variant="transparent"
-                                    onClick={() => cubeMidHandler.current?.decrement()}
-                                    disabled={cubeMid === 0}
-                                    className={scoreInputClasses.control}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                >
-                                    <IconMinus size={16} stroke={1.5} />
-                                </ActionIcon>
-
-                                <NumberInput
-                                    variant="unstyled"
-                                    min={0}
-                                    max={50}
-                                    handlersRef={cubeMidHandler}
-                                    value={cubeMid}
-                                    onChange={setCubeMid}
-                                    classNames={{ input: scoreInputClasses.input }}
-                                />
-
-                                <ActionIcon<'button'>
-                                    size={28}
-                                    variant="transparent"
-                                    onClick={() => cubeMidHandler.current?.increment()}
-                                    disabled={cubeMid === 50}
-                                    className={scoreInputClasses.control}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                >
-                                    <IconPlus size={16} stroke={1.5} />
-                                </ActionIcon>
-                            </div>
-
-                            <Text c="dimmed">Low Cubes</Text>
-                            <div className={scoreInputClasses.wrapper}>
-                                <ActionIcon<'button'>
-                                    size={28}
-                                    variant="transparent"
-                                    onClick={() => cubeLowHandler.current?.decrement()}
-                                    disabled={cubeLow === 0}
-                                    className={scoreInputClasses.control}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                >
-                                    <IconMinus size={16} stroke={1.5} />
-                                </ActionIcon>
-
-                                <NumberInput
-                                    variant="unstyled"
-                                    min={0}
-                                    max={50}
-                                    handlersRef={cubeLowHandler}
-                                    value={cubeLow}
-                                    onChange={setCubeLow}
-                                    classNames={{ input: scoreInputClasses.input }}
-                                />
-
-                                <ActionIcon<'button'>
-                                    size={28}
-                                    variant="transparent"
-                                    onClick={() => cubeLowHandler.current?.increment()}
-                                    disabled={cubeLow === 50}
+                                    onClick={() => trapNotesHandler.current?.increment()}
+                                    disabled={trapNotes === 50}
                                     className={scoreInputClasses.control}
                                     onMouseDown={(event) => event.preventDefault()}
                                 >
@@ -978,31 +750,11 @@ function ReconForm() {
                                 </ActionIcon>
                             </div>
                         </div>
-                    </div>
-
-                    <Text
-                        color={theme.primaryColor}
-                        ta="center"
-                        fz="xl"
-                        fw={700}
-                        className="FormSubheader"
-                    >
-                        Endgame
-                    </Text>
-
-                    <div className="DockedLevel">
-                        <Text c="dimmed">Endgame Robot Dock Level</Text>
-                        <SegmentedControl
-                            radius="xl"
-                            size="md"
-                            data={['Not Docked', 'Docked', 'Engaged']}
-                            value={dockedTypeEndgame}
-                            onChange={(value) => {
-                                setDockedTypeEndgame(value)
-                            }}
-                            classNames={dockedSectionClasses}
-                        />
-                    </div>
+                               
+                                    <Checkbox label="Did the robot go on stage?"></Checkbox>
+                                    <Checkbox label="Was their harmony?"></Checkbox>
+                                    <Checkbox label="Was your team's human player spotlight?"></Checkbox>
+                                
 
                     <Text
                         color={theme.primaryColor}
@@ -1027,7 +779,7 @@ function ReconForm() {
                     />
 
                     <div className="DockedLevel">
-                        <Text c="dimmed">Did they pick up tipped cones?</Text>
+                        <Text c="dimmed">Did they pick rings up off the floor?</Text>
                         <SegmentedControl
                             radius="xl"
                             size="md"
@@ -1036,51 +788,15 @@ function ReconForm() {
                                 { label: "Yes", value: "true" },
                                 { label: "No", value: "false" },
                             ]}
-                            value={pickUpTippedCones}
+                            value={pickUpFloorRings}
                             onChange={(value) => {
-                                setPickUpTippedCones(value)
+                                setPickUpFloorRings(value)
                             }}
                             classNames={dockedSectionClasses}
                         />
                     </div>
 
-                    <div className="DockedLevel">
-                        <Text c="dimmed">Did they pick cones up off the floor?</Text>
-                        <SegmentedControl
-                            radius="xl"
-                            size="md"
-                            data={[
-                                { label: "I Don't Know", value: "none" },
-                                { label: "Yes", value: "true" },
-                                { label: "No", value: "false" },
-                            ]}
-                            value={pickUpFloorCones}
-                            onChange={(value) => {
-                                setPickUpFloorCones(value)
-                            }}
-                            classNames={dockedSectionClasses}
-                        />
-                    </div>
-
-                    <div className="DockedLevel">
-                        <Text c="dimmed">Which Human Player Station did they use?</Text>
-                        <SegmentedControl
-                            radius="xl"
-                            size="md"
-                            data={[
-                                { label: "I Don't Know", value: "dk" },
-                                { label: "None", value: "none" },
-                                { label: "Single", value: "single" },
-                                { label: "Double", value: "double" },
-                                { label: "Both", value: "both" },
-                            ]}
-                            value={humanPlayerStation}
-                            onChange={(value) => {
-                                setHumanPlayerStation(value)
-                            }}
-                            classNames={dockedSectionClasses}
-                        />
-                    </div>
+                    
 
                     <div className="DockedLevel">
                         <Text c="dimmed">Match Result</Text>
@@ -1159,19 +875,9 @@ function ReconForm() {
                         })}
                     />
 
-                    <div className="DockedLevel">
-                        <Text c="dimmed">Was the bot a Defense bot?</Text>
-                        <SegmentedControl
-                            radius="xl"
-                            size="md"
-                            data={['No', 'Yes']}
-                            value={defenseBot}
-                            onChange={(value) => {
-                                setDefenseBot(value)
-                            }}
-                            classNames={dockedSectionClasses}
-                        />
-                    </div>
+                    <Checkbox label="Was your robot a defense bot?"></Checkbox>
+                    <Checkbox label="Was your robot defended against?"></Checkbox>
+                    <Checkbox label="Could your robot go under the stage?"></Checkbox>
 
                     <MultiSelect
                         data={['Robot Died', 'Robot Tipped', 'Red Card', 'Mechanism Broke', 'Bumper Malfunction']}
@@ -1198,7 +904,7 @@ function ReconForm() {
                                 root: { paddingRight: 14, height: 48 },
                             }}
                             onClick={() => {
-                                SubmitForm(authHeader())
+                              //SubmitForm(authHeader())
                             }}
                         >
                             Submit Form
