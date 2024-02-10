@@ -425,7 +425,8 @@ function ReconForm() {
                 </>
 
                 {sessionExpired == false ? <div className="ReconFormContainer">
-
+                    <div className="ReconFormInner">
+                    
                     <Text
                         color={theme.primaryColor}
                         ta="center"
@@ -910,6 +911,7 @@ function ReconForm() {
                             Submit Form
                         </Button>
                     </div>
+                    </div> {/* end  ReconFormInner */}
                 </div>
                     : <div className="ReconFormContainer">
 

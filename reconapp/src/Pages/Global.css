@@ -317,6 +317,16 @@
     padding-bottom: calc(250px + 2vmin);
 }
 
+.ReconFormInner {
+    display: flex;
+    /* justify-content: center; */
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 25px;
+    padding-top: 50px;
+    padding-bottom: calc(250px + 2vmin);
+}
+
 .SubmissionsEventCard {
     display: flex;
     justify-content: center;
