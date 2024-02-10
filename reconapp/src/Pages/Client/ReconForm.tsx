@@ -55,7 +55,6 @@ function ReconForm() {
     const [eventData, setEventData] = useState<any>([])
     const [selectedEvent, setSelectedEvent] = useState("")
     const [criticals, setCriticals] = useState<any[]>([])
-    const [pickUpTippedCones, setPickUpTippedCones] = useState<string>("none")
     const [pickUpFloorRings, setPickUpFloorRings] = useState<string>("none")
     const [humanPlayerStation, setHumanPlayerStation] = useState<string>("dk")
 
@@ -203,199 +202,176 @@ function ReconForm() {
         </Anchor>
     ));
 
-    // function SubmitForm(authToken: any) {
 
-    //     if (!selectedEvent && !lockedEvent) return showNotification({
-    //         title: 'Form Error',
-    //         message: 'You need to select an event!',
-    //         color: "red",
-    //     })
+    function SubmitForm(authToken: any) {
 
-    //     if (!matchNumber || !teamNumber || !userName || !rankPointsEarned || !rankPostMatch) return showNotification({
-    //         title: 'Form Error',
-    //         message: 'You have not filled out all the required fields!',
-    //         color: "red",
-    //     })
+        if (!selectedEvent && !lockedEvent) return showNotification({
+            title: 'Form Error',
+            message: 'You need to select an event!',
+            color: "red",
+        })
 
-    //     if (Number(matchNumber) < 0 || Number(teamNumber) < 0 || Number(rankPointsEarned) < 0 || Number(rankPostMatch) < 0) return showNotification({
-    //         title: 'Form Error',
-    //         message: 'No value can be less than 0!',
-    //         color: "red",
-    //     })
+        if (!matchNumber || !teamNumber || !userName || !rankPointsEarned || !rankPostMatch) return showNotification({
+            title: 'Form Error',
+            message: 'You have not filled out all the required fields!',
+            color: "red",
+        })
 
-    //     if (Number(rankPointsEarned) > 4) return showNotification({
-    //         title: 'Form Error',
-    //         message: 'The robot cannot earn above 4 ranking points!',
-    //         color: "red",
-    //     })
+        if (Number(matchNumber) < 0 || Number(teamNumber) < 0 || Number(rankPointsEarned) < 0 || Number(rankPostMatch) < 0) return showNotification({
+            title: 'Form Error',
+            message: 'No value can be less than 0!',
+            color: "red",
+        })
 
-    //     const submitTeamNumber = Number(teamNumber)
-    //     const submitMatchNumber = Number(matchNumber)
-    //     const submitUsersName = userName
-    //     var submitAuto = false
-    //     var submitAutoEngaged = false
-    //     var submitAutoDocked = false
-    //     var submitAutoScore = 0
-    //     var submitAutoTaxi = false
-    //     const submitTeleopScoreCubeHigh = cubeHigh
-    //     const submitAutoAmpsScore = autoAmpsScore
-    //     const submitAutoSpeakerScore = autoSpeakerScore
-    //     const submitTeleopScoreConeHigh = coneHigh
-    //     const submitTeleopScoreConeMid = coneMid
-    //     const submitTeleopScoreConeLow = coneLow
-    //     const submitAutoExtraScoreHigh = extraPieceHigh
-    //     const submitAutoExtraScoreMid = extraPieceMid
-    //     const submitAutoExtraScoreLow = extraPieceLow
-    //     var submitEndgameEngaged = false
-    //     var submitEndgameDocked = false
-    //     const submitComments = matchComments
-    //     const submitRankPostMatch = Number(rankPostMatch)
-    //     var submitWin = false;
-    //     const submitRankPointsEarned = Number(rankPointsEarned)
-    //     const submitPenalties = matchPenalties
-    //     var submitDefenceOrCycle = false;
-    //     const submitUserRating = selfRankSliderValue
-    //     const submitEventName = selectedEvent
-    //     const submitCriticals = criticals
-    //     var submitPickUpTippedCones = 0
-    //     var submitPickUpFloorCones = 0
-    //     var submitHumanPlayerStation = 0
+        if (Number(rankPointsEarned) > 4) return showNotification({
+            title: 'Form Error',
+            message: 'The robot cannot earn above 4 ranking points!',
+            color: "red",
+        })
 
-    //     if (isAuto == "true") submitAuto = true
+        const submitTeamNumber = Number(teamNumber)
+        const submitMatchNumber = Number(matchNumber)
+        const submitUsersName = userName
+        var submitAuto = false
+        var submitAutoEngaged = false
+        var submitAutoDocked = false
+        var submitAutoScore = 0
+        var submitAutoTaxi = false
+        const submitAutoAmpScore = autoAmpNotes
+        const submitAutoSpeakerScore = autoSpeakerNotes
+        const submitTeleopAmpScore = ampNotes
+        const submitTeleopSpeakerScore = speakerNotes
+        const submitTrapScore = trapNotes
+        var submitEndgameEngaged = false
+        var submitEndgameDocked = false
+        const submitComments = matchComments
+        const submitRankPostMatch = Number(rankPostMatch)
+        var submitWin = false;
+        const submitRankPointsEarned = Number(rankPointsEarned)
+        const submitPenalties = matchPenalties
+        var submitDefenceOrCycle = false;
+        const submitUserRating = selfRankSliderValue
+        const submitEventName = selectedEvent
+        const submitCriticals = criticals
+        var submitPickUpFloorRings = 0
+        var submitHumanPlayerStation = 0
 
-    //     switch (pickUpTippedCones) {
-    //         case "true":
-    //             submitPickUpTippedCones = 1
-    //             break;
-    //         case "false":
-    //             submitPickUpTippedCones = 0
-    //             break;
-    //         case "none":
-    //             submitPickUpTippedCones = 2
-    //             break;
-    //     }
+        if (isAuto == "true") submitAuto = true
 
-    //     switch (pickUpFloorCones) {
-    //         case "false":
-    //             submitPickUpFloorCones = 0
-    //             break;
-    //         case "true":
-    //             submitPickUpFloorCones = 1
-    //             break;
-    //         case "none":
-    //             submitPickUpFloorCones = 2
-    //             break;
-    //     }
+        switch (pickUpFloorRings) {
+            case "false":
+                submitPickUpFloorRings = 0
+                break;
+            case "true":
+                submitPickUpFloorRings = 1
+                break;
+            case "none":
+                submitPickUpFloorRings = 2
+                break;
+        }
 
-    //     switch (humanPlayerStation) {
-    //         case "none":
-    //             submitHumanPlayerStation = 0
-    //             break;
-    //         case "single":
-    //             submitHumanPlayerStation = 1
-    //             break;
-    //         case "double":
-    //             submitHumanPlayerStation = 2
-    //             break;
-    //         case "both":
-    //             submitHumanPlayerStation = 3
-    //             break;
-    //         case "dk":
-    //             submitHumanPlayerStation = 4
-    //             break;
-    //     }
+        switch (humanPlayerStation) {
+            case "none":
+                submitHumanPlayerStation = 0
+                break;
+            case "single":
+                submitHumanPlayerStation = 1
+                break;
+            case "double":
+                submitHumanPlayerStation = 2
+                break;
+            case "both":
+                submitHumanPlayerStation = 3
+                break;
+            case "dk":
+                submitHumanPlayerStation = 4
+                break;
+        }
 
-    //     switch (dockedType) {
-    //         case "Docked":
-    //             submitAutoDocked = true
-    //             break;
-    //         case "Engaged":
-    //             submitAutoEngaged = true
-    //             break;
-    //     }
+        switch (dockedType) {
+            case "Docked":
+                submitAutoDocked = true
+                break;
+            case "Engaged":
+                submitAutoEngaged = true
+                break;
+        }
 
-    //     switch (scoreLevel) {
-    //         case "Low":
-    //             submitAutoScore = 1
-    //             break;
-    //         case "Mid":
-    //             submitAutoScore = 2
-    //             break;
-    //         case "High":
-    //             submitAutoScore = 3
-    //             break;
-    //     }
+        switch (scoreLevel) {
+            case "Low":
+                submitAutoScore = 1
+                break;
+            case "Mid":
+                submitAutoScore = 2
+                break;
+            case "High":
+                submitAutoScore = 3
+                break;
+        }
 
-    //     if (taxiOption == "Taxi") submitAutoTaxi = true
+        if (taxiOption == "Taxi") submitAutoTaxi = true
 
-    //     switch (dockedTypeEndgame) {
-    //         case "Docked":
-    //             submitEndgameDocked = true
-    //             break;
-    //         case "Engaged":
-    //             submitEndgameEngaged = true
-    //             break;
-    //     }
+        switch (dockedTypeEndgame) {
+            case "Docked":
+                submitEndgameDocked = true
+                break;
+            case "Engaged":
+                submitEndgameEngaged = true
+                break;
+        }
 
-    //     if (gameWin == "Win") submitWin = true
+        if (gameWin == "Win") submitWin = true
 
-    //     if (defenseBot == "Yes") submitDefenceOrCycle = true
+        if (defenseBot == "Yes") submitDefenceOrCycle = true
 
-    //     // SendToAPI({
-    //     //     data: {
-    //     //         teamNumber: submitTeamNumber,
-    //     //         matchNumber: submitMatchNumber,
-    //     //         usersName: submitUsersName,
-    //     //         auto: submitAuto,
-    //     //         autoScoreLevel: submitAutoScore,
-    //     //         autoExtraPiece: {
-    //     //             scored: {
-    //     //                 amp: submitAutoAmpsScore,
-    //     //                 speaker: submitAutoSpeakerScore,
-    //     //                 low: submitAutoExtraScoreLow
-    //     //             }
-    //     //         },
-    //     //         autoTaxi: submitAutoTaxi,
-    //     //         teleop: {
-    //     //             scored: {
-    //     //                 cube: {
-    //     //                     high: submitTeleopScoreCubeHigh,
-    //     //                     mid: submitTeleopScoreCubeMid,
-    //     //                     low: submitTeleopScoreCubeLow
-    //     //                 },
-    //     //                 cone: {
-    //     //                     high: submitTeleopScoreConeHigh,
-    //     //                     mid: submitTeleopScoreConeMid,
-    //     //                     low: submitTeleopScoreConeLow
-    //     //                 }
-    //     //             }
-    //     //         },
-    //     //         endgameEngaged: submitEndgameEngaged,
-    //     //         endgameDocked: submitEndgameDocked,
-    //     //         comments: submitComments,
-    //     //         rankPostMatch: submitRankPostMatch,
-    //     //         win: submitWin,
-    //     //         rankPointsEarned: submitRankPointsEarned,
-    //     //         penalties: submitPenalties,
-    //     //         defenceOrCycle: submitDefenceOrCycle,
-    //     //         userRating: submitUserRating,
-    //     //         eventName: submitEventName,
-    //     //         criticals: submitCriticals,
-    //     //         pickUpTippedCones: submitPickUpTippedCones,
-    //     //         pickUpFloorCones: submitPickUpFloorCones,
-    //     //         humanPlayerStation: submitHumanPlayerStation
-    //     //     }
-    //     // }, authToken).catch(() => {
-    //     //     return showNotification({
-    //     //         title: 'Form Error',
-    //     //         message: 'There was an error submitting this form!',
-    //     //         color: "red",
-    //     //     })
-    //     // })
+        
 
-    //     // navigate('/formsubmitted')
+        SendToAPI({
+            data: {
+                teamNumber: submitTeamNumber,
+                matchNumber: submitMatchNumber,
+                usersName: submitUsersName,
+                auto: submitAuto,
+                autoScoreLevel: submitAutoScore,
+                autoExtraPiece: {
+                    scored: {
+                        autoAmp: submitAutoAmpScore,
+                        autoSpeaker: submitAutoSpeakerScore,
+                    }
+                },
+                autoTaxi: submitAutoTaxi,
+                teleop: {
+                    scored: {
+                        amp: submitTeleopAmpScore,
+                        speaker: submitTeleopSpeakerScore,
+                        trap: submitTrapScore
+                    }
+                },
+                endgameEngaged: submitEndgameEngaged,
+                endgameDocked: submitEndgameDocked,
+                comments: submitComments,
+                rankPostMatch: submitRankPostMatch,
+                win: submitWin,
+                rankPointsEarned: submitRankPointsEarned,
+                penalties: submitPenalties,
+                defenceOrCycle: submitDefenceOrCycle,
+                userRating: submitUserRating,
+                eventName: submitEventName,
+                criticals: submitCriticals,
+                pickUpFloorRings: submitPickUpFloorRings,
+                humanPlayerStation: submitHumanPlayerStation,
+            }
+        }, authToken).catch(() => {
+            return showNotification({
+                title: 'Form Error',
+                message: 'There was an error submitting this form!',
+                color: "red",
+            })
+        })
 
-    // }
+        navigate('/formsubmitted')
+
+    }
 
     return (
         <div className="App">
@@ -905,7 +881,7 @@ function ReconForm() {
                                 root: { paddingRight: 14, height: 48 },
                             }}
                             onClick={() => {
-                              //SubmitForm(authHeader())
+                                SubmitForm(authHeader())
                             }}
                         >
                             Submit Form

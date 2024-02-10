@@ -222,8 +222,8 @@ function Landing() {
                         </Stepper.Step>
                         <Stepper.Step label="Second step" description="Set preferences">
                         </Stepper.Step>
-                        <Stepper.Completed>
-                        </Stepper.Completed>
+                        {/* <Stepper.Completed>
+                        </Stepper.Completed> */}
                     </Stepper>
                 </div>
                 {loading ? <Loader color="violet" /> : <>{renderLanding(active)}</>}

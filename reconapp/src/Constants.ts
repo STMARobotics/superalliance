@@ -1,12 +1,8 @@
 const config = {
     version: "v1.0-alpha",
-    api_url: "https://6ub9peevj9.execute-api.us-east-2.amazonaws.com/latest",
+    api_url: "http://localhost:9000",
     adminUsers: [
-        "Blake (Admin)",
-        "Zack O.",
-        "Scott B.",
-        "Addi V.",
-        "Vincent M."
+        "Keith",
     ],
     colors: [
         { label: 'Blue', value: 'blue' },

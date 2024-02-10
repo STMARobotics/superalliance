@@ -7,29 +7,19 @@ interface formData {
         matchNumber: number,
         usersName: string,
         auto: boolean,
-        autoEngaged: boolean,
-        autoDocked: boolean,
         autoScoreLevel: number,
         autoExtraPiece: {
             scored: {
-                high: number | undefined,
-                mid: number | undefined,
-                low: number | undefined,
+                autoAmp: number | undefined,
+                autoSpeaker: number | undefined,
             }
         }
         autoTaxi: boolean,
         teleop: {
             scored: {
-                cube: {
-                    high: number | undefined,
-                    mid: number | undefined,
-                    low: number | undefined,
-                },
-                cone: {
-                    high: number | undefined,
-                    mid: number | undefined,
-                    low: number | undefined,
-                }
+                    speaker: number | undefined,
+                    amp: number | undefined,
+                    trap: number | undefined,
             }
         },
         endgameEngaged: boolean,
@@ -43,8 +33,7 @@ interface formData {
         userRating: number | undefined,
         eventName: string,
         criticals: Array<any[]> | undefined,
-        pickUpTippedCones: number,
-        pickUpFloorCones: number,
+        pickUpFloorRings: number,
         humanPlayerStation: number,
     }
 }
