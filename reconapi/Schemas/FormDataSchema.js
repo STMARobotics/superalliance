@@ -5,29 +5,19 @@ const FormDataSchema = new Schema({
     matchNumber: Number,
     usersName: String,
     auto: Boolean,
-    autoEngaged: Boolean,
-    autoDocked: Boolean,
     autoScoreLevel: Number,
     autoExtraPiece: {
         scored: {
-            high: Number | undefined,
-            mid: Number | undefined,
-            low: Number | undefined,
+            autoAmp: number | undefined,
+            autoSpeaker: number | undefined,
         }
     },
-    autoTaxi: Boolean,
+    autoTaxi: boolean,
     teleop: {
         scored: {
-            cube: {
-                high: Number | undefined,
-                mid: Number | undefined,
-                low: Number | undefined,
-            },
-            cone: {
-                high: Number | undefined,
-                mid: Number | undefined,
-                low: Number | undefined,
-            }
+                speaker: number | undefined,
+                amp: number | undefined,
+                trap: number | undefined,
         }
     },
     endgameEngaged: Boolean,

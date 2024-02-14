@@ -89,24 +89,16 @@ const schemaSend = async (data) => {
     autoScoreLevel: data.autoScoreLevel,
     autoExtraPiece: {
       scored: {
-        high: data.autoExtraPiece.scored.high,
-        mid: data.autoExtraPiece.scored.mid,
-        low: data.autoExtraPiece.scored.low,
+        autoAmp: number | undefined,
+        autoSpeaker: number | undefined,
       }
     },
-    autoTaxi: data.autoTaxi,
+    autoTaxi: boolean,
     teleop: {
       scored: {
-        cube: {
-          high: data.teleop.scored.cube.high,
-          mid: data.teleop.scored.cube.mid,
-          low: data.teleop.scored.cube.low,
-        },
-        cone: {
-          high: data.teleop.scored.cone.high,
-          mid: data.teleop.scored.cone.mid,
-          low: data.teleop.scored.cone.low,
-        }
+          speaker: number | undefined,
+          amp: number | undefined,
+          trap: number | undefined,
       }
     },
     endgameEngaged: data.endgameEngaged,
@@ -120,8 +112,7 @@ const schemaSend = async (data) => {
     userRating: data.userRating,
     eventName: data.eventName,
     criticals: data.criticals,
-    pickUpTippedCones: data.pickUpTippedCones,
-    pickUpFloorCones: data.pickUpFloorCones,
+    pickUpFloorRings: data.pickUpFloorRings,
     humanPlayerStation: data.humanPlayerStation,
   })
 
@@ -144,12 +135,9 @@ const pitSchemaSend = async (data) => {
     mechanicalHaveCameras: data.mechanicalHaveCameras,
     mechanicalHaveAuto: data.mechanicalHaveAuto,
     mechanicalAutoInfo: data.mechanicalAutoInfo,
-    mechanicalCubesLow: data.mechanicalCubesLow,
-    mechanicalCubesMid: data.mechanicalCubesMid,
-    mechanicalCubesHigh: data.mechanicalCubesHigh,
-    mechanicalConesLow: data.mechanicalConesLow,
-    mechanicalConesMid: data.mechanicalConesMid,
-    mechanicalConesHigh: data.mechanicalConesHigh,
+    mechanicalAmp: data.mechanicalAmp,
+    mechanicalSpeaker: data.mechanicalSpeaker,
+    mechanicalTrap: data.mechanicalTrap,
     mechanicalAutoBalancingTools: data.mechanicalAutoBalancingTools,
     mechanicalChargeStationInches: data.mechanicalChargeStationInches,
     mechanicalFrameDimensions: data.mechanicalFrameDimensions,
@@ -323,9 +311,7 @@ const getForms = async (teamNumber) => {
       rankPointsEarned: data.rankPointsEarned,
       eventName: data.eventName,
       criticals: data.criticals,
-      totalCubes: (data.teleop.scored.cube.high + data.teleop.scored.cube.mid + data.teleop.scored.cube.low),
-      totalCones: (data.teleop.scored.cone.high + data.teleop.scored.cone.mid + data.teleop.scored.cone.low),
-      totalTeleop: (data.teleop.scored.cube.high + data.teleop.scored.cube.mid + data.teleop.scored.cube.low) + (data.teleop.scored.cone.high + data.teleop.scored.cone.mid + data.teleop.scored.cone.low)
+      totalTeleop: (data.teleop.scored.amp + data.teleop.scored.trap + data.teleop.scored.speaker)
     })
   }))
   return dataArray
