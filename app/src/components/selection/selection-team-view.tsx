@@ -57,14 +57,14 @@ const SelectionTeamView = ({
         }}
         centered
         onClose={() => {
-          close();
+          setMainOpened(false);
           setSelectedTeam("");
         }}
       >
         <DataDisplay
           aggregationData={aggregationData}
           pitFormData={pitFormData}
-          close={close}
+          setMainOpened={setMainOpened}
           setSelectedTeam={setSelectedTeam}
           setFormsOpened={setFormsOpened}
           setImageOpened={setImageOpened}
@@ -136,7 +136,7 @@ const SelectionTeamView = ({
 const DataDisplay = ({
   aggregationData,
   pitFormData,
-  close,
+  setMainOpened,
   setSelectedTeam,
   setFormsOpened,
   setImageOpened,
@@ -144,7 +144,7 @@ const DataDisplay = ({
 }: {
   aggregationData: any;
   pitFormData: any;
-  close: any;
+  setMainOpened: any;
   setSelectedTeam: any;
   setFormsOpened: any;
   setImageOpened: any;
@@ -189,7 +189,7 @@ const DataDisplay = ({
         <div className="flex items-center space-x-2">
           <Button
             onClick={() => {
-              close();
+              setMainOpened(false);
               setSelectedTeam("");
             }}
           >

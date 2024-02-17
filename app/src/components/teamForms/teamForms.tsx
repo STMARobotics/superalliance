@@ -16,7 +16,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { EventSwitcher } from "../event-switcher";
 import { useLocation } from "react-router-dom";
 import TeamList from "./team-list";
-import { useDisclosure } from "@mantine/hooks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import PitFormView from "../pit-form-view";
 import { getPitFormByTeam } from "@/lib/superallianceapi";
@@ -35,7 +34,7 @@ function TeamForms({
   const [pitFormData, setPitFormData] = useState<any>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchContent, setSearchContent] = useState("");
-  const [opened, { open, close }] = useDisclosure(false);
+  const [teamFormsOpened, setTeamFormsOpened] = useState(false);
   const pathname = useLocation().pathname;
   const newEvents = [{ short_name: "All Events", event_code: "all" }].concat(
     events
@@ -45,7 +44,7 @@ function TeamForms({
     setSearchContent(e.target.value);
   };
   useEffect(() => {
-    if (selectedForm) return open();
+    if (selectedForm) return setTeamFormsOpened(true);
   }, [selectedForm]);
   useEffect(() => {
     (async function () {
@@ -59,11 +58,11 @@ function TeamForms({
       <Drawer
         offset={8}
         radius="md"
-        opened={opened}
+        opened={teamFormsOpened}
         position="right"
         onClose={() => {
           setSelectedForm("");
-          close();
+          setTeamFormsOpened(false);
         }}
         title="Form View"
       >
