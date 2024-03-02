@@ -17,5 +17,7 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(console.log("Connected to Mongo!"))
   .catch(console.error);
-exports.handler = (event, context) =>
+exports.handler = (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   awsServerlessExpress.proxy(server, event, context);
+}
