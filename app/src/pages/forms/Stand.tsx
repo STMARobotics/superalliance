@@ -73,7 +73,7 @@ export default function StandForm() {
     if (appSettings?.event !== "none") {
       form.setFieldValue("event", appSettings?.event);
     }
-  });
+  }, [appSettings]);
 
   const criticals = [
     "Robot Died",
