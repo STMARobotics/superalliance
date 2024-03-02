@@ -1,0 +1,41 @@
+const { Router } = require("express");
+
+const commentRouter = Router();
+
+const CommentFormSchema = require("../models/CommentFormSchema");
+const mongoose = require("mongoose");
+
+commentRouter.get("/api/form/comments/formId", async (req, res) => {
+  const formId = req.params?.formId;
+  const data = await CommentFormSchema.find({
+    _id: formId,
+  }).catch((err) => null);
+  if (!data) return res.status(404).json({ error: "Form not found" });
+  return res.send(data[0]);
+});
+
+commentRouter.get("/api/forms/comments", async (req, res) => {
+  const forms = await CommentFormSchema.find({}).sort({
+    _id: -1,
+  });
+  return res.send(forms);
+});
+
+commentRouter.post("/api/form/comments/submit", async (req, res) => {
+  const data = req.body;
+  const sendForm = await new CommentFormSchema({
+    _id: new mongoose.Types.ObjectId(),
+    event: data.event,
+    teamNumber: data.teamNumber,
+    usersName: data.usersName,
+    comments: data.comments,
+  });
+
+  await sendForm.save().catch((err) => {
+    return res.status(500).send(err);
+  });
+
+  return res.send("Submitted Form!");
+});
+
+module.exports = commentRouter;

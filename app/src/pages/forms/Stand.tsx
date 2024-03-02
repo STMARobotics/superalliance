@@ -26,13 +26,15 @@ import { Minus, Plus } from "lucide-react";
 interface StandFormValues {
   event: null | number;
   teamNumber: null | number;
+  autoMiddleNotes: any[];
   autoAmpsNotes: null | number;
   autoSpeakersNotes: null | number;
+  leave: boolean;
   park: boolean;
   teleAmpsNotes: null | number;
   teleSpeakersNotes: null | number;
+  teleAmplifiedSpeakersNotes: null | number;
   teleTrapsNotes: null | number;
-  timesAmpedUsed: null | number;
   onstage: boolean;
   onstageSpotlit: boolean;
   harmony: boolean;
@@ -85,13 +87,15 @@ export default function StandForm() {
     initialValues: {
       event: null,
       teamNumber: null,
+      autoMiddleNotes: [],
       autoAmpsNotes: 0,
       autoSpeakersNotes: 0,
+      leave: false,
       park: false,
       teleAmpsNotes: 0,
       teleSpeakersNotes: 0,
+      teleAmplifiedSpeakersNotes: 0,
       teleTrapsNotes: 0,
-      timesAmpedUsed: 0,
       onstage: false,
       onstageSpotlit: false,
       harmony: false,
@@ -112,8 +116,8 @@ export default function StandForm() {
       autoSpeakersNotes: isNotEmpty("This cannot be empty"),
       teleAmpsNotes: isNotEmpty("This cannot be empty"),
       teleSpeakersNotes: isNotEmpty("This cannot be empty"),
+      teleAmplifiedSpeakersNotes: isNotEmpty("This cannot be empty"),
       teleTrapsNotes: isNotEmpty("This cannot be empty"),
-      timesAmpedUsed: isNotEmpty("This cannot be empty"),
       rpEarned: isNotEmpty("This cannot be empty"),
     },
   });
@@ -205,6 +209,35 @@ export default function StandForm() {
           Autonomous
         </div>
 
+        <Checkbox.Group
+          defaultValue={[]}
+          label="Did the robot touch the notes from the middle of the field?"
+          description="1 being closest to the scoring table, 5 being farthest away. (Choose in the order of being touched)"
+          className="pb-4"
+          {...form.getInputProps("autoMiddleNotes")}
+        >
+          <div className="mt-3 flex flex-col gap-2">
+            {form.values?.autoMiddleNotes.length > 0 && (
+              <div className="text-gray-300 text-md font-bold leading-tight tracking-tighter lg:leading-[1.1]">
+                {form.values?.autoMiddleNotes.join(" -> ")}
+              </div>
+            )}
+            <Checkbox
+              size="md"
+              value="1"
+              label="Position 1 (Closest note to Scoring Table)"
+            />
+            <Checkbox size="md" value="2" label="Position 2" />
+            <Checkbox size="md" value="3" label="Position 3" />
+            <Checkbox size="md" value="4" label="Position 4" />
+            <Checkbox
+              size="md"
+              value="5"
+              label="Position 5 (Farthest note from Scoring Table)"
+            />
+          </div>
+        </Checkbox.Group>
+
         <div className="flex flex-row justify-between items-center w-full gap-5">
           <ActionIcon
             size={"2rem"}
@@ -224,7 +257,7 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Notes Scored in Amps"
+            label="Amp Notes Scored"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -265,7 +298,7 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Notes Scored in Speakers"
+            label="Speaker Notes Scored"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -290,8 +323,9 @@ export default function StandForm() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Did the robot park?"
-          {...form.getInputProps("park", { type: "checkbox" })}
+          label="Did the robot LEAVE?"
+          description="The robot's bumpers fully left the starting area at any point during the autonomous period."
+          {...form.getInputProps("leave", { type: "checkbox" })}
         />
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -317,7 +351,7 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Notes Scored in Amps"
+            label="Amp Notes Scored"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -358,7 +392,7 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Notes Scored in Speakers"
+            label="Speaker Notes Scored"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -373,6 +407,74 @@ export default function StandForm() {
               form.setFieldValue(
                 "teleSpeakersNotes",
                 Number(form.values.teleSpeakersNotes! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            style={{
+              outline: "2px solid #00ffea",
+              outlineOffset: "-2px",
+              boxShadow: "inset 0 0 6px #00ffea",
+            }}
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleAmplifiedSpeakersNotes !== null &&
+                form.values.teleAmplifiedSpeakersNotes > 0
+              ) {
+                form.setFieldValue(
+                  "teleAmplifiedSpeakersNotes",
+                  Number(form.values.teleAmplifiedSpeakersNotes! - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label={
+              <>
+                <span
+                  className="text-[#00ffea]"
+                  style={{ textShadow: "0 0 4px #00ffea" }}
+                >
+                  Amplified
+                </span>{" "}
+                Speaker Notes Scored
+              </>
+            }
+            placeholder="0"
+            className="pb-4 w-full"
+            styles={{
+              input: {
+                outline: "2px solid #00ffea",
+                outlineOffset: "-2px",
+                boxShadow: "inset 0 0 6px #00ffea",
+              },
+            }}
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            {...form.getInputProps("teleAmplifiedSpeakersNotes")}
+          />
+          <ActionIcon
+            style={{
+              outline: "2px solid #00ffea",
+              outlineOffset: "-2px",
+              boxShadow: "inset 0 0 6px #00ffea",
+            }}
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleAmplifiedSpeakersNotes",
+                Number(form.values.teleAmplifiedSpeakersNotes! + 1)
               );
             }}
           >
@@ -399,7 +501,7 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Notes Scored in Traps"
+            label="Trap Notes Scored"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -421,51 +523,19 @@ export default function StandForm() {
           </ActionIcon>
         </div>
 
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.timesAmpedUsed !== null &&
-                form.values.timesAmpedUsed > 0
-              ) {
-                form.setFieldValue(
-                  "timesAmpedUsed",
-                  Number(form.values.timesAmpedUsed! - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="How many times were the notes amped?"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            {...form.getInputProps("timesAmpedUsed")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "timesAmpedUsed",
-                Number(form.values.timesAmpedUsed! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Did the robot PARK?"
+          description="Any part of the robot's bumpers were in the stage zone at the end of the match."
+          {...form.getInputProps("park", { type: "checkbox" })}
+        />
 
         <Checkbox
           className="pb-4"
           size="md"
-          label="Did the robot go onstage?"
+          label="Was the robot ONSTAGE?"
+          description="The robot successfully climbed and earned climb points."
           {...form.getInputProps("onstage", { type: "checkbox" })}
         />
 
@@ -481,7 +551,7 @@ export default function StandForm() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Was harmony achieved?"
+          label="Was HARMONY achieved?"
           {...form.getInputProps("harmony", { type: "checkbox" })}
         />
 
@@ -588,7 +658,12 @@ export default function StandForm() {
         />
 
         <Group justify="center" mt="md">
-          <Button type="submit" fullWidth h={"3rem"} color="white" c="black">
+          <Button
+            type="submit"
+            fullWidth
+            h={"3rem"}
+            className="bg-white text-black"
+          >
             Submit
           </Button>
         </Group>

@@ -35,6 +35,17 @@ export function MainNav() {
             Stand Form
           </Link>
           <Link
+            to="/new/comments"
+            className={cn(
+              "transition-colors hover:text-foreground/80",
+              pathname?.startsWith("/new/comments")
+                ? "text-foreground"
+                : "text-foreground/60"
+            )}
+          >
+            Comments Form
+          </Link>
+          <Link
             to="/new/pit"
             className={cn(
               "transition-colors hover:text-foreground/80",

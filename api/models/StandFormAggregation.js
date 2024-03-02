@@ -1,6 +1,6 @@
 const StandFormSchema = require("./StandFormSchema");
 
-const PitFormAggregation = (eventId) => {
+const StandFormAggregation = (eventId) => {
   let pipeline = [
     {
       $addFields: {
@@ -19,6 +19,16 @@ const PitFormAggregation = (eventId) => {
               $multiply: ["$teleSpeakersNotes", 2],
             },
             {
+              $multiply: ["$teleTrapsNotes", 2],
+            },
+            {
+              $cond: {
+                if: "$leave",
+                then: 1,
+                else: 0,
+              },
+            },
+            {
               $cond: {
                 if: "$park",
                 then: 1,
@@ -34,7 +44,7 @@ const PitFormAggregation = (eventId) => {
             },
             {
               $cond: {
-                if: "$onstageSpotlitk",
+                if: "$onstageSpotlit",
                 then: 1,
                 else: 0,
               },
@@ -46,19 +56,22 @@ const PitFormAggregation = (eventId) => {
                 else: 0,
               },
             },
-            {
-              $cond: {
-                if: "$teleTrapsNotes",
-                then: 5,
-                else: 0,
-              },
-            },
           ],
         },
         autoscore: {
           $add: [
             {
               $multiply: ["$autoAmpsNotes", 2],
+            },
+            {
+              $multiply: ["$autoSpeakersNotes", 5],
+            },
+            {
+              $cond: {
+                if: "$leave",
+                then: 1,
+                else: 0,
+              },
             },
           ],
         },
@@ -69,13 +82,6 @@ const PitFormAggregation = (eventId) => {
             },
             {
               $multiply: ["$teleSpeakersNotes", 2],
-            },
-            {
-              $cond: {
-                if: "$teleTrapsNotes",
-                then: 5,
-                else: 0,
-              },
             },
           ],
         },
@@ -154,8 +160,60 @@ const PitFormAggregation = (eventId) => {
           totalAutoScore: {
             $sum: "$autoscore",
           },
+          matchTeleScores: {
+            $push: {
+              $cond: [
+                { $ne: ["$telescore", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  teleScore: "$telescore",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchAutoScores: {
+            $push: {
+              $cond: [
+                { $ne: ["$autoscore", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  autoScore: "$autoscore",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchTotalScores: {
+            $push: {
+              $cond: [
+                { $ne: ["$totalScore", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  totalScore: "$totalScore",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
           avgScore: {
             $avg: "$totalScore",
+          },
+          autoMiddleNotes: {
+            $push: {
+              $cond: [
+                { $ne: ["$autoMiddleNotes", []] },
+                {
+                  matchNumber: "$matchNumber",
+                  autoMiddleNotes: "$autoMiddleNotes",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
           },
           avgAutoAmp: {
             $avg: "$autoAmpsNotes",
@@ -244,7 +302,19 @@ const PitFormAggregation = (eventId) => {
           TeamNumber: 1,
           totalScore: { $round: ["$totalScore", 2] },
           totalAutoScore: { $round: ["$totalAutoScore", 2] },
+          matchAutoScore: {
+            $concatArrays: "$matchAutoScores",
+          },
+          matchTeleScore: {
+            $concatArrays: "$matchTeleScores",
+          },
+          matchTotalScore: {
+            $concatArrays: "$matchTotalScores",
+          },
           avgScore: { $round: ["$avgScore", 2] },
+          middleNotes: {
+            $concatArrays: "$autoMiddleNotes",
+          },
           avgAutoAmp: { $round: ["$avgAutoAmp", 2] },
           avgAutoSpeaker: { $round: ["$avgAutoSpeaker", 2] },
           avgTeleAmp: { $round: ["$avgTeleAmp", 2] },
@@ -288,4 +358,4 @@ const PitFormAggregation = (eventId) => {
   return StandFormSchema.aggregate(pipeline);
 };
 
-module.exports = PitFormAggregation;
+module.exports = StandFormAggregation;

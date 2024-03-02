@@ -81,6 +81,9 @@ export function MobileNav() {
               <MobileLink href={"/new/stand"} onOpenChange={setOpen}>
                 Stand Form
               </MobileLink>
+              <MobileLink href={"/new/comments"} onOpenChange={setOpen}>
+                Comments Form
+              </MobileLink>
               <MobileLink href={"/new/pit"} onOpenChange={setOpen}>
                 Pit Form
               </MobileLink>

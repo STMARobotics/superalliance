@@ -11,6 +11,7 @@ import {
   ClipboardList,
   ImageIcon,
   Medal,
+  Route,
   Tally5,
   XCircle,
 } from "lucide-react";
@@ -20,6 +21,8 @@ import { IconRobot } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import SelectionPitFormView from "./selection-pit-form-view";
+import TeamMatchGraph from "../graphs/team-match-graph";
+import SelectionMiddleNotesPath from "./selection-middle-notes-path";
 
 const SelectionTeamView = ({
   aggregationData,
@@ -35,6 +38,7 @@ const SelectionTeamView = ({
   const [mainOpened, setMainOpened] = useState(false);
   const [imageOpened, setImageOpened] = useState(false);
   const [criticalsOpened, setCriticalsOpened] = useState(false);
+  const [middleNotesOpened, setMiddleNotesOpened] = useState(false);
 
   useEffect(() => {
     if (aggregationData) return setMainOpened(true);
@@ -69,6 +73,7 @@ const SelectionTeamView = ({
           setFormsOpened={setFormsOpened}
           setImageOpened={setImageOpened}
           setCriticalsOpened={setCriticalsOpened}
+          setMiddleNotesOpened={setMiddleNotesOpened}
         />
       </Modal>
       <Modal
@@ -129,6 +134,32 @@ const SelectionTeamView = ({
           />
         )}
       </Drawer>
+      <Drawer
+        classNames={{
+          content: "bg-[#18181b]",
+          header: "bg-[#18181b]",
+        }}
+        opened={middleNotesOpened}
+        withCloseButton={true}
+        title={"Middle Notes Path"}
+        onClose={() => setMiddleNotesOpened(false)}
+        radius={"md"}
+        position="right"
+        size={"auto"}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+      >
+        {aggregationData?.middleNotes.length > 0 && (
+          <SelectionMiddleNotesPath
+            middleNotes={aggregationData?.middleNotes?.sort(
+              (a: any, b: any) => a.matchNumber - b.matchNumber
+            )}
+            alliance="red"
+          />
+        )}
+      </Drawer>
     </>
   );
 };
@@ -141,6 +172,7 @@ const DataDisplay = ({
   setFormsOpened,
   setImageOpened,
   setCriticalsOpened,
+  setMiddleNotesOpened,
 }: {
   aggregationData: any;
   pitFormData: any;
@@ -149,6 +181,7 @@ const DataDisplay = ({
   setFormsOpened: any;
   setImageOpened: any;
   setCriticalsOpened: any;
+  setMiddleNotesOpened: any;
 }) => {
   const averages = [
     { label: "Average Score", value: aggregationData?.avgScore },
@@ -165,6 +198,7 @@ const DataDisplay = ({
     { label: "Average Trap Notes", value: aggregationData?.AvgTrapNotes },
     { label: "Average Under Stage", value: aggregationData?.AvgUnderStage },
     { label: "Onstage Percentage", value: aggregationData?.onstagePCT },
+    { label: "Leave Percentage", value: aggregationData?.leavePCT },
     { label: "Park Percentage", value: aggregationData?.parkPCT },
     { label: "Stockpile Percentage", value: aggregationData?.StockpilePCT },
     {
@@ -372,6 +406,20 @@ const DataDisplay = ({
                     </Button>
                     <Button
                       onClick={() => {
+                        if (
+                          !aggregationData?.middleNotes ||
+                          aggregationData?.middleNotes.length == 0
+                        )
+                          return toast.error("No Middle Note Data Found!");
+                        setMiddleNotesOpened(true);
+                      }}
+                      className="w-full h-14 text-lg font-bold"
+                    >
+                      <Route className="mr-2 h-6 w-6" />
+                      View Auto Middle Path
+                    </Button>
+                    <Button
+                      onClick={() => {
                         if (aggregationData?.Criticals.length == 0)
                           return toast.error("No Criticals Found!");
                         setCriticalsOpened(true);
@@ -400,7 +448,23 @@ const DataDisplay = ({
           value="graphs"
           className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"
         >
-          coming soon lol
+          <h1 className="text-xl font-extrabold tracking-tight lg:text-xl text-center">
+            Match Graphs - Tele Score
+          </h1>
+          {aggregationData?.matchTotalScore?.length !== 0 ? (
+            <TeamMatchGraph
+              data={aggregationData?.matchTeleScore?.sort(
+                (a: any, b: any) => a.matchNumber - b.matchNumber
+              )}
+              statistic="Tele Score"
+            />
+          ) : (
+            <div className="flex justify-center items-center">
+              <h1 className="text-3xl font-bold tracking-tight text-center">
+                No Match Data Found!
+              </h1>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

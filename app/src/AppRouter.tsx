@@ -16,6 +16,7 @@ import DataTeams from "./pages/data/teams/ViewTeams";
 import PitForm from "./pages/forms/Pit";
 import TeamSelection from "./pages/analysis/selection/TeamSelection";
 import AdministrationSettings from "./pages/admin/Settings";
+import CommentsForm from "./pages/forms/Comments";
 
 function AppRouter() {
   const { user } = useUser();
@@ -33,6 +34,19 @@ function AppRouter() {
             <>
               <SignedIn>
                 <StandForm />
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/login" />
+              </SignedOut>
+            </>
+          }
+        />
+        <Route
+          path="/new/comments"
+          element={
+            <>
+              <SignedIn>
+                <CommentsForm />
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />

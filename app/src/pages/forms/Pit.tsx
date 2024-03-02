@@ -41,7 +41,7 @@ export default function PitForm() {
           label: event.short_name,
           value: event.event_code,
         };
-      })
+      }),
     );
   }, [events]);
 
@@ -96,11 +96,11 @@ export default function PitForm() {
   const submitForm = (values: any) => {
     (async function () {
       const pitForm = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.teamNumber}`
+        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.teamNumber}`,
       );
       if (pitForm)
         return toast.error(
-          "A pit form for this team has already been submitted!"
+          "A pit form for this team has already been submitted!",
         );
 
       if (!file) return toast.error("Please upload an image!");
@@ -136,7 +136,7 @@ export default function PitForm() {
     })();
   };
   return (
-    <div className="pt-3 flex flex-col w-full justify-center items-center">
+    <div className="flex w-full flex-col items-center justify-center pt-3">
       <>
         <Affix position={{ bottom: 20, right: 20 }}>
           <Transition transition="slide-up" mounted={scroll.y > 0}>
@@ -179,7 +179,7 @@ export default function PitForm() {
           {...pitForm.getInputProps("teamNumber")}
         />
 
-        <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
+        <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Strategy
         </div>
 
@@ -208,7 +208,7 @@ export default function PitForm() {
           />
         )}
 
-        <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
+        <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Mechanical/Electrical
         </div>
 
@@ -263,7 +263,7 @@ export default function PitForm() {
           {...pitForm.getInputProps("backupSwerve", { type: "checkbox" })}
         />
 
-        <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
+        <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Driveteam/Competition
         </div>
 
@@ -432,7 +432,7 @@ export default function PitForm() {
           {...pitForm.getInputProps("robotIssues")}
         />
 
-        <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
+        <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           General
         </div>
 
@@ -514,7 +514,12 @@ export default function PitForm() {
         )}
 
         <Group justify="center" mt="md">
-          <Button type="submit" fullWidth h={"3rem"}>
+          <Button
+            type="submit"
+            fullWidth
+            h={"3rem"}
+            className="bg-white text-black"
+          >
             Submit
           </Button>
         </Group>

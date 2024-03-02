@@ -15,6 +15,7 @@ app/dist-ssr
 .env
 
 .vite
+.zed
 
 package-lock.json
 yarn.lock

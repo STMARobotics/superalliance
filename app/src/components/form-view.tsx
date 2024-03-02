@@ -68,6 +68,14 @@ const FormView = ({ formData }: { formData: any }) => {
       />
 
       <Checkbox
+        checked={formData?.leave}
+        readOnly
+        className="pb-4"
+        size="md"
+        label="Did the robot leave the starting area?"
+      />
+
+      <Checkbox
         checked={formData?.park}
         readOnly
         className="pb-4"
