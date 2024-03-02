@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - v2
+    paths:
+      - 'app/**'
 jobs:
   run:
     runs-on: ubuntu-latest
