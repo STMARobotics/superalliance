@@ -16,11 +16,10 @@ const mongoose = require("mongoose");
 
 exports.handler = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
-
   mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_URI, { family: 4 })
   .then(console.log("Connected to Mongo!"))
   .catch(console.error);
-  
+
   awsServerlessExpress.proxy(server, event, context);
 }
