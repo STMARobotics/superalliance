@@ -13,11 +13,14 @@ const binaryMimeTypes = [
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
 const mongoose = require("mongoose");
 
-mongoose
+
+exports.handler = (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  mongoose
   .connect(process.env.MONGODB_URI)
   .then(console.log("Connected to Mongo!"))
   .catch(console.error);
-exports.handler = (event, context) => {
-  context.callbackWaitsForEmptyEventLoop = false;
+  
   awsServerlessExpress.proxy(server, event, context);
 }
