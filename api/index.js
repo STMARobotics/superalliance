@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
 const fs = require("node:fs");
 const path = require("node:path");
 var cors = require("cors");
@@ -33,10 +32,5 @@ app.use(commentRouter);
 app.use(pitFormRouter);
 app.use(teamRouter);
 app.use(settingsRouter);
-
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(console.log("Connected to Mongo!"))
-  .catch(console.error);
 
 module.exports = app;
