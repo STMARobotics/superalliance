@@ -100,11 +100,31 @@ export function SuperAllianceProvider(props: any) {
 
   useEffect(() => {
     (async function () {
-      setForms(await getForms());
-      setTeams(await getTeams());
-      setEvents(await getEvents(appConfig.teamNumber, appConfig.year));
-      setTotalAggregation(await getTotalAggregation());
       setAppSettings(await getAppSettings());
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      setForms(await getForms());
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      setTeams(await getTeams());
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      setEvents(await getEvents(appConfig.teamNumber, appConfig.year));
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      setTotalAggregation(await getTotalAggregation());
     })();
   }, []);
 

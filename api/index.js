@@ -23,6 +23,7 @@ const aggregationRouter = require("./routes/aggregationRouter");
 const settingsRouter = require("./routes/settingsRouter");
 const commentRouter = require("./routes/commentRouter");
 app.use(cors(corsOptions));
+app.options("/api/*", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(aggregationRouter);
@@ -32,8 +33,6 @@ app.use(commentRouter);
 app.use(pitFormRouter);
 app.use(teamRouter);
 app.use(settingsRouter);
-
-app.options("/api/*", cors());
 
 mongoose
   .connect(process.env.MONGODB_URI)
