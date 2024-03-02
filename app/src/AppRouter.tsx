@@ -22,6 +22,7 @@ function AppRouter() {
   const { user } = useUser();
   return (
     <Router>
+      {/* HEADER */}
       <Header />
       <Routes>
         {/* CLIENT ROUTES */}
