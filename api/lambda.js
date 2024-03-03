@@ -51,10 +51,13 @@ let connection = null;
 
 exports.handler = (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  connection = mongoose
-  .connect(process.env.MONGODB_URI, { family: 4, maxPoolSize: 10 })
-  .then(console.log("Connected to Mongo!"))
-  .catch(console.error);
 
+  if(connection == null) {
+    connection = mongoose
+    .connect(process.env.MONGODB_URI, { family: 4, maxPoolSize: 10 })
+    .then(console.log("Connected to Mongo!"))
+    .catch(console.error);
+  }
+  
   awsServerlessExpress.proxy(server, event, context);
 }
