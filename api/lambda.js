@@ -40,6 +40,8 @@ exports.handler = async function(event, context) {
     // to avoid multiple function calls creating new connections
     await connection;
   }
+
+  awsServerlessExpress.proxy(server, event, context);
 }
 
 // exports.handler = (event, context) => {
