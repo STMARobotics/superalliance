@@ -27,7 +27,7 @@ exports.handler = async function(event, context) {
   
   if (connection == null) {
 
-    connection = mongoose.connect(uri, {family: 4, serverSelectionTimeoutMS: 5000})
+    connection = mongoose.connect(process.env.MONGODB_URI, {family: 4, serverSelectionTimeoutMS: 5000})
       .then(() => {        
         console.log("Connected to Mongo!");
         return mongoose;
