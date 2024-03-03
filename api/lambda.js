@@ -38,7 +38,7 @@ exports.handler = async function(event, context) {
 
     // `await`ing connection after assigning to the `conn` variable
     // to avoid multiple function calls creating new connections
-    await connection.asPromise();
+    await connection;
   }
 }
 
