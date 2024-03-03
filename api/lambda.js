@@ -26,15 +26,20 @@ exports.handler = async function(event, context) {
   // potentially expensive process of connecting to MongoDB every time.
   
   if (connection == null) {
-    // connection = mongoose.createConnection(uri, {
-    //   // and tell the MongoDB driver to not wait more than 5 seconds
-    //   // before erroring out if it isn't connected
-    //   serverSelectionTimeoutMS: 5000
-    // });
-    connection = mongoose
-    .connect(process.env.MONGODB_URI, { family: 4 })
-    .then(console.log("Connected to Mongo!"))
-    .catch(console.error);
+
+    connection = mongoose.connect(uri, {family: 4, serverSelectionTimeoutMS: 5000})
+      .then(() => {        
+        console.log("Connected to Mongo!");
+        return mongoose;
+      })
+      .catch(error => {
+        console.error("Error connecting to MongoDB:", err);
+      });
+
+    // connection = mongoose
+    // .connect(process.env.MONGODB_URI, { family: 4 })
+    // .then(console.log("Connected to Mongo!"))
+    // .catch(console.error);
 
     // `await`ing connection after assigning to the `conn` variable
     // to avoid multiple function calls creating new connections
