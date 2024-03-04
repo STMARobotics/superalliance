@@ -46,7 +46,7 @@ exports.handler = (event, context) => {
   // awsServerlessExpress.proxy(server, event, context);
 }
 
-export default function connectDatabase() {
+function connectDatabase() {
   return new Promise((resolve, reject) => {
     mongoose.Promise = global.Promise;
     mongoose.connection
