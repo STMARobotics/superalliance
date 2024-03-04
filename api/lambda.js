@@ -78,18 +78,7 @@ function connectDatabase() {
       // function calls thanks to `callbackWaitsForEmptyEventLoop`.
       // This means our Lambda function doesn't have to go through the
       // potentially expensive process of connecting to MongoDB every time.
-      cachedMongoConn = mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        connectTimeoutMS: 15000,
-        // Buffering means mongoose will queue up operations if it gets
-        // disconnected from MongoDB and send them when it reconnects.
-        // With serverless, better to fail fast if not connected.
-        bufferCommands: false, // Disable mongoose buffering
-        bufferMaxEntries: 0, // and MongoDB driver buffering
-      });
+      cachedMongoConn = mongoose.connect(process.env.MONGODB_URI);
     } else {
       console.log('MongoDB: using cached database instance');
       resolve(cachedMongoConn);
