@@ -26,6 +26,7 @@ exports.handler = async function(event, context) {
     .connect(process.env.MONGODB_URI, { maxPoolSize: 10, socketTimeoutMS: 60000 })
     .then(console.log("Connected to Mongo!"))
     .catch(console.error);
+    await connection;
   } else {
     console.log("Connection reused by Lambda");
   }
