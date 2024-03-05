@@ -12,8 +12,8 @@ const binaryMimeTypes = [
 ];
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
 const mongoose = require("mongoose");
-// let connection = null;
-let cachedMongoConn = null;
+let connection = null;
+// let cachedMongoConn = null;
 
 exports.handler = (event, context) => {
   // This makes the Lambda reuse the connection between function calls.
