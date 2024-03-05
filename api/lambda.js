@@ -22,7 +22,7 @@ exports.handler = (event, context, callback) => {
   // Because connection is in the global scope, Lambda may retain it between
   // function calls thanks to `callbackWaitsForEmptyEventLoop`.
   if(connection == null) {
-    connection = mongoose.connect(process.env.MONGODB_URI, { maxPoolSize: 10, socketTimeoutMS: 60000 })
+    connection = mongoose.connect(process.env.MONGODB_URI, { maxPoolSize: 25, socketTimeoutMS: 60000 })
       .then(() => {
         console.log("Connected to Mongo!");
         awsServerlessExpress.proxy(server, event, context);
