@@ -78,7 +78,7 @@ function connectDatabase() {
       // function calls thanks to `callbackWaitsForEmptyEventLoop`.
       // This means our Lambda function doesn't have to go through the
       // potentially expensive process of connecting to MongoDB every time.
-      cachedMongoConn = mongoose.connect(process.env.MONGODB_URI);
+      cachedMongoConn = mongoose.connect(process.env.MONGODB_URI, { maxPoolSize: 10, socketTimeoutMS: 60000 });
     } else {
       console.log('MongoDB: using cached database instance');
       resolve(cachedMongoConn);
