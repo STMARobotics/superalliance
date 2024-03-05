@@ -15,7 +15,7 @@ const mongoose = require("mongoose");
 let connection = null;
 // let cachedMongoConn = null;
 
-exports.handler = (event, context) => {
+exports.handler = (event, context, callback) => {
   // This makes the Lambda reuse the connection between function calls.
   // See https://www.mongodb.com/blog/post/serverless-development-with-nodejs-aws-lambda-mongodb-atlas
   context.callbackWaitsForEmptyEventLoop = false;
