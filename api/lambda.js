@@ -10,12 +10,16 @@ const binaryMimeTypes = [
   "image/png",
   "image/svg+xml",
 ];
-const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
-const mongoose = require("mongoose");
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(console.log("Connected to Mongo!"))
-  .catch(console.error);
-exports.handler = (event, context) =>
+const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
+const mongoConnectPromise = require('./mongo-connect');
+let connection = null;
+
+exports.handler = (event, context) => {
+  getConnection();
   awsServerlessExpress.proxy(server, event, context);
+}
+
+async function getConnection() {
+  connection = await mongoConnectPromise;
+}
