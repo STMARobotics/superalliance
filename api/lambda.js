@@ -12,7 +12,7 @@ const binaryMimeTypes = [
 ];
 
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
-const mongoConnectPromise = require('./mongodb-connect');
+const mongoConnectPromise = require('./mongo-connect');
 let connection = null;
 
 module.exports.handler = async function(event, context) {
