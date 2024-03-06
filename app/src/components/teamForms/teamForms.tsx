@@ -82,7 +82,7 @@ function TeamForms({
       <TooltipProvider delayDuration={0}>
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-full max-h-[800px] items-stretch"
+          className="h-full items-stretch"
         >
           <ResizablePanel
             collapsible={true}
@@ -188,7 +188,7 @@ function TeamForms({
                   </TabsList>
                 </div>
                 <TabsContent value="stand" className="m-0">
-                  <ScrollArea className="h-full p-10">
+                  <ScrollArea className="h-[calc(100vh-7.85rem)]">
                     <FormList
                       forms={forms?.filter(
                         (form: any) => form.teamNumber == selectedTeam

@@ -20,8 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { DataTableToolbar } from "@/components/sorting/sorting-toolbar";
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -54,7 +52,6 @@ export function SortingTeamsTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

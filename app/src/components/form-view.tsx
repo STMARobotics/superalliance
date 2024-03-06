@@ -2,9 +2,13 @@ import { Checkbox, MultiSelect, TextInput, Textarea } from "@mantine/core";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { useUser } from "@clerk/clerk-react";
 
 const FormView = ({ formData }: { formData: any }) => {
   const { teams } = useSuperAlliance();
+  const { user } = useUser();
+
+  const isAdmin = user?.organizationMemberships[0]?.role == "org:admin";
 
   return (
     <>
@@ -13,9 +17,15 @@ const FormView = ({ formData }: { formData: any }) => {
       </div>
 
       <div className="flex justify-center items-center pb-4">
-        <Badge className="text-sm" variant="outline">
-          Read-only
-        </Badge>
+        {isAdmin ? (
+          <Badge className="text-sm" variant="outline">
+            Admin Mode
+          </Badge>
+        ) : (
+          <Badge className="text-sm" variant="outline">
+            Read-only
+          </Badge>
+        )}
       </div>
 
       <div className="text-red-500 pb-6 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
@@ -28,9 +38,11 @@ const FormView = ({ formData }: { formData: any }) => {
           }`}
       </div>
 
-      <div className="text-gray-400 pb-8 text-center text-xl font-bold leading-tight tracking-tighter md:text-xl lg:leading-[1.1]">
-        Form ID: {formData?._id}{" "}
-      </div>
+      {isAdmin && (
+        <div className="text-gray-400 pb-8 text-center text-xl font-bold leading-tight tracking-tighter md:text-xl lg:leading-[1.1]">
+          Form ID: {formData?._id}{" "}
+        </div>
+      )}
 
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
         Pre-Game
@@ -38,6 +50,13 @@ const FormView = ({ formData }: { formData: any }) => {
       <TextInput
         value={formData?.usersName}
         label="User's Name"
+        className="pb-4"
+        readOnly
+      />
+
+      <TextInput
+        value={formData?.matchNumber}
+        label="Match Number"
         className="pb-4"
         readOnly
       />
@@ -52,6 +71,35 @@ const FormView = ({ formData }: { formData: any }) => {
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
         Autonomous
       </div>
+
+      <Checkbox.Group
+        defaultValue={[]}
+        label="Did the robot touch the notes from the middle of the field?"
+        description="1 being closest to the scoring table, 5 being farthest away. (Choose in the order of being touched)"
+        className="pb-4"
+        value={formData?.autoMiddleNotes}
+      >
+        <div className="mt-3 flex flex-col gap-2">
+          {formData?.autoMiddleNotes.length > 0 && (
+            <div className="text-gray-300 text-md font-bold leading-tight tracking-tighter lg:leading-[1.1]">
+              {formData?.autoMiddleNotes.join(" -> ")}
+            </div>
+          )}
+          <Checkbox
+            size="md"
+            value="1"
+            label="Position 1 (Closest note to Scoring Table)"
+          />
+          <Checkbox size="md" value="2" label="Position 2" />
+          <Checkbox size="md" value="3" label="Position 3" />
+          <Checkbox size="md" value="4" label="Position 4" />
+          <Checkbox
+            size="md"
+            value="5"
+            label="Position 5 (Farthest note from Scoring Table)"
+          />
+        </div>
+      </Checkbox.Group>
 
       <TextInput
         value={formData?.autoAmpsNotes}
@@ -72,15 +120,8 @@ const FormView = ({ formData }: { formData: any }) => {
         readOnly
         className="pb-4"
         size="md"
-        label="Did the robot leave the starting area?"
-      />
-
-      <Checkbox
-        checked={formData?.park}
-        readOnly
-        className="pb-4"
-        size="md"
-        label="Did the robot park?"
+        label="Did the robot LEAVE?"
+        description="The robot's bumpers fully left the starting area at any point during the autonomous period."
       />
 
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -90,22 +131,48 @@ const FormView = ({ formData }: { formData: any }) => {
       <TextInput
         value={formData?.teleAmpsNotes}
         readOnly
-        label="Notes Scored in Amps"
+        label="Amp Notes Scored"
         className="pb-4"
       />
 
       <TextInput
         value={formData?.teleSpeakersNotes}
         readOnly
-        label="Notes Scored in Speakers"
+        label="Speaker Notes Scored"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.teleAmplifiedSpeakersNotes}
+        readOnly
+        label={
+          <>
+            <span
+              className="text-[#e03131]"
+              style={{ textShadow: "0 0 4px #e03131" }}
+            >
+              Amplified
+            </span>{" "}
+            Speaker Notes Scored
+          </>
+        }
         className="pb-4"
       />
 
       <TextInput
         value={formData?.teleTrapsNotes}
         readOnly
-        label="Notes Scored in Traps"
+        label="Trap Notes Scored"
         className="pb-4"
+      />
+
+      <Checkbox
+        checked={formData?.park}
+        readOnly
+        className="pb-4"
+        size="md"
+        label="Did the robot PARK?"
+        description="Any part of the robot's bumpers were in the stage zone at the end of the match."
       />
 
       <Checkbox
@@ -113,23 +180,26 @@ const FormView = ({ formData }: { formData: any }) => {
         readOnly
         className="pb-4"
         size="md"
-        label="Did the robot go onstage?"
+        label="Was the robot ONSTAGE?"
+        description="The robot successfully climbed and earned climb points."
       />
 
-      <Checkbox
-        checked={formData?.onstageSpotlit}
-        readOnly
-        className="pb-4 ml-7"
-        size="md"
-        label="Was it spotlit?"
-      />
+      {formData?.onstage && (
+        <Checkbox
+          checked={formData?.onstageSpotlit}
+          readOnly
+          className="pb-4 ml-7"
+          size="md"
+          label="Was it spotlit?"
+        />
+      )}
 
       <Checkbox
         checked={formData?.harmony}
         readOnly
         className="pb-4"
         size="md"
-        label="Was harmony achieved?"
+        label="Was HARMONY achieved?"
       />
 
       <Checkbox
@@ -145,14 +215,18 @@ const FormView = ({ formData }: { formData: any }) => {
       </div>
 
       <MultiSelect
-        value={formData?.criticals}
+        value={
+          formData?.criticals?.length > 0
+            ? formData?.criticals
+            : ["No criticals"]
+        }
         readOnly
         label="Criticals"
         className="pb-4"
       />
 
       <Textarea
-        value={formData?.comments}
+        value={formData?.comments ? formData?.comments : "No comments."}
         readOnly
         label="Comments?"
         className="pb-4"

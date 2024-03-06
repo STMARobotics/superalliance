@@ -14,6 +14,17 @@ formRouter.get("/api/form/stand/:formId", async (req, res) => {
   return res.send(data[0]);
 });
 
+formRouter.delete("/api/form/stand/:formId", async (req, res) => {
+  const formId = req.params?.formId;
+  await StandFormSchema.deleteOne({
+    _id: formId,
+  })
+    .then(() => {
+      return res.send("Form deleted successfully.");
+    })
+    .catch((err) => res.status(500).json({ error: err.message }));
+});
+
 formRouter.get("/api/forms/stand", async (req, res) => {
   const forms = await StandFormSchema.find({}).sort({
     _id: -1,
