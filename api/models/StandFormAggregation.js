@@ -365,7 +365,7 @@ const StandFormAggregation = (eventId) => {
           comments: {
             $push: {
               $cond: [
-                { $ne: ["$comments", []] },
+                { $ne: ["$comments", ""] },
                 {
                   matchNumber: "$matchNumber",
                   comments: "$comments",

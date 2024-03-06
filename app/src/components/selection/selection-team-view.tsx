@@ -462,6 +462,7 @@ const DataDisplay = ({
                     </Button>
                     <Button
                       onClick={() => {
+                        console.log(aggregationData?.comments);
                         if (aggregationData?.comments.length == 0)
                           return toast.error("No Comments Found!");
                         setCommentsOpened(true);
@@ -482,7 +483,7 @@ const DataDisplay = ({
                       onClick={() => {
                         if (
                           !aggregationData?.middleNotes ||
-                          aggregationData?.middleNotes.length == 0
+                          aggregationData?.middleNotes?.length == 0
                         )
                           return toast.error("No Middle Note Data Found!");
                         setMiddleNotesOpened(true);
