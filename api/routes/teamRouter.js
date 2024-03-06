@@ -26,6 +26,9 @@ teamRouter.get("/api/listTeams", async (req, res) => {
     {
       $group: {
         _id: "$teamNumber",
+        event: {
+          $addToSet: "$event",
+        },
       },
     },
     {
@@ -36,13 +39,14 @@ teamRouter.get("/api/listTeams", async (req, res) => {
   ]);
 
   const teamArray = await Promise.all(
-    teamList.map(async ({ _id }) => {
+    teamList.map(async ({ _id, event }) => {
       const response = await axios.get(
         `${process.env.API_URL}/api/team/${_id}`
       );
       const { nickname, city, state_prov } = response.data;
       return {
         teamNumber: _id,
+        teamEvent: event,
         teamName: nickname ? nickname : "Unknown Team",
         teamLocation:
           city && state_prov ? `${city}, ${state_prov}` : "Unknown Location",

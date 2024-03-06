@@ -1,98 +1,60 @@
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+"use client";
 
-const TeamMatchGraph = ({
-  data,
-  statistic,
-}: {
-  data: any;
-  statistic: string;
-}) => {
+import { useEffect, useState } from "react";
+import { Select } from "@mantine/core";
+import LineChart from "@/components/graphs/team-match-line-graph";
+
+const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
+  const [yAxis, setYAxis] = useState("matchTotalScore");
+  const [lineData, setLineData] = useState<any[]>([]);
+
+  useEffect(() => {
+    setLineData([
+      {
+        id: aggregation._id,
+        data:
+          aggregation[yAxis]
+            ?.sort((a: any, b: any) => a.matchNumber - b.matchNumber)
+            .map((match: any) => ({
+              x: match.matchNumber,
+              label: `Match: ${match.matchNumber}`,
+              y: match.score,
+            })) || [],
+      },
+    ]);
+  }, [yAxis]);
+
+  const yAxisOptions = [
+    { value: "matchTotalScore", label: "Auto + Teleop Score" },
+    { value: "matchAutoScore", label: "Auto Score" },
+    { value: "matchTeleScore", label: "Teleop Score" },
+    { value: "matchRP", label: "Ranking Points" },
+  ];
+
   return (
-    <ResponsiveContainer width="100%" height={600}>
-      {/* <BarChart
-        data={data.map((match: any) => {
-          return {
-            match: `Match ${match.matchNumber}`,
-            score: match.teleScore,
-          };
-        })}
-      >
-        <XAxis
-          dataKey="match"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
+    <div className="w-full flex flex-col">
+      <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
+        <Select
+          className="flex-shrink-0 w-auto h-10 text-sm mr-2"
+          data={yAxisOptions}
+          onChange={(e: any) => setYAxis(e)}
+          value={yAxis}
+          allowDeselect={false}
         />
-        <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <Bar
-          dataKey="score"
-          fill="currentColor"
-          radius={[4, 4, 0, 0]}
-          className="fill-primary"
-        />
-      </BarChart> */}
-      <AreaChart
-        data={data.map((match: any) => {
-          return {
-            match: `Match #${match.matchNumber}`,
-            score: match.teleScore,
-          };
-        })}
-        margin={{
-          top: 10,
-          right: 30,
-          left: 0,
-          bottom: 20,
-        }}
-      >
-        <Tooltip
-          labelStyle={{ color: "black" }}
-          itemStyle={{ color: "black" }}
-        />
-        <CartesianGrid strokeDasharray="3 3" stroke="#000000" />
-        <XAxis
-          dataKey="match"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value) => value.replace("Match #", "")}
-          label={{
-            value: "Match Number",
-            position: "insideBottom",
-            offset: 0,
-          }}
-        />
-        <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <Area
-          name={statistic}
-          type={"monotone"}
-          dataKey="score"
-          fill="#fff"
-          stroke="#fff"
-          className="fill-primary"
-        />
-      </AreaChart>
-    </ResponsiveContainer>
+      </div>
+      <div className="flex">
+        {lineData && (
+          <LineChart
+            data={lineData}
+            xAxis={"Match Number"}
+            yAxis={
+              yAxisOptions.filter((option: any) => option.value == yAxis)[0]
+                .label
+            }
+          />
+        )}
+      </div>
+    </div>
   );
 };
 

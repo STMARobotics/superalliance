@@ -28,10 +28,11 @@ export default function PitForm() {
   const [scroll, scrollTo] = useWindowScroll();
   const { user } = useUser();
   const navigate = useNavigate();
-  const { events } = useSuperAlliance();
-  const [eventData, setEventData] = useState([]);
 
   const [file, setFile] = useState<File | null>(null);
+
+  const { events, appSettings } = useSuperAlliance();
+  const [eventData, setEventData] = useState([]);
 
   useEffect(() => {
     if (!events) return;
@@ -41,9 +42,16 @@ export default function PitForm() {
           label: event.short_name,
           value: event.event_code,
         };
-      }),
+      })
     );
   }, [events]);
+
+  useEffect(() => {
+    if (!appSettings) return;
+    if (appSettings?.event !== "none") {
+      pitForm.setFieldValue("event", appSettings?.event);
+    }
+  }, [appSettings]);
 
   const pitForm = useForm({
     initialValues: {
@@ -96,11 +104,11 @@ export default function PitForm() {
   const submitForm = (values: any) => {
     (async function () {
       const pitForm = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.teamNumber}`,
+        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.teamNumber}`
       );
       if (pitForm)
         return toast.error(
-          "A pit form for this team has already been submitted!",
+          "A pit form for this team has already been submitted!"
         );
 
       if (!file) return toast.error("Please upload an image!");
@@ -160,13 +168,32 @@ export default function PitForm() {
           Pit Scouting Form
         </div>
 
-        <Select
-          label="Select Event"
-          placeholder="Event"
+        <TextInput
+          label="User's Name"
+          value={user?.fullName ? user?.fullName : ""}
+          onChange={() => null}
           className="pb-4"
-          data={eventData}
-          {...pitForm.getInputProps("event")}
         />
+
+        {appSettings?.event == "none" ? (
+          <Select
+            label="Select Event"
+            placeholder="Event"
+            className="pb-4"
+            data={eventData}
+            {...pitForm.getInputProps("event")}
+          />
+        ) : (
+          <Select
+            label="Select Event"
+            description="This event has been locked in by an Administrator!"
+            disabled
+            placeholder="Event"
+            className="pb-4"
+            data={eventData}
+            {...pitForm.getInputProps("event")}
+          />
+        )}
 
         <NumberInput
           label="Team Number"

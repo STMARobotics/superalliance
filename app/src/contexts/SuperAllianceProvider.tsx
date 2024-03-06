@@ -20,6 +20,7 @@ type SuperAllianceContextProps = {
   totalAggregation?: any;
   eventAggregation?: any;
   selectedEvent?: any;
+  badComments?: any;
   appSettings?: any;
   setSelectedEvent?: any;
   refreshSA?: {
@@ -29,6 +30,7 @@ type SuperAllianceContextProps = {
     events: () => void;
     totalAggregation: () => void;
     appSettings: () => void;
+    eventData: () => void;
   };
 };
 
@@ -82,6 +84,25 @@ export function SuperAllianceProvider(props: any) {
         setAppSettings(await getAppSettings());
       })();
     },
+    eventData: () => {
+      (async function () {
+        console.log("hello");
+        if (selectedEvent && selectedEvent !== "all") {
+          const eventForms = await getForms();
+          const eventTeams = await getTeams();
+          const eventAggregation = await getEventAggregation(selectedEvent);
+          setEventForms(
+            eventForms.filter((form: any) => form.event === selectedEvent)
+          );
+          setEventTeams(
+            eventTeams.filter((team: any) =>
+              team.teamEvent.includes(selectedEvent)
+            )
+          );
+          setEventAggregation(eventAggregation);
+        }
+      })();
+    },
   };
 
   const value = {
@@ -100,9 +121,46 @@ export function SuperAllianceProvider(props: any) {
 
   useEffect(() => {
     (async function () {
-      setAppSettings(await getAppSettings());
+      const appSettingsRes = await getAppSettings();
+      setAppSettings(appSettingsRes);
+      if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
+        const eventForms = await getForms();
+        const eventTeams = await getTeams();
+        const eventAggregation = await getEventAggregation(
+          appSettingsRes?.event
+        );
+        setEventForms(
+          eventForms.filter((form: any) => form.event === appSettingsRes?.event)
+        );
+        setEventTeams(
+          eventTeams.filter((team: any) =>
+            team.teamEvent.includes(appSettingsRes?.event)
+          )
+        );
+        setEventAggregation(eventAggregation);
+        setSelectedEvent(appSettingsRes?.event);
+      }
     })();
   }, []);
+
+  useEffect(() => {
+    (async function () {
+      if (selectedEvent && selectedEvent !== "all") {
+        const eventForms = await getForms();
+        const eventTeams = await getTeams();
+        const eventAggregation = await getEventAggregation(selectedEvent);
+        setEventForms(
+          eventForms.filter((form: any) => form.event === selectedEvent)
+        );
+        setEventTeams(
+          eventTeams.filter((team: any) =>
+            team.teamEvent.includes(selectedEvent)
+          )
+        );
+        setEventAggregation(eventAggregation);
+      }
+    })();
+  }, [selectedEvent]);
 
   useEffect(() => {
     (async function () {
@@ -127,24 +185,6 @@ export function SuperAllianceProvider(props: any) {
       setTotalAggregation(await getTotalAggregation());
     })();
   }, []);
-
-  useEffect(() => {
-    (async function () {
-      if (appSettings?.event && appSettings?.event !== "none") {
-        const eventForms = await getForms();
-        const eventTeams = await getTeams();
-        const eventAggregation = await getEventAggregation(appSettings?.event);
-        setEventForms(
-          eventForms.filter((form: any) => form.event === appSettings?.event)
-        );
-        setEventTeams(
-          eventTeams.filter((team: any) => team.event === appSettings?.event)
-        );
-        setEventAggregation(eventAggregation);
-        setSelectedEvent(appSettings?.event);
-      }
-    })();
-  }, [appSettings]);
 
   return (
     <SuperAllianceContext.Provider value={value}>

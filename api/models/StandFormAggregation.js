@@ -19,12 +19,15 @@ const StandFormAggregation = (eventId) => {
               $multiply: ["$teleSpeakersNotes", 2],
             },
             {
-              $multiply: ["$teleTrapsNotes", 2],
+              $multiply: ["$teleAmplifiedSpeakersNotes", 5],
+            },
+            {
+              $multiply: ["$teleTrapsNotes", 5],
             },
             {
               $cond: {
                 if: "$leave",
-                then: 1,
+                then: 2,
                 else: 0,
               },
             },
@@ -45,7 +48,7 @@ const StandFormAggregation = (eventId) => {
             {
               $cond: {
                 if: "$onstageSpotlit",
-                then: 1,
+                then: 4,
                 else: 0,
               },
             },
@@ -58,7 +61,7 @@ const StandFormAggregation = (eventId) => {
             },
           ],
         },
-        autoscore: {
+        autoScore: {
           $add: [
             {
               $multiply: ["$autoAmpsNotes", 2],
@@ -69,13 +72,13 @@ const StandFormAggregation = (eventId) => {
             {
               $cond: {
                 if: "$leave",
-                then: 1,
+                then: 2,
                 else: 0,
               },
             },
           ],
         },
-        telescore: {
+        teleScore: {
           $add: [
             {
               $multiply: ["$teleAmpsNotes", 1],
@@ -83,66 +86,121 @@ const StandFormAggregation = (eventId) => {
             {
               $multiply: ["$teleSpeakersNotes", 2],
             },
+            {
+              $multiply: ["$teleAmplifiedSpeakersNotes", 5],
+            },
+            {
+              $multiply: ["$teleTrapsNotes", 5],
+            },
+            {
+              $cond: {
+                if: "$park",
+                then: 1,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: "$onstage",
+                then: 3,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: "$onstageSpotlit",
+                then: 4,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: "$harmony",
+                then: 2,
+                else: 0,
+              },
+            },
           ],
         },
-        onstageNumber: {
+        leaveBoolean: {
           $cond: {
-            if: "$onstage",
+            if: "$leave",
             then: 1,
             else: 0,
           },
         },
-        parkNumber: {
+        parkBoolean: {
           $cond: {
             if: "$park",
             then: 1,
             else: 0,
           },
         },
-        CritNumber: {
-          $size: "$criticals",
-        },
-        StockpileNumber: {
+        onstageBoolean: {
           $cond: {
-            if: "$stockpile",
+            if: "$onstage",
             then: 1,
             else: 0,
           },
         },
-        WinNumber: {
+        onstageSpotlitBoolean: {
           $cond: {
-            if: "$Win",
+            if: "$onstageSpotlit",
             then: 1,
             else: 0,
           },
         },
-        SelfSpotlightNumber: {
+        harmonyBoolean: {
+          $cond: {
+            if: "$harmony",
+            then: 1,
+            else: 0,
+          },
+        },
+        selfSpotlitBoolean: {
           $cond: {
             if: "$selfSpotlight",
             then: 1,
             else: 0,
           },
         },
-        DefenseNumber: {
+        defenseBoolean: {
           $cond: {
             if: "$defense",
             then: 1,
             else: 0,
           },
         },
-        DefenseAgainstNumber: {
+        defendedAgainstBoolean: {
           $cond: {
             if: "$defendedAgainst",
             then: 1,
             else: 0,
           },
         },
-        UnderStageNumber: {
+        stockpileBoolean: {
+          $cond: {
+            if: "$stockpile",
+            then: 1,
+            else: 0,
+          },
+        },
+        underStageBoolean: {
           $cond: {
             if: "$underStage",
             then: 1,
             else: 0,
           },
+        },
+        winBoolean: {
+          $cond: {
+            if: "$win",
+            then: 1,
+            else: 0,
+          },
+        },
+        criticalCount: {
+          $size: "$criticals",
         },
       },
     },
@@ -158,15 +216,18 @@ const StandFormAggregation = (eventId) => {
             $sum: "$totalScore",
           },
           totalAutoScore: {
-            $sum: "$autoscore",
+            $sum: "$autoScore",
           },
-          matchTeleScores: {
+          totalTeleScore: {
+            $sum: "$teleScore",
+          },
+          matchTotalScores: {
             $push: {
               $cond: [
-                { $ne: ["$telescore", 0] },
+                { $ne: ["$totalScore", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  teleScore: "$telescore",
+                  score: "$totalScore",
                   formId: "$_id",
                 },
                 "$$REMOVE",
@@ -176,31 +237,41 @@ const StandFormAggregation = (eventId) => {
           matchAutoScores: {
             $push: {
               $cond: [
-                { $ne: ["$autoscore", 0] },
+                { $ne: ["$autoScore", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  autoScore: "$autoscore",
+                  score: "$autoScore",
                   formId: "$_id",
                 },
                 "$$REMOVE",
               ],
             },
           },
-          matchTotalScores: {
+          matchTeleScores: {
             $push: {
               $cond: [
-                { $ne: ["$totalScore", 0] },
+                { $ne: ["$teleScore", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  totalScore: "$totalScore",
+                  score: "$teleScore",
                   formId: "$_id",
                 },
                 "$$REMOVE",
               ],
             },
           },
-          avgScore: {
-            $avg: "$totalScore",
+          matchRP: {
+            $push: {
+              $cond: [
+                { $ne: ["$rpEarned", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$rpEarned",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
           },
           autoMiddleNotes: {
             $push: {
@@ -215,31 +286,70 @@ const StandFormAggregation = (eventId) => {
               ],
             },
           },
-          avgAutoAmp: {
+          avgTotalScore: {
+            $avg: "$totalScore",
+          },
+          avgAutoScore: {
+            $avg: "$autoScore",
+          },
+          avgTeleScore: {
+            $avg: "$teleScore",
+          },
+          avgAutoAmpsNotes: {
             $avg: "$autoAmpsNotes",
           },
-          avgAutoSpeaker: {
+          avgAutoSpeakersNotes: {
             $avg: "$autoSpeakersNotes",
           },
-          avgTeleAmp: {
+          avgTeleAmpsNotes: {
             $avg: "$teleAmpsNotes",
           },
-          avgTeleSpeaker: {
+          avgTeleSpeakersNotes: {
             $avg: "$teleSpeakersNotes",
           },
-          onstagePCT: {
-            $avg: "$onstageNumber",
+          avgTeleAmplifiedSpeakersNotes: {
+            $avg: "$teleAmplifiedSpeakersNotes",
+          },
+          avgTeleTrapsNotes: {
+            $avg: "$teleTrapsNotes",
+          },
+          leavePercentage: {
+            $avg: "$leaveBoolean",
+          },
+          parkPercentage: {
+            $avg: "$parkBoolean",
+          },
+          onstagePercentage: {
+            $avg: "$onstageBoolean",
+          },
+          onstageSpotlitPercentage: {
+            $avg: "$onstageSpotlitBoolean",
+          },
+          harmonyPercentage: {
+            $avg: "$harmonyBoolean",
+          },
+          selfSpotlitPercentage: {
+            $avg: "$selfSpotlitBoolean",
+          },
+          defensePercentage: {
+            $avg: "$defenseBoolean",
+          },
+          defendedAgainstPercentage: {
+            $avg: "$defendedAgainstBoolean",
+          },
+          stockpilePercentage: {
+            $avg: "$stockpileBoolean",
+          },
+          underStagePercentage: {
+            $avg: "$underStageBoolean",
+          },
+          winPercentage: {
+            $avg: "$winBoolean",
           },
           avgRP: {
             $avg: "$rpEarned",
           },
-          parkPCT: {
-            $avg: "$parkNumber",
-          },
-          TotalCrits: {
-            $sum: "$CritNumber",
-          },
-          Criticals: {
+          criticals: {
             $push: {
               $cond: [
                 { $ne: ["$criticals", []] },
@@ -252,43 +362,25 @@ const StandFormAggregation = (eventId) => {
               ],
             },
           },
-          Comments: {
+          comments: {
             $push: {
-              $cond: [{ $ne: ["$comments", ""] }, "$comments", "$$REMOVE"],
+              $cond: [
+                { $ne: ["$comments", []] },
+                {
+                  matchNumber: "$matchNumber",
+                  comments: "$comments",
+                  formId: "$_id",
+                  usersName: "$usersName",
+                },
+                "$$REMOVE",
+              ],
             },
           },
-          StockpilePCT: {
-            $avg: "$StockpileNumber",
+          criticalCount: {
+            $sum: "$criticalCount",
           },
-          WinPCT: {
-            $avg: "$WinNumber",
-          },
-          Matches: {
+          matchCount: {
             $sum: 1,
-          },
-          AVGAutoScore: {
-            $avg: "$autoscore",
-          },
-          AVGTeleScore: {
-            $avg: "$telescore",
-          },
-          SelfSpotlightPCT: {
-            $avg: "$SelfSpotlightNumber",
-          },
-          DefensePCT: {
-            $avg: "$DefenseNumber",
-          },
-          DefenseAgainstPCT: {
-            $avg: "$DefenseAgainstNumber",
-          },
-          AvgTimesAmped: {
-            $avg: "$timesAmpedUsed",
-          },
-          AvgTrapNotes: {
-            $avg: "$teleTrapsNotes",
-          },
-          AvgUnderStage: {
-            $avg: "$UnderStageNumber",
           },
         },
     },
@@ -299,47 +391,60 @@ const StandFormAggregation = (eventId) => {
          *   include or exclude.
          */
         {
-          TeamNumber: 1,
+          teamNumber: 1,
           totalScore: { $round: ["$totalScore", 2] },
           totalAutoScore: { $round: ["$totalAutoScore", 2] },
+          totalTeleScore: { $round: ["$totalTeleScore", 2] },
+          matchTotalScore: {
+            $concatArrays: "$matchTotalScores",
+          },
           matchAutoScore: {
             $concatArrays: "$matchAutoScores",
           },
           matchTeleScore: {
             $concatArrays: "$matchTeleScores",
           },
-          matchTotalScore: {
-            $concatArrays: "$matchTotalScores",
+          matchRP: {
+            $concatArrays: "$matchRP",
           },
-          avgScore: { $round: ["$avgScore", 2] },
           middleNotes: {
             $concatArrays: "$autoMiddleNotes",
           },
-          avgAutoAmp: { $round: ["$avgAutoAmp", 2] },
-          avgAutoSpeaker: { $round: ["$avgAutoSpeaker", 2] },
-          avgTeleAmp: { $round: ["$avgTeleAmp", 2] },
-          avgTeleSpeaker: { $round: ["$avgTeleSpeaker", 2] },
-          onstagePCT: { $round: ["$onstagePCT", 2] },
+          avgTotalScore: { $round: ["$avgTotalScore", 2] },
+          avgAutoScore: { $round: ["$avgAutoScore", 2] },
+          avgTeleScore: { $round: ["$avgTeleScore", 2] },
+          avgAutoAmpsNotes: { $round: ["$avgAutoAmpsNotes", 2] },
+          avgAutoSpeakersNotes: { $round: ["$avgAutoSpeakersNotes", 2] },
+          avgTeleAmpsNotes: { $round: ["$avgTeleAmpsNotes", 2] },
+          avgTeleSpeakersNotes: { $round: ["$avgTeleSpeakersNotes", 2] },
+          avgTeleAmplifiedSpeakersNotes: {
+            $round: ["$avgTeleAmplifiedSpeakersNotes", 2],
+          },
+          avgTeleTrapsNotes: { $round: ["$avgTeleTrapsNotes", 2] },
+          leavePercentage: { $round: ["$leavePercentage", 2] },
+          parkPercentage: { $round: ["$parkPercentage", 2] },
+          onstagePercentage: { $round: ["$onstagePercentage", 2] },
+          onstageSpotlitPercentage: {
+            $round: ["$onstageSpotlitPercentage", 2],
+          },
+          harmonyPercentage: { $round: ["$harmonyPercentage", 2] },
+          selfSpotlitPercentage: { $round: ["$selfSpotlitPercentage", 2] },
+          defensePercentage: { $round: ["$defensePercentage", 2] },
+          defendedAgainstPercentage: {
+            $round: ["$defendedAgainstPercentage", 2],
+          },
+          stockpilePercentage: { $round: ["$stockpilePercentage", 2] },
+          underStagePercentage: { $round: ["$underStagePercentage", 2] },
+          winPercentage: { $round: ["$winPercentage", 2] },
           avgRP: { $round: ["$avgRP", 2] },
-          parkPCT: { $round: ["$parkPCT", 2] },
-          TotalCrits: 1,
-          Comments: {
-            $concatArrays: "$Comments",
+          comments: {
+            $concatArrays: "$comments",
           },
-          Criticals: {
-            $concatArrays: "$Criticals",
+          criticals: {
+            $concatArrays: "$criticals",
           },
-          StockpilePCT: { $round: ["$StockpilePCT", 2] },
-          WinPCT: { $round: ["$WinPCT", 2] },
-          Matches: 1,
-          AVGAutoScore: { $round: ["$AVGAutoScore", 2] },
-          AVGTeleScore: { $round: ["$AVGTeleScore", 2] },
-          SelfSpotlightPCT: { $round: ["$SelfSpotlightPCT", 2] },
-          DefensePCT: { $round: ["$DefensePCT", 2] },
-          DefenseAgainstPCT: { $round: ["$DefenseAgainstPCT", 2] },
-          AvgTimesAmped: { $round: ["$AvgTimesAmped", 2] },
-          AvgTrapNotes: { $round: ["$AvgTrapNotes", 2] },
-          AvgUnderStage: { $round: ["$AvgUnderStage", 2] },
+          criticalCount: 1,
+          matchCount: 1,
         },
     },
     {

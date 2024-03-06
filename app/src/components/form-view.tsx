@@ -108,13 +108,6 @@ const FormView = ({ formData }: { formData: any }) => {
         className="pb-4"
       />
 
-      <TextInput
-        value={formData?.timesAmpedUsed}
-        readOnly
-        label="How many times were the notes amped?"
-        className="pb-4"
-      />
-
       <Checkbox
         checked={formData?.onstage}
         readOnly

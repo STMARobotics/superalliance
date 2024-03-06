@@ -3,7 +3,7 @@ import {
   BoardContainer,
   type Column,
 } from "@/components/selection/selection-column";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Team, TeamCard } from "@/components/selection/selection-team-card";
 import {
   DndContext,
@@ -67,6 +67,19 @@ const SelectionDND = ({
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
+
+  useEffect(() => {
+    setTeams(
+      propTeams.map((team: any) => {
+        return {
+          id: `${team.teamNumber}`,
+          columnId: "unsorted",
+          teamNumber: `${team.teamNumber}`,
+          teamName: `${team.teamName}`,
+        };
+      })
+    );
+  }, [propTeams]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {

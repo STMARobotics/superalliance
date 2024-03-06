@@ -9,7 +9,15 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 
 function TeamSelection() {
-  const { teams, totalAggregation, forms } = useSuperAlliance();
+  const {
+    teams,
+    totalAggregation,
+    forms,
+    selectedEvent,
+    eventTeams,
+    eventAggregation,
+    eventForms,
+  } = useSuperAlliance();
   const [pitFormData, setPitFormData] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState<any>("");
   const [selectedForm, setSelectedForm] = useState<any>("");
@@ -39,15 +47,22 @@ function TeamSelection() {
       </h1>
       <div className="h-full flex justify-center items-center px-3">
         {teams?.length > 0 && (
-          <SelectionDND propTeams={teams} setSelectedTeam={setSelectedTeam} />
+          <SelectionDND
+            propTeams={selectedEvent !== "all" ? eventTeams : teams}
+            setSelectedTeam={setSelectedTeam}
+          />
         )}
         {selectedTeam !== "" && totalAggregation && (
           <>
             <SelectionTeamView
               aggregationData={
-                totalAggregation?.filter((team: any) => {
-                  return team._id == Number(selectedTeam);
-                })[0]
+                selectedEvent !== "all"
+                  ? eventAggregation?.filter((team: any) => {
+                      return team._id == Number(selectedTeam);
+                    })[0]
+                  : totalAggregation?.filter((team: any) => {
+                      return team._id == Number(selectedTeam);
+                    })[0]
               }
               setSelectedTeam={setSelectedTeam}
               pitFormData={pitFormData}
@@ -71,9 +86,15 @@ function TeamSelection() {
             >
               <FormList
                 teamsPage={false}
-                forms={forms?.filter(
-                  (form: any) => form.teamNumber == selectedTeam
-                )}
+                forms={
+                  selectedEvent !== "all"
+                    ? eventForms?.filter(
+                        (form: any) => form.teamNumber == selectedTeam
+                      )
+                    : forms?.filter(
+                        (form: any) => form.teamNumber == selectedTeam
+                      )
+                }
                 selectedForm={selectedForm}
                 setSelectedForm={setSelectedForm}
               />

@@ -25,12 +25,12 @@ const SelectionPitFormView = ({
           multiple
           variant="contained"
         >
-          {aggregationData?.Comments?.length !== 0 ? (
+          {aggregationData?.comments?.length !== 0 ? (
             <Accordion.Item value="comments">
               <Accordion.Control>Comments</Accordion.Control>
               <Accordion.Panel>
                 <Grid grow>
-                  {aggregationData?.Comments.map((comment: any, index: any) => {
+                  {aggregationData?.comments.map((comment: any, index: any) => {
                     return (
                       <Grid.Col span={12} key={index + 1}>
                         <Paper shadow="xl" radius="md" p="sm" withBorder>

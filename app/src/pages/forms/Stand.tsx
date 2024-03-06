@@ -26,6 +26,7 @@ import { Minus, Plus } from "lucide-react";
 interface StandFormValues {
   event: null | number;
   teamNumber: null | number;
+  matchNumber: null | number;
   autoMiddleNotes: any[];
   autoAmpsNotes: null | number;
   autoSpeakersNotes: null | number;
@@ -87,6 +88,7 @@ export default function StandForm() {
     initialValues: {
       event: null,
       teamNumber: null,
+      matchNumber: null,
       autoMiddleNotes: [],
       autoAmpsNotes: 0,
       autoSpeakersNotes: 0,
@@ -112,6 +114,7 @@ export default function StandForm() {
     validate: {
       event: isNotEmpty("This cannot be empty"),
       teamNumber: isNotEmpty("This cannot be empty"),
+      matchNumber: isNotEmpty("This cannot be empty"),
       autoAmpsNotes: isNotEmpty("This cannot be empty"),
       autoSpeakersNotes: isNotEmpty("This cannot be empty"),
       teleAmpsNotes: isNotEmpty("This cannot be empty"),
@@ -193,6 +196,16 @@ export default function StandForm() {
             {...form.getInputProps("event")}
           />
         )}
+
+        <NumberInput
+          label="Match Number"
+          placeholder="0"
+          className="pb-4 w-full"
+          allowDecimal={false}
+          allowNegative={false}
+          hideControls
+          {...form.getInputProps("matchNumber")}
+        />
 
         <NumberInput
           label="Team Number"
@@ -416,11 +429,6 @@ export default function StandForm() {
 
         <div className="flex flex-row justify-between items-center w-full gap-5">
           <ActionIcon
-            style={{
-              outline: "2px solid #00ffea",
-              outlineOffset: "-2px",
-              boxShadow: "inset 0 0 6px #00ffea",
-            }}
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
@@ -441,8 +449,8 @@ export default function StandForm() {
             label={
               <>
                 <span
-                  className="text-[#00ffea]"
-                  style={{ textShadow: "0 0 4px #00ffea" }}
+                  className="text-[#e03131]"
+                  style={{ textShadow: "0 0 4px #e03131" }}
                 >
                   Amplified
                 </span>{" "}
@@ -451,24 +459,12 @@ export default function StandForm() {
             }
             placeholder="0"
             className="pb-4 w-full"
-            styles={{
-              input: {
-                outline: "2px solid #00ffea",
-                outlineOffset: "-2px",
-                boxShadow: "inset 0 0 6px #00ffea",
-              },
-            }}
             allowDecimal={false}
             allowNegative={false}
             hideControls
             {...form.getInputProps("teleAmplifiedSpeakersNotes")}
           />
           <ActionIcon
-            style={{
-              outline: "2px solid #00ffea",
-              outlineOffset: "-2px",
-              boxShadow: "inset 0 0 6px #00ffea",
-            }}
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {

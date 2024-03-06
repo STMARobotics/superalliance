@@ -11,18 +11,20 @@ import {
   ClipboardList,
   ImageIcon,
   Medal,
+  MessageCircleMore,
   Route,
   Tally5,
   XCircle,
 } from "lucide-react";
-import SelectionCriticals from "./selection-view-criticals";
+import SelectionCriticals from "@/components/selection/selection-view-criticals";
 import { toast } from "sonner";
 import { IconRobot } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import SelectionPitFormView from "./selection-pit-form-view";
-import TeamMatchGraph from "../graphs/team-match-graph";
-import SelectionMiddleNotesPath from "./selection-middle-notes-path";
+import SelectionPitFormView from "@/components/selection/selection-pit-form-view";
+import TeamMatchGraph from "@/components/graphs/team-match-graph";
+import SelectionMiddleNotesPath from "@/components/selection/selection-middle-notes-path";
+import SelectionComments from "@/components/selection/selection-view-comments";
 
 const SelectionTeamView = ({
   aggregationData,
@@ -38,6 +40,7 @@ const SelectionTeamView = ({
   const [mainOpened, setMainOpened] = useState(false);
   const [imageOpened, setImageOpened] = useState(false);
   const [criticalsOpened, setCriticalsOpened] = useState(false);
+  const [commentsOpened, setCommentsOpened] = useState(false);
   const [middleNotesOpened, setMiddleNotesOpened] = useState(false);
 
   useEffect(() => {
@@ -73,6 +76,7 @@ const SelectionTeamView = ({
           setFormsOpened={setFormsOpened}
           setImageOpened={setImageOpened}
           setCriticalsOpened={setCriticalsOpened}
+          setCommentsOpened={setCommentsOpened}
           setMiddleNotesOpened={setMiddleNotesOpened}
         />
       </Modal>
@@ -126,9 +130,34 @@ const SelectionTeamView = ({
           blur: 3,
         }}
       >
-        {aggregationData?.Criticals.length > 0 && (
+        {aggregationData?.criticals.length > 0 && (
           <SelectionCriticals
-            criticals={aggregationData?.Criticals?.sort(
+            criticals={aggregationData?.criticals?.sort(
+              (a: any, b: any) => a.matchNumber - b.matchNumber
+            )}
+          />
+        )}
+      </Drawer>
+      <Drawer
+        classNames={{
+          content: "bg-[#18181b]",
+          header: "bg-[#18181b]",
+        }}
+        opened={commentsOpened}
+        withCloseButton={true}
+        title={"Comments"}
+        onClose={() => setCommentsOpened(false)}
+        radius={"md"}
+        position="right"
+        size={"md"}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+      >
+        {aggregationData?.comments.length > 0 && (
+          <SelectionComments
+            comments={aggregationData?.comments?.sort(
               (a: any, b: any) => a.matchNumber - b.matchNumber
             )}
           />
@@ -172,6 +201,7 @@ const DataDisplay = ({
   setFormsOpened,
   setImageOpened,
   setCriticalsOpened,
+  setCommentsOpened,
   setMiddleNotesOpened,
 }: {
   aggregationData: any;
@@ -181,34 +211,67 @@ const DataDisplay = ({
   setFormsOpened: any;
   setImageOpened: any;
   setCriticalsOpened: any;
+  setCommentsOpened: any;
   setMiddleNotesOpened: any;
 }) => {
   const averages = [
-    { label: "Average Score", value: aggregationData?.avgScore },
-    { label: "Average Auto Score", value: aggregationData?.AVGAutoScore },
-    { label: "Average Tele Score", value: aggregationData?.AVGTeleScore },
+    { label: "Total Score", value: aggregationData?.totalScore },
+    { label: "Total Auto Score", value: aggregationData?.totalAutoScore },
+    { label: "Total Tele Score", value: aggregationData?.totalTeleScore },
+    { label: "Average Total Score", value: aggregationData?.avgTotalScore },
+    { label: "Average Auto Score", value: aggregationData?.avgAutoScore },
+    { label: "Average Tele Score", value: aggregationData?.avgTeleScore },
     { label: "Average RP", value: aggregationData?.avgRP },
-    { label: "Total Crits", value: aggregationData?.TotalCrits },
-    { label: "Win Percentage", value: aggregationData?.WinPCT },
-    { label: "Average Auto Amp", value: aggregationData?.avgAutoAmp },
-    { label: "Average Auto Speaker", value: aggregationData?.avgAutoSpeaker },
-    { label: "Average Tele Amp", value: aggregationData?.avgTeleAmp },
-    { label: "Average Tele Speaker", value: aggregationData?.avgTeleSpeaker },
-    { label: "Average Times Amped", value: aggregationData?.AvgTimesAmped },
-    { label: "Average Trap Notes", value: aggregationData?.AvgTrapNotes },
-    { label: "Average Under Stage", value: aggregationData?.AvgUnderStage },
-    { label: "Onstage Percentage", value: aggregationData?.onstagePCT },
-    { label: "Leave Percentage", value: aggregationData?.leavePCT },
-    { label: "Park Percentage", value: aggregationData?.parkPCT },
-    { label: "Stockpile Percentage", value: aggregationData?.StockpilePCT },
+    { label: "Total Crits", value: aggregationData?.criticalCount },
+    { label: "Win Percentage", value: aggregationData?.winPercentage },
     {
-      label: "Self Spotlight Percentage",
-      value: aggregationData?.SelfSpotlightPCT,
+      label: "Average Auto Amps Score",
+      value: aggregationData?.avgAutoAmpsNotes,
     },
-    { label: "Defense Percentage", value: aggregationData?.DefensePCT },
     {
-      label: "Defense Against Percentage",
-      value: aggregationData?.DefenseAgainstPCT,
+      label: "Average Auto Speakers Score",
+      value: aggregationData?.avgAutoSpeakersNotes,
+    },
+    {
+      label: "Average Tele Amps Score",
+      value: aggregationData?.avgTeleAmpsNotes,
+    },
+    {
+      label: "Average Tele Speakers Score",
+      value: aggregationData?.avgTeleSpeakersNotes,
+    },
+    {
+      label: "Average Tele Amplified Speakers Score",
+      value: aggregationData?.avgTeleAmplifiedSpeakersNotes,
+    },
+    {
+      label: "Average Tele Traps Score",
+      value: aggregationData?.avgTeleTrapsNotes,
+    },
+    { label: "Leave Percentage", value: aggregationData?.leavePercentage },
+    { label: "Park Percentage", value: aggregationData?.parkPercentage },
+    { label: "Onstage Percentage", value: aggregationData?.onstagePercentage },
+    {
+      label: "Onstage Spotlit Percentage",
+      value: aggregationData?.onstageSpotlitPercentage,
+    },
+    { label: "Harmony Percentage", value: aggregationData?.harmonyPercentage },
+    {
+      label: "Self Spotlit Percentage",
+      value: aggregationData?.selfSpotlitPercentage,
+    },
+    { label: "Defense Percentage", value: aggregationData?.defensePercentage },
+    {
+      label: "Defended Against Percentage",
+      value: aggregationData?.defendedAgainstPercentage,
+    },
+    {
+      label: "Stockpile Percentage",
+      value: aggregationData?.stockpilePercentage,
+    },
+    {
+      label: "Under Stage Percentage",
+      value: aggregationData?.underStagePercentage,
     },
   ];
 
@@ -252,11 +315,11 @@ const DataDisplay = ({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.avgScore} Points
+                    {aggregationData?.avgTotalScore} Points
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {aggregationData?.totalScore} points across{" "}
-                    {aggregationData?.Matches} matches.
+                    {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>
               </Card>
@@ -269,11 +332,11 @@ const DataDisplay = ({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.AVGAutoScore} Points
+                    {aggregationData?.avgAutoScore} Points
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {aggregationData?.totalAutoScore} points across{" "}
-                    {aggregationData?.Matches} matches.
+                    {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>
               </Card>
@@ -286,12 +349,12 @@ const DataDisplay = ({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.TotalCrits}
+                    {aggregationData?.criticalCount}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Broke a Mechanism{" "}
                     {
-                      aggregationData?.Criticals.filter(
+                      aggregationData?.criticals.filter(
                         ({ criticals }: { criticals: any }) =>
                           criticals.includes("Mechanism Broke")
                       ).length
@@ -385,7 +448,7 @@ const DataDisplay = ({
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-12 flex-col h-[45vh] justify-center">
+                  <div className="flex items-center gap-7 flex-col h-[45vh] justify-center">
                     <Button
                       onClick={() => {
                         if (!pitFormData?.robotImage)
@@ -396,6 +459,17 @@ const DataDisplay = ({
                     >
                       <ImageIcon className="mr-2 h-6 w-6" />
                       View Image
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (aggregationData?.comments.length == 0)
+                          return toast.error("No Comments Found!");
+                        setCommentsOpened(true);
+                      }}
+                      className="w-full h-14 text-lg font-bold"
+                    >
+                      <MessageCircleMore className="mr-2 h-6 w-6" />
+                      View Comments
                     </Button>
                     <Button
                       onClick={() => setFormsOpened(true)}
@@ -420,11 +494,11 @@ const DataDisplay = ({
                     </Button>
                     <Button
                       onClick={() => {
-                        if (aggregationData?.Criticals.length == 0)
+                        if (aggregationData?.criticals.length == 0)
                           return toast.error("No Criticals Found!");
                         setCriticalsOpened(true);
                       }}
-                      className="w-full h-14 text-lg font-bold"
+                      className="w-full h-14 text-lg font-bold bg-red-500 hover:bg-red-700 text-white"
                     >
                       <XCircle className="mr-2 h-6 w-6" />
                       View Criticals
@@ -448,16 +522,8 @@ const DataDisplay = ({
           value="graphs"
           className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"
         >
-          <h1 className="text-xl font-extrabold tracking-tight lg:text-xl text-center">
-            Match Graphs - Tele Score
-          </h1>
-          {aggregationData?.matchTotalScore?.length !== 0 ? (
-            <TeamMatchGraph
-              data={aggregationData?.matchTeleScore?.sort(
-                (a: any, b: any) => a.matchNumber - b.matchNumber
-              )}
-              statistic="Tele Score"
-            />
+          {aggregationData?.length !== 0 ? (
+            <TeamMatchGraph aggregation={aggregationData} />
           ) : (
             <div className="flex justify-center items-center">
               <h1 className="text-3xl font-bold tracking-tight text-center">

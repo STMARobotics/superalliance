@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
 const adminSettingsSchema = z.object({
   event: z.string({
@@ -48,6 +49,8 @@ function AdminSettingsForm({
     mode: "onChange",
   });
 
+  const { setSelectedEvent } = useSuperAlliance();
+
   function onSubmit(data: SettingsFormValues) {
     (async function () {
       await axios
@@ -58,6 +61,7 @@ function AdminSettingsForm({
         .catch(function () {
           toast.error("The settings failed to save. Please contact an admin!");
         });
+      setSelectedEvent(data.event == "none" ? "all" : data.event);
     })();
   }
   return (

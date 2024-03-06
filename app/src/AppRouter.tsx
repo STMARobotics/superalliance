@@ -17,6 +17,7 @@ import PitForm from "./pages/forms/Pit";
 import TeamSelection from "./pages/analysis/selection/TeamSelection";
 import AdministrationSettings from "./pages/admin/Settings";
 import CommentsForm from "./pages/forms/Comments";
+import DataSorting from "./pages/data/sorting/ViewSorting";
 
 function AppRouter() {
   const { user } = useUser();
@@ -114,6 +115,19 @@ function AppRouter() {
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
                 <DataTeams />
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/login" />
+              </SignedOut>
+            </div>
+          }
+        />
+        <Route
+          path="/data/sorting"
+          element={
+            <div className="h-[calc(100vh-3.6rem)] w-full">
+              <SignedIn>
+                <DataSorting />
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />

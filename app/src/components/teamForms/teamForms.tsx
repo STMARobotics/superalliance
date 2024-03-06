@@ -8,7 +8,7 @@ import {
 import FormView from "@/components/form-view";
 import { Drawer, ScrollArea } from "@mantine/core";
 import { Separator } from "@/components/ui/separator";
-import { FileDigit, Home, Search } from "lucide-react";
+import { ArrowDownUp, FileDigit, Home, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { FormNav } from "@/components/forms/form-nav";
@@ -123,6 +123,13 @@ function TeamForms({
                   icon: FileDigit,
                   variant: pathname == "/data/teams" ? "default" : "ghost",
                   link: "/data/teams",
+                },
+                {
+                  title: "Sorting",
+                  label: "",
+                  icon: ArrowDownUp,
+                  variant: pathname == "/data/sorting" ? "default" : "ghost",
+                  link: "/data/sorting",
                 },
               ]}
             />

@@ -84,6 +84,18 @@ export const getEventAggregation = async (eventId: String) => {
   }
 };
 
+export const getBadComments = async () => {
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/forms/comments`
+    );
+    const data = res.data;
+    return data;
+  } catch {
+    throw new Error("Comments not found");
+  }
+};
+
 export const getAppSettings = async () => {
   try {
     const res = await axios.get(

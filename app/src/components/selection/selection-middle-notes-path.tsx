@@ -23,7 +23,7 @@ const SelectionMiddleNotesPath = ({
           return (
             <Accordion.Item
               key={index}
-              value={`${note.matchNumber}`}
+              value={`${index}`}
               className="w-[60vw] flex flex-col justify-center items-center"
             >
               <Accordion.Control icon={<Route />}>
@@ -64,22 +64,22 @@ const SelectionMiddleNotesPath = ({
                             >
                               <line
                                 x1={
-                                  pos == "1"
+                                  (index = 1
                                     ? "86%"
                                     : redPositions[
                                         Number(
                                           note.autoMiddleNotes[index - 1]
                                         ) - 1
-                                      ].l
+                                      ].l)
                                 }
                                 y1={
-                                  pos == "1"
+                                  (index = 1
                                     ? "33.7%"
                                     : redPositions[
                                         Number(
                                           note.autoMiddleNotes[index - 1]
                                         ) - 1
-                                      ].t
+                                      ].t)
                                 }
                                 x2={redPositions[Number(pos) - 1].l}
                                 y2={redPositions[Number(pos) - 1].t}

@@ -19,17 +19,23 @@ const SelectionCriticals = ({ criticals }: { criticals: any[] }) => {
                 <CardTitle>Match #{match.matchNumber}</CardTitle>
               </CardHeader>
               <CardContent>
-                {match.criticals?.map((crit: any, index: any) => {
-                  return (
-                    <Badge key={index + 1} color={"white"} variant={"outline"}>
-                      {crit}
-                    </Badge>
-                  );
-                })}
+                <div className="space-x-2">
+                  {match.criticals?.map((crit: any, index: any) => {
+                    return (
+                      <Badge
+                        key={index + 1}
+                        color={"white"}
+                        variant={"outline"}
+                      >
+                        {crit}
+                      </Badge>
+                    );
+                  })}
+                </div>
               </CardContent>
               <CardFooter className="justify-between space-x-2">
                 <Button className="w-full">View Form</Button>
-                <Button className="w-full bg-red-500 text-white">
+                <Button className="w-full bg-red-500 hover:bg-red-700 text-white">
                   View YouTube
                 </Button>
               </CardFooter>

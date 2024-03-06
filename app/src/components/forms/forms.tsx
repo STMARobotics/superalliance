@@ -8,7 +8,7 @@ import {
 import FormView from "@/components/form-view";
 import { Affix, Button, ScrollArea, Transition } from "@mantine/core";
 import { Separator } from "@/components/ui/separator";
-import { FileDigit, Home, Search } from "lucide-react";
+import { ArrowDownUp, FileDigit, Home, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { FormNav } from "@/components/forms/form-nav";
@@ -98,6 +98,13 @@ function Forms({
                 variant: pathname == "/data/teams" ? "default" : "ghost",
                 link: "/data/teams",
               },
+              {
+                title: "Sorting",
+                label: "",
+                icon: ArrowDownUp,
+                variant: pathname == "/data/sorting" ? "default" : "ghost",
+                link: "/data/sorting",
+              },
             ]}
           />
         </ResizablePanel>
@@ -132,7 +139,11 @@ function Forms({
                         (team: any) => team.teamNumber == form.teamNumber
                       )[0]
                       ?.teamName.toLowerCase()
-                      .includes(searchContent.toLowerCase())
+                      .includes(searchContent.toLowerCase()) ||
+                    form.usersName
+                      .toString()
+                      .toLocaleLowerCase()
+                      .includes(searchContent.toLocaleLowerCase())
                   );
               })}
               selectedForm={selectedForm}

@@ -3,7 +3,7 @@ import AdminSettingsForm from "@/components/admin/admin-settings";
 import { Separator } from "@/components/ui/separator";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { LoadingOverlay } from "@mantine/core";
-import { FileDigit, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 function AdminSettings() {
@@ -26,12 +26,6 @@ function AdminSettings() {
               icon: Settings,
               variant: pathname == "/admin/settings" ? "default" : "ghost",
               link: "/admin/settings",
-            },
-            {
-              title: "placeholder",
-              icon: FileDigit,
-              variant: pathname == "/data/teams" ? "default" : "ghost",
-              link: "/data/teams",
             },
           ]}
         />
