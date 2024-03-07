@@ -199,6 +199,7 @@ export default function StandForm() {
 
         <NumberInput
           label="Match Number"
+          description={"The number of the match you are scouting for."}
           placeholder="0"
           className="pb-4 w-full"
           allowDecimal={false}
@@ -209,7 +210,8 @@ export default function StandForm() {
 
         <NumberInput
           label="Team Number"
-          placeholder="7028"
+          description={"The number of the team for the robot you are scouting."}
+          placeholder="1234"
           className="pb-4"
           allowDecimal={false}
           allowNegative={false}
