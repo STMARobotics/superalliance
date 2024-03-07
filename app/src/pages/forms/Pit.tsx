@@ -106,7 +106,8 @@ export default function PitForm() {
       const pitForm = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.teamNumber}`
       );
-      if (pitForm)
+      console.log(pitForm);
+      if (pitForm.data !== "")
         return toast.error(
           "A pit form for this team has already been submitted!"
         );
