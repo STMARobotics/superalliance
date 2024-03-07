@@ -550,6 +550,7 @@ export default function StandForm() {
           className="pb-4"
           size="md"
           label="Was HARMONY achieved?"
+          description="2 or more Robots sucessfully climbed on a single chain."
           {...form.getInputProps("harmony", { type: "checkbox" })}
         />
 
