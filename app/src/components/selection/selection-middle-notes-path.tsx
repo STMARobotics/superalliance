@@ -37,6 +37,7 @@ const SelectionMiddleNotesPath = ({
                         fit="contain"
                         radius={"md"}
                         mah={"100%"}
+                        className="rotate-180"
                         src={`https://raw.githubusercontent.com/wpilibsuite/allwpilib/main/fieldImages/src/main/native/resources/edu/wpi/first/fields/2024-field.png`}
                       />
                       {alliance === "red" ? (
