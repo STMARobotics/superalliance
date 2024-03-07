@@ -1,17 +1,7 @@
-import {
-  Accordion,
-  Button,
-  Grid,
-  Group,
-  Paper,
-  Text,
-  TextInput,
-  Textarea,
-} from "@mantine/core";
+import { Accordion, Group, Text, TextInput, Textarea } from "@mantine/core";
 
 const SelectionPitFormView = ({
   pitFormData,
-  aggregationData,
 }: {
   pitFormData: any;
   aggregationData: any;
@@ -25,35 +15,6 @@ const SelectionPitFormView = ({
           multiple
           variant="contained"
         >
-          {aggregationData?.comments?.length !== 0 ? (
-            <Accordion.Item value="comments">
-              <Accordion.Control>Comments</Accordion.Control>
-              <Accordion.Panel>
-                <Grid grow>
-                  {aggregationData?.comments.map((comment: any, index: any) => {
-                    return (
-                      <Grid.Col span={12} key={index + 1}>
-                        <Paper shadow="xl" radius="md" p="sm" withBorder>
-                          <Text fw={700}>Match #soon - placeholder</Text>
-                          <Text fw={400}>"{comment.comment}"</Text>
-                          <Button
-                            variant="outline"
-                            fullWidth
-                            mt="md"
-                            component="a"
-                            target={"_blank"}
-                            href={`#`}
-                          >
-                            View Form
-                          </Button>
-                        </Paper>
-                      </Grid.Col>
-                    );
-                  })}
-                </Grid>
-              </Accordion.Panel>
-            </Accordion.Item>
-          ) : null}
           <Accordion.Item value="strategy">
             <Accordion.Control>Strategy</Accordion.Control>
             <Accordion.Panel>

@@ -74,12 +74,14 @@ export function SortingTeamsTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row: any) => (
                 <TableRow
-                  key={row.id}
+                  key={row.original._id}
+                  data-team={row.original._id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell: any) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

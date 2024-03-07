@@ -25,7 +25,7 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
   }, [yAxis]);
 
   const yAxisOptions = [
-    { value: "matchTotalScore", label: "Auto + Teleop Score" },
+    { value: "matchTotalScore", label: "Total Score" },
     { value: "matchAutoScore", label: "Auto Score" },
     { value: "matchTeleScore", label: "Teleop Score" },
     { value: "matchRP", label: "Ranking Points" },
@@ -43,7 +43,7 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
         />
       </div>
       <div className="flex">
-        {lineData && (
+        {lineData.length > 0 && (
           <LineChart
             data={lineData}
             xAxis={"Match Number"}

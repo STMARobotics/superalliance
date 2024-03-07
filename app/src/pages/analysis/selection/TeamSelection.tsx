@@ -65,6 +65,7 @@ function TeamSelection() {
         {selectedTeam !== "" && totalAggregation && (
           <>
             <SelectionTeamView
+              teams={teams}
               aggregationData={
                 selectedEvent !== "all"
                   ? eventAggregation?.filter((team: any) => {

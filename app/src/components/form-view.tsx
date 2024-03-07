@@ -104,14 +104,14 @@ const FormView = ({ formData }: { formData: any }) => {
       <TextInput
         value={formData?.autoAmpsNotes}
         readOnly
-        label="Notes Scored in Amps"
+        label="Auto Notes Scored in Amps"
         className="pb-4"
       />
 
       <TextInput
         value={formData?.autoSpeakersNotes}
         readOnly
-        label="Notes Scored in Speakers"
+        label="Auto Notes Scored in Speakers"
         className="pb-4"
       />
 

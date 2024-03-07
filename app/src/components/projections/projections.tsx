@@ -11,20 +11,22 @@ import { EventSwitcher } from "@/components/event-switcher";
 import { Separator } from "@/components/ui/separator";
 import { FormNav } from "@/components/forms/form-nav";
 import { ArrowDownUp, FileDigit, Home, ScatterChart } from "lucide-react";
-import { SortingTeamsTable } from "@/components/sorting/sorting-table";
-import { columns } from "@/components/sorting/sorting-columns";
-import { ScrollArea } from "@mantine/core";
+import ProjectionsGraph from "./projections-graph";
 
-export default function Sorting({
+export default function TeamProjections({
   forms,
   teams,
   events,
   aggregation,
+  selectedTeam,
+  setSelectedTeam,
 }: {
   forms: any;
   teams: any;
   events: any;
   aggregation: any;
+  selectedTeam: any;
+  setSelectedTeam: any;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = useLocation().pathname;
@@ -98,10 +100,15 @@ export default function Sorting({
         <ResizableHandle withHandle />
         <ResizablePanel minSize={30} defaultSize={1095}>
           <div className="hidden h-full flex-1 flex-col space-y-4 p-8 md:flex">
-            <h2 className="text-3xl font-bold tracking-tight">Team Sorting</h2>
-            <ScrollArea className="w-full h-screen">
-              <SortingTeamsTable data={aggregation} columns={columns} />
-            </ScrollArea>
+            <h2 className="text-3xl font-bold tracking-tight">
+              Team Projections
+            </h2>
+            <Separator />
+            <ProjectionsGraph
+              data={aggregation ?? []}
+              selectedTeam={selectedTeam}
+              setSelectedTeam={setSelectedTeam}
+            />
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>

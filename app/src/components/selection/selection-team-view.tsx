@@ -27,11 +27,13 @@ import SelectionMiddleNotesPath from "@/components/selection/selection-middle-no
 import SelectionComments from "@/components/selection/selection-view-comments";
 
 const SelectionTeamView = ({
+  teams,
   aggregationData,
   setSelectedTeam,
   pitFormData,
   setFormsOpened,
 }: {
+  teams: any;
   aggregationData: any;
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   pitFormData: any;
@@ -69,6 +71,7 @@ const SelectionTeamView = ({
         }}
       >
         <DataDisplay
+          teams={teams}
           aggregationData={aggregationData}
           pitFormData={pitFormData}
           setMainOpened={setMainOpened}
@@ -186,6 +189,7 @@ const SelectionTeamView = ({
               (a: any, b: any) => a.matchNumber - b.matchNumber
             )}
             alliance="red"
+            fullWidth={false}
           />
         )}
       </Drawer>
@@ -194,6 +198,7 @@ const SelectionTeamView = ({
 };
 
 const DataDisplay = ({
+  teams,
   aggregationData,
   pitFormData,
   setMainOpened,
@@ -204,6 +209,7 @@ const DataDisplay = ({
   setCommentsOpened,
   setMiddleNotesOpened,
 }: {
+  teams: any;
   aggregationData: any;
   pitFormData: any;
   setMainOpened: any;
@@ -215,9 +221,6 @@ const DataDisplay = ({
   setMiddleNotesOpened: any;
 }) => {
   const averages = [
-    { label: "Total Score", value: aggregationData?.totalScore },
-    { label: "Total Auto Score", value: aggregationData?.totalAutoScore },
-    { label: "Total Tele Score", value: aggregationData?.totalTeleScore },
     { label: "Average Total Score", value: aggregationData?.avgTotalScore },
     { label: "Average Auto Score", value: aggregationData?.avgAutoScore },
     { label: "Average Tele Score", value: aggregationData?.avgTeleScore },
@@ -281,7 +284,12 @@ const DataDisplay = ({
     <div>
       <div className="flex items-center justify-between space-y-2 mb-3">
         <h2 className="text-3xl font-bold tracking-tight">
-          Inspecting Team #{aggregationData?._id}
+          Inspecting Team #{aggregationData?._id} -{" "}
+          {
+            teams.filter(
+              (team: any) => team.teamNumber == aggregationData?._id
+            )[0].teamName
+          }
         </h2>
         <div className="flex items-center space-x-2">
           <Button

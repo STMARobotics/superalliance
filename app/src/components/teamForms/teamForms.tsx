@@ -8,7 +8,13 @@ import {
 import FormView from "@/components/form-view";
 import { Drawer, ScrollArea } from "@mantine/core";
 import { Separator } from "@/components/ui/separator";
-import { ArrowDownUp, FileDigit, Home, Search } from "lucide-react";
+import {
+  ArrowDownUp,
+  FileDigit,
+  Home,
+  ScatterChart,
+  Search,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { FormNav } from "@/components/forms/form-nav";
@@ -112,14 +118,14 @@ function TeamForms({
               links={[
                 {
                   title: "Forms",
-                  label: forms?.length,
+                  label: forms?.length > 0 ? forms?.length : "",
                   icon: Home,
                   variant: pathname == "/data/forms" ? "default" : "ghost",
                   link: "/data/forms",
                 },
                 {
                   title: "Teams",
-                  label: teams?.length,
+                  label: teams?.length > 0 ? teams?.length : "",
                   icon: FileDigit,
                   variant: pathname == "/data/teams" ? "default" : "ghost",
                   link: "/data/teams",
@@ -130,6 +136,14 @@ function TeamForms({
                   icon: ArrowDownUp,
                   variant: pathname == "/data/sorting" ? "default" : "ghost",
                   link: "/data/sorting",
+                },
+                {
+                  title: "Team Projections",
+                  label: "",
+                  icon: ScatterChart,
+                  variant:
+                    pathname == "/data/team/projections" ? "default" : "ghost",
+                  link: "/data/team/projections",
                 },
               ]}
             />

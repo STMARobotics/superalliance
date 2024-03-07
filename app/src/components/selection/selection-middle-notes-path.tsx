@@ -4,16 +4,18 @@ import { Route } from "lucide-react";
 const SelectionMiddleNotesPath = ({
   middleNotes,
   alliance,
+  fullWidth,
 }: {
   middleNotes: any[];
   alliance: string;
+  fullWidth: any;
 }) => {
   const redPositions = [
-    { t: "14%", l: "49.2%" },
-    { t: "31.3%", l: "49.2%" },
-    { t: "48.2%", l: "49.2%" },
-    { t: "65.4%", l: "49.2%" },
     { t: "82.4%", l: "49.2%" },
+    { t: "65.4%", l: "49.2%" },
+    { t: "48.2%", l: "49.2%" },
+    { t: "31.3%", l: "49.2%" },
+    { t: "14%", l: "49.2%" },
   ];
 
   return (
@@ -26,13 +28,18 @@ const SelectionMiddleNotesPath = ({
                 <Accordion.Item
                   key={index}
                   value={`${index}`}
-                  className="w-[60vw] flex flex-col justify-center items-center"
+                  className={`w-[${
+                    fullWidth ? "100vw" : "60vw"
+                  }] flex flex-col justify-center items-center`}
                 >
                   <Accordion.Control icon={<Route />}>
                     Match #{note.matchNumber} Autonomous Note Path
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <Card key={index} className="h-[100%] w-[55vw]">
+                    <Card
+                      key={index}
+                      className={`h-[100%] w-[${fullWidth ? "100vw" : "55vw"}]`}
+                    >
                       <Image
                         fit="contain"
                         radius={"md"}
@@ -45,8 +52,8 @@ const SelectionMiddleNotesPath = ({
                           <div
                             style={{
                               position: "absolute",
-                              top: "33.7%",
-                              left: "86%",
+                              top: "63.7%",
+                              left: "10%",
                               width: "1rem",
                               height: "1rem",
                               backgroundColor: "red",
@@ -68,7 +75,7 @@ const SelectionMiddleNotesPath = ({
                                   <line
                                     x1={
                                       i == 0
-                                        ? "86%"
+                                        ? "10%"
                                         : redPositions[
                                             Number(
                                               note.autoMiddleNotes[i - 1]
@@ -77,7 +84,7 @@ const SelectionMiddleNotesPath = ({
                                     }
                                     y1={
                                       i == 0
-                                        ? "33.7%"
+                                        ? "63.7%"
                                         : redPositions[
                                             Number(
                                               note.autoMiddleNotes[i - 1]

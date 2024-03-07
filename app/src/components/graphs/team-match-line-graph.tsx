@@ -9,16 +9,12 @@ const TeamMatchLineGraph = ({
   data,
   xAxis,
   yAxis,
-  xMin,
-  xMax,
   yMin,
   yMax,
 }: {
   data: any[];
   xAxis: string;
   yAxis: string;
-  xMin?: number;
-  xMax?: number;
   yMin?: number | "auto";
   yMax?: number | "auto";
 }) => {
@@ -30,9 +26,6 @@ const TeamMatchLineGraph = ({
     acc[curr.id] = xToLabel;
     return acc;
   }, {});
-
-  const finalXMin = xMin ? xMin : 1;
-  const finalXMax = xMax ? xMax : data.length === 0 ? 1 : "auto";
 
   const finalYMin = yMin
     ? yMin
@@ -48,7 +41,7 @@ const TeamMatchLineGraph = ({
       <ResponsiveLine
         data={data}
         margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
-        xScale={{ type: "linear", min: finalXMin, max: finalXMax }}
+        xScale={{ type: "point" }}
         yScale={{ type: "linear", min: finalYMin, max: finalYMax }}
         curve="monotoneX"
         // enableGridX={false}
