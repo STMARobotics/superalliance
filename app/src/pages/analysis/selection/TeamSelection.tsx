@@ -6,7 +6,9 @@ import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { getPitFormByTeam } from "@/lib/superallianceapi";
 import { Drawer, Modal, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { Download, Save } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 function TeamSelection() {
   const {
@@ -45,6 +47,14 @@ function TeamSelection() {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center py-8">
         Team Selection
       </h1>
+      <div className="w-full flex flex-row items-center justify-center pb-4 gap-2">
+        <Button>
+          <Download className="mr-2 h-4 w-4" /> Load Teams
+        </Button>
+        <Button>
+          <Save className="mr-2 h-4 w-4" /> Save Teams
+        </Button>
+      </div>
       <div className="h-full flex justify-center items-center px-3">
         {teams?.length > 0 && (
           <SelectionDND
