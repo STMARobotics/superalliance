@@ -5,6 +5,40 @@ const eventRouter = Router();
 const mongoose = require("mongoose");
 const axios = require("axios");
 
+eventRouter.get(
+  "/api/event/:eventCode/match/:matchNumber/teams",
+  async (req, res) => {
+    try {
+      const { eventCode, matchNumber } = req.params;
+      const response = await axios.get(
+        `https://www.thebluealliance.com/api/v3/match/2024${eventCode}_qm${matchNumber}`,
+        {
+          headers: {
+            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+            accept: "application/json",
+          },
+        }
+      );
+      const data = response.data;
+      if (!data)
+        return res
+          .status(404)
+          .json({ error: "Event match or teams not found!" });
+      const teamStruct = {
+        red: data.alliances.red.team_keys.map((team) => {
+          return team.replace("frc", "");
+        }),
+        blue: data.alliances.blue.team_keys.map((team) => {
+          return team.replace("frc", "");
+        }),
+      };
+      return res.send(teamStruct);
+    } catch {
+      return res.status(404).json({ error: "Event match or teams not found!" });
+    }
+  }
+);
+
 eventRouter.get("/api/listEvents/:team/:year", async (req, res) => {
   const { team, year } = req.params;
   if (!team || !year)

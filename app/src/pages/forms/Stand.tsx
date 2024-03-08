@@ -22,10 +22,11 @@ import { Separator } from "@/components/ui/separator";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import { getTeamsFromMatch } from "@/lib/superallianceapi";
 
 interface StandFormValues {
   event: null | number;
-  teamNumber: null | number;
+  teamNumber: null | string | number;
   matchNumber: null | number;
   autoMiddleNotes: any[];
   autoAmpsNotes: null | number;
@@ -56,6 +57,7 @@ export default function StandForm() {
   const navigate = useNavigate();
   const { events, appSettings } = useSuperAlliance();
   const [eventData, setEventData] = useState([]);
+  const [matchTeams, setMatchTeams] = useState<any>();
 
   useEffect(() => {
     if (!events) return;
@@ -141,6 +143,44 @@ export default function StandForm() {
       });
   };
 
+  const configureMatchTeams = () => {
+    (async function () {
+      if (!appSettings) return;
+      if (!form.values?.matchNumber) return setMatchTeams([]);
+      if (
+        appSettings?.event == "testing" ||
+        appSettings?.event == "week0" ||
+        appSettings?.event == "gnrprac"
+      )
+        return;
+      try {
+        const data = await getTeamsFromMatch(
+          appSettings?.event,
+          form.values?.matchNumber
+        );
+        const teamsArray: any[] = [];
+        data.red.map((team: any, index: any) => {
+          const struct = {
+            label: `Red ${index + 1} - ${team}`,
+            value: team,
+          };
+          teamsArray.push(struct);
+        });
+        data.blue.map((team: any, index: any) => {
+          const struct = {
+            label: `Blue ${index + 1} - ${team}`,
+            value: team,
+          };
+          teamsArray.push(struct);
+        });
+        return setMatchTeams(teamsArray);
+      } catch (err) {
+        toast.error("Match not found, is this a valid match number?");
+        return setMatchTeams([]);
+      }
+    })();
+  };
+
   return (
     <div className="pt-3 flex flex-col w-full justify-center items-center">
       <>
@@ -208,17 +248,45 @@ export default function StandForm() {
           {...form.getInputProps("matchNumber")}
         />
 
-        <NumberInput
-          label="Team Number"
-          description={"The number of the team for the robot you are scouting."}
-          placeholder="1234"
-          className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          maxLength={4}
-          {...form.getInputProps("teamNumber")}
-        />
+        {appSettings?.event !== "none" && (
+          <div className="pb-4">
+            <Button
+              fullWidth
+              h={"3rem"}
+              className="bg-white text-black"
+              onClick={configureMatchTeams}
+            >
+              Get Teams
+            </Button>
+          </div>
+        )}
+
+        {appSettings?.event !== "none" && matchTeams?.length > 0 ? (
+          <Select
+            data={matchTeams}
+            placeholder="Pick one"
+            label="Select Team"
+            description={
+              "The number of the team for the robot you are scouting."
+            }
+            required
+            {...form.getInputProps("teamNumber")}
+          />
+        ) : (
+          <NumberInput
+            label="Team Number"
+            description={
+              "The number of the team for the robot you are scouting."
+            }
+            placeholder="1234"
+            className="pb-4"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            maxLength={4}
+            {...form.getInputProps("teamNumber")}
+          />
+        )}
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Autonomous

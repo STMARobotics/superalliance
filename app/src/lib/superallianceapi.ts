@@ -36,6 +36,23 @@ export const getEvents = async (team: string, year: string) => {
   }
 };
 
+export const getTeamsFromMatch = async (
+  eventCode: string,
+  matchNumber: number
+) => {
+  try {
+    const res = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/api/event/${eventCode}/match/${matchNumber}/teams`
+    );
+    const data = res.data;
+    return data;
+  } catch (err) {
+    throw new Error("Teams not found");
+  }
+};
+
 export const getFormById = async (id: string) => {
   try {
     const res = await axios.get(
