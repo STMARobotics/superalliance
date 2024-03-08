@@ -12,6 +12,7 @@ import {
   ArrowDownUp,
   FileDigit,
   Home,
+  RefreshCcw,
   ScatterChart,
   Search,
 } from "lucide-react";
@@ -22,6 +23,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { EventSwitcher } from "../event-switcher";
 import { useLocation } from "react-router-dom";
 import { IconExternalLink } from "@tabler/icons-react";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
 function Forms({
   forms,
@@ -43,6 +45,7 @@ function Forms({
     e.preventDefault();
     setSearchContent(e.target.value);
   };
+  const { refreshSA } = useSuperAlliance();
   return (
     <TooltipProvider delayDuration={0}>
       <Affix position={{ bottom: 20, right: 20 }}>
@@ -124,8 +127,12 @@ function Forms({
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel minSize={30} defaultSize={440}>
-          <div className="h-[52px] flex items-center px-4 py-2">
+          <div className="h-[52px] flex items-center px-4 py-2 justify-between">
             <h1 className="text-xl font-bold">Forms</h1>
+            <RefreshCcw
+              className="h-5 w-5 cursor-pointer"
+              onClick={() => !refreshSA?.eventData()}
+            />
           </div>
           <Separator />
           <div className="h-[4.25rem] bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">

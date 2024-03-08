@@ -86,19 +86,18 @@ export function SuperAllianceProvider(props: any) {
     },
     eventData: () => {
       (async function () {
-        console.log("hello");
         if (selectedEvent && selectedEvent !== "all") {
           const eventForms = await getForms();
-          const eventTeams = await getTeams();
-          const eventAggregation = await getEventAggregation(selectedEvent);
           setEventForms(
             eventForms.filter((form: any) => form.event === selectedEvent)
           );
+          const eventTeams = await getTeams();
           setEventTeams(
             eventTeams.filter((team: any) =>
               team.teamEvent.includes(selectedEvent)
             )
           );
+          const eventAggregation = await getEventAggregation(selectedEvent);
           setEventAggregation(eventAggregation);
         }
       })();
@@ -125,20 +124,36 @@ export function SuperAllianceProvider(props: any) {
       setAppSettings(appSettingsRes);
       if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
         const eventForms = await getForms();
-        const eventTeams = await getTeams();
-        const eventAggregation = await getEventAggregation(
-          appSettingsRes?.event
-        );
         setEventForms(
           eventForms.filter((form: any) => form.event === appSettingsRes?.event)
         );
+        setSelectedEvent(appSettingsRes?.event);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      const appSettingsRes = await getAppSettings();
+      if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
+        const eventTeams = await getTeams();
         setEventTeams(
           eventTeams.filter((team: any) =>
             team.teamEvent.includes(appSettingsRes?.event)
           )
         );
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      const appSettingsRes = await getAppSettings();
+      if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
+        const eventAggregation = await getEventAggregation(
+          appSettingsRes?.event
+        );
         setEventAggregation(eventAggregation);
-        setSelectedEvent(appSettingsRes?.event);
       }
     })();
   }, []);
@@ -147,16 +162,30 @@ export function SuperAllianceProvider(props: any) {
     (async function () {
       if (selectedEvent && selectedEvent !== "all") {
         const eventForms = await getForms();
-        const eventTeams = await getTeams();
-        const eventAggregation = await getEventAggregation(selectedEvent);
         setEventForms(
           eventForms.filter((form: any) => form.event === selectedEvent)
         );
+      }
+    })();
+  }, [selectedEvent]);
+
+  useEffect(() => {
+    (async function () {
+      if (selectedEvent && selectedEvent !== "all") {
+        const eventTeams = await getTeams();
         setEventTeams(
           eventTeams.filter((team: any) =>
             team.teamEvent.includes(selectedEvent)
           )
         );
+      }
+    })();
+  }, [selectedEvent]);
+
+  useEffect(() => {
+    (async function () {
+      if (selectedEvent && selectedEvent !== "all") {
+        const eventAggregation = await getEventAggregation(selectedEvent);
         setEventAggregation(eventAggregation);
       }
     })();

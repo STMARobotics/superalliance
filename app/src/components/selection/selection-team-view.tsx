@@ -25,6 +25,7 @@ import SelectionPitFormView from "@/components/selection/selection-pit-form-view
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionMiddleNotesPath from "@/components/selection/selection-middle-notes-path";
 import SelectionComments from "@/components/selection/selection-view-comments";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
 const SelectionTeamView = ({
   teams,
@@ -32,18 +33,21 @@ const SelectionTeamView = ({
   setSelectedTeam,
   pitFormData,
   setFormsOpened,
+  eventInfo,
 }: {
   teams: any;
   aggregationData: any;
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   pitFormData: any;
   setFormsOpened: any;
+  eventInfo: any;
 }) => {
   const [mainOpened, setMainOpened] = useState(false);
   const [imageOpened, setImageOpened] = useState(false);
   const [criticalsOpened, setCriticalsOpened] = useState(false);
   const [commentsOpened, setCommentsOpened] = useState(false);
   const [middleNotesOpened, setMiddleNotesOpened] = useState(false);
+  const { appSettings } = useSuperAlliance();
 
   useEffect(() => {
     if (aggregationData) return setMainOpened(true);
@@ -81,6 +85,8 @@ const SelectionTeamView = ({
           setCriticalsOpened={setCriticalsOpened}
           setCommentsOpened={setCommentsOpened}
           setMiddleNotesOpened={setMiddleNotesOpened}
+          appSettings={appSettings}
+          eventInfo={eventInfo}
         />
       </Modal>
       <Modal
@@ -208,6 +214,8 @@ const DataDisplay = ({
   setCriticalsOpened,
   setCommentsOpened,
   setMiddleNotesOpened,
+  appSettings,
+  eventInfo,
 }: {
   teams: any;
   aggregationData: any;
@@ -219,6 +227,8 @@ const DataDisplay = ({
   setCriticalsOpened: any;
   setCommentsOpened: any;
   setMiddleNotesOpened: any;
+  appSettings: any;
+  eventInfo: any;
 }) => {
   const averages = [
     { label: "Average Total Score", value: aggregationData?.avgTotalScore },
@@ -371,22 +381,41 @@ const DataDisplay = ({
                   </p>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Average Ranking Points
-                  </CardTitle>
-                  <Medal className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {aggregationData?.avgRP} Points
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    (Placeholder for ranking in event)
-                  </p>
-                </CardContent>
-              </Card>
+              {appSettings?.event !== "none" ? (
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Event Rank
+                    </CardTitle>
+                    <Medal className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {aggregationData?.avgRP} Points
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      (Placeholder for ranking in event)
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Average Ranking Points
+                    </CardTitle>
+                    <Medal className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {aggregationData?.avgRP} Points
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      (Placeholder for ranking in event)
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 pt-4">
               <Card className="col-span-3">

@@ -58,6 +58,7 @@ export default function StandForm() {
   const { events, appSettings } = useSuperAlliance();
   const [eventData, setEventData] = useState([]);
   const [matchTeams, setMatchTeams] = useState<any>();
+  const [submitPress, setSubmitPress] = useState(false);
 
   useEffect(() => {
     if (!events) return;
@@ -128,6 +129,7 @@ export default function StandForm() {
   });
 
   const submitForm = async (values: any) => {
+    setSubmitPress(true);
     const struct = {
       usersName: user?.fullName,
       ...values,
@@ -140,6 +142,7 @@ export default function StandForm() {
       })
       .catch(function () {
         toast.error("The form failed to submit. Please contact an admin!");
+        setSubmitPress(false);
       });
   };
 
@@ -745,6 +748,7 @@ export default function StandForm() {
             fullWidth
             h={"3rem"}
             className="bg-white text-black"
+            loading={submitPress}
           >
             Submit
           </Button>
