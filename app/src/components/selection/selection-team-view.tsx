@@ -33,14 +33,12 @@ const SelectionTeamView = ({
   setSelectedTeam,
   pitFormData,
   setFormsOpened,
-  eventInfo,
 }: {
   teams: any;
   aggregationData: any;
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   pitFormData: any;
   setFormsOpened: any;
-  eventInfo: any;
 }) => {
   const [mainOpened, setMainOpened] = useState(false);
   const [imageOpened, setImageOpened] = useState(false);
@@ -86,7 +84,6 @@ const SelectionTeamView = ({
           setCommentsOpened={setCommentsOpened}
           setMiddleNotesOpened={setMiddleNotesOpened}
           appSettings={appSettings}
-          eventInfo={eventInfo}
         />
       </Modal>
       <Modal
@@ -215,7 +212,6 @@ const DataDisplay = ({
   setCommentsOpened,
   setMiddleNotesOpened,
   appSettings,
-  eventInfo,
 }: {
   teams: any;
   aggregationData: any;
@@ -228,7 +224,6 @@ const DataDisplay = ({
   setCommentsOpened: any;
   setMiddleNotesOpened: any;
   appSettings: any;
-  eventInfo: any;
 }) => {
   const averages = [
     { label: "Average Total Score", value: aggregationData?.avgTotalScore },
