@@ -73,6 +73,7 @@ function DataTeamProjections() {
             setSelectedTeam={setSelectedTeam}
             pitFormData={pitFormData}
             setFormsOpened={setFormListOpened}
+            eventInfo={[]}
           />
           <Modal
             classNames={{

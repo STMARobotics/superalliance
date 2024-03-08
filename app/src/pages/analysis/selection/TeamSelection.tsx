@@ -78,6 +78,7 @@ function TeamSelection() {
               setSelectedTeam={setSelectedTeam}
               pitFormData={pitFormData}
               setFormsOpened={setFormListOpened}
+              eventInfo={[]}
             />
             <Modal
               classNames={{
