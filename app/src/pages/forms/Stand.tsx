@@ -273,19 +273,34 @@ export default function StandForm() {
             {...form.getInputProps("teamNumber")}
           />
         ) : (
-          <NumberInput
-            label="Team Number"
-            description={
-              "The number of the team for the robot you are scouting."
-            }
-            placeholder="1234"
-            className="pb-4"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            maxLength={4}
-            {...form.getInputProps("teamNumber")}
-          />
+          <>
+            {matchTeams ? (
+              <NumberInput
+                label="Team Number"
+                description={
+                  "The number of the team for the robot you are scouting."
+                }
+                placeholder="1234"
+                className="pb-4"
+                allowDecimal={false}
+                allowNegative={false}
+                hideControls
+                maxLength={4}
+                {...form.getInputProps("teamNumber")}
+              />
+            ) : (
+              <Select
+                placeholder="Pick one"
+                label="Select Team"
+                disabled
+                className="pb-4"
+                description={
+                  "Please select a match number and press 'Get Teams'."
+                }
+                required
+              />
+            )}
+          </>
         )}
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
