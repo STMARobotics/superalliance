@@ -26,6 +26,7 @@ import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionMiddleNotesPath from "@/components/selection/selection-middle-notes-path";
 import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { getTeamEventAlliance } from "@/lib/superallianceapi";
 
 const SelectionTeamView = ({
   teams,
@@ -45,10 +46,21 @@ const SelectionTeamView = ({
   const [criticalsOpened, setCriticalsOpened] = useState(false);
   const [commentsOpened, setCommentsOpened] = useState(false);
   const [middleNotesOpened, setMiddleNotesOpened] = useState(false);
+  const [allianceData, setAllianceData] = useState<any>();
   const { appSettings } = useSuperAlliance();
 
   useEffect(() => {
     if (aggregationData) return setMainOpened(true);
+  }, [aggregationData]);
+
+  useEffect(() => {
+    (async function () {
+      const data = await getTeamEventAlliance(
+        aggregationData._id,
+        appSettings.event
+      );
+      setAllianceData(data);
+    })();
   }, [aggregationData]);
 
   return (
@@ -191,7 +203,7 @@ const SelectionTeamView = ({
             middleNotes={aggregationData?.middleNotes?.sort(
               (a: any, b: any) => a.matchNumber - b.matchNumber
             )}
-            alliance="red"
+            allianceData={allianceData}
             fullWidth={false}
           />
         )}

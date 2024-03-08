@@ -15,17 +15,32 @@ function DataSorting() {
 
   return (
     <>
-      {totalAggregation && (
-        <div className="h-full flex-col md:flex">
-          <Sorting
-            forms={selectedEvent !== "all" ? eventForms : forms}
-            teams={selectedEvent !== "all" ? eventTeams : teams}
-            events={events}
-            aggregation={
-              selectedEvent !== "all" ? eventAggregation : totalAggregation
-            }
-          />
-        </div>
+      {selectedEvent !== "all" ? (
+        <>
+          {eventAggregation && (
+            <div className="h-full flex-col md:flex">
+              <Sorting
+                forms={eventForms}
+                teams={eventTeams}
+                events={events}
+                aggregation={eventAggregation}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {totalAggregation && (
+            <div className="h-full flex-col md:flex">
+              <Sorting
+                forms={forms}
+                teams={teams}
+                events={events}
+                aggregation={totalAggregation}
+              />
+            </div>
+          )}
+        </>
       )}
     </>
   );

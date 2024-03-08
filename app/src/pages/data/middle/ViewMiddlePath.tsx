@@ -59,7 +59,7 @@ function DataMiddlePath() {
           middleNotes={aggregationData?.middleNotes?.sort(
             (a: any, b: any) => a.matchNumber - b.matchNumber
           )}
-          alliance="red"
+          allianceData={[]}
           fullWidth={isMobile ? true : false}
         />
       )}

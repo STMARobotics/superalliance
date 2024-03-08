@@ -113,6 +113,20 @@ export const getBadComments = async () => {
   }
 };
 
+export const getTeamEventAlliance = async (team: string, eventCode: string) => {
+  try {
+    const res = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/api/team/${team}/event/${eventCode}/matches/alliance`
+    );
+    const data = res.data;
+    return data;
+  } catch {
+    throw new Error("This teams alliance data is not found.");
+  }
+};
+
 export const getAppSettings = async () => {
   try {
     const res = await axios.get(
