@@ -138,3 +138,15 @@ export const getAppSettings = async () => {
     throw new Error("Settings not found!");
   }
 };
+
+export const getTeamSelection = async () => {
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/teamSelection`
+    );
+    const data = res.data;
+    return data;
+  } catch {
+    throw new Error("Team Selection not found");
+  }
+};

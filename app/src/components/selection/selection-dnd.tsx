@@ -22,6 +22,12 @@ import { coordinateGetter } from "@/components/selection/multipleContainersKeybo
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { hasDraggableData } from "@/components/selection/selection-utils";
 import { createPortal } from "react-dom";
+import { Button } from "@/components/ui/button";
+import { Download, Save } from "lucide-react";
+import { getTeamSelection } from "@/lib/superallianceapi";
+import { useUser } from "@clerk/clerk-react";
+import axios from "axios";
+import { toast } from "sonner";
 
 const defaultCols = [
   {
@@ -60,7 +66,9 @@ const SelectionDND = ({
     };
   });
 
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
+  const { user } = useUser();
+
+  const [columns, setColumns] = useState<any[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
   const [teams, setTeams] = useState<Team[]>(initialTeams);
 
@@ -97,45 +105,89 @@ const SelectionDND = ({
     })
   );
 
-  return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={onDragOver}
-    >
-      <BoardContainer>
-        <SortableContext items={columnsId}>
-          {columns.map((col) => (
-            <BoardColumn
-              key={col.id}
-              column={col}
-              teams={teams.filter((team) => team.columnId === col.id)}
-              totalTeamCount={teams.length}
-              setSelectedTeam={setSelectedTeam}
-            />
-          ))}
-        </SortableContext>
-      </BoardContainer>
+  const getApiSelection = () => {
+    (async function () {
+      try {
+        const data = await getTeamSelection();
+        toast.success("Team Selection retrieved successfully!");
+        const teams = data.teams;
+        console.log(teams);
+        setTeams(teams);
+      } catch {
+        toast.error("The team selections failed to retrieve.");
+      }
+    })();
+  };
 
-      {"document" in window &&
-        createPortal(
-          <DragOverlay>
-            {activeColumn && (
+  const saveSelection = () => {
+    (async function () {
+      console.log(columns);
+      await axios
+        .post(`${import.meta.env.VITE_API_URL}/api/teamSelection/save`, {
+          teams: teams,
+        })
+        .then(function () {
+          toast.success("Team Selection saved successfully!");
+        })
+        .catch(function () {
+          toast.error("The team selections failed to save.");
+        });
+    })();
+  };
+
+  return (
+    <div className="flex flex-col">
+      <div className="w-full flex flex-row items-center justify-center pb-4 gap-2">
+        {user?.organizationMemberships[0]?.role == "org:admin" && (
+          <>
+            <Button onClick={getApiSelection}>
+              <Download className="mr-2 h-4 w-4" /> Load Teams
+            </Button>
+            <Button onClick={saveSelection}>
+              <Save className="mr-2 h-4 w-4" /> Save Teams
+            </Button>
+          </>
+        )}
+      </div>
+      <DndContext
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
+        <BoardContainer>
+          <SortableContext items={columnsId}>
+            {columns.map((col) => (
               <BoardColumn
-                column={activeColumn}
-                teams={teams.filter(
-                  (team) => team.columnId === activeColumn.id
-                )}
+                key={col.id}
+                column={col}
+                teams={teams.filter((team) => team.columnId === col.id)}
                 totalTeamCount={teams.length}
                 setSelectedTeam={setSelectedTeam}
               />
-            )}
-            {activeTeam && <TeamCard team={activeTeam} isOverlay />}
-          </DragOverlay>,
-          document.body
-        )}
-    </DndContext>
+            ))}
+          </SortableContext>
+        </BoardContainer>
+
+        {"document" in window &&
+          createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <BoardColumn
+                  column={activeColumn}
+                  teams={teams.filter(
+                    (team) => team.columnId === activeColumn.id
+                  )}
+                  totalTeamCount={teams.length}
+                  setSelectedTeam={setSelectedTeam}
+                />
+              )}
+              {activeTeam && <TeamCard team={activeTeam} isOverlay />}
+            </DragOverlay>,
+            document.body
+          )}
+      </DndContext>
+    </div>
   );
 
   function onDragStart(event: DragStartEvent) {

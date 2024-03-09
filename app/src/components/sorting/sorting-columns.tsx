@@ -4,67 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/sorting/sorting-column-header";
 import { DataTableRowActions } from "@/components/sorting/sorting-row-actions";
 
-// const averages = [
-//   { label: "Total Score", value: aggregationData?.totalScore },
-//   { label: "Total Auto Score", value: aggregationData?.totalAutoScore },
-//   { label: "Total Tele Score", value: aggregationData?.totalTeleScore },
-//   { label: "Average Total Score", value: aggregationData?.avgTotalScore },
-//   { label: "Average Auto Score", value: aggregationData?.avgAutoScore },
-//   { label: "Average Tele Score", value: aggregationData?.avgTeleScore },
-//   { label: "Average RP", value: aggregationData?.avgRP },
-//   { label: "Total Crits", value: aggregationData?.criticalCount },
-//   { label: "Win Percentage", value: aggregationData?.winPercentage },
-//   {
-//     label: "Average Auto Amps Score",
-//     value: aggregationData?.avgAutoAmpsNotes,
-//   },
-//   {
-//     label: "Average Auto Speakers Score",
-//     value: aggregationData?.avgAutoSpeakersNotes,
-//   },
-//   {
-//     label: "Average Tele Amps Score",
-//     value: aggregationData?.avgTeleAmpsNotes,
-//   },
-//   {
-//     label: "Average Tele Speakers Score",
-//     value: aggregationData?.avgTeleSpeakersNotes,
-//   },
-//   {
-//     label: "Average Tele Amplified Speakers Score",
-//     value: aggregationData?.avgTeleAmplifiedSpeakersNotes,
-//   },
-//   {
-//     label: "Average Tele Traps Score",
-//     value: aggregationData?.avgTeleTrapsNotes,
-//   },
-//   { label: "Leave Percentage", value: aggregationData?.leavePercentage },
-//   { label: "Park Percentage", value: aggregationData?.parkPercentage },
-//   { label: "Onstage Percentage", value: aggregationData?.onstagePercentage },
-//   {
-//     label: "Onstage Spotlit Percentage",
-//     value: aggregationData?.onstageSpotlitPercentage,
-//   },
-//   { label: "Harmony Percentage", value: aggregationData?.harmonyPercentage },
-//   {
-//     label: "Self Spotlit Percentage",
-//     value: aggregationData?.selfSpotlitPercentage,
-//   },
-//   { label: "Defense Percentage", value: aggregationData?.defensePercentage },
-//   {
-//     label: "Defended Against Percentage",
-//     value: aggregationData?.defendedAgainstPercentage,
-//   },
-//   {
-//     label: "Stockpile Percentage",
-//     value: aggregationData?.stockpilePercentage,
-//   },
-//   {
-//     label: "Under Stage Percentage",
-//     value: aggregationData?.underStagePercentage,
-//   },
-// ];
-
 export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "_id",
@@ -72,6 +11,15 @@ export const columns: ColumnDef<any>[] = [
       <DataTableColumnHeader column={column} title="Team #" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("_id")}</div>,
+  },
+  {
+    accessorKey: "teamName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Team Name" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">{row.getValue("teamName")}</div>
+    ),
   },
   {
     accessorKey: "avgTotalScore",

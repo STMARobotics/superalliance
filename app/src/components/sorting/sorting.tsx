@@ -99,9 +99,11 @@ export default function Sorting({
         <ResizablePanel minSize={30} defaultSize={1095}>
           <div className="hidden h-full flex-1 flex-col space-y-4 p-8 md:flex">
             <h2 className="text-3xl font-bold tracking-tight">Team Sorting</h2>
-            <ScrollArea className="w-full h-screen">
-              <SortingTeamsTable data={aggregation} columns={columns} />
-            </ScrollArea>
+            {teams?.length > 0 && (
+              <ScrollArea className="w-full h-screen">
+                <SortingTeamsTable data={aggregation} columns={columns} />
+              </ScrollArea>
+            )}
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>

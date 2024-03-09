@@ -5,7 +5,7 @@ const commentRouter = Router();
 const CommentFormSchema = require("../models/CommentFormSchema");
 const mongoose = require("mongoose");
 
-commentRouter.get("/api/form/comments/formId", async (req, res) => {
+commentRouter.get("/api/form/comments/:formId", async (req, res) => {
   const formId = req.params?.formId;
   const data = await CommentFormSchema.find({
     _id: formId,
