@@ -25,6 +25,7 @@ interface BoardColumnProps {
   isOverlay?: boolean;
   totalTeamCount: number;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
+  printMode?: boolean;
 }
 
 export function BoardColumn({
@@ -33,6 +34,7 @@ export function BoardColumn({
   isOverlay,
   totalTeamCount,
   setSelectedTeam,
+  printMode,
 }: BoardColumnProps) {
   const teamsIds = useMemo(() => {
     return teams.map((team) => team.id);
@@ -55,7 +57,9 @@ export function BoardColumn({
   };
 
   const variants = cva(
-    "h-[72vh] max-h-[72vh] w-[350px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center",
+    `${
+      printMode ? "" : "h-[66vh] max-h-[66vh]"
+    } lg:w-[20vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center`,
     {
       variants: {
         dragging: {
@@ -91,6 +95,7 @@ export function BoardColumn({
                 team={team}
                 index={`#${index + 1}`}
                 setSelectedTeam={setSelectedTeam!}
+                printMode={printMode}
               />
             ))}
           </SortableContext>
@@ -118,7 +123,7 @@ export function BoardContainer({ children }: { children: React.ReactNode }) {
         dragging: dndContext.active ? "active" : "default",
       })}
     >
-      <div className="flex gap-4 items-center flex-row justify-center">
+      <div className="flex gap-4 items-start flex-row justify-center">
         {children}
       </div>
       <ScrollBar orientation="horizontal" />

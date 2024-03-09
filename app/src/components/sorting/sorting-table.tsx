@@ -77,7 +77,6 @@ export function SortingTeamsTable<TData, TValue>({
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
                   key={row.original._id}
-                  data-team={row.original._id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
                 >

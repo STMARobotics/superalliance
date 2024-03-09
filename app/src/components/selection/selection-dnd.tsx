@@ -76,6 +76,8 @@ const SelectionDND = ({
 
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
 
+  const [printMode, setPrintMode] = useState<boolean>(false);
+
   useEffect(() => {
     setTeams(
       propTeams.map((team: any) => {
@@ -111,7 +113,6 @@ const SelectionDND = ({
         const data = await getTeamSelection();
         toast.success("Team Selection retrieved successfully!");
         const teams = data.teams;
-        console.log(teams);
         setTeams(teams);
       } catch {
         toast.error("The team selections failed to retrieve.");
@@ -121,7 +122,6 @@ const SelectionDND = ({
 
   const saveSelection = () => {
     (async function () {
-      console.log(columns);
       await axios
         .post(`${import.meta.env.VITE_API_URL}/api/teamSelection/save`, {
           teams: teams,
@@ -146,6 +146,9 @@ const SelectionDND = ({
             <Button onClick={saveSelection}>
               <Save className="mr-2 h-4 w-4" /> Save Teams
             </Button>
+            <Button onClick={() => setPrintMode(printMode ? false : true)}>
+              <Save className="mr-2 h-4 w-4" /> Print Mode
+            </Button>
           </>
         )}
       </div>
@@ -164,6 +167,7 @@ const SelectionDND = ({
                 teams={teams.filter((team) => team.columnId === col.id)}
                 totalTeamCount={teams.length}
                 setSelectedTeam={setSelectedTeam}
+                printMode={printMode}
               />
             ))}
           </SortableContext>
@@ -180,6 +184,7 @@ const SelectionDND = ({
                   )}
                   totalTeamCount={teams.length}
                   setSelectedTeam={setSelectedTeam}
+                  printMode={printMode}
                 />
               )}
               {activeTeam && <TeamCard team={activeTeam} isOverlay />}

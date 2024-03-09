@@ -18,6 +18,7 @@ interface TeamCardProps {
   isOverlay?: boolean;
   index?: string;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
+  printMode?: boolean;
 }
 
 export type TeamType = "Team";
@@ -32,6 +33,7 @@ export function TeamCard({
   isOverlay,
   index,
   setSelectedTeam,
+  printMode,
 }: TeamCardProps) {
   const {
     setNodeRef,
@@ -81,9 +83,11 @@ export function TeamCard({
           {team.teamNumber} -{" "}
           <span className="text-secondary-foreground/65">{team?.teamName}</span>
         </span>
-        <Badge variant={"outline"} className="ml-auto font-semibold h-6">
-          {index ? index : "#"}
-        </Badge>
+        {!printMode && (
+          <Badge variant={"outline"} className="ml-auto font-semibold h-6">
+            {index ? index : "#"}
+          </Badge>
+        )}
       </CardHeader>
     </Card>
   );
