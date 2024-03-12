@@ -46,20 +46,20 @@ function TeamSelection() {
         Team Selection
       </h1>
       <div className="h-full flex justify-center items-center px-3">
-        {selectedEvent !== "all" ? (
+        {selectedEvent == "all" ? (
           <>
-            {eventTeams?.length > 0 && (
+            {teams?.length > 0 && (
               <SelectionDND
-                propTeams={eventTeams}
+                propTeams={teams}
                 setSelectedTeam={setSelectedTeam}
               />
             )}
           </>
         ) : (
           <>
-            {teams?.length > 0 && (
+            {eventTeams?.length > 0 && (
               <SelectionDND
-                propTeams={teams}
+                propTeams={eventTeams}
                 setSelectedTeam={setSelectedTeam}
               />
             )}

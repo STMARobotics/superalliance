@@ -20,9 +20,12 @@ import CommentsForm from "./pages/forms/Comments";
 import DataSorting from "./pages/data/sorting/ViewSorting";
 import DataTeamProjections from "./pages/data/projections/ViewTeamProjections";
 import DataMiddlePath from "./pages/data/middle/ViewMiddlePath";
+import { useSuperAlliance } from "./contexts/SuperAllianceProvider";
+import { LoadingOverlay } from "@mantine/core";
 
 function AppRouter() {
   const { user } = useUser();
+  const { loading } = useSuperAlliance();
   return (
     <Router>
       {/* HEADER */}
@@ -103,7 +106,20 @@ function AppRouter() {
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
-                <DataForms />
+                {loading ? (
+                  <div>
+                    <LoadingOverlay
+                      visible={true}
+                      zIndex={1000}
+                      overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+                      loaderProps={{ color: "red", type: "bars" }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <DataForms />
+                  </>
+                )}
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />
@@ -116,7 +132,20 @@ function AppRouter() {
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
-                <DataTeams />
+                {loading ? (
+                  <div>
+                    <LoadingOverlay
+                      visible={true}
+                      zIndex={1000}
+                      overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+                      loaderProps={{ color: "red", type: "bars" }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <DataTeams />
+                  </>
+                )}
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />
@@ -129,7 +158,20 @@ function AppRouter() {
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
-                <DataSorting />
+                {loading ? (
+                  <div>
+                    <LoadingOverlay
+                      visible={true}
+                      zIndex={1000}
+                      overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+                      loaderProps={{ color: "red", type: "bars" }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <DataSorting />
+                  </>
+                )}
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />
@@ -142,7 +184,20 @@ function AppRouter() {
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
-                <DataTeamProjections />
+                {loading ? (
+                  <div>
+                    <LoadingOverlay
+                      visible={true}
+                      zIndex={1000}
+                      overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+                      loaderProps={{ color: "red", type: "bars" }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <DataTeamProjections />
+                  </>
+                )}
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />
@@ -180,9 +235,22 @@ function AppRouter() {
         <Route
           path="/analysis/selection"
           element={
-            <div className="h-[calc(100vh-3.6rem)] w-full">
+            <div className="h-[calc(100vh-3.6rem)] w-full relative">
               <SignedIn>
-                <TeamSelection />
+                {loading ? (
+                  <div>
+                    <LoadingOverlay
+                      visible={true}
+                      zIndex={1000}
+                      overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+                      loaderProps={{ color: "red", type: "bars" }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <TeamSelection />
+                  </>
+                )}
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />

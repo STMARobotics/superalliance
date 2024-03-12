@@ -114,7 +114,7 @@ const SelectionTeamView = ({
         }}
         centered
       >
-        <Card className="h-[85vh] w-[85vw]">
+        <Card className="h-[85vh] w-[85vw] flex justify-center items-center">
           {pitFormData?.robotImage ? (
             <Image
               fit="contain"

@@ -32,6 +32,7 @@ type SuperAllianceContextProps = {
     appSettings: () => void;
     eventData: () => void;
   };
+  loading?: boolean;
 };
 
 const SuperAllianceContext = createContext<SuperAllianceContextProps>({});
@@ -48,6 +49,7 @@ export function SuperAllianceProvider(props: any) {
   const [eventAggregation, setEventAggregation] = useState<any>(null);
   const [appSettings, setAppSettings] = useState<any>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>("all");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const refreshSA = {
     all: () => {
@@ -116,102 +118,55 @@ export function SuperAllianceProvider(props: any) {
     appSettings,
     setSelectedEvent,
     refreshSA,
+    loading,
   };
 
   useEffect(() => {
     (async function () {
       const appSettingsRes = await getAppSettings();
       setAppSettings(appSettingsRes);
-      if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
-        const eventForms = await getForms();
-        setEventForms(
-          eventForms.filter((form: any) => form.event === appSettingsRes?.event)
-        );
+      if (appSettingsRes?.event && appSettingsRes?.event !== "none")
         setSelectedEvent(appSettingsRes?.event);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async function () {
-      const appSettingsRes = await getAppSettings();
-      if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
-        const eventTeams = await getTeams();
-        setEventTeams(
-          eventTeams.filter((team: any) =>
-            team.teamEvent.includes(appSettingsRes?.event)
-          )
-        );
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async function () {
-      const appSettingsRes = await getAppSettings();
-      if (appSettingsRes?.event && appSettingsRes?.event !== "none") {
-        const eventAggregation = await getEventAggregation(
-          appSettingsRes?.event
-        );
-        setEventAggregation(eventAggregation);
-      }
     })();
   }, []);
 
   useEffect(() => {
     (async function () {
       if (selectedEvent && selectedEvent !== "all") {
-        const eventForms = await getForms();
+        const [eventForms, eventTeams, eventAggregation] = await Promise.all([
+          getForms(),
+          getTeams(),
+          getEventAggregation(selectedEvent),
+        ]);
         setEventForms(
           eventForms.filter((form: any) => form.event === selectedEvent)
         );
-      }
-    })();
-  }, [selectedEvent]);
-
-  useEffect(() => {
-    (async function () {
-      if (selectedEvent && selectedEvent !== "all") {
-        const eventTeams = await getTeams();
         setEventTeams(
           eventTeams.filter((team: any) =>
             team.teamEvent.includes(selectedEvent)
           )
         );
-      }
-    })();
-  }, [selectedEvent]);
-
-  useEffect(() => {
-    (async function () {
-      if (selectedEvent && selectedEvent !== "all") {
-        const eventAggregation = await getEventAggregation(selectedEvent);
         setEventAggregation(eventAggregation);
+        setLoading(false);
       }
     })();
   }, [selectedEvent]);
 
   useEffect(() => {
     (async function () {
-      setForms(await getForms());
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async function () {
-      setTeams(await getTeams());
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async function () {
-      setEvents(await getEvents(appConfig.teamNumber, appConfig.year));
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async function () {
-      setTotalAggregation(await getTotalAggregation());
+      const appSettingsRes = await getAppSettings();
+      const [forms, teams, events, totalAggregation] = await Promise.all([
+        getForms(),
+        getTeams(),
+        getEvents(appConfig.teamNumber, appConfig.year),
+        getTotalAggregation(),
+      ]);
+      setForms(forms);
+      setTeams(teams);
+      setEvents(events);
+      setTotalAggregation(totalAggregation);
+      if (appSettingsRes?.event && appSettingsRes?.event == "none")
+        setLoading(false);
     })();
   }, []);
 

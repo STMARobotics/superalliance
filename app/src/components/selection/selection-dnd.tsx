@@ -158,7 +158,7 @@ const SelectionDND = ({
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <BoardContainer>
+        <BoardContainer printMode={printMode}>
           <SortableContext items={columnsId}>
             {columns.map((col) => (
               <BoardColumn

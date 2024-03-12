@@ -105,7 +105,13 @@ export function BoardColumn({
   );
 }
 
-export function BoardContainer({ children }: { children: React.ReactNode }) {
+export function BoardContainer({
+  children,
+  printMode,
+}: {
+  children: React.ReactNode;
+  printMode: boolean;
+}) {
   const dndContext = useDndContext();
 
   const variations = cva("px-2 md:px-0 flex lg:justify-center pb-4", {
@@ -123,7 +129,13 @@ export function BoardContainer({ children }: { children: React.ReactNode }) {
         dragging: dndContext.active ? "active" : "default",
       })}
     >
-      <div className="flex gap-4 items-start flex-row justify-center">
+      <div
+        className={`flex gap-4 ${
+          printMode
+            ? "items-start flex-row"
+            : "items-center flex-col md:flex-row"
+        } justify-center`}
+      >
         {children}
       </div>
       <ScrollBar orientation="horizontal" />
