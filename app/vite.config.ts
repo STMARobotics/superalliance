@@ -12,8 +12,14 @@ const manifestForPlugin: Partial<VitePWAOptions> = {
     description: "Team 7028's Most Advanced Scouting Tool",
     icons: [
       {
+        src: "/images/superalliancelogonoglow.png",
+        sizes: "144x144",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
         src: "/images/superalliancelogo.png",
-        sizes: "2000x2000",
+        sizes: "any",
         type: "image/png",
         purpose: "apple touch icon",
       },

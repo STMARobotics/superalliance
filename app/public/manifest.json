@@ -1,0 +1,25 @@
+{
+    "name": "SuperAlliance",
+    "short_name": "SA",
+    "description": "Team 7028's Most Advanced Scouting Tool",
+    "icons": [
+      {
+        "src": "/images/superalliancelogonoglow.png",
+        "sizes": "144x144",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "/images/superalliancelogo.png",
+        "sizes": "any",
+        "type": "image/png",
+        "purpose": "apple touch icon"
+      }
+    ],
+    "theme_color": "#000000",
+    "background_color": "#000000",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "orientation": "portrait"
+  }
