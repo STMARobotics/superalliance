@@ -248,6 +248,7 @@ export default function StandForm() {
           allowDecimal={false}
           allowNegative={false}
           hideControls
+          inputMode="numeric"
           {...form.getInputProps("matchNumber")}
         />
 
@@ -289,6 +290,7 @@ export default function StandForm() {
                 allowNegative={false}
                 hideControls
                 maxLength={4}
+                inputMode="numeric"
                 {...form.getInputProps("teamNumber")}
               />
             ) : (
@@ -364,6 +366,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("autoAmpsNotes")}
           />
           <ActionIcon
@@ -405,6 +408,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("autoSpeakersNotes")}
           />
           <ActionIcon
@@ -458,6 +462,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("teleAmpsNotes")}
           />
           <ActionIcon
@@ -499,6 +504,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("teleSpeakersNotes")}
           />
           <ActionIcon
@@ -550,6 +556,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("teleAmplifiedSpeakersNotes")}
           />
           <ActionIcon
@@ -591,6 +598,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("teleTrapsNotes")}
           />
           <ActionIcon
@@ -692,6 +700,7 @@ export default function StandForm() {
             allowDecimal={false}
             allowNegative={false}
             hideControls
+            inputMode="numeric"
             {...form.getInputProps("rpEarned")}
           />
           <ActionIcon
