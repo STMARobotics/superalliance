@@ -23,7 +23,7 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { hasDraggableData } from "@/components/selection/selection-utils";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
-import { Download, Save } from "lucide-react";
+import { Download, Printer, Save } from "lucide-react";
 import { getTeamSelection } from "@/lib/superallianceapi";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
@@ -136,18 +136,18 @@ const SelectionDND = ({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <div className="w-full flex flex-row items-center justify-center pb-4 gap-2">
         {user?.organizationMemberships[0]?.role == "org:admin" && (
           <>
             <Button onClick={getApiSelection}>
-              <Download className="mr-2 h-4 w-4" /> Load Teams
+              <Download className="h-4 w-4" />
             </Button>
             <Button onClick={saveSelection}>
-              <Save className="mr-2 h-4 w-4" /> Save Teams
+              <Save className="h-4 w-4" />
             </Button>
             <Button onClick={() => setPrintMode(printMode ? false : true)}>
-              <Save className="mr-2 h-4 w-4" /> Print Mode
+              <Printer className="h-4 w-4" />
             </Button>
           </>
         )}

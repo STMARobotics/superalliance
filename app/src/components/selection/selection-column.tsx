@@ -59,7 +59,7 @@ export function BoardColumn({
   const variants = cva(
     `${
       printMode ? "" : "h-[66vh] max-h-[66vh]"
-    } lg:w-[20vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center`,
+    } md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center`,
     {
       variants: {
         dragging: {
@@ -87,7 +87,11 @@ export function BoardColumn({
         </span>
       </CardHeader>
       <ScrollArea>
-        <CardContent className="flex flex-grow flex-col gap-2 p-2">
+        <CardContent
+          className={`flex flex-grow flex-col gap-2 p-2 ${
+            printMode ? "mb-10" : ""
+          }`}
+        >
           <SortableContext items={teamsIds}>
             {teams.map((team, index) => (
               <TeamCard

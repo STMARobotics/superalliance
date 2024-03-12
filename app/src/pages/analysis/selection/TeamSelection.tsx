@@ -45,7 +45,7 @@ function TeamSelection() {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center py-8">
         Team Selection
       </h1>
-      <div className="h-full flex justify-center items-center px-3">
+      <div className="h-full flex justify-center items-center w-full">
         {selectedEvent == "all" ? (
           <>
             {teams?.length > 0 && (

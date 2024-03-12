@@ -8,7 +8,15 @@ function DataTeams() {
     useSuperAlliance();
   return (
     <>
-      {selectedEvent !== "all" ? (
+      {selectedEvent == "all" ? (
+        <>
+          {forms && (
+            <div className="h-full flex-col md:flex">
+              <TeamForms forms={forms} teams={teams} events={events} />
+            </div>
+          )}
+        </>
+      ) : (
         <>
           {eventForms && (
             <div className="h-full flex-col md:flex">
@@ -17,14 +25,6 @@ function DataTeams() {
                 teams={eventTeams}
                 events={events}
               />
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          {forms && (
-            <div className="h-full flex-col md:flex">
-              <TeamForms forms={forms} teams={teams} events={events} />
             </div>
           )}
         </>

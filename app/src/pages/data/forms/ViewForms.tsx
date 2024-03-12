@@ -10,11 +10,11 @@ function DataForms() {
   return (
     <>
       <div className="h-full flex-col md:flex">
-        {selectedEvent !== "all" ? (
+        {selectedEvent == "all" ? (
           <>
-            {eventForms && (
+            {forms && (
               <Forms
-                forms={eventForms}
+                forms={forms}
                 teams={selectedEvent !== "all" ? eventTeams : teams}
                 events={events}
               />
@@ -22,9 +22,9 @@ function DataForms() {
           </>
         ) : (
           <>
-            {forms && (
+            {eventForms && (
               <Forms
-                forms={forms}
+                forms={eventForms}
                 teams={selectedEvent !== "all" ? eventTeams : teams}
                 events={events}
               />
