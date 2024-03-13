@@ -6,6 +6,32 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 
 eventRouter.get(
+  "/api/event/:eventCode/match/:matchNumber/data",
+  async (req, res) => {
+    try {
+      const { eventCode, matchNumber } = req.params;
+      const response = await axios.get(
+        `https://www.thebluealliance.com/api/v3/match/2024${eventCode}_qm${matchNumber}`,
+        {
+          headers: {
+            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+            accept: "application/json",
+          },
+        }
+      );
+      const data = response.data;
+      if (!data)
+        return res
+          .status(404)
+          .json({ error: "Event match or teams not found!" });
+      return res.send(data);
+    } catch {
+      return res.status(404).json({ error: "Event match or teams not found!" });
+    }
+  }
+);
+
+eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/teams",
   async (req, res) => {
     try {

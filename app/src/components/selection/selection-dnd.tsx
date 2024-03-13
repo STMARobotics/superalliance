@@ -23,7 +23,7 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { hasDraggableData } from "@/components/selection/selection-utils";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
-import { Download, Printer, Save } from "lucide-react";
+import { Download, GitCompareArrows, Printer, Save } from "lucide-react";
 import { getTeamSelection } from "@/lib/superallianceapi";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
@@ -53,9 +53,13 @@ export type ColumnId = (typeof defaultCols)[number]["id"];
 const SelectionDND = ({
   propTeams,
   setSelectedTeam,
+  compareMode,
+  setCompareMode,
 }: {
   propTeams: any[];
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
+  compareMode: boolean;
+  setCompareMode: (compareMode: boolean) => void;
 }) => {
   const initialTeams: Team[] = propTeams.map((team: any) => {
     return {
@@ -148,6 +152,9 @@ const SelectionDND = ({
             </Button>
             <Button onClick={() => setPrintMode(printMode ? false : true)}>
               <Printer className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => setCompareMode(compareMode ? false : true)}>
+              <GitCompareArrows className="h-4 w-4" />
             </Button>
           </>
         )}

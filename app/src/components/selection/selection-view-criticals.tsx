@@ -1,4 +1,4 @@
-import { Badge } from "@mantine/core";
+import { AspectRatio, Badge, Modal } from "@mantine/core";
 import {
   Card,
   CardContent,
@@ -7,10 +7,53 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import { getMatchData } from "@/lib/superallianceapi";
+import { toast } from "sonner";
 
-const SelectionCriticals = ({ criticals }: { criticals: any[] }) => {
+const SelectionCriticals = ({
+  criticals,
+  selectedEvent,
+}: {
+  criticals: any[];
+  selectedEvent: any;
+}) => {
+  const [youtubeLink, setYoutubeLink] = useState<any>();
+  const [opened, setOpened] = useState<boolean>(false);
+
+  const handleYoutube = (matchNumber: any) => {
+    (async function () {
+      const data = await getMatchData(selectedEvent, matchNumber);
+      const video = data?.videos[0]?.key;
+      if (video) {
+        setOpened(true);
+        setYoutubeLink(video);
+      } else {
+        toast.error("No YouTube video found for this match");
+      }
+    })();
+  };
+
   return (
     <div className="space-y-2">
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        size="auto"
+        withCloseButton={false}
+        centered
+      >
+        <AspectRatio ratio={16 / 9} h={"65vh"} w={"65vw"}>
+          <iframe
+            src={`https://www.youtube.com/embed/${youtubeLink}`}
+            title="YouTube video player"
+            style={{ border: 0 }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </AspectRatio>
+      </Modal>
       {criticals.map((match: any, index: any) => (
         <div key={index}>
           {match.criticals?.length > 0 && (
@@ -34,8 +77,17 @@ const SelectionCriticals = ({ criticals }: { criticals: any[] }) => {
                 </div>
               </CardContent>
               <CardFooter className="justify-between space-x-2">
-                <Button className="w-full">View Form</Button>
-                <Button className="w-full bg-red-500 hover:bg-red-700 text-white">
+                <Button asChild className="w-full">
+                  <Link target="_blank" to={`/data/form/stand/${match.formId}`}>
+                    View Form
+                  </Link>
+                </Button>
+                <Button
+                  className="w-full bg-red-500 hover:bg-red-700 text-white"
+                  onClick={() => {
+                    handleYoutube(match.matchNumber);
+                  }}
+                >
                   View YouTube
                 </Button>
               </CardFooter>

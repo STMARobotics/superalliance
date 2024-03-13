@@ -150,3 +150,17 @@ export const getTeamSelection = async () => {
     throw new Error("Team Selection not found");
   }
 };
+
+export const getMatchData = async (eventCode: string, matchNumber: number) => {
+  try {
+    const res = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/api/event/${eventCode}/match/${matchNumber}/data`
+    );
+    const data = res.data;
+    return data;
+  } catch {
+    throw new Error("Match Data not found");
+  }
+};

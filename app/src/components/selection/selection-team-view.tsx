@@ -142,7 +142,7 @@ const SelectionTeamView = ({
         onClose={() => setCriticalsOpened(false)}
         radius={"md"}
         position="right"
-        size={"auto"}
+        size={"md"}
         overlayProps={{
           backgroundOpacity: 0.55,
           blur: 3,
@@ -153,6 +153,7 @@ const SelectionTeamView = ({
             criticals={aggregationData?.criticals?.sort(
               (a: any, b: any) => a.matchNumber - b.matchNumber
             )}
+            selectedEvent={appSettings?.event}
           />
         )}
       </Drawer>
@@ -212,7 +213,7 @@ const SelectionTeamView = ({
   );
 };
 
-const DataDisplay = ({
+export const DataDisplay = ({
   teams,
   aggregationData,
   pitFormData,
