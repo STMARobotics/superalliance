@@ -5,7 +5,7 @@ import { Select } from "@mantine/core";
 import LineChart from "@/components/graphs/team-match-line-graph";
 
 const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
-  const [yAxis, setYAxis] = useState("matchTotalScore");
+  const [yAxis, setYAxis] = useState("matchTotalNotes");
   const [lineData, setLineData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -25,6 +25,9 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
   }, [yAxis]);
 
   const yAxisOptions = [
+    { value: "matchTotalNotes", label: "Total Notes" },
+    { value: "matchAutoNotes", label: "Auto Notes" },
+    { value: "matchTeleNotes", label: "Teleop Notes" },
     { value: "matchTotalScore", label: "Total Score" },
     { value: "matchAutoScore", label: "Auto Score" },
     { value: "matchTeleScore", label: "Teleop Score" },
@@ -40,6 +43,11 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}
           allowDeselect={false}
+          styles={{
+            dropdown: {
+              zIndex: 10001,
+            },
+          }}
         />
       </div>
       <div className="flex">

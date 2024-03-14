@@ -15,25 +15,23 @@ const SelectionCompare = ({
   setCompareMode,
   aggregation,
   teams,
+  leftTeam,
+  rightTeam,
+  setLeftTeam,
+  setRightTeam,
 }: {
   compareMode: boolean;
   setCompareMode: (compareMode: boolean) => void;
   aggregation: any;
   teams: any;
+  leftTeam: any;
+  rightTeam: any;
+  setLeftTeam: (leftTeam: any) => void;
+  setRightTeam: (rightTeam: any) => void;
 }) => {
-  const [leftTeam, setLeftTeam] = useState<any>();
-  const [rightTeam, setRightTeam] = useState<any>();
   const [compareData, setCompareData] = useState<any>();
   const [pitFormData, setPitFormData] = useState<any>();
   const [statsDifference, setStatsDifference] = useState<any>();
-
-  const [compareSelectVisible, setCompareSelectVisible] = useState(false);
-
-  useEffect(() => {
-    if (compareMode) {
-      setCompareSelectVisible(true);
-    }
-  }, [compareMode]);
 
   const handleSubmit = () => {
     (async function () {
@@ -47,6 +45,8 @@ const SelectionCompare = ({
           (aggregation: any) => aggregation._id == Number(rightTeam)
         )[0],
       };
+      if (!aggregationStruct.left || !aggregationStruct.right)
+        return toast.error("One or both of the teams do not exist");
       setCompareData(aggregationStruct);
       const pitStruct = {
         left: await getPitFormByTeam(leftTeam).catch(() => null),
@@ -57,8 +57,16 @@ const SelectionCompare = ({
   };
 
   useEffect(() => {
+    if (!leftTeam || !rightTeam) return;
+    handleSubmit();
+  }, [leftTeam, rightTeam]);
+
+  useEffect(() => {
     if (!compareData) return;
     const stats = [
+      "avgTotalNotes",
+      "avgAutoNotes",
+      "avgTeleNotes",
       "avgTotalScore",
       "avgAutoScore",
       "avgTeleScore",
@@ -98,7 +106,7 @@ const SelectionCompare = ({
 
   return (
     <>
-      {compareMode && (
+      {/* {compareMode && (
         <>
           <Modal
             opened={compareSelectVisible}
@@ -149,12 +157,16 @@ const SelectionCompare = ({
             </div>
           </Modal>
         </>
-      )}
+      )} */}
       <Modal
         opened={compareData}
         onClose={() => {
+          setLeftTeam(null);
+          setRightTeam(null);
           setCompareData(null);
           setPitFormData(null);
+          setStatsDifference(null);
+          setCompareMode(false);
         }}
         title="Team Comparison"
         fullScreen

@@ -239,59 +239,62 @@ export const DataDisplay = ({
   appSettings: any;
 }) => {
   const averages = [
-    { label: "Average Total Score", value: aggregationData?.avgTotalScore },
-    { label: "Average Auto Score", value: aggregationData?.avgAutoScore },
-    { label: "Average Tele Score", value: aggregationData?.avgTeleScore },
-    { label: "Average RP", value: aggregationData?.avgRP },
+    { label: "Avg Notes", value: aggregationData?.avgTotalNotes },
+    { label: "Avg Auto Notes", value: aggregationData?.avgAutoNotes },
+    { label: "Avg Tele Notes", value: aggregationData?.avgTeleNotes },
+    { label: "Avg Total Score", value: aggregationData?.avgTotalScore },
+    { label: "Avg Auto Score", value: aggregationData?.avgAutoScore },
+    { label: "Avg Tele Score", value: aggregationData?.avgTeleScore },
+    { label: "Avg RP", value: aggregationData?.avgRP },
     { label: "Total Crits", value: aggregationData?.criticalCount },
-    { label: "Win Percentage", value: aggregationData?.winPercentage },
+    { label: "Win %", value: aggregationData?.winPercentage },
     {
-      label: "Average Auto Amps Score",
+      label: "Avg Auto Amps Score",
       value: aggregationData?.avgAutoAmpsNotes,
     },
     {
-      label: "Average Auto Speakers Score",
+      label: "Avg Auto Speakers Score",
       value: aggregationData?.avgAutoSpeakersNotes,
     },
     {
-      label: "Average Tele Amps Score",
+      label: "Avg Tele Amps Score",
       value: aggregationData?.avgTeleAmpsNotes,
     },
     {
-      label: "Average Tele Speakers Score",
+      label: "Avg Tele Speakers Score",
       value: aggregationData?.avgTeleSpeakersNotes,
     },
     {
-      label: "Average Tele Amplified Speakers Score",
+      label: "Avg Tele Amped Speakers Score",
       value: aggregationData?.avgTeleAmplifiedSpeakersNotes,
     },
     {
-      label: "Average Tele Traps Score",
+      label: "Avg Tele Traps Score",
       value: aggregationData?.avgTeleTrapsNotes,
     },
-    { label: "Leave Percentage", value: aggregationData?.leavePercentage },
-    { label: "Park Percentage", value: aggregationData?.parkPercentage },
-    { label: "Onstage Percentage", value: aggregationData?.onstagePercentage },
+    { label: "Leave %", value: aggregationData?.leavePercentage },
+    { label: "Park %", value: aggregationData?.parkPercentage },
+    { label: "Onstage %", value: aggregationData?.onstagePercentage },
     {
-      label: "Onstage Spotlit Percentage",
+      label: "Onstage Spotlit %",
       value: aggregationData?.onstageSpotlitPercentage,
     },
-    { label: "Harmony Percentage", value: aggregationData?.harmonyPercentage },
+    { label: "Harmony %", value: aggregationData?.harmonyPercentage },
     {
-      label: "Self Spotlit Percentage",
+      label: "Self Spotlit %",
       value: aggregationData?.selfSpotlitPercentage,
     },
-    { label: "Defense Percentage", value: aggregationData?.defensePercentage },
+    { label: "Defense %", value: aggregationData?.defensePercentage },
     {
-      label: "Defended Against Percentage",
+      label: "Defended Against %",
       value: aggregationData?.defendedAgainstPercentage,
     },
     {
-      label: "Stockpile Percentage",
+      label: "Stockpile %",
       value: aggregationData?.stockpilePercentage,
     },
     {
-      label: "Under Stage Percentage",
+      label: "Under Stage %",
       value: aggregationData?.underStagePercentage,
     },
   ];
@@ -335,16 +338,16 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Average Score
+                    Average Notes
                   </CardTitle>
                   <Tally5 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.avgTotalScore} Points
+                    {aggregationData?.avgTotalNotes} Notes
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalScore} points across{" "}
+                    {aggregationData?.totalNotes} notes across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>
@@ -352,16 +355,16 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Average Auto Score
+                    Average Auto Notes
                   </CardTitle>
                   <IconRobot className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.avgAutoScore} Points
+                    {aggregationData?.avgAutoNotes} notes
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalAutoScore} points across{" "}
+                    {aggregationData?.totalAutoNotes} notes across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>

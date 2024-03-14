@@ -122,6 +122,27 @@ const StandFormAggregation = (eventId) => {
             },
           ],
         },
+        totalNotes: {
+          $add: [
+            "$autoAmpsNotes",
+            "$autoSpeakersNotes",
+            "$teleAmpsNotes",
+            "$teleSpeakersNotes",
+            "$teleAmplifiedSpeakersNotes",
+            "$teleTrapsNotes",
+          ],
+        },
+        totalAutoNotes: {
+          $add: ["$autoAmpsNotes", "$autoSpeakersNotes"],
+        },
+        totalTeleNotes: {
+          $add: [
+            "$teleAmpsNotes",
+            "$teleSpeakersNotes",
+            "$teleAmplifiedSpeakersNotes",
+            "$teleTrapsNotes",
+          ],
+        },
         leaveBoolean: {
           $cond: {
             if: "$leave",
@@ -221,6 +242,54 @@ const StandFormAggregation = (eventId) => {
           totalTeleScore: {
             $sum: "$teleScore",
           },
+          totalNotes: {
+            $sum: "$totalNotes",
+          },
+          totalAutoNotes: {
+            $sum: "$totalAutoNotes",
+          },
+          totalTeleNotes: {
+            $sum: "$totalTeleNotes",
+          },
+          matchTotalNotes: {
+            $push: {
+              $cond: [
+                { $ne: ["$totalNotes", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$totalNotes",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchAutoNotes: {
+            $push: {
+              $cond: [
+                { $ne: ["$autoNotes", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$totalAutoNotes",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchTeleNotes: {
+            $push: {
+              $cond: [
+                { $ne: ["$teleNotes", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$totalTeleNotes",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
           matchTotalScores: {
             $push: {
               $cond: [
@@ -294,6 +363,15 @@ const StandFormAggregation = (eventId) => {
           },
           avgTeleScore: {
             $avg: "$teleScore",
+          },
+          avgTotalNotes: {
+            $avg: "$totalNotes",
+          },
+          avgAutoNotes: {
+            $avg: "$totalAutoNotes",
+          },
+          avgTeleNotes: {
+            $avg: "$totalTeleNotes",
           },
           avgAutoAmpsNotes: {
             $avg: "$autoAmpsNotes",
@@ -395,6 +473,18 @@ const StandFormAggregation = (eventId) => {
           totalScore: { $round: ["$totalScore", 2] },
           totalAutoScore: { $round: ["$totalAutoScore", 2] },
           totalTeleScore: { $round: ["$totalTeleScore", 2] },
+          totalNotes: { $round: ["$totalNotes", 2] },
+          totalAutoNotes: { $round: ["$totalAutoNotes", 2] },
+          totalTeleNotes: { $round: ["$totalTeleNotes", 2] },
+          matchTotalNotes: {
+            $concatArrays: "$matchTotalNotes",
+          },
+          matchAutoNotes: {
+            $concatArrays: "$matchAutoNotes",
+          },
+          matchTeleNotes: {
+            $concatArrays: "$matchTeleNotes",
+          },
           matchTotalScore: {
             $concatArrays: "$matchTotalScores",
           },
@@ -413,6 +503,9 @@ const StandFormAggregation = (eventId) => {
           avgTotalScore: { $round: ["$avgTotalScore", 2] },
           avgAutoScore: { $round: ["$avgAutoScore", 2] },
           avgTeleScore: { $round: ["$avgTeleScore", 2] },
+          avgTotalNotes: { $round: ["$avgTotalNotes", 2] },
+          avgAutoNotes: { $round: ["$avgAutoNotes", 2] },
+          avgTeleNotes: { $round: ["$avgTeleNotes", 2] },
           avgAutoAmpsNotes: { $round: ["$avgAutoAmpsNotes", 2] },
           avgAutoSpeakersNotes: { $round: ["$avgAutoSpeakersNotes", 2] },
           avgTeleAmpsNotes: { $round: ["$avgTeleAmpsNotes", 2] },

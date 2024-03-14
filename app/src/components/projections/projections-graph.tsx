@@ -59,12 +59,12 @@ const ProjectionsGraph = ({
   }, []);
 
   const xAxis = {
-    label: "Auto Points",
-    accessor: (datum: any) => round(datum?.avgAutoScore),
+    label: "Total Auto Notes",
+    accessor: (datum: any) => round(datum?.totalAutoNotes),
   };
   const yAxis = {
-    label: "Teleop Points",
-    accessor: (datum: any) => round(datum?.avgTeleScore),
+    label: "Total Teleop Notes",
+    accessor: (datum: any) => round(datum?.totalTeleNotes),
   };
   const zAxis = { label: "Constant", accessor: (_datum: any) => 1 };
 

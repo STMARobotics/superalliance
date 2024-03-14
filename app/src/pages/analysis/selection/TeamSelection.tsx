@@ -25,6 +25,8 @@ function TeamSelection() {
   const [formListOpened, setFormListOpened] = useState(false);
   const [formOpened, setFormOpened] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
+  const [leftTeam, setLeftTeam] = useState<any>();
+  const [rightTeam, setRightTeam] = useState<any>();
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
@@ -56,6 +58,10 @@ function TeamSelection() {
                 setSelectedTeam={setSelectedTeam}
                 compareMode={compareMode}
                 setCompareMode={setCompareMode}
+                leftTeam={leftTeam}
+                rightTeam={rightTeam}
+                setLeftTeam={setLeftTeam}
+                setRightTeam={setRightTeam}
               />
             )}
             <SelectionCompare
@@ -63,6 +69,10 @@ function TeamSelection() {
               aggregation={totalAggregation}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
+              leftTeam={leftTeam}
+              rightTeam={rightTeam}
+              setLeftTeam={setLeftTeam}
+              setRightTeam={setRightTeam}
             />
             {selectedTeam !== "" && totalAggregation && (
               <>
@@ -100,6 +110,7 @@ function TeamSelection() {
                     )}
                     selectedForm={selectedForm}
                     setSelectedForm={setSelectedForm}
+                    selectedEvent={selectedEvent}
                   />
                 </Modal>
                 <Drawer
@@ -132,6 +143,10 @@ function TeamSelection() {
                 setSelectedTeam={setSelectedTeam}
                 compareMode={compareMode}
                 setCompareMode={setCompareMode}
+                leftTeam={leftTeam}
+                rightTeam={rightTeam}
+                setLeftTeam={setLeftTeam}
+                setRightTeam={setRightTeam}
               />
             )}
             <SelectionCompare
@@ -139,6 +154,10 @@ function TeamSelection() {
               aggregation={eventAggregation}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
+              leftTeam={leftTeam}
+              rightTeam={rightTeam}
+              setLeftTeam={setLeftTeam}
+              setRightTeam={setRightTeam}
             />
             {selectedTeam !== "" && eventAggregation && (
               <>
@@ -176,6 +195,7 @@ function TeamSelection() {
                     )}
                     selectedForm={selectedForm}
                     setSelectedForm={setSelectedForm}
+                    selectedEvent={selectedEvent}
                   />
                 </Modal>
                 <Drawer

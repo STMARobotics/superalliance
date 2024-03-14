@@ -55,11 +55,19 @@ const SelectionDND = ({
   setSelectedTeam,
   compareMode,
   setCompareMode,
+  leftTeam,
+  rightTeam,
+  setLeftTeam,
+  setRightTeam,
 }: {
   propTeams: any[];
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   compareMode: boolean;
   setCompareMode: (compareMode: boolean) => void;
+  leftTeam: any;
+  rightTeam: any;
+  setLeftTeam: (leftTeam: any) => void;
+  setRightTeam: (rightTeam: any) => void;
 }) => {
   const initialTeams: Team[] = propTeams.map((team: any) => {
     return {
@@ -153,7 +161,16 @@ const SelectionDND = ({
             <Button onClick={() => setPrintMode(printMode ? false : true)}>
               <Printer className="h-4 w-4" />
             </Button>
-            <Button onClick={() => setCompareMode(compareMode ? false : true)}>
+            <Button
+              variant={compareMode ? "secondary" : "default"}
+              onClick={() => {
+                if (compareMode) {
+                  setLeftTeam(null);
+                  setRightTeam(null);
+                }
+                setCompareMode(compareMode ? false : true);
+              }}
+            >
               <GitCompareArrows className="h-4 w-4" />
             </Button>
           </>
@@ -175,6 +192,11 @@ const SelectionDND = ({
                 totalTeamCount={teams.length}
                 setSelectedTeam={setSelectedTeam}
                 printMode={printMode}
+                compareMode={compareMode}
+                leftTeam={leftTeam}
+                rightTeam={rightTeam}
+                setLeftTeam={setLeftTeam}
+                setRightTeam={setRightTeam}
               />
             ))}
           </SortableContext>
@@ -192,6 +214,11 @@ const SelectionDND = ({
                   totalTeamCount={teams.length}
                   setSelectedTeam={setSelectedTeam}
                   printMode={printMode}
+                  compareMode={compareMode}
+                  leftTeam={leftTeam}
+                  rightTeam={rightTeam}
+                  setLeftTeam={setLeftTeam}
+                  setRightTeam={setRightTeam}
                 />
               )}
               {activeTeam && <TeamCard team={activeTeam} isOverlay />}

@@ -32,59 +32,62 @@ const SelectionCompareView = ({
   side: any;
 }) => {
   const averages = [
-    { label: "Average Total Score", value: aggregation?.avgTotalScore },
-    { label: "Average Auto Score", value: aggregation?.avgAutoScore },
-    { label: "Average Tele Score", value: aggregation?.avgTeleScore },
-    { label: "Average RP", value: aggregation?.avgRP },
+    { label: "Avg Notes", value: aggregation?.avgTotalNotes },
+    { label: "Avg Auto Notes", value: aggregation?.avgAutoNotes },
+    { label: "Avg Tele Notes", value: aggregation?.avgTeleNotes },
+    { label: "Avg Total Score", value: aggregation?.avgTotalScore },
+    { label: "Avg Auto Score", value: aggregation?.avgAutoScore },
+    { label: "Avg Tele Score", value: aggregation?.avgTeleScore },
+    { label: "Avg RP", value: aggregation?.avgRP },
     { label: "Total Crits", value: aggregation?.criticalCount },
-    { label: "Win Percentage", value: aggregation?.winPercentage },
+    { label: "Win %", value: aggregation?.winPercentage },
     {
-      label: "Average Auto Amps Score",
+      label: "Avg Auto Amps Score",
       value: aggregation?.avgAutoAmpsNotes,
     },
     {
-      label: "Average Auto Speakers Score",
+      label: "Avg Auto Speakers Score",
       value: aggregation?.avgAutoSpeakersNotes,
     },
     {
-      label: "Average Tele Amps Score",
+      label: "Avg Tele Amps Score",
       value: aggregation?.avgTeleAmpsNotes,
     },
     {
-      label: "Average Tele Speakers Score",
+      label: "Avg Tele Speakers Score",
       value: aggregation?.avgTeleSpeakersNotes,
     },
     {
-      label: "Average Tele Amplified Speakers Score",
+      label: "Avg Tele Amped Speakers Score",
       value: aggregation?.avgTeleAmplifiedSpeakersNotes,
     },
     {
-      label: "Average Tele Traps Score",
+      label: "Avg Tele Traps Score",
       value: aggregation?.avgTeleTrapsNotes,
     },
-    { label: "Leave Percentage", value: aggregation?.leavePercentage },
-    { label: "Park Percentage", value: aggregation?.parkPercentage },
-    { label: "Onstage Percentage", value: aggregation?.onstagePercentage },
+    { label: "Leave %", value: aggregation?.leavePercentage },
+    { label: "Park %", value: aggregation?.parkPercentage },
+    { label: "Onstage %", value: aggregation?.onstagePercentage },
     {
-      label: "Onstage Spotlit Percentage",
+      label: "Onstage Spotlit %",
       value: aggregation?.onstageSpotlitPercentage,
     },
-    { label: "Harmony Percentage", value: aggregation?.harmonyPercentage },
+    { label: "Harmony %", value: aggregation?.harmonyPercentage },
     {
-      label: "Self Spotlit Percentage",
+      label: "Self Spotlit %",
       value: aggregation?.selfSpotlitPercentage,
     },
-    { label: "Defense Percentage", value: aggregation?.defensePercentage },
+    { label: "Defense %", value: aggregation?.defensePercentage },
     {
-      label: "Defended Against Percentage",
+      label: "Defended Against %",
       value: aggregation?.defendedAgainstPercentage,
     },
     {
-      label: "Stockpile Percentage",
+      label: "Stockpile %",
       value: aggregation?.stockpilePercentage,
     },
     {
-      label: "Under Stage Percentage",
+      label: "Under Stage %",
       value: aggregation?.underStagePercentage,
     },
   ];
@@ -135,24 +138,24 @@ const SelectionCompareView = ({
                 <Card className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Average Score
+                      Average Notes
                     </CardTitle>
                     <Tally5 className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgTotalScore} Points{" "}
-                      {Math.sign(statsDifference.avgTotalScore) == 1 ? (
+                      {aggregation?.avgTotalNotes} Notes{" "}
+                      {Math.sign(statsDifference.avgTotalNotes) == 1 ? (
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgTotalScore}
+                            +{statsDifference.avgTotalNotes}
                           </span>
                         </>
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalScore} points across{" "}
+                      {aggregation?.totalNotes} notes across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
@@ -160,24 +163,24 @@ const SelectionCompareView = ({
                 <Card className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Average Auto Score
+                      Average Auto Notes
                     </CardTitle>
                     <IconRobot className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgAutoScore} Points
-                      {Math.sign(statsDifference.avgAutoScore) == 1 ? (
+                      {aggregation?.avgAutoNotes} Notes
+                      {Math.sign(statsDifference.avgAutoNotes) == 1 ? (
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgAutoScore}
+                            +{statsDifference.avgAutoNotes}
                           </span>
                         </>
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalAutoScore} points across{" "}
+                      {aggregation?.totalAutoNotes} notes across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>

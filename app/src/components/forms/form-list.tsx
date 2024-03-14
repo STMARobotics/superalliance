@@ -8,11 +8,13 @@ function FormList({
   selectedForm,
   setSelectedForm,
   teamsPage,
+  selectedEvent,
 }: {
   forms: any;
   selectedForm: any;
   setSelectedForm: any;
   teamsPage: any;
+  selectedEvent?: any;
 }) {
   const { teams } = useSuperAlliance();
   return (
@@ -29,7 +31,12 @@ function FormList({
           <div className="flex w-full flex-col gap-1">
             <div className="flex items-center">
               <div className="flex items-center gap-2">
-                <div className="font-semibold">Team #{item.teamNumber}</div>
+                <div className="font-semibold">
+                  Team #{item.teamNumber}
+                  {selectedEvent !== "none"
+                    ? ` - Match #${item.matchNumber}`
+                    : null}
+                </div>
               </div>
               <div
                 className={cn(

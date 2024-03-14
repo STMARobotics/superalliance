@@ -26,6 +26,11 @@ interface BoardColumnProps {
   totalTeamCount: number;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
   printMode?: boolean;
+  compareMode?: boolean;
+  leftTeam?: UniqueIdentifier;
+  rightTeam?: UniqueIdentifier;
+  setLeftTeam?: (teamId: UniqueIdentifier) => void;
+  setRightTeam?: (teamId: UniqueIdentifier) => void;
 }
 
 export function BoardColumn({
@@ -35,6 +40,11 @@ export function BoardColumn({
   totalTeamCount,
   setSelectedTeam,
   printMode,
+  compareMode,
+  leftTeam,
+  rightTeam,
+  setLeftTeam,
+  setRightTeam,
 }: BoardColumnProps) {
   const teamsIds = useMemo(() => {
     return teams.map((team) => team.id);
@@ -100,6 +110,11 @@ export function BoardColumn({
                 index={`#${index + 1}`}
                 setSelectedTeam={setSelectedTeam!}
                 printMode={printMode}
+                compareMode={compareMode}
+                leftTeam={leftTeam}
+                rightTeam={rightTeam}
+                setLeftTeam={setLeftTeam}
+                setRightTeam={setRightTeam}
               />
             ))}
           </SortableContext>
