@@ -1,6 +1,5 @@
-import { Modal, NumberInput } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getPitFormByTeam } from "@/lib/superallianceapi";
 import SelectionCompareView from "./selection-compare-view";
@@ -11,7 +10,6 @@ const round = (num: number, digits: number = 1) => {
 };
 
 const SelectionCompare = ({
-  compareMode,
   setCompareMode,
   aggregation,
   teams,
@@ -20,7 +18,7 @@ const SelectionCompare = ({
   setLeftTeam,
   setRightTeam,
 }: {
-  compareMode: boolean;
+  compareMode?: boolean;
   setCompareMode: (compareMode: boolean) => void;
   aggregation: any;
   teams: any;
@@ -106,58 +104,6 @@ const SelectionCompare = ({
 
   return (
     <>
-      {/* {compareMode && (
-        <>
-          <Modal
-            opened={compareSelectVisible}
-            onClose={() => {
-              setCompareSelectVisible(false);
-              setCompareMode(false);
-            }}
-            title="Team Comparison"
-            size={"xl"}
-            radius={"lg"}
-            styles={{
-              body: {
-                backgroundColor: "var(--mantine-color-dark-7)",
-              },
-              header: {
-                backgroundColor: "var(--mantine-color-dark-7)",
-              },
-            }}
-          >
-            <div className="flex flex-row gap-4 justify-center items-center w-full pb-4">
-              <NumberInput
-                label="Left Team Number"
-                placeholder="1234"
-                className="w-full"
-                allowDecimal={false}
-                allowNegative={false}
-                hideControls
-                maxLength={4}
-                inputMode="numeric"
-                onChange={setLeftTeam}
-                value={leftTeam}
-              />
-              <NumberInput
-                label="Right Team Number"
-                placeholder="1234"
-                className="w-full"
-                allowDecimal={false}
-                allowNegative={false}
-                hideControls
-                maxLength={4}
-                inputMode="numeric"
-                onChange={setRightTeam}
-                value={rightTeam}
-              />
-            </div>
-            <div className="flex items-center justify-center">
-              <Button onClick={handleSubmit}>Compare Teams</Button>
-            </div>
-          </Modal>
-        </>
-      )} */}
       <Modal
         opened={compareData}
         onClose={() => {
