@@ -23,11 +23,13 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { hasDraggableData } from "@/components/selection/selection-utils";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
-import { Download, GitCompareArrows, Printer, Save } from "lucide-react";
+import { Diff, Download, Printer, Save } from "lucide-react";
 import { getTeamSelection } from "@/lib/superallianceapi";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
 import { toast } from "sonner";
+import { useMediaQuery } from "@mantine/hooks";
+import { em } from "@mantine/core";
 
 const defaultCols = [
   {
@@ -89,6 +91,8 @@ const SelectionDND = ({
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
 
   const [printMode, setPrintMode] = useState<boolean>(false);
+
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   useEffect(() => {
     setTeams(
@@ -153,13 +157,19 @@ const SelectionDND = ({
         {user?.organizationMemberships[0]?.role == "org:admin" && (
           <>
             <Button onClick={getApiSelection}>
-              <Download className="h-4 w-4" />
+              <Download className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />{" "}
+              {isMobile ? null : "Get from DB"}
             </Button>
             <Button onClick={saveSelection}>
-              <Save className="h-4 w-4" />
+              <Save className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
+              {isMobile ? null : "Save to DB"}
             </Button>
-            <Button onClick={() => setPrintMode(printMode ? false : true)}>
-              <Printer className="h-4 w-4" />
+            <Button
+              variant={printMode ? "secondary" : "default"}
+              onClick={() => setPrintMode(printMode ? false : true)}
+            >
+              <Printer className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
+              {isMobile ? null : "Print Mode"}
             </Button>
             <Button
               variant={compareMode ? "secondary" : "default"}
@@ -171,7 +181,8 @@ const SelectionDND = ({
                 setCompareMode(compareMode ? false : true);
               }}
             >
-              <GitCompareArrows className="h-4 w-4" />
+              <Diff className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
+              {isMobile ? null : "Compare Mode"}
             </Button>
           </>
         )}
