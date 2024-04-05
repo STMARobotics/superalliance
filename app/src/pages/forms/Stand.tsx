@@ -252,24 +252,30 @@ export default function StandForm() {
           {...form.getInputProps("matchNumber")}
         />
 
-        {appSettings?.event !== "none" && (
-          <div className="pb-4">
-            <Button
-              fullWidth
-              h={"3rem"}
-              className="bg-white text-black"
-              onClick={configureMatchTeams}
-            >
-              Get Teams
-            </Button>
-          </div>
-        )}
+        {appSettings?.event !== "none" &&
+          appSettings?.event !== "gnrprac" &&
+          appSettings?.event !== "gcrprac" && (
+            <div className="pb-4">
+              <Button
+                fullWidth
+                h={"3rem"}
+                className="bg-white text-black"
+                onClick={configureMatchTeams}
+              >
+                Get Teams
+              </Button>
+            </div>
+          )}
 
-        {appSettings?.event !== "none" && matchTeams?.length > 0 ? (
+        {appSettings?.event !== "none" &&
+        appSettings?.event !== "gnrprac" &&
+        appSettings?.event !== "gcrprac" &&
+        matchTeams?.length > 0 ? (
           <Select
             data={matchTeams}
             placeholder="Pick one"
             label="Select Team"
+            className="pb-4"
             description={
               "The number of the team for the robot you are scouting."
             }
@@ -278,7 +284,10 @@ export default function StandForm() {
           />
         ) : (
           <>
-            {matchTeams ? (
+            {(matchTeams && appSettings?.event !== "none") ||
+            appSettings?.event == "none" ||
+            appSettings?.event == "gnrprac" ||
+            appSettings?.event == "gcrprac" ? (
               <NumberInput
                 label="Team Number"
                 description={
