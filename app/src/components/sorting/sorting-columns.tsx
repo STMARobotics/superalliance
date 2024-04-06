@@ -13,47 +13,31 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("_id")}</div>,
   },
   {
-    accessorKey: "teamName",
+    accessorKey: "avgTotalNotes",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Team Name" />
+      <DataTableColumnHeader column={column} title="Average Total Notes" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("teamName")}</div>
+      <div className="w-[80px]">{row.getValue("avgTotalNotes")}</div>
     ),
   },
   {
-    accessorKey: "avgTotalScore",
+    accessorKey: "avgAutoNotes",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Total Score" />
+      <DataTableColumnHeader column={column} title="Average Auto Notes" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTotalScore")}</div>
+      <div className="w-[80px]">{row.getValue("avgAutoNotes")}</div>
     ),
   },
   {
-    accessorKey: "avgAutoScore",
+    accessorKey: "avgTeleNotes",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Auto Score" />
+      <DataTableColumnHeader column={column} title="Average Tele Notes" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgAutoScore")}</div>
+      <div className="w-[80px]">{row.getValue("avgTeleNotes")}</div>
     ),
-  },
-  {
-    accessorKey: "avgTeleScore",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Tele Score" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTeleScore")}</div>
-    ),
-  },
-  {
-    accessorKey: "avgRP",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average RP" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("avgRP")}</div>,
   },
   {
     accessorKey: "criticalCount",
@@ -63,6 +47,13 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <div className="w-[80px]">{row.getValue("criticalCount")}</div>
     ),
+  },
+  {
+    accessorKey: "avgRP",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Average RP" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("avgRP")}</div>,
   },
   {
     accessorKey: "winPercentage",
