@@ -176,6 +176,7 @@ const SelectionTeamView = ({
       >
         {aggregationData?.comments.length > 0 && (
           <SelectionComments
+            selectedEvent={appSettings?.event}
             comments={aggregationData?.comments?.sort(
               (a: any, b: any) => a.matchNumber - b.matchNumber
             )}

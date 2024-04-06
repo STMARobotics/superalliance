@@ -22,8 +22,9 @@ teamRouter.get(
         }
       )
       .catch(() => "Error");
+    if (response === "Error") return res.send("");
     const data = response.data;
-    const matches = data.map((match) => {
+    const matches = data?.map((match) => {
       return {
         matchNumber: match.match_number,
         alliance:
@@ -33,7 +34,6 @@ teamRouter.get(
             : "blue",
       };
     });
-    if (response === "Error") return res.send("");
     return res.send(matches);
   }
 );

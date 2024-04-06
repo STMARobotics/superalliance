@@ -17,6 +17,7 @@ function DataForms() {
                 forms={forms}
                 teams={selectedEvent !== "all" ? eventTeams : teams}
                 events={events}
+                selectedEvent={selectedEvent}
               />
             )}
           </>
@@ -27,6 +28,7 @@ function DataForms() {
                 forms={eventForms}
                 teams={selectedEvent !== "all" ? eventTeams : teams}
                 events={events}
+                selectedEvent={selectedEvent}
               />
             )}
           </>

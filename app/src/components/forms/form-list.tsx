@@ -1,7 +1,11 @@
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { getMatchData } from "@/lib/superallianceapi";
 import { cn } from "@/lib/utils";
-import { Badge } from "@mantine/core";
+import { AspectRatio, Badge, Button, Modal } from "@mantine/core";
 import { formatDistanceToNow } from "date-fns";
+import { Youtube } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 function FormList({
   forms,
@@ -17,8 +21,41 @@ function FormList({
   selectedEvent?: any;
 }) {
   const { teams } = useSuperAlliance();
+  const [youtubeLink, setYoutubeLink] = useState<any>();
+
+  const [opened, setOpened] = useState<boolean>(false);
+
+  const handleYoutube = (matchNumber: any) => {
+    (async function () {
+      const data = await getMatchData(selectedEvent, matchNumber);
+      const video = data?.videos[0]?.key;
+      if (video) {
+        setOpened(true);
+        setYoutubeLink(video);
+      } else {
+        toast.error("No YouTube video found for this match");
+      }
+    })();
+  };
   return (
     <div className="flex flex-col gap-2 p-4 pt-0">
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        size="auto"
+        withCloseButton={false}
+        centered
+      >
+        <AspectRatio ratio={16 / 9} h={"65vh"} w={"65vw"}>
+          <iframe
+            src={`https://www.youtube.com/embed/${youtubeLink}`}
+            title="YouTube video player"
+            style={{ border: 0 }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </AspectRatio>
+      </Modal>
       {forms.map((item: any, index: any) => (
         <button
           key={index}
@@ -40,8 +77,8 @@ function FormList({
               </div>
               <div
                 className={cn(
-                  "ml-auto text-xs",
-                  selectedForm && !teamsPage === item._id
+                  "ml-auto text-xs flex justify-center items-center gap-2",
+                  selectedForm === item._id && !teamsPage
                     ? "text-foreground"
                     : "text-muted-foreground"
                 )}
@@ -49,6 +86,14 @@ function FormList({
                 <Badge variant={"filled"} color={item.win ? "green" : "red"}>
                   {item.win ? "WIN" : "LOSS"}
                 </Badge>
+                <Button
+                  onClick={() => {
+                    handleYoutube(item.matchNumber);
+                  }}
+                  size="xs"
+                >
+                  <Youtube size={14} />
+                </Button>
               </div>
             </div>
             <div className="text-xs font-medium">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { FormNav } from "@/components/forms/form-nav";
 import { ArrowDownUp, FileDigit, Home, ScatterChart } from "lucide-react";
 import ProjectionsGraph from "./projections-graph";
+import { Select } from "@mantine/core";
 
 export default function TeamProjections({
   forms,
@@ -33,6 +34,12 @@ export default function TeamProjections({
   const newEvents = [{ short_name: "All Events", event_code: "all" }].concat(
     events
   );
+  const [stat, setStat] = useState<string | null>("averages");
+
+  useEffect(() => {
+    console.log(stat);
+  }, []);
+
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup
@@ -100,11 +107,22 @@ export default function TeamProjections({
         <ResizableHandle withHandle />
         <ResizablePanel minSize={30} defaultSize={1095}>
           <div className="hidden h-full flex-1 flex-col space-y-4 p-8 md:flex">
-            <h2 className="text-3xl font-bold tracking-tight">
-              Team Projections
-            </h2>
+            <div className="flex flex-row justify-between items-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Team Projections
+              </h2>
+              <Select
+                data={[
+                  { label: "Averages", value: "averages" },
+                  { label: "Totals", value: "totals" },
+                ]}
+                value={stat}
+                onChange={setStat}
+              />
+            </div>
             <Separator />
             <ProjectionsGraph
+              selectedStat={stat}
               data={aggregation ?? []}
               selectedTeam={selectedTeam}
               setSelectedTeam={setSelectedTeam}

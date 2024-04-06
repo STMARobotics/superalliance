@@ -29,10 +29,12 @@ function Forms({
   forms,
   teams,
   events,
+  selectedEvent,
 }: {
   forms: any;
   teams: any;
   events: any;
+  selectedEvent: any;
 }) {
   const [selectedForm, setSelectedForm] = useState<any>("");
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -170,6 +172,7 @@ function Forms({
               selectedForm={selectedForm}
               setSelectedForm={setSelectedForm}
               teamsPage={false}
+              selectedEvent={selectedEvent}
             />
           </ScrollArea>
         </ResizablePanel>

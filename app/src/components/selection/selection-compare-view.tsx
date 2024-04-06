@@ -32,63 +32,126 @@ const SelectionCompareView = ({
   side: any;
 }) => {
   const averages = [
-    { label: "Avg Notes", value: aggregation?.avgTotalNotes },
-    { label: "Avg Auto Notes", value: aggregation?.avgAutoNotes },
-    { label: "Avg Tele Notes", value: aggregation?.avgTeleNotes },
-    { label: "Avg Total Score", value: aggregation?.avgTotalScore },
-    { label: "Avg Auto Score", value: aggregation?.avgAutoScore },
-    { label: "Avg Tele Score", value: aggregation?.avgTeleScore },
-    { label: "Avg RP", value: aggregation?.avgRP },
-    { label: "Total Crits", value: aggregation?.criticalCount },
-    { label: "Win %", value: aggregation?.winPercentage },
+    {
+      label: "Avg Notes",
+      value: aggregation?.avgTotalNotes,
+      statKey: "avgTotalNotes",
+    },
+    {
+      label: "Avg Auto Notes",
+      value: aggregation?.avgAutoNotes,
+      statKey: "avgAutoNotes",
+    },
+    {
+      label: "Avg Tele Notes",
+      value: aggregation?.avgTeleNotes,
+      statKey: "avgTeleNotes",
+    },
+    {
+      label: "Avg Total Score",
+      value: aggregation?.avgTotalScore,
+      statKey: "avgTotalScore",
+    },
+    {
+      label: "Avg Auto Score",
+      value: aggregation?.avgAutoScore,
+      statKey: "avgAutoScore",
+    },
+    {
+      label: "Avg Tele Score",
+      value: aggregation?.avgTeleScore,
+      statKey: "avgTeleScore",
+    },
+    { label: "Avg RP", value: aggregation?.avgRP, statKey: "avgRP" },
+    {
+      label: "Total Crits",
+      value: aggregation?.criticalCount,
+      statKey: "criticalCount",
+    },
+    {
+      label: "Win %",
+      value: aggregation?.winPercentage,
+      statKey: "winPercentage",
+    },
     {
       label: "Avg Auto Amps Score",
       value: aggregation?.avgAutoAmpsNotes,
+      statKey: "avgAutoAmpsNotes",
     },
     {
       label: "Avg Auto Speakers Score",
       value: aggregation?.avgAutoSpeakersNotes,
+      statKey: "avgAutoSpeakersNotes",
     },
     {
       label: "Avg Tele Amps Score",
       value: aggregation?.avgTeleAmpsNotes,
+      statKey: "avgTeleAmpsNotes",
     },
     {
       label: "Avg Tele Speakers Score",
       value: aggregation?.avgTeleSpeakersNotes,
+      statKey: "avgTeleSpeakersNotes",
     },
     {
       label: "Avg Tele Amped Speakers Score",
       value: aggregation?.avgTeleAmplifiedSpeakersNotes,
+      statKey: "avgTeleAmplifiedSpeakersNotes",
     },
     {
       label: "Avg Tele Traps Score",
       value: aggregation?.avgTeleTrapsNotes,
+      statKey: "avgTeleTrapsNotes",
     },
-    { label: "Leave %", value: aggregation?.leavePercentage },
-    { label: "Park %", value: aggregation?.parkPercentage },
-    { label: "Onstage %", value: aggregation?.onstagePercentage },
+    {
+      label: "Leave %",
+      value: aggregation?.leavePercentage,
+      statKey: "leavePercentage",
+    },
+    {
+      label: "Park %",
+      value: aggregation?.parkPercentage,
+      statKey: "parkPercentage",
+    },
+    {
+      label: "Onstage %",
+      value: aggregation?.onstagePercentage,
+      statKey: "onstagePercentage",
+    },
     {
       label: "Onstage Spotlit %",
       value: aggregation?.onstageSpotlitPercentage,
+      statKey: "onstageSpotlitPercentage",
     },
-    { label: "Harmony %", value: aggregation?.harmonyPercentage },
+    {
+      label: "Harmony %",
+      value: aggregation?.harmonyPercentage,
+      statKey: "harmonyPercentage",
+    },
     {
       label: "Self Spotlit %",
       value: aggregation?.selfSpotlitPercentage,
+      statKey: "selfSpotlitPercentage",
     },
-    { label: "Defense %", value: aggregation?.defensePercentage },
+    {
+      label: "Defense %",
+      value: aggregation?.defensePercentage,
+      statKey: "defensePercentage",
+    },
     {
       label: "Defended Against %",
       value: aggregation?.defendedAgainstPercentage,
+      statKey: "defendedAgainstPercentage",
     },
     {
       label: "Stockpile %",
       value: aggregation?.stockpilePercentage,
+      statKey: "stockpilePercentage",
     },
     {
       label: "Under Stage %",
       value: aggregation?.underStagePercentage,
+      statKey: "underStagePercentage",
     },
   ];
   return (
@@ -389,6 +452,14 @@ const SelectionCompareView = ({
                               className={cn("text-background dark:text-white")}
                             >
                               {item.value}
+                              {Math.sign(statsDifference[item.statKey]) == 1 ? (
+                                <>
+                                  {" "}
+                                  <span className="text-green-500 underline text-[1rem]">
+                                    +{statsDifference[item.statKey]}
+                                  </span>
+                                </>
+                              ) : null}
                             </span>
                           </div>
                         ))}

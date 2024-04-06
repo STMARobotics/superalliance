@@ -35,10 +35,12 @@ type ScatterData = {
 
 const ProjectionsGraph = ({
   data,
+  selectedStat,
   selectedTeam,
   setSelectedTeam,
 }: {
   data: any[];
+  selectedStat: any;
   selectedTeam: any;
   setSelectedTeam: any;
 }) => {
@@ -59,12 +61,18 @@ const ProjectionsGraph = ({
   }, []);
 
   const xAxis = {
-    label: "Total Auto Notes",
-    accessor: (datum: any) => round(datum?.totalAutoNotes),
+    label: selectedStat == "averages" ? "Avg Auto Notes" : "Total Auto Notes",
+    accessor: (datum: any) =>
+      round(
+        datum[selectedStat == "averages" ? "avgAutoNotes" : "totalAutoNotes"]
+      ),
   };
   const yAxis = {
-    label: "Total Teleop Notes",
-    accessor: (datum: any) => round(datum?.totalTeleNotes),
+    label: selectedStat == "averages" ? "Avg Tele Notes" : "Total Tele Notes",
+    accessor: (datum: any) =>
+      round(
+        datum[selectedStat == "averages" ? "avgTeleNotes" : "totalTeleNotes"]
+      ),
   };
   const zAxis = { label: "Constant", accessor: (_datum: any) => 1 };
 
