@@ -112,6 +112,7 @@ function DataTeamProjections() {
                   )}
                   selectedForm={selectedForm}
                   setSelectedForm={setSelectedForm}
+                  selectedEvent={selectedEvent}
                 />
               </Modal>
               <Drawer
@@ -174,6 +175,7 @@ function DataTeamProjections() {
                   )}
                   selectedForm={selectedForm}
                   setSelectedForm={setSelectedForm}
+                  selectedEvent={selectedEvent}
                 />
               </Modal>
               <Drawer
