@@ -127,11 +127,11 @@ const SelectionCompare = ({
       >
         <div className="flex flex-row py-2 w-full">
           <div className="w-[50%] px-4">
-            {compareData?.left && pitFormData?.left && statsDifference && (
+            {compareData?.left && statsDifference && (
               <>
                 <SelectionCompareView
                   aggregation={compareData.left}
-                  pitForm={pitFormData.left}
+                  pitForm={pitFormData?.left}
                   teams={teams}
                   statsDifference={statsDifference.left}
                   side={"left"}
@@ -140,11 +140,11 @@ const SelectionCompare = ({
             )}
           </div>
           <div className="w-[50%] px-4">
-            {compareData?.right && pitFormData?.right && statsDifference && (
+            {compareData?.right && statsDifference && (
               <>
                 <SelectionCompareView
                   aggregation={compareData.right}
-                  pitForm={pitFormData.right}
+                  pitForm={pitFormData?.right}
                   teams={teams}
                   statsDifference={statsDifference.right}
                   side={"right"}
