@@ -153,7 +153,8 @@ export default function StandForm() {
       if (
         appSettings?.event == "testing" ||
         appSettings?.event == "week0" ||
-        appSettings?.event == "gnrprac"
+        appSettings?.event == "gnrprac" ||
+        appSettings?.event == "worldsprac"
       )
         return;
       try {
@@ -254,6 +255,7 @@ export default function StandForm() {
 
         {appSettings?.event !== "none" &&
           appSettings?.event !== "gnrprac" &&
+          appSettings?.event !== "worldsprac" &&
           appSettings?.event !== "gcrprac" && (
             <div className="pb-4">
               <Button
@@ -269,6 +271,7 @@ export default function StandForm() {
 
         {appSettings?.event !== "none" &&
         appSettings?.event !== "gnrprac" &&
+        appSettings?.event !== "worldsprac" &&
         appSettings?.event !== "gcrprac" &&
         matchTeams?.length > 0 ? (
           <Select
@@ -287,6 +290,7 @@ export default function StandForm() {
             {(matchTeams && appSettings?.event !== "none") ||
             appSettings?.event == "none" ||
             appSettings?.event == "gnrprac" ||
+            appSettings?.event == "worldsprac" ||
             appSettings?.event == "gcrprac" ? (
               <NumberInput
                 label="Team Number"

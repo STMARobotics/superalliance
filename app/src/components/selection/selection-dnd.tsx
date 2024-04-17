@@ -37,16 +37,16 @@ const defaultCols = [
     title: "Unsorted",
   },
   {
-    id: "pick" as const,
-    title: "Pick",
+    id: "r1" as const,
+    title: "R1",
   },
   {
-    id: "plsno" as const,
-    title: "Please no",
+    id: "r2" as const,
+    title: "R2",
   },
   {
-    id: "dnp" as const,
-    title: "Do not pick",
+    id: "r3" as const,
+    title: "R3",
   },
 ] satisfies Column[];
 
