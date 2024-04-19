@@ -155,10 +155,10 @@ export function SuperAllianceProvider(props: any) {
   useEffect(() => {
     (async function () {
       const appSettingsRes = await getAppSettings();
-      const [forms, teams, events, totalAggregation] = await Promise.all([
+      const events = await getEvents(appConfig.teamNumber, appConfig.year);
+      const [forms, teams, totalAggregation] = await Promise.all([
         getForms(),
         getTeams(),
-        getEvents(appConfig.teamNumber, appConfig.year),
         getTotalAggregation(),
       ]);
       setForms(forms);
