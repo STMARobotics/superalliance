@@ -156,6 +156,9 @@ function Forms({
                 if (searchContent == "") return true;
                 else
                   return (
+                    (searchContent.toLowerCase().includes("match") &&
+                      form.matchNumber.toString() ==
+                        searchContent.toLowerCase().replace("match ", "")) ||
                     form.teamNumber.toString().includes(searchContent) ||
                     teams
                       .filter(
