@@ -72,9 +72,16 @@ teamRouter.get("/api/listTeams", async (req, res) => {
 
   const teamArray = await Promise.all(
     teamList.map(async ({ _id, event }) => {
-      const response = await axios.get(
-        `${process.env.API_URL}/api/team/${_id}`
-      );
+      const response = await axios
+        .get(`https://www.thebluealliance.com/api/v3/team/frc${_id}`, {
+          method: "GET",
+          headers: {
+            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+            accept: "application/json",
+          },
+        })
+        .catch(() => "Error");
+      if (response === "Error") return res.send("");
       const { nickname, city, state_prov } = response.data;
       return {
         teamNumber: _id,
