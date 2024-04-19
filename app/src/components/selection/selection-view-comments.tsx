@@ -69,7 +69,7 @@ const SelectionComments = ({
                   Match: {match.matchNumber}
                 </Text>
 
-                <Text fz="sm" c="dimmed" lineClamp={4}>
+                <Text fz="sm" c="dimmed">
                   {match.comments}
                 </Text>
 
