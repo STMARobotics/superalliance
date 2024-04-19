@@ -32,6 +32,33 @@ eventRouter.get(
 );
 
 eventRouter.get(
+  "/api/event/:eventCode/team/:teamNumber/rank",
+  async (req, res) => {
+    try {
+      const { eventCode, teamNumber } = req.params;
+      const response = await axios.get(
+        `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2024${eventCode}/status`,
+        {
+          headers: {
+            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+            accept: "application/json",
+          },
+        }
+      );
+      const data = response.data;
+      console.log(data);
+      if (!data)
+        return res
+          .status(404)
+          .json({ error: "Event match or teams not found!" });
+      return res.send(data);
+    } catch {
+      return res.status(404).json({ error: "Event match or teams not found!" });
+    }
+  }
+);
+
+eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/teams",
   async (req, res) => {
     try {

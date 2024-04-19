@@ -77,6 +77,7 @@ const SelectionDND = ({
       columnId: "unsorted",
       teamNumber: `${team.teamNumber}`,
       teamName: `${team.teamName}`,
+      rank: `${team.teamRank}`,
     };
   });
 
@@ -102,6 +103,7 @@ const SelectionDND = ({
           columnId: "unsorted",
           teamNumber: `${team.teamNumber}`,
           teamName: `${team.teamName}`,
+          rank: `${team.teamRank}`,
         };
       })
     );
@@ -199,7 +201,9 @@ const SelectionDND = ({
               <BoardColumn
                 key={col.id}
                 column={col}
-                teams={teams.filter((team) => team.columnId === col.id)}
+                teams={teams
+                  .filter((team) => team.columnId === col.id)
+                  .sort((a: any, b: any) => a.rank - b.rank)}
                 totalTeamCount={teams.length}
                 setSelectedTeam={setSelectedTeam}
                 printMode={printMode}
@@ -219,9 +223,9 @@ const SelectionDND = ({
               {activeColumn && (
                 <BoardColumn
                   column={activeColumn}
-                  teams={teams.filter(
-                    (team) => team.columnId === activeColumn.id
-                  )}
+                  teams={teams
+                    .filter((team) => team.columnId === activeColumn.id)
+                    .sort((a: any, b: any) => a.rank - b.rank)}
                   totalTeamCount={teams.length}
                   setSelectedTeam={setSelectedTeam}
                   printMode={printMode}

@@ -164,3 +164,15 @@ export const getMatchData = async (eventCode: string, matchNumber: number) => {
     throw new Error("Match Data not found");
   }
 };
+
+export const getEventTeamRank = async (eventCode: string, team: any) => {
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/event/${eventCode}/team/${team}/rank`
+    );
+    const data = res.data;
+    return data;
+  } catch {
+    throw new Error("Team Rank not found");
+  }
+};

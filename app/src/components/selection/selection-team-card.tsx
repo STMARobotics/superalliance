@@ -12,12 +12,12 @@ export interface Team {
   columnId: ColumnId;
   teamNumber: string;
   teamName: string;
+  rank: any;
 }
 
 interface TeamCardProps {
   team: Team;
   isOverlay?: boolean;
-  index?: string;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
   printMode?: boolean;
   compareMode?: boolean;
@@ -37,7 +37,6 @@ export interface TeamDragData {
 export function TeamCard({
   team,
   isOverlay,
-  index,
   setSelectedTeam,
   printMode,
   compareMode,
@@ -135,16 +134,20 @@ export function TeamCard({
           </span>
         </span>
         {!printMode && (
-          <Badge
-            variant={"outline"}
-            className={`ml-auto font-semibold h-6 ${
-              compareMode &&
-              (leftTeam == team.id || rightTeam == team.id) &&
-              "text-black"
-            }`}
-          >
-            {index ? index : "#"}
-          </Badge>
+          <>
+            {team?.rank > 0 ? (
+              <Badge
+                variant={"outline"}
+                className={`ml-auto font-semibold text-red-600 h-6 ${
+                  compareMode &&
+                  (leftTeam == team.id || rightTeam == team.id) &&
+                  "text-black"
+                }`}
+              >
+                Rank #{team.rank}
+              </Badge>
+            ) : null}
+          </>
         )}
       </CardHeader>
     </Card>

@@ -103,20 +103,21 @@ export function BoardColumn({
           }`}
         >
           <SortableContext items={teamsIds}>
-            {teams.map((team, index) => (
-              <TeamCard
-                key={team.id}
-                team={team}
-                index={`#${index + 1}`}
-                setSelectedTeam={setSelectedTeam!}
-                printMode={printMode}
-                compareMode={compareMode}
-                leftTeam={leftTeam}
-                rightTeam={rightTeam}
-                setLeftTeam={setLeftTeam}
-                setRightTeam={setRightTeam}
-              />
-            ))}
+            {teams.map((team) => {
+              return (
+                <TeamCard
+                  key={team.id}
+                  team={team}
+                  setSelectedTeam={setSelectedTeam!}
+                  printMode={printMode}
+                  compareMode={compareMode}
+                  leftTeam={leftTeam}
+                  rightTeam={rightTeam}
+                  setLeftTeam={setLeftTeam}
+                  setRightTeam={setRightTeam}
+                />
+              );
+            })}
           </SortableContext>
         </CardContent>
       </ScrollArea>

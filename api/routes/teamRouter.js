@@ -82,6 +82,15 @@ teamRouter.get("/api/listTeams", async (req, res) => {
         })
         .catch(() => "Error");
       if (response === "Error") return res.send("");
+      const rank = await axios.get(
+        `https://www.thebluealliance.com/api/v3/team/frc${_id}/event/2024cur/status`,
+        {
+          headers: {
+            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+            accept: "application/json",
+          },
+        }
+      );
       const { nickname, city, state_prov } = response.data;
       return {
         teamNumber: _id,
@@ -89,6 +98,9 @@ teamRouter.get("/api/listTeams", async (req, res) => {
         teamName: nickname ? nickname : "Unknown Team",
         teamLocation:
           city && state_prov ? `${city}, ${state_prov}` : "Unknown Location",
+        teamRank: rank?.data?.qual.ranking.rank
+          ? rank?.data?.qual.ranking.rank
+          : 0,
       };
     })
   );

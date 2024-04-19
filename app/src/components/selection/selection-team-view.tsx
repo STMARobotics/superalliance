@@ -403,10 +403,19 @@ export const DataDisplay = ({
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {aggregationData?.avgRP} Points
+                      Rank #
+                      {
+                        teams.filter(
+                          (team: any) => team.teamNumber == aggregationData?._id
+                        )[0].teamRank
+                      }
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      (Placeholder for ranking in event)
+                      Rank{" "}
+                      {teams.filter(
+                        (team: any) => team.teamNumber == aggregationData?._id
+                      )[0].teamRank + " "}
+                      /{" " + teams.length}
                     </p>
                   </CardContent>
                 </Card>
