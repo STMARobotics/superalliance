@@ -20,11 +20,15 @@ export default function Sorting({
   teams,
   events,
   aggregation,
+  setSelectedTeam,
+  selectedTeam,
 }: {
   forms: any;
   teams: any;
   events: any;
   aggregation: any;
+  setSelectedTeam: (teamId: any) => void;
+  selectedTeam: any;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = useLocation().pathname;
@@ -101,7 +105,12 @@ export default function Sorting({
             <h2 className="text-3xl font-bold tracking-tight">Team Sorting</h2>
             {teams?.length > 0 && (
               <ScrollArea className="w-full h-screen">
-                <SortingTeamsTable data={aggregation} columns={columns} />
+                <SortingTeamsTable
+                  data={aggregation}
+                  columns={columns}
+                  setSelectedTeam={setSelectedTeam}
+                  selectedTeam={selectedTeam}
+                />
               </ScrollArea>
             )}
           </div>
