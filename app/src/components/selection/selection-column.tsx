@@ -91,7 +91,7 @@ export function BoardColumn({
     >
       <CardHeader className="p-4 font-semibold border-b-2 text-center flex flex-row space-between items-center">
         <span className="m-auto">
-          {column.id == "dnp" && totalTeamCount - 23 > 0
+          {column.id == "r3" && totalTeamCount - 23 > 0
             ? `${column.title} (${teams.length}/${totalTeamCount - 23})`
             : `${column.title} (${teams.length})`}
         </span>
