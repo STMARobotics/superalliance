@@ -8,7 +8,7 @@ const manifestForPlugin: Partial<VitePWAOptions> = {
   includeAssets: ["favicon.ico", "images/superalliancelogo.png"],
   manifest: {
     name: "SuperAlliance",
-    short_name: "SA",
+    short_name: "SuperAlliance",
     description: "Team 7028's Most Advanced Scouting Tool",
     icons: [
       {
