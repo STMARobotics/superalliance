@@ -5,6 +5,7 @@ on:
       - v2
     paths:
       - 'app/**'
+  workflow_dispatch: # this enables you to manually trigger the build
 jobs:
   run:
     runs-on: ubuntu-latest
