@@ -77,9 +77,9 @@ const SelectionComments = ({
                   <Center>
                     <Avatar size={24} radius="xl" mr="xs" color="red">
                       {(() => {
-                        let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu");
+                        let rgx = new RegExp(/(\p{L}{1})\p{L}+/u, "gu");
 
-                        let initials = [...match.usersName.matchAll(rgx)] || [];
+                        let initials = [...match.usersName.matchAll(rgx)];
 
                         initials = (
                           (initials.shift()?.[1] || "") +
