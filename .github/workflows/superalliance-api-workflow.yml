@@ -2,7 +2,7 @@ name: Workflow to deploy SuperAlliance API to AWS Lambda & API Gateway
 on:
   push:
     branches:
-      - v2
+      - main
     paths:
       - 'api/**'
 

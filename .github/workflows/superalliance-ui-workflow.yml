@@ -2,7 +2,7 @@ name: Workflow to deploy SuperAlliance UI to S3
 on:
   push:
     branches:
-      - v2
+      - main
     paths:
       - 'app/**'
   workflow_dispatch: # this enables you to manually trigger the build
