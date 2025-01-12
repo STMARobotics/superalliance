@@ -5,7 +5,8 @@ on:
       - main
     paths:
       - 'api/**'
-
+  workflow_dispatch: # this enables you to manually trigger the build
+  
 jobs:
   run:
     runs-on: ubuntu-latest
