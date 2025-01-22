@@ -1,0 +1,19 @@
+
+{
+  "name": "superalliance",
+  "version": "2.0.0",
+  "scripts": {
+    "pre-init": "./pre-init.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/STMARobotics/superalliance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/STMARobotics/superalliance/issues"
+  },
+  "homepage": "https://github.com/STMARobotics/superalliance#readme",
+  "description": ""
+}
