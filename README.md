@@ -3,8 +3,8 @@ Here at robotics, scouting is a very important intelligence operation which offe
 
 ## Local Setup
 1. Clone the repo to your machine using either HTTPS or SSH:
-    HTTPS: `git clone https://github.com/STMARobotics/superalliance.git` 
-    SSH: `git clone git@github.com:STMARobotics/superalliance.git`
+    * HTTPS: `git clone https://github.com/STMARobotics/superalliance.git` 
+    * SSH: `git clone git@github.com:STMARobotics/superalliance.git`
 
 2. Set up the frontend application
     * Open a command prompt and navigate to the `app` directory, then run the following commands:
