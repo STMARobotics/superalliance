@@ -7,7 +7,9 @@ import {
 import Home from "./pages/client/Home";
 import Header from "./components/header";
 import SignInPage from "./pages/handlers/login/page";
+
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
+import StandFormOld from "./pages/forms/StandFormOld.tsx";
 import StandForm from "./pages/forms/Stand";
 import NotFound from "./pages/NotFound";
 import DataStandForm from "./pages/data/form/stand/ViewForm";
@@ -35,6 +37,19 @@ function AppRouter() {
         <Route index element={<Home />} />
         <Route path="/login" element={<SignInPage />} />
         {/* NEW FORM ROUTES */}
+        <Route
+            path="/ref/stand"
+            element={
+              <>
+                <SignedIn>
+                  <StandFormOld/>
+                </SignedIn>
+                <SignedOut>
+                  <Navigate to="/login" />
+                </SignedOut>
+              </>
+            }
+        />
         <Route
           path="/new/stand"
           element={
@@ -290,6 +305,7 @@ function AppRouter() {
               <SignedOut>
                 <Navigate to="/login" />
               </SignedOut>
+
             </div>
           }
         />

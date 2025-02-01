@@ -1,0 +1,20 @@
+.formContainer {
+    text-align: center;
+}
+
+.formSectionTitle {
+
+}
+
+.formSectionContainer {
+    justify-content: center;
+    display: flex;
+    align-items: flex-start;
+
+    text-align: left;
+    margin-left: -20rem;
+}
+
+.formField {
+    padding-top: 1rem;
+}

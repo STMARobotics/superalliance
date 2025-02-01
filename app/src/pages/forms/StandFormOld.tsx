@@ -51,7 +51,7 @@ interface StandFormValues {
   win: boolean;
 }
 
-export default function StandForm() {
+export default function StandFormOld() {
   const [scroll, scrollTo] = useWindowScroll();
   const { user } = useUser();
   const navigate = useNavigate();
@@ -127,6 +127,7 @@ export default function StandForm() {
       rpEarned: isNotEmpty("This cannot be empty"),
     },
   });
+
 
   const submitForm = async (values: any) => {
     setSubmitPress(true);
@@ -206,9 +207,7 @@ export default function StandForm() {
         onSubmit={form.onSubmit((values) => submitForm(values))}
         className="w-full max-w-md p-10"
       >
-        <div className="pb-8 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
-          Stand Scouting Form
-        </div>
+
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Pre-Game
