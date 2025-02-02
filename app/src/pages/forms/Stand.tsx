@@ -8,7 +8,7 @@ import {getForm} from '@/form-schemes/Stand.ts'
 
 import {useState} from "react";
 
-import {MantineProvider} from'@mantine/core'
+import {Container, MantineProvider} from '@mantine/core'
 
 const criticals = [
     "died",
@@ -30,8 +30,14 @@ export default function StandForm() {
             <div className="formContainer">
                 <FormTitle title="Stand Scouting Form"/>
                 <FormSection title="Section">
-                    <FormTextInput title="Title" description="Description" placeholder="Placeholder"/>
-                    <FormIncrementable title="Incrementable" description="Description"/>
+                    <FormTextInput title="Name"/>
+                    <Container className="massIncrementContainer">
+                        <FormIncrementable title="Coral" description="Level 1"/>
+                        <FormIncrementable title="Coral" description="Level 2"/>
+                        <FormIncrementable title="Coral" description="Level 3"/>
+                        <FormIncrementable title="Coral" description="Level 4"/>
+                    </Container>
+
                 </FormSection>
             </div>
         </MantineProvider>

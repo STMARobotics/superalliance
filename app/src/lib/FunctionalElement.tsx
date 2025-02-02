@@ -4,7 +4,8 @@ import {
     NumberInput,
     Text,
     rem,
-    rgba
+    rgba,
+    Container
 } from '@mantine/core'
 
 export type caliber = "NA" | "trivial" | "exceptional" | number | ""
@@ -19,12 +20,13 @@ interface functionalElementConstructor {
 interface TextInputElement extends functionalElementConstructor {
     placeholder: string
 }
+
 export const CoreFormTheme = createTheme({
     fontSizes: {
         leadTitle: rem(40),
         sectionTitle: rem(35),
         fieldTitle: rem(18),
-        fieldDescription: rem(12)
+        fieldDescription: rem(20)
     },
 
 })
@@ -54,20 +56,22 @@ export function FormSection({title, children}: { title: string, children: React.
             >
                 {title}
             </Text>
-            <div className="formSectionContainer">
+            <Container className="formSectionContainer">
                 {children}
-            </div>
+            </Container>
         </div>
 
     )
 }
+
 export function FormTextInput({title, description, placeholder}: TextInputElement) {
     return (
-        <div className="formField">
+        <div className="formFieldText">
             <TextInput
                 styles={{
                     input: {backgroundColor: "#2b2b2b", color: "white"},
                 }}
+                variant="filled"
                 label={title}
                 description={description}
                 placeholder={placeholder}
@@ -81,14 +85,21 @@ export function FormIncrementable({title, description}: functionalElementConstru
     return (
         <div>
             <NumberInput
+                className="formFieldIncrement"
+                styles={{
+                    input: {backgroundColor: "#2b2b2b", color: "white", width: "45%", transform: "translateX(65%)"},
+                }}
+                variant="filled"
                 label={title}
                 description={description}
-                placeholder="0"
                 min={0}
-                styles={{
-                    input: {backgroundColor: "#2b2b2b", color: "white"},
-                }}
-            />
+                max={99}
+                allowDecimal={false}
+                allowNegative={false}
+                hideControls
+            >
+            </NumberInput>
         </div>
     )
 }
+
