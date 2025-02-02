@@ -18,11 +18,11 @@ import axios from "axios";
 import { useWindowScroll } from "@mantine/hooks";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Separator } from "@/components/ui/separator";
-import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { Separator } from "@/components/ui/separator.tsx";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
-import { getTeamsFromMatch } from "@/lib/superallianceapi";
+import { getTeamsFromMatch } from "@/lib/superallianceapi.ts";
 
 interface StandFormValues {
   event: null | number;

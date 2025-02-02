@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import FormData from "form-data";
-import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 
 export default function PitForm() {
   const [scroll, scrollTo] = useWindowScroll();

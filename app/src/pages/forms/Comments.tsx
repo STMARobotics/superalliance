@@ -1,4 +1,4 @@
-import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useUser } from "@clerk/clerk-react";
 import {
   Affix,
