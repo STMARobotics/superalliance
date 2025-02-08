@@ -43,6 +43,3 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
 
 ### `/pre-init.sh`
 This script initializes a laptop for development by ensuring that npm & node.js is installed, installs neccessary packages for`api` & `app`, and builds the client application. 
-
-
-## Build and deployment
