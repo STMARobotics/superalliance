@@ -5,16 +5,20 @@ import {
     Text,
     rem,
     rgba,
-    Container
+    Container,
+    Title,
+    InputDescription
 } from '@mantine/core'
+
+import {Minus, Plus} from 'lucide-react'
 
 export type caliber = "NA" | "trivial" | "exceptional" | number | ""
 export type functionCaliber = caliber | "bare-minimum" | "fine" | "solid" | "great"
 export type combatCaliber = caliber | "trivial" | "weak" | "decent" | "strong" | "formidable"
 
 interface functionalElementConstructor {
-    title: string | undefined,
-    description: string | undefined,
+    title: string | undefined | null,
+    description: string | undefined | null,
 }
 
 interface TextInputElement extends functionalElementConstructor {
@@ -50,9 +54,9 @@ export function FormSection({title, children}: { title: string, children: React.
             <Text
                 className="formSectionTitle"
                 size="sectionTitle"
-                fw={600}
+                fw={800}
                 variant="gradient"
-                gradient={{from: "white", to: rgba("#b3e0ff", 0), deg: 20}}
+                gradient={{from: "white", to: rgba("#89c3ff", 1/2), deg: 20}}
             >
                 {title}
             </Text>
@@ -72,6 +76,7 @@ export function FormTextInput({title, description, placeholder}: TextInputElemen
                     input: {backgroundColor: "#2b2b2b", color: "white"},
                 }}
                 variant="filled"
+                radius="sm"
                 label={title}
                 description={description}
                 placeholder={placeholder}
@@ -81,25 +86,53 @@ export function FormTextInput({title, description, placeholder}: TextInputElemen
     )
 }
 
-export function FormIncrementable({title, description}: functionalElementConstructor) {
+export function FormIncrementTable({title, fields}: {
+    title: string,
+    fields: [...([string, string] | string)]
+}) {
     return (
-        <div>
-            <NumberInput
-                className="formFieldIncrement"
-                styles={{
-                    input: {backgroundColor: "#2b2b2b", color: "white", width: "45%", transform: "translateX(65%)"},
-                }}
-                variant="filled"
-                label={title}
-                description={description}
-                min={0}
-                max={99}
-                allowDecimal={false}
-                allowNegative={false}
-                hideControls
-            >
-            </NumberInput>
+        <div className="formIncrementTable">
+            <Title size="2rem" className="formIncrementTableTitle" >{title}</Title>
+            <div className="formIncrementTableContainer">
+                {fields.map((data => (
+                    <FormIncrementer description={data}/>
+                )))}
+            </div>
         </div>
     )
 }
 
+export function FormIncrementer({title, description}: {
+    title: string | undefined,
+    description: string | undefined
+}) {
+    return (
+        <div className="formIncrementer">
+            {description && <InputDescription>{description}</InputDescription>}
+            <Plus
+                className="formIncrementerPlus"
+            />
+            <NumberInput
+                className="formIncrementerInput"
+                size="lg"
+                hideControls
+            />
+            <Minus
+                className="formIncrementorMinus"
+            />
+        </div>
+    )
+}
+
+export function FormIncrementable({title, description}: functionalElementConstructor) {
+    return (
+        <div className="formIncrementGeneralContainer">
+            <Text>{title}</Text>
+            <div className="formIncrementElementContainer">
+                <Plus className="formIncrementPlus"/>
+                <NumberInput description={description} hideControls></NumberInput>
+                <Minus className="formIncrementMinus"/>
+            </div>
+        </div>
+    )
+}

@@ -5,6 +5,9 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    max-width: 30rem;
+    justify-self: center;
+    background-color: #000107;
 }
 
 .formSectionTitle {
@@ -18,6 +21,7 @@
 .formSectionContainer {
     @apply formField;
     padding-top: 2rem;
+    padding-bottom: 2rem;
     display: flex;
     text-align: left;
     flex-direction: column;
@@ -25,17 +29,44 @@
 
 .formFieldText {
     @apply formField;
-    max-width: 50%;
-    transform: translateX(50%)
+    width: 160%;
+    max-width: 200%;
+    transform: translateX(-20%)
 }
 
-.formFieldIncrement {
+.formIncrementTable {
 
 }
 
-.massIncrementContainer {
-    display: flex;
-    width: 50%;
-    text-align: center;
+.formIncrementTableTitle {
+    justify-self: left;
+    transform: translateX(3.75rem);
+    font-size: 1rem;
 }
 
+.formIncrementTableContainer {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.formIncrementer {
+    max-width: 15%;
+    justify-items: center;
+    padding-right: 1rem;
+}
+
+.formIncrementerIcon {
+
+}
+
+.formIncrementerInput {
+    max-width: 100%
+}
+
+.formIncrementerPlus {
+    @apply formIncrementerIcon
+}
+
+.formIncrementerMinus {
+    @apply formIncrementerIcon
+}
