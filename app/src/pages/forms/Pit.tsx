@@ -57,7 +57,6 @@ export default function PitForm() {
     initialValues: {
       event: null,
       teamNumber: null,
-      overallStrategy: "",
       aprilTags: false,
       aprilTagsUse: "",
       protectedElectronics: "",

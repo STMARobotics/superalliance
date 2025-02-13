@@ -59,6 +59,7 @@ formRouter.post("/api/form/stand/submit", async (req, res) => {
   park: data.park,
   criticals: data.criticals,
   comments: data.comments,
+  strategy: data.strategy,
   rpEarned: data.rpEarned,
   defendedAgainst: data.defendedAgainst,
   defense: data.defense,

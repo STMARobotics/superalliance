@@ -46,6 +46,7 @@ interface StandFormValues {
   deepClimb: boolean;
   criticals: any[];
   comments: string;
+  strategy: string;
   rpEarned: null | number;
   defendedAgainst: boolean;
   defense: boolean;
@@ -111,6 +112,7 @@ export default function StandFormChad() {
       deepClimb: false,
       criticals: [],
       comments: "",
+      strategy: "",      
       rpEarned: 0,
       defendedAgainst: false,
       defense: false,
@@ -383,7 +385,7 @@ export default function StandFormChad() {
                 form.values.autoCoralL2 > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
+                  "autoCoralL2",
                   Number(form.values.autoCoralL2 - 1)
                 );
               }
@@ -425,7 +427,7 @@ export default function StandFormChad() {
                 form.values.autoCoralL3 > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
+                  "autoCoralL3",
                   Number(form.values.autoCoralL3 - 1)
                 );
               }
@@ -467,7 +469,7 @@ export default function StandFormChad() {
                 form.values.autoCoralL4 > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
+                  "autoCoralL4",
                   Number(form.values.autoCoralL4 - 1)
                 );
               }
@@ -509,7 +511,7 @@ export default function StandFormChad() {
                 form.values.autoAlgaeProcessor > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
+                  "autoAlgaeProcessor",
                   Number(form.values.autoAlgaeProcessor - 1)
                 );
               }
@@ -551,7 +553,7 @@ export default function StandFormChad() {
                 form.values.autoAlgaeNet > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
+                  "autoAlgaeNet",
                   Number(form.values.autoAlgaeNet - 1)
                 );
               }
@@ -605,7 +607,7 @@ export default function StandFormChad() {
                 form.values.teleopCoralL1 > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
+                  "teleopCoralL1",
                   Number(form.values.teleopCoralL1 - 1)
                 );
               }
@@ -886,7 +888,16 @@ export default function StandFormChad() {
         />
 
         <Textarea
-          label="Comments?"
+          label="Overall Strategy"
+          placeholder="Type some text here."
+          className="pb-4"
+          maxLength={750}
+          autosize
+          {...form.getInputProps("strategy")}
+        />
+
+        <Textarea
+          label="Extra Comments"
           placeholder="Type some text here."
           className="pb-4"
           maxLength={750}

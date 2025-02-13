@@ -25,6 +25,7 @@ const StandFormSchema = new Schema(
     deepClimb: Boolean,
     criticals: Array,
     comments: String,
+    strategy: String,
     rpEarned: Number,
     defendedAgainst: Boolean,
     defense: Boolean,
