@@ -62,16 +62,15 @@ export default function StandFormChad() {
   const [submitPress, setSubmitPress] = useState(false);
 
   useEffect(() => {
-    if (!events) {
-      setEventData(
-        events.map((event: any) => ({
+    if (!events) return;
+    setEventData(
+      events.map((event: any) => {
+        return {
           label: event.short_name,
           value: event.event_code,
-        }))
-      );
-    } else {
-      setEventData([]);
-    }
+        };
+      })
+    );
   }, [events]);
 
   useEffect(() => {
@@ -706,7 +705,7 @@ export default function StandFormChad() {
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleopCoralL2")}
+            {...form.getInputProps("teleopCoralL3")}
           />
           <ActionIcon
             size={"2rem"}
@@ -797,7 +796,7 @@ export default function StandFormChad() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleopCoralL4",
+                "teleopAlgaeProcessor",
                 Number(form.values.teleopAlgaeProcessor! + 1)
               );
             }}
