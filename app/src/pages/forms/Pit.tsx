@@ -174,7 +174,7 @@ export default function PitForm() {
 
         {appSettings?.event == "none" ? (
           <Select
-            label="Select Event"
+            label="Select event"
             placeholder="Event"
             className="pb-4"
             data={eventData}
@@ -182,7 +182,7 @@ export default function PitForm() {
           />
         ) : (
           <Select
-            label="Select Event"
+            label="Select event"
             description="This event has been locked in by an Administrator!"
             disabled
             placeholder="Event"
@@ -193,7 +193,7 @@ export default function PitForm() {
         )}
 
         <NumberInput
-          label="Team Number"
+          label="Team number"
           placeholder="7028"
           className="pb-4"
           allowDecimal={false}
@@ -237,7 +237,7 @@ export default function PitForm() {
         </div>
 
         <TextInput
-          label="Protected Electronics? (Look & Ask)"
+          label="Protected electronics? (look & ask)"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("protectedElectronics")}
@@ -358,14 +358,14 @@ export default function PitForm() {
         <Checkbox
           className="pb-4"
           size="sm"
-          label="Shallow climb"
+          label="Shallow Climb"
           {...pitForm.getInputProps("scoreShallow", { type: "checkbox" })}
         />
 
         <Checkbox
           className="pb-4"
           size="sm"
-          label="Deep climb"
+          label="Deep Climb"
           {...pitForm.getInputProps("scoreDeep", { type: "checkbox" })}
         />
 
@@ -406,7 +406,7 @@ export default function PitForm() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Do you have an Auto?"
+          label="Do you have an auto?"
           {...pitForm.getInputProps("auto", { type: "checkbox" })}
         />
 
@@ -442,14 +442,14 @@ export default function PitForm() {
         </div>
 
         <TextInput
-          label="Prefered Driver Station?"
+          label="Prefered driver station?"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("preferredDriverStation")}
         />
 
         <TextInput
-          label="Preferred Human Player Placement?"
+          label="Preferred human player placement?"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("preferedHumanPlayerPlacement")}
