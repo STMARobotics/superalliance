@@ -23,7 +23,6 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import SelectionPitFormView from "@/components/selection/selection-pit-form-view";
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
-import SelectionMiddleNotesPath from "@/components/selection/selection-middle-notes-path";
 import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { getTeamEventAlliance } from "@/lib/superallianceapi";
@@ -45,7 +44,6 @@ const SelectionTeamView = ({
   const [imageOpened, setImageOpened] = useState(false);
   const [criticalsOpened, setCriticalsOpened] = useState(false);
   const [commentsOpened, setCommentsOpened] = useState(false);
-  const [middleNotesOpened, setMiddleNotesOpened] = useState(false);
   const [allianceData, setAllianceData] = useState<any>();
   const { appSettings } = useSuperAlliance();
 
@@ -94,7 +92,6 @@ const SelectionTeamView = ({
           setImageOpened={setImageOpened}
           setCriticalsOpened={setCriticalsOpened}
           setCommentsOpened={setCommentsOpened}
-          setMiddleNotesOpened={setMiddleNotesOpened}
           appSettings={appSettings}
         />
       </Modal>
@@ -183,33 +180,6 @@ const SelectionTeamView = ({
           />
         )}
       </Drawer>
-      <Drawer
-        classNames={{
-          content: "bg-[#18181b]",
-          header: "bg-[#18181b]",
-        }}
-        opened={middleNotesOpened}
-        withCloseButton={true}
-        title={"Middle Notes Path"}
-        onClose={() => setMiddleNotesOpened(false)}
-        radius={"md"}
-        position="right"
-        size={"auto"}
-        overlayProps={{
-          backgroundOpacity: 0.55,
-          blur: 3,
-        }}
-      >
-        {aggregationData?.middleNotes.length > 0 && (
-          <SelectionMiddleNotesPath
-            middleNotes={aggregationData?.middleNotes?.sort(
-              (a: any, b: any) => a.matchNumber - b.matchNumber
-            )}
-            allianceData={allianceData}
-            fullWidth={false}
-          />
-        )}
-      </Drawer>
     </>
   );
 };
@@ -224,7 +194,6 @@ export const DataDisplay = ({
   setImageOpened,
   setCriticalsOpened,
   setCommentsOpened,
-  setMiddleNotesOpened,
   appSettings,
 }: {
   teams: any;
@@ -236,67 +205,27 @@ export const DataDisplay = ({
   setImageOpened: any;
   setCriticalsOpened: any;
   setCommentsOpened: any;
-  setMiddleNotesOpened: any;
   appSettings: any;
 }) => {
   const averages = [
-    { label: "Avg Notes", value: aggregationData?.avgTotalNotes },
-    { label: "Avg Auto Notes", value: aggregationData?.avgAutoNotes },
-    { label: "Avg Tele Notes", value: aggregationData?.avgTeleNotes },
+    { label: "Avg Coral", value: aggregationData?.avgTotalCoral },
+    { label: "Avg Auto Coral", value: aggregationData?.avgAutoCoral },
+    { label: "Avg Tele Coral", value: aggregationData?.avgTeleCoral },
+    { label: "Avg Algae", value: aggregationData?.avgTotalAlgae },
+    { label: "Avg Processed Algae", value: aggregationData?.avgProcessedAlgae },
+    { label: "Avg Net Algae", value: aggregationData?.avgNetAlgae },
     { label: "Avg Total Score", value: aggregationData?.avgTotalScore },
     { label: "Avg Auto Score", value: aggregationData?.avgAutoScore },
     { label: "Avg Tele Score", value: aggregationData?.avgTeleScore },
     { label: "Avg RP", value: aggregationData?.avgRP },
     { label: "Total Crits", value: aggregationData?.criticalCount },
     { label: "Win %", value: aggregationData?.winPercentage },
-    {
-      label: "Avg Auto Amps Score",
-      value: aggregationData?.avgAutoAmpsNotes,
-    },
-    {
-      label: "Avg Auto Speakers Score",
-      value: aggregationData?.avgAutoSpeakersNotes,
-    },
-    {
-      label: "Avg Tele Amps Score",
-      value: aggregationData?.avgTeleAmpsNotes,
-    },
-    {
-      label: "Avg Tele Speakers Score",
-      value: aggregationData?.avgTeleSpeakersNotes,
-    },
-    {
-      label: "Avg Tele Amped Speakers Score",
-      value: aggregationData?.avgTeleAmplifiedSpeakersNotes,
-    },
-    {
-      label: "Avg Tele Traps Score",
-      value: aggregationData?.avgTeleTrapsNotes,
-    },
     { label: "Leave %", value: aggregationData?.leavePercentage },
     { label: "Park %", value: aggregationData?.parkPercentage },
-    { label: "Onstage %", value: aggregationData?.onstagePercentage },
-    {
-      label: "Onstage Spotlit %",
-      value: aggregationData?.onstageSpotlitPercentage,
-    },
-    { label: "Harmony %", value: aggregationData?.harmonyPercentage },
-    {
-      label: "Self Spotlit %",
-      value: aggregationData?.selfSpotlitPercentage,
-    },
     { label: "Defense %", value: aggregationData?.defensePercentage },
     {
       label: "Defended Against %",
       value: aggregationData?.defendedAgainstPercentage,
-    },
-    {
-      label: "Stockpile %",
-      value: aggregationData?.stockpilePercentage,
-    },
-    {
-      label: "Under Stage %",
-      value: aggregationData?.underStagePercentage,
     },
   ];
 
@@ -339,16 +268,16 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Average Notes
+                    Average Coral
                   </CardTitle>
                   <Tally5 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.avgTotalNotes} Notes
+                    {aggregationData?.avgTotalCoral} Coral
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalNotes} notes across{" "}
+                    {aggregationData?.totalCoral} coral across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>
@@ -356,16 +285,16 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Average Auto Notes
+                    Average Auto Coral
                   </CardTitle>
                   <IconRobot className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.avgAutoNotes} notes
+                    {aggregationData?.avgAutoCoral} Coral
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalAutoNotes} notes across{" "}
+                    {aggregationData?.totalAutoCoral} coral across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>
@@ -535,20 +464,6 @@ export const DataDisplay = ({
                     >
                       <ClipboardList className="mr-2 h-6 w-6" />
                       View Forms
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (
-                          !aggregationData?.middleNotes ||
-                          aggregationData?.middleNotes?.length == 0
-                        )
-                          return toast.error("No Middle Note Data Found!");
-                        setMiddleNotesOpened(true);
-                      }}
-                      className="w-full h-14 text-lg font-bold"
-                    >
-                      <Route className="mr-2 h-6 w-6" />
-                      View Auto Middle Path
                     </Button>
                     <Button
                       onClick={() => {
