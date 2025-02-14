@@ -25,7 +25,7 @@ const PitFormSchema = new Schema(
     scoreL4: Boolean,
     scoreProcessor: Boolean,
     scoreShallow: Boolean,
-    scoreOtherDeep: Boolean,
+    scoreDeep: Boolean,
     pickupGround: Boolean,
     pickupSource: Boolean,
     pickupOther: Boolean,
@@ -49,4 +49,4 @@ const PitFormSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = model("PitForm", PitFormSchema, "pitForms");
+module.exports = model("PitForm", PitFormSchema, "PIT_FORMS");

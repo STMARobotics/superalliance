@@ -167,37 +167,53 @@ const PitFormView = ({ pitFormData }: { pitFormData: any }) => {
               />
 
               <TextInput
-                label="Score Shoot"
-                description="Did the robot score by shooting?"
-                value={pitFormData?.scoreShoot ? "Yes" : "No"}
+                label="Score L1"
+                description="Did the robot score by L1?"
+                value={pitFormData?.scoreL1 ? "Yes" : "No"}
                 readOnly
               />
 
               <TextInput
-                label="Score Pickup"
-                description="Did the robot score by picking up?"
-                value={pitFormData?.scorePickup ? "Yes" : "No"}
+                label="Score L2"
+                description="Did the robot score by L2?"
+                value={pitFormData?.scoreL2 ? "Yes" : "No"}
                 readOnly
               />
 
               <TextInput
-                label="Score Other"
-                description="Did the robot score by other means?"
-                value={pitFormData?.scoreOther ? "Yes" : "No"}
+                label="Score L3"
+                description="Did the robot score by L3?"
+                value={pitFormData?.scoreL3 ? "Yes" : "No"}
                 readOnly
               />
 
-              {pitFormData?.scoreOther && (
-                <Textarea
-                  placeholder="Description..."
-                  label="Score Other Explain"
-                  description="Explain 'other'."
-                  autosize
-                  minRows={1}
-                  value={pitFormData?.scoreOtherExplain}
-                  readOnly
-                />
-              )}
+              <TextInput
+                label="Score L4"
+                description="Did the robot score by L4?"
+                value={pitFormData?.scoreL4 ? "Yes" : "No"}
+                readOnly
+              />
+
+              <TextInput
+                label="Score Processor"
+                description="Did the robot score via the processor?"
+                value={pitFormData?.scoreProcessor ? "Yes" : "No"}
+                readOnly
+              />
+
+              <TextInput
+                label="Score Shallow"
+                description="Did the robot score by climbing shallow?"
+                value={pitFormData?.scoreShallow ? "Yes" : "No"}
+                readOnly
+              />
+
+              <TextInput
+                label="Score Deep"
+                description="Did the robot score by climbing deep?"
+                value={pitFormData?.scoreDeep ? "Yes" : "No"}
+                readOnly
+              />
 
               <TextInput
                 label="Pickup Ground"
@@ -259,56 +275,6 @@ const PitFormView = ({ pitFormData }: { pitFormData: any }) => {
                 readOnly
               />
 
-              <Group>
-                <TextInput
-                  label="Can Score Speaker"
-                  description="Can the robot score with the speaker?"
-                  value={pitFormData?.canScoreSpeaker ? "Yes" : "No"}
-                  readOnly
-                />
-
-                <TextInput
-                  label="Can Score Amp"
-                  description="Can the robot score with the amp?"
-                  value={pitFormData?.canScoreAmp ? "Yes" : "No"}
-                  readOnly
-                />
-
-                <TextInput
-                  label="Can Score Trap"
-                  description="Can the robot score with the trap?"
-                  value={pitFormData?.canScoreTrap ? "Yes" : "No"}
-                  readOnly
-                />
-              </Group>
-
-              <TextInput
-                label="Fit Under Stage"
-                description="Can the robot fit under the stage?"
-                value={pitFormData?.fitUnderStage ? "Yes" : "No"}
-                readOnly
-              />
-
-              <Textarea
-                placeholder="Description..."
-                label="Climb Info"
-                description="Can you climb? How many robots at once?"
-                autosize
-                minRows={1}
-                value={pitFormData?.climbInfo}
-                readOnly
-              />
-
-              <Textarea
-                placeholder="Description..."
-                label="Human Player Info"
-                description="Human Player Consistency on Spotlight?"
-                autosize
-                minRows={1}
-                value={pitFormData?.humanPlayerInfo}
-                readOnly
-              />
-
               <Textarea
                 placeholder="Description..."
                 label="Robot Issues"
@@ -366,13 +332,6 @@ const PitFormView = ({ pitFormData }: { pitFormData: any }) => {
                 autosize
                 minRows={1}
                 value={pitFormData?.extraComments}
-                readOnly
-              />
-
-              <TextInput
-                label="Direct Contact"
-                description="Preferred direct contact?"
-                value={pitFormData?.directContact}
                 readOnly
               />
             </Group>

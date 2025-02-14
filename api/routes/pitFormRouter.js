@@ -31,7 +31,7 @@ pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
     scoreL4: false,
     scoreProcessor: false,
     scoreShallow: false,
-    scoreOtherDeep: false,
+    scoreDeep: false,
     pickupGround: data.pickupGround,
     pickupSource: data.pickupSource,
     pickupOther: data.pickupOther,

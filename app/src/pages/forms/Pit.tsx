@@ -75,7 +75,7 @@ export default function PitForm() {
       scoreL4: false,
       scoreProcessor: false,
       scoreShallow: false,
-      scoreOtherDeep: false,
+      scoreDeep: false,
       pickupGround: false,
       pickupSource: false,
       pickupOther: false,
