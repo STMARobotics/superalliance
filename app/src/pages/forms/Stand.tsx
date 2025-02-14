@@ -880,7 +880,7 @@ export default function StandFormChad() {
         <MultiSelect
           data={criticals}
           label="Criticals"
-          placeholder="Choose Criticals."
+          placeholder="Choose criticals."
           searchable
           nothingFoundMessage="No criticals found"
           className="pb-4"
@@ -888,7 +888,7 @@ export default function StandFormChad() {
         />
 
         <Textarea
-          label="Overall Strategy"
+          label="Overall strategy"
           placeholder="Type some text here."
           className="pb-4"
           maxLength={750}
@@ -897,7 +897,7 @@ export default function StandFormChad() {
         />
 
         <Textarea
-          label="Extra Comments"
+          label="Extra comments"
           placeholder="Type some text here."
           className="pb-4"
           maxLength={750}
