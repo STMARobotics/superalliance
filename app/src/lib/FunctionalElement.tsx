@@ -7,10 +7,12 @@ import {
     rgba,
     Container,
     Title,
-    InputDescription
+    InputDescription,
+    ActionIcon
 } from '@mantine/core'
 
 import {Minus, Plus} from 'lucide-react'
+import {DOMElement} from "react";
 
 export type caliber = "NA" | "trivial" | "exceptional" | number | ""
 export type functionCaliber = caliber | "bare-minimum" | "fine" | "solid" | "great"
@@ -25,6 +27,7 @@ interface TextInputElement extends functionalElementConstructor {
     placeholder: string
 }
 
+
 export const CoreFormTheme = createTheme({
     fontSizes: {
         leadTitle: rem(40),
@@ -32,6 +35,9 @@ export const CoreFormTheme = createTheme({
         fieldTitle: rem(18),
         fieldDescription: rem(20)
     },
+    colors: {
+        incrementer: ["rgba(\"#2b0809\", 1)"]
+    }
 
 })
 
@@ -102,6 +108,31 @@ export function FormIncrementTable({title, fields}: {
     )
 }
 
+enum elementActionType {
+    INCREMENT,
+    DECREMENT,
+    SET,
+}
+
+const extractForm(element: HTMLElement) => {
+}
+
+function bind(element: HTMLElement, actionType: elementActionType, ) {
+    switch(actionType) {
+        case elementActionType.increment: {
+            return () => {
+                element.closest('')
+            }
+        }
+        case elementActionType.decrement: {
+            return () => {
+
+            }
+
+        }
+    }
+}
+
 export function FormIncrementer({title, description}: {
     title: string | undefined,
     description: string | undefined
@@ -109,17 +140,22 @@ export function FormIncrementer({title, description}: {
     return (
         <div className="formIncrementer">
             {description && <InputDescription>{description}</InputDescription>}
-            <Plus
-                className="formIncrementerPlus"
-            />
+            <ActionIcon color={"#2b0809\""}>
+                <Plus
+                    className="formIncrementerPlus"
+
+                />
+            </ActionIcon>
             <NumberInput
                 className="formIncrementerInput"
                 size="lg"
                 hideControls
             />
-            <Minus
-                className="formIncrementorMinus"
-            />
+            <ActionIcon color={"#2b0809\""}>
+                <Minus
+                    className="formIncrementorMinus"
+                />
+            </ActionIcon>
         </div>
     )
 }

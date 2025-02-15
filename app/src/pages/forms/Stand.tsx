@@ -27,9 +27,9 @@ export default function StandForm() {
     // @ts-ignore
     const form = getForm()
 
-    return (
+    const formDOM =  (
         <MantineProvider theme={CoreFormTheme}>
-            <div className="formContainer">
+            <div className="formContainer" id="FORM" >
                 <FormTitle title="Stand Scouting Form"/>
                 <FormSection title="testing">
                     <FormIncrementTable title="increment title" fields={
@@ -37,17 +37,12 @@ export default function StandForm() {
                     }></FormIncrementTable>
                 </FormSection>
 
-
-
-
                 <FormSection title="Meta">
                     <FormTextInput title="Name"/>
-                    <FormTextInput title="Event"/>
+                    <FormTextInput title="Event" path="something/this/that"/>
                 </FormSection>
                 <FormSection title="Autonomous">
-                    <FormIncrementTable title="Algae" fields={
-                       ["I", "II"]
-                    }/>
+
                     <FormIncrementable title="algae/processor"/>
                     <FormTextInput title="algae/net"/>
                     <FormTextInput title="coral/level1"/>
@@ -85,4 +80,6 @@ export default function StandForm() {
             </div>
         </MantineProvider>
     )
+
+    formDOM.props.formObject = form;
 }

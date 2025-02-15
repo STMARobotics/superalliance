@@ -1,0 +1,77 @@
+{
+  "env": {
+    "include": ["section-title"],
+    "constructs": {
+      "net-field": {
+        "arguments": ["class", "type", "src", "lock"],
+        "using": ["get"],
+        "tree": [
+          "!::[class]<type, lock> &get<src>"
+        ]
+      },
+      "net-selection": {
+        "arguments": ["src", "context", "parameters", "useDefault"],
+        "using": ["get"],
+        "tree": [
+          "context? : ascertain context; context[PATH] -> context[*&]",
+          "response[STRING] -> [&get<src, [context, parameters]>]",
+          "!::selection<response, useDefault>"
+        ],
+        "increment-table": {
+          "arguments": ["identifiers"],
+          "using": [],
+          "tree": [
+            "!::div{.increment-table}",
+            "^ (~/ identifiers[*]) : path >> [path&]::increment<#path>"
+          ]
+        }
+      }
+    },
+    "data": {
+      "reference": {
+
+      }
+    }
+  },
+  "tree": [
+    [
+      "::title `Stand Scouting Form`",
+      "::year 2025"
+    ],
+    [
+      "#~: /meta",
+      "::section-title meta",
+      "name::inline<STRING> name",
+      "event::net-selection<EVENT, true> Event",
+      "match-number::inline<NUMBER> `match number`",
+      "team::net-selection<TEAM, [/meta/match-number, /meta/event>], []"
+    ],
+    [
+      "#~: /match",
+      [
+        "#~: /autonomous",
+        "::section-title autonomous",
+        "algae::incrementTable<[/net, /processor]>",
+        "coral::incrementTable<[/I, /II, /III, /IV]>"
+      ],
+      [
+        "#~: /teleop",
+        "::section-title teleop",
+        "algae::incrementTable<[/net, /processor]>",
+        "coral::incrementTable<[/I, /II, /III, /IV]>"
+      ],
+      [
+        "#~: /endgame",
+        "::section-title endgame",
+        "parks::check `does park`",
+        "park-type::selection<[abc, def, NA]> `park type`",
+        "park-success::check `succeeded`",
+        "performance::selection<[abc, abc]> performance"
+      ],
+      [
+        "#~: /post-match",
+        "comments::box comments"
+      ]
+    ]
+  ]
+}
