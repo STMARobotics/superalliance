@@ -12,7 +12,6 @@ import {
   ImageIcon,
   Medal,
   MessageCircleMore,
-  Route,
   Tally5,
   XCircle,
 } from "lucide-react";
@@ -44,7 +43,7 @@ const SelectionTeamView = ({
   const [imageOpened, setImageOpened] = useState(false);
   const [criticalsOpened, setCriticalsOpened] = useState(false);
   const [commentsOpened, setCommentsOpened] = useState(false);
-  const [allianceData, setAllianceData] = useState<any>();
+  const [setAllianceData] = useState<any>();
   const { appSettings } = useSuperAlliance();
 
   useEffect(() => {
