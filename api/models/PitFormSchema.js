@@ -19,10 +19,13 @@ const PitFormSchema = new Schema(
     backupSwerve: Boolean,
     complimentaryRobot: String,
     robotChanges: String,
-    scoreShoot: Boolean,
-    scorePickup: Boolean,
-    scoreOther: Boolean,
-    scoreOtherExplain: String,
+    scoreL1: Boolean,
+    scoreL2: Boolean,
+    scoreL3: Boolean,
+    scoreL4: Boolean,
+    scoreProcessor: Boolean,
+    scoreShallow: Boolean,
+    scoreDeep: Boolean,
     pickupGround: Boolean,
     pickupSource: Boolean,
     pickupOther: Boolean,
@@ -42,9 +45,8 @@ const PitFormSchema = new Schema(
     strongestValue: String,
     weakestValue: String,
     extraComments: String,
-    directContact: String,
   },
   { timestamps: true }
 );
 
-module.exports = model("PitForm", PitFormSchema, "pitForms");
+module.exports = model("PitForm", PitFormSchema, "PIT_FORMS");

@@ -69,10 +69,13 @@ export default function PitForm() {
       backupSwerve: false,
       complimentaryRobot: "",
       robotChanges: "",
-      scoreShoot: false,
-      scorePickup: false,
-      scoreOther: false,
-      scoreOtherExplain: "",
+      scoreL1: false,
+      scoreL2: false,
+      scoreL3: false,
+      scoreL4: false,
+      scoreProcessor: false,
+      scoreShallow: false,
+      scoreDeep: false,
       pickupGround: false,
       pickupSource: false,
       pickupOther: false,
@@ -80,11 +83,6 @@ export default function PitForm() {
       auto: false,
       autoCount: "",
       idealAuto: "",
-      canScoreSpeaker: false,
-      canScoreAmp: false,
-      canScoreTrap: false,
-      fitUnderStage: false,
-      climbInfo: "",
       humanPlayerInfo: "",
       robotIssues: "",
       preferredDriverStation: "",
@@ -92,7 +90,6 @@ export default function PitForm() {
       strongestValue: "",
       weakestValue: "",
       extraComments: "",
-      directContact: "",
     },
 
     validate: {
@@ -177,7 +174,7 @@ export default function PitForm() {
 
         {appSettings?.event == "none" ? (
           <Select
-            label="Select Event"
+            label="Select event"
             placeholder="Event"
             className="pb-4"
             data={eventData}
@@ -185,7 +182,7 @@ export default function PitForm() {
           />
         ) : (
           <Select
-            label="Select Event"
+            label="Select event"
             description="This event has been locked in by an Administrator!"
             disabled
             placeholder="Event"
@@ -196,7 +193,7 @@ export default function PitForm() {
         )}
 
         <NumberInput
-          label="Team Number"
+          label="Team number"
           placeholder="7028"
           className="pb-4"
           allowDecimal={false}
@@ -240,7 +237,7 @@ export default function PitForm() {
         </div>
 
         <TextInput
-          label="Protected Electronics? (Look & Ask)"
+          label="Protected electronics? (look & ask)"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("protectedElectronics")}
@@ -319,32 +316,58 @@ export default function PitForm() {
         <Checkbox
           className="pb-4"
           size="sm"
-          label="Shoot"
-          {...pitForm.getInputProps("scoreShoot", { type: "checkbox" })}
+          label="Score Coral L1"
+          {...pitForm.getInputProps("scoreL1", { type: "checkbox" })}
         />
 
         <Checkbox
           className="pb-4"
           size="sm"
-          label="Pickup and Place"
-          {...pitForm.getInputProps("scorePickup", { type: "checkbox" })}
+          label="Score Coral L2"
+          {...pitForm.getInputProps("scoreL2", { type: "checkbox" })}
         />
 
         <Checkbox
           className="pb-4"
           size="sm"
-          label="Other?"
-          {...pitForm.getInputProps("scoreOther", { type: "checkbox" })}
+          label="Score Coral L3"
+          {...pitForm.getInputProps("scoreL3", { type: "checkbox" })}
         />
 
-        {pitForm.values?.scoreOther && (
-          <TextInput
-            label="Explain 'other'."
-            placeholder="Type some text here."
-            className="pb-4"
-            {...pitForm.getInputProps("scoreOtherExplain")}
-          />
-        )}
+        <Checkbox
+          className="pb-4"
+          size="sm"
+          label="Score Coral L4"
+          {...pitForm.getInputProps("scoreL4", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="sm"
+          label="Algae in the Processor"
+          {...pitForm.getInputProps("scoreProcessor", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="sm"
+          label="Algae in the Barge"
+          {...pitForm.getInputProps("scoreBarge", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="sm"
+          label="Shallow Climb"
+          {...pitForm.getInputProps("scoreShallow", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="sm"
+          label="Deep Climb"
+          {...pitForm.getInputProps("scoreDeep", { type: "checkbox" })}
+        />
 
         <Text size="sm" className="pb-2">
           How do you pickup game pieces?
@@ -383,7 +406,7 @@ export default function PitForm() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Do you have an Auto?"
+          label="Do you have an auto?"
           {...pitForm.getInputProps("auto", { type: "checkbox" })}
         />
 
@@ -405,51 +428,6 @@ export default function PitForm() {
           {...pitForm.getInputProps("idealAuto")}
         />
 
-        <Text size="sm" className="pb-2">
-          Where are you able to score?
-        </Text>
-
-        <Group className="pb-4">
-          <Checkbox
-            size="sm"
-            label="Speaker?"
-            {...pitForm.getInputProps("canScoreSpeaker", { type: "checkbox" })}
-          />
-
-          <Checkbox
-            size="sm"
-            label="Amp?"
-            {...pitForm.getInputProps("canScoreAmp", { type: "checkbox" })}
-          />
-
-          <Checkbox
-            size="sm"
-            label="Trap?"
-            {...pitForm.getInputProps("canScoreTrap", { type: "checkbox" })}
-          />
-        </Group>
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Can you fit under the stage?"
-          {...pitForm.getInputProps("fitUnderStage", { type: "checkbox" })}
-        />
-
-        <TextInput
-          label="Can you climb? How many robots at once?"
-          placeholder="Type some text here."
-          className="pb-4"
-          {...pitForm.getInputProps("climbInfo")}
-        />
-
-        <TextInput
-          label="Human Player Consistency on Spotlight?"
-          placeholder="Type some text here."
-          className="pb-4"
-          {...pitForm.getInputProps("humanPlayerInfo")}
-        />
-
         <Textarea
           label="Issues with your robot?"
           placeholder="Type some text here."
@@ -464,14 +442,14 @@ export default function PitForm() {
         </div>
 
         <TextInput
-          label="Prefered Driver Station?"
+          label="Prefered driver station?"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("preferredDriverStation")}
         />
 
         <TextInput
-          label="Preferred Human Player Placement?"
+          label="Preferred human player placement?"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("preferedHumanPlayerPlacement")}
@@ -502,13 +480,6 @@ export default function PitForm() {
           maxLength={750}
           autosize
           {...pitForm.getInputProps("extraComments")}
-        />
-
-        <TextInput
-          label="Preferred direct contact?"
-          placeholder="Type some text here."
-          className="pb-4"
-          {...pitForm.getInputProps("directContact")}
         />
 
         <Group justify="center">

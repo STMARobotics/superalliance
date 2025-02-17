@@ -72,46 +72,45 @@ const FormView = ({ formData }: { formData: any }) => {
         Autonomous
       </div>
 
-      <Checkbox.Group
-        defaultValue={[]}
-        label="Did the robot touch the notes from the middle of the field?"
-        description="1 being closest to the scoring table, 5 being farthest away. (Choose in the order of being touched)"
-        className="pb-4"
-        value={formData?.autoMiddleNotes}
-      >
-        <div className="mt-3 flex flex-col gap-2">
-          {formData?.autoMiddleNotes.length > 0 && (
-            <div className="text-gray-300 text-md font-bold leading-tight tracking-tighter lg:leading-[1.1]">
-              {formData?.autoMiddleNotes.join(" -> ")}
-            </div>
-          )}
-          <Checkbox
-            size="md"
-            value="1"
-            label="Position 1 (Closest note to Scoring Table)"
-          />
-          <Checkbox size="md" value="2" label="Position 2" />
-          <Checkbox size="md" value="3" label="Position 3" />
-          <Checkbox size="md" value="4" label="Position 4" />
-          <Checkbox
-            size="md"
-            value="5"
-            label="Position 5 (Farthest note from Scoring Table)"
-          />
-        </div>
-      </Checkbox.Group>
-
       <TextInput
-        value={formData?.autoAmpsNotes}
+        value={formData?.autoCoralL1}
         readOnly
-        label="Auto Notes Scored in Amps"
+        label="Auto Coral Scored in L1"
         className="pb-4"
       />
 
       <TextInput
-        value={formData?.autoSpeakersNotes}
+        value={formData?.autoCoralL2}
         readOnly
-        label="Auto Notes Scored in Speakers"
+        label="Auto Coral Scored in L2"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.autoCoralL3}
+        readOnly
+        label="Auto Coral Scored in L3"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.autoCoralL4}
+        readOnly
+        label="Auto Coral Scored in L4"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.autoAlgaeProcessor}
+        readOnly
+        label="Auto Algae Scored in the Algae Processor"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.autoAlgaeNet}
+        readOnly
+        label="Auto Algae Scored in the Algae Net"
         className="pb-4"
       />
 
@@ -129,40 +128,44 @@ const FormView = ({ formData }: { formData: any }) => {
       </div>
 
       <TextInput
-        value={formData?.teleAmpsNotes}
+        value={formData?.teleopCoralL1}
         readOnly
-        label="Amp Notes Scored"
+        label="Teleop Coral Scored in L1"
         className="pb-4"
       />
 
       <TextInput
-        value={formData?.teleSpeakersNotes}
+        value={formData?.teleopCoralL2}
         readOnly
-        label="Speaker Notes Scored"
+        label="Teleop Coral Scored in L2"
         className="pb-4"
       />
 
       <TextInput
-        value={formData?.teleAmplifiedSpeakersNotes}
+        value={formData?.teleopCoralL3}
         readOnly
-        label={
-          <>
-            <span
-              className="text-[#e03131]"
-              style={{ textShadow: "0 0 4px #e03131" }}
-            >
-              Amplified
-            </span>{" "}
-            Speaker Notes Scored
-          </>
-        }
+        label="Teleop Coral Scored in L3"
         className="pb-4"
       />
 
       <TextInput
-        value={formData?.teleTrapsNotes}
+        value={formData?.teleopCoralL4}
         readOnly
-        label="Trap Notes Scored"
+        label="Teleop Coral Scored in L4"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.teleopAlgaeProcessor}
+        readOnly
+        label="Teleop Algae Scored in the Algae Processor"
+        className="pb-4"
+      />
+
+      <TextInput
+        value={formData?.teleopAlgaeNet}
+        readOnly
+        label="Teleop Algae Scored in the Algae Net"
         className="pb-4"
       />
 
@@ -172,42 +175,25 @@ const FormView = ({ formData }: { formData: any }) => {
         className="pb-4"
         size="md"
         label="Did the robot PARK?"
-        description="Any part of the robot's bumpers were in the stage zone at the end of the match."
+        description="The robot was "
       />
 
       <Checkbox
-        checked={formData?.onstage}
+        checked={formData?.shallowClimb}
         readOnly
         className="pb-4"
         size="md"
-        label="Was the robot ONSTAGE?"
-        description="The robot successfully climbed and earned climb points."
-      />
-
-      {formData?.onstage && (
-        <Checkbox
-          checked={formData?.onstageSpotlit}
-          readOnly
-          className="pb-4 ml-7"
-          size="md"
-          label="Was it spotlit?"
-        />
-      )}
-
-      <Checkbox
-        checked={formData?.harmony}
-        readOnly
-        className="pb-4"
-        size="md"
-        label="Was HARMONY achieved?"
+        label="Did the robot deep climb?"
+        description="The robot successfully climbed and earned deep climb points."
       />
 
       <Checkbox
-        checked={formData?.selfSpotlight}
+        checked={formData?.shallowClimb}
         readOnly
         className="pb-4"
         size="md"
-        label="Was your teams player able to spotlight?"
+        label="Did the robot shallow climb?"
+        description="The robot successfully climbed and earned shallow climb points."
       />
 
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -226,9 +212,18 @@ const FormView = ({ formData }: { formData: any }) => {
       />
 
       <Textarea
+        value={formData?.comments ? formData?.strategy : "No strategy."}
+        readOnly
+        label="Overall strategy"
+        className="pb-4"
+        maxLength={750}
+        autosize
+      />
+
+<Textarea
         value={formData?.comments ? formData?.comments : "No comments."}
         readOnly
-        label="Comments?"
+        label="Extra Comments"
         className="pb-4"
         maxLength={750}
         autosize
@@ -255,22 +250,6 @@ const FormView = ({ formData }: { formData: any }) => {
         className="pb-4"
         size="md"
         label="Did your team defend?"
-      />
-
-      <Checkbox
-        checked={formData?.stockpile}
-        readOnly
-        className="pb-4"
-        size="md"
-        label="Did your team stockpile notes?"
-      />
-
-      <Checkbox
-        checked={formData?.underStage}
-        readOnly
-        className="pb-4"
-        size="md"
-        label="Could your robot go under the stage?"
       />
 
       <Separator />

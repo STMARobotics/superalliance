@@ -18,40 +18,42 @@ import axios from "axios";
 import { useWindowScroll } from "@mantine/hooks";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Separator } from "@/components/ui/separator";
-import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { Separator } from "@/components/ui/separator.tsx";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
-import { getTeamsFromMatch } from "@/lib/superallianceapi";
+import { getTeamsFromMatch } from "@/lib/superallianceapi.ts";
 
 interface StandFormValues {
   event: null | number;
   teamNumber: null | string | number;
   matchNumber: null | number;
-  autoMiddleNotes: any[];
-  autoAmpsNotes: null | number;
-  autoSpeakersNotes: null | number;
   leave: boolean;
+  autoCoralL1: null | number;
+  autoCoralL2: null | number;
+  autoCoralL3: null | number;
+  autoCoralL4: null | number;
+  autoAlgaeProcessor: null | number;
+  autoAlgaeNet: null | number;
+  teleopCoralL1: null | number;
+  teleopCoralL2: null | number;
+  teleopCoralL3: null | number;
+  teleopCoralL4: null | number;
+  teleopAlgaeProcessor: null | number;
+  teleopAlgaeNet: null | number;
   park: boolean;
-  teleAmpsNotes: null | number;
-  teleSpeakersNotes: null | number;
-  teleAmplifiedSpeakersNotes: null | number;
-  teleTrapsNotes: null | number;
-  onstage: boolean;
-  onstageSpotlit: boolean;
-  harmony: boolean;
-  selfSpotlight: boolean;
+  shallowClimb: boolean;
+  deepClimb: boolean;
   criticals: any[];
   comments: string;
+  strategy: string;
   rpEarned: null | number;
   defendedAgainst: boolean;
   defense: boolean;
-  stockpile: boolean;
-  underStage: boolean;
   win: boolean;
 }
 
-export default function StandForm() {
+export default function StandFormChad() {
   const [scroll, scrollTo] = useWindowScroll();
   const { user } = useUser();
   const navigate = useNavigate();
@@ -92,41 +94,50 @@ export default function StandForm() {
       event: null,
       teamNumber: null,
       matchNumber: null,
-      autoMiddleNotes: [],
-      autoAmpsNotes: 0,
-      autoSpeakersNotes: 0,
       leave: false,
+      autoCoralL1: 0,
+      autoCoralL2: 0,
+      autoCoralL3: 0,
+      autoCoralL4: 0,
+      autoAlgaeProcessor: 0,
+      autoAlgaeNet: 0,
+      teleopCoralL1: 0,
+      teleopCoralL2: 0,
+      teleopCoralL3: 0,
+      teleopCoralL4: 0,
+      teleopAlgaeProcessor: 0,
+      teleopAlgaeNet: 0,
       park: false,
-      teleAmpsNotes: 0,
-      teleSpeakersNotes: 0,
-      teleAmplifiedSpeakersNotes: 0,
-      teleTrapsNotes: 0,
-      onstage: false,
-      onstageSpotlit: false,
-      harmony: false,
-      selfSpotlight: false,
+      shallowClimb: false,
+      deepClimb: false,
       criticals: [],
       comments: "",
+      strategy: "",      
       rpEarned: 0,
       defendedAgainst: false,
       defense: false,
-      stockpile: false,
-      underStage: false,
       win: false,
     },
     validate: {
       event: isNotEmpty("This cannot be empty"),
       teamNumber: isNotEmpty("This cannot be empty"),
       matchNumber: isNotEmpty("This cannot be empty"),
-      autoAmpsNotes: isNotEmpty("This cannot be empty"),
-      autoSpeakersNotes: isNotEmpty("This cannot be empty"),
-      teleAmpsNotes: isNotEmpty("This cannot be empty"),
-      teleSpeakersNotes: isNotEmpty("This cannot be empty"),
-      teleAmplifiedSpeakersNotes: isNotEmpty("This cannot be empty"),
-      teleTrapsNotes: isNotEmpty("This cannot be empty"),
+      autoCoralL1: isNotEmpty("This cannot be empty"),
+      autoCoralL2: isNotEmpty("This cannot be empty"),
+      autoCoralL3: isNotEmpty("This cannot be empty"),
+      autoCoralL4: isNotEmpty("This cannot be empty"),
+      autoAlgaeProcessor: isNotEmpty("This cannot be empty"),
+      autoAlgaeNet: isNotEmpty("This cannot be empty"),
+      teleopCoralL1: isNotEmpty("This cannot be empty"),
+      teleopCoralL2: isNotEmpty("This cannot be empty"),
+      teleopCoralL3: isNotEmpty("This cannot be empty"),
+      teleopCoralL4: isNotEmpty("This cannot be empty"),
+      teleopAlgaeProcessor: isNotEmpty("This cannot be empty"),
+      teleopAlgaeNet: isNotEmpty("This cannot be empty"),
       rpEarned: isNotEmpty("This cannot be empty"),
     },
   });
+
 
   const submitForm = async (values: any) => {
     setSubmitPress(true);
@@ -206,9 +217,6 @@ export default function StandForm() {
         onSubmit={form.onSubmit((values) => submitForm(values))}
         className="w-full max-w-md p-10"
       >
-        <div className="pb-8 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
-          Stand Scouting Form
-        </div>
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Pre-Game
@@ -325,47 +333,18 @@ export default function StandForm() {
           Autonomous
         </div>
 
-        <Checkbox.Group
-          defaultValue={[]}
-          label="Did the robot touch the notes from the middle of the field?"
-          description="1 being closest to the scoring table, 5 being farthest away. (Choose in the order of being touched)"
-          className="pb-4"
-          {...form.getInputProps("autoMiddleNotes")}
-        >
-          <div className="mt-3 flex flex-col gap-2">
-            {form.values?.autoMiddleNotes.length > 0 && (
-              <div className="text-gray-300 text-md font-bold leading-tight tracking-tighter lg:leading-[1.1]">
-                {form.values?.autoMiddleNotes.join(" -> ")}
-              </div>
-            )}
-            <Checkbox
-              size="md"
-              value="1"
-              label="Position 1 (Closest note to Scoring Table)"
-            />
-            <Checkbox size="md" value="2" label="Position 2" />
-            <Checkbox size="md" value="3" label="Position 3" />
-            <Checkbox size="md" value="4" label="Position 4" />
-            <Checkbox
-              size="md"
-              value="5"
-              label="Position 5 (Farthest note from Scoring Table)"
-            />
-          </div>
-        </Checkbox.Group>
-
         <div className="flex flex-row justify-between items-center w-full gap-5">
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.autoAmpsNotes !== null &&
-                form.values.autoAmpsNotes > 0
+                form.values.autoCoralL1 !== null &&
+                form.values.autoCoralL1 > 0
               ) {
                 form.setFieldValue(
-                  "autoAmpsNotes",
-                  Number(form.values.autoAmpsNotes - 1)
+                  "autoCoralL1",
+                  Number(form.values.autoCoralL1 - 1)
                 );
               }
             }}
@@ -373,22 +352,22 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Amp Notes Scored"
+            label="Coral Level 1"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("autoAmpsNotes")}
+            {...form.getInputProps("autoCoralL1")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "autoAmpsNotes",
-                Number(form.values.autoAmpsNotes! + 1)
+                "autoCoralL1",
+                Number(form.values.autoCoralL1! + 1)
               );
             }}
           >
@@ -402,12 +381,12 @@ export default function StandForm() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.autoSpeakersNotes !== null &&
-                form.values.autoSpeakersNotes > 0
+                form.values.autoCoralL2 !== null &&
+                form.values.autoCoralL2 > 0
               ) {
                 form.setFieldValue(
-                  "autoSpeakersNotes",
-                  Number(form.values.autoSpeakersNotes - 1)
+                  "autoCoralL2",
+                  Number(form.values.autoCoralL2 - 1)
                 );
               }
             }}
@@ -415,22 +394,190 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Speaker Notes Scored"
+            label="Coral Level 2"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("autoSpeakersNotes")}
+            {...form.getInputProps("autoCoralL2")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "autoSpeakersNotes",
-                Number(form.values.autoSpeakersNotes! + 1)
+                "autoCoralL2",
+                Number(form.values.autoCoralL2! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoCoralL3 !== null &&
+                form.values.autoCoralL3 > 0
+              ) {
+                form.setFieldValue(
+                  "autoCoralL3",
+                  Number(form.values.autoCoralL3 - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Coral Level 3"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("autoCoralL3")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoCoralL3",
+                Number(form.values.autoCoralL3! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoCoralL4 !== null &&
+                form.values.autoCoralL4 > 0
+              ) {
+                form.setFieldValue(
+                  "autoCoralL4",
+                  Number(form.values.autoCoralL4 - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Coral Level 4"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("autoCoralL4")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoCoralL4",
+                Number(form.values.autoCoralL4! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoAlgaeProcessor !== null &&
+                form.values.autoAlgaeProcessor > 0
+              ) {
+                form.setFieldValue(
+                  "autoAlgaeProcessor",
+                  Number(form.values.autoAlgaeProcessor - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Algae Processor"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("autoAlgaeProcessor")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoAlgaeProcessor",
+                Number(form.values.autoAlgaeProcessor! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoAlgaeNet !== null &&
+                form.values.autoAlgaeNet > 0
+              ) {
+                form.setFieldValue(
+                  "autoAlgaeNet",
+                  Number(form.values.autoAlgaeNet - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Algae Net"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("autoAlgaeNet")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoAlgaeNet",
+                Number(form.values.autoAlgaeNet! + 1)
               );
             }}
           >
@@ -456,12 +603,12 @@ export default function StandForm() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.teleAmpsNotes !== null &&
-                form.values.teleAmpsNotes > 0
+                form.values.teleopCoralL1 !== null &&
+                form.values.teleopCoralL1 > 0
               ) {
                 form.setFieldValue(
-                  "teleAmpsNotes",
-                  Number(form.values.teleAmpsNotes - 1)
+                  "teleopCoralL1",
+                  Number(form.values.teleopCoralL1 - 1)
                 );
               }
             }}
@@ -469,22 +616,22 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Amp Notes Scored"
+            label="Coral L1"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleAmpsNotes")}
+            {...form.getInputProps("teleopCoralL1")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleAmpsNotes",
-                Number(form.values.teleAmpsNotes! + 1)
+                "teleopCoralL1",
+                Number(form.values.teleopCoralL1! + 1)
               );
             }}
           >
@@ -498,12 +645,12 @@ export default function StandForm() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.teleSpeakersNotes !== null &&
-                form.values.teleSpeakersNotes > 0
+                form.values.teleopCoralL2 !== null &&
+                form.values.teleopCoralL2 > 0
               ) {
                 form.setFieldValue(
-                  "teleSpeakersNotes",
-                  Number(form.values.teleSpeakersNotes! - 1)
+                  "teleopCoralL2",
+                  Number(form.values.teleopCoralL2 - 1)
                 );
               }
             }}
@@ -511,22 +658,22 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Speaker Notes Scored"
+            label="Coral L2"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleSpeakersNotes")}
+            {...form.getInputProps("teleopCoralL2")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleSpeakersNotes",
-                Number(form.values.teleSpeakersNotes! + 1)
+                "teleopCoralL2",
+                Number(form.values.teleopCoralL2! + 1)
               );
             }}
           >
@@ -540,12 +687,12 @@ export default function StandForm() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.teleAmplifiedSpeakersNotes !== null &&
-                form.values.teleAmplifiedSpeakersNotes > 0
+                form.values.teleopCoralL3 !== null &&
+                form.values.teleopCoralL3 > 0
               ) {
                 form.setFieldValue(
-                  "teleAmplifiedSpeakersNotes",
-                  Number(form.values.teleAmplifiedSpeakersNotes! - 1)
+                  "teleopCoralL3",
+                  Number(form.values.teleopCoralL3 - 1)
                 );
               }
             }}
@@ -553,32 +700,22 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label={
-              <>
-                <span
-                  className="text-[#e03131]"
-                  style={{ textShadow: "0 0 4px #e03131" }}
-                >
-                  Amplified
-                </span>{" "}
-                Speaker Notes Scored
-              </>
-            }
+            label="Coral L3"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleAmplifiedSpeakersNotes")}
+            {...form.getInputProps("teleopCoralL3")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleAmplifiedSpeakersNotes",
-                Number(form.values.teleAmplifiedSpeakersNotes! + 1)
+                "teleopCoralL3",
+                Number(form.values.teleopCoralL3! + 1)
               );
             }}
           >
@@ -592,12 +729,12 @@ export default function StandForm() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.teleTrapsNotes !== null &&
-                form.values.teleTrapsNotes > 0
+                form.values.teleopCoralL4 !== null &&
+                form.values.teleopCoralL4 > 0
               ) {
                 form.setFieldValue(
-                  "teleTrapsNotes",
-                  Number(form.values.teleTrapsNotes! - 1)
+                  "teleopCoralL4",
+                  Number(form.values.teleopCoralL4 - 1)
                 );
               }
             }}
@@ -605,22 +742,106 @@ export default function StandForm() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Trap Notes Scored"
+            label="Coral L4"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleTrapsNotes")}
+            {...form.getInputProps("teleopCoralL4")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleTrapsNotes",
-                Number(form.values.teleTrapsNotes! + 1)
+                "teleopCoralL4",
+                Number(form.values.teleopCoralL4! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleopAlgaeProcessor !== null &&
+                form.values.teleopAlgaeProcessor > 0
+              ) {
+                form.setFieldValue(
+                  "teleopAlgaeProcessor",
+                  Number(form.values.teleopAlgaeProcessor - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Algae Processor"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("teleopAlgaeProcessor")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleopAlgaeProcessor",
+                Number(form.values.teleopAlgaeProcessor! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleopAlgaeNet !== null &&
+                form.values.teleopAlgaeNet > 0
+              ) {
+                form.setFieldValue(
+                  "teleopAlgaeNet",
+                  Number(form.values.teleopAlgaeNet - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Algae Net"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("teleopAlgaeNet")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleopAlgaeNet",
+                Number(form.values.teleopAlgaeNet! + 1)
               );
             }}
           >
@@ -639,33 +860,17 @@ export default function StandForm() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Was the robot ONSTAGE?"
-          description="The robot successfully climbed and earned climb points."
-          {...form.getInputProps("onstage", { type: "checkbox" })}
-        />
-
-        {form.values?.onstage && (
-          <Checkbox
-            className="pb-4 ml-7"
-            size="md"
-            label="Was it spotlit?"
-            {...form.getInputProps("onstageSpotlit", { type: "checkbox" })}
-          />
-        )}
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Was HARMONY achieved?"
-          description="2 or more Robots sucessfully climbed on a single chain."
-          {...form.getInputProps("harmony", { type: "checkbox" })}
+          label="Did the robot shallow climb?"
+          description="The robot successfully climbed the short cage."
+          {...form.getInputProps("shallowClimb", { type: "checkbox" })}
         />
 
         <Checkbox
           className="pb-4"
           size="md"
-          label="Was your teams player able to spotlight?"
-          {...form.getInputProps("selfSpotlight", { type: "checkbox" })}
+          label="Did the robot deep climb?"
+          description="The robot successfully climbed the long chain."
+          {...form.getInputProps("deepClimb", { type: "checkbox" })}
         />
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -675,7 +880,7 @@ export default function StandForm() {
         <MultiSelect
           data={criticals}
           label="Criticals"
-          placeholder="Choose Criticals."
+          placeholder="Choose criticals."
           searchable
           nothingFoundMessage="No criticals found"
           className="pb-4"
@@ -683,7 +888,16 @@ export default function StandForm() {
         />
 
         <Textarea
-          label="Comments?"
+          label="Overall strategy"
+          placeholder="Type some text here."
+          className="pb-4"
+          maxLength={750}
+          autosize
+          {...form.getInputProps("strategy")}
+        />
+
+        <Textarea
+          label="Extra comments"
           placeholder="Type some text here."
           className="pb-4"
           maxLength={750}
@@ -739,20 +953,6 @@ export default function StandForm() {
           size="md"
           label="Did your team defend?"
           {...form.getInputProps("defense", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Did your team stockpile notes?"
-          {...form.getInputProps("stockpile", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Could your robot go under the stage?"
-          {...form.getInputProps("underStage", { type: "checkbox" })}
         />
 
         <Separator />

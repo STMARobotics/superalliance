@@ -7,55 +7,59 @@ const StandFormAggregation = (eventId) => {
         totalScore: {
           $add: [
             {
-              $multiply: ["$autoAmpsNotes", 2],
+              $multiply: ["$autoCoralL1", 3],
             },
             {
-              $multiply: ["$autoSpeakersNotes", 5],
+              $multiply: ["$autoCoralL2", 4],
             },
             {
-              $multiply: ["$teleAmpsNotes", 1],
+              $multiply: ["$autoCoralL3", 6],
             },
             {
-              $multiply: ["$teleSpeakersNotes", 2],
+              $multiply: ["$autoCoralL4", 7],
             },
             {
-              $multiply: ["$teleAmplifiedSpeakersNotes", 5],
+              $multiply: ["$autoAlgaeProcessor", 6],
             },
             {
-              $multiply: ["$teleTrapsNotes", 5],
+              $multiply: ["$autoAlgaeNet", 4],
             },
             {
-              $cond: {
-                if: "$leave",
-                then: 2,
-                else: 0,
-              },
+              $multiply: ["$teleopCoralL1", 2],
+            },
+            {
+              $multiply: ["$teleopCoralL2", 3],
+            },
+            {
+              $multiply: ["$teleopCoralL3", 4],
+            },
+            {
+              $multiply: ["$teleopCoralL4", 5],
+            },
+            {
+              $multiply: ["$teleopAlgaeProcessor", 6],
+            },
+            {
+              $multiply: ["$teleopAlgaeNet", 4],
             },
             {
               $cond: {
                 if: "$park",
-                then: 1,
-                else: 0,
-              },
-            },
-            {
-              $cond: {
-                if: "$onstage",
-                then: 3,
-                else: 0,
-              },
-            },
-            {
-              $cond: {
-                if: "$onstageSpotlit",
-                then: 4,
-                else: 0,
-              },
-            },
-            {
-              $cond: {
-                if: "$harmony",
                 then: 2,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: "$shallowClimb",
+                then: 6,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: "$deepClimb",
+                then: 12,
                 else: 0,
               },
             },
@@ -64,84 +68,110 @@ const StandFormAggregation = (eventId) => {
         autoScore: {
           $add: [
             {
-              $multiply: ["$autoAmpsNotes", 2],
+              $multiply: ["$autoCoralL1", 3],
             },
             {
-              $multiply: ["$autoSpeakersNotes", 5],
+              $multiply: ["$autoCoralL2", 4],
             },
             {
-              $cond: {
-                if: "$leave",
-                then: 2,
-                else: 0,
-              },
+              $multiply: ["$autoCoralL3", 6],
+            },
+            {
+              $multiply: ["$autoCoralL4", 7],
+            },
+            {
+              $multiply: ["$autoAlgaeProcessor", 6],
+            },
+            {
+              $multiply: ["$autoAlgaeNet", 4],
             },
           ],
         },
         teleScore: {
           $add: [
             {
-              $multiply: ["$teleAmpsNotes", 1],
+              $multiply: ["$teleopCoralL1", 2],
             },
             {
-              $multiply: ["$teleSpeakersNotes", 2],
+              $multiply: ["$teleopCoralL2", 3],
             },
             {
-              $multiply: ["$teleAmplifiedSpeakersNotes", 5],
+              $multiply: ["$teleopCoralL3", 4],
             },
             {
-              $multiply: ["$teleTrapsNotes", 5],
+              $multiply: ["$teleopCoralL4", 5],
+            },
+            {
+              $multiply: ["$teleopAlgaeProcessor", 6],
+            },
+            {
+              $multiply: ["$teleopAlgaeNet", 4],
             },
             {
               $cond: {
                 if: "$park",
-                then: 1,
-                else: 0,
-              },
-            },
-            {
-              $cond: {
-                if: "$onstage",
-                then: 3,
-                else: 0,
-              },
-            },
-            {
-              $cond: {
-                if: "$onstageSpotlit",
-                then: 4,
-                else: 0,
-              },
-            },
-            {
-              $cond: {
-                if: "$harmony",
                 then: 2,
                 else: 0,
               },
             },
+            {
+              $cond: {
+                if: "$shallowClimb",
+                then: 6,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: "$deepClimb",
+                then: 12,
+                else: 0,
+              },
+            },
           ],
         },
-        totalNotes: {
+        totalCoral: {
           $add: [
-            "$autoAmpsNotes",
-            "$autoSpeakersNotes",
-            "$teleAmpsNotes",
-            "$teleSpeakersNotes",
-            "$teleAmplifiedSpeakersNotes",
-            "$teleTrapsNotes",
+            "$autoCoralL1",
+            "$autoCoralL2",
+            "$autoCoralL3",
+            "$autoCoralL4",
+            "$teleopCoralL1",
+            "$teleopCoralL2",
+            "$teleopCoralL3",
+            "$teleopCoralL4",
           ],
         },
-        totalAutoNotes: {
-          $add: ["$autoAmpsNotes", "$autoSpeakersNotes"],
+        totalAutoCoral: {
+          $add: ["$autoCoralL1",
+            "$autoCoralL2",
+            "$autoCoralL3",
+            "$autoCoralL4",],
         },
-        totalTeleNotes: {
+        totalTeleCoral: {
           $add: [
-            "$teleAmpsNotes",
-            "$teleSpeakersNotes",
-            "$teleAmplifiedSpeakersNotes",
-            "$teleTrapsNotes",
+            "$teleopCoralL1",
+            "$teleopCoralL2",
+            "$teleopCoralL3",
+            "$teleopCoralL4",
           ],
+        },
+        totalAlgae : {
+          $add: ["$autoAlgaeProcessor",
+                 "$autoAlgaeNet", 
+                 "$teleopAlgaeProcessor", 
+                 "$teleopAlgaeNet"
+              ],
+        },
+        totalProcessedAlgae : {
+          $add: ["$autoAlgaeProcessor", 
+                 "$teleopAlgaeProcessor"
+              ],
+        },
+        totalNetAlgae : {
+          $add: ["$autoAlgaeNet", 
+                 "$teleopAlgaeNet"
+              ],
         },
         leaveBoolean: {
           $cond: {
@@ -153,34 +183,6 @@ const StandFormAggregation = (eventId) => {
         parkBoolean: {
           $cond: {
             if: "$park",
-            then: 1,
-            else: 0,
-          },
-        },
-        onstageBoolean: {
-          $cond: {
-            if: "$onstage",
-            then: 1,
-            else: 0,
-          },
-        },
-        onstageSpotlitBoolean: {
-          $cond: {
-            if: "$onstageSpotlit",
-            then: 1,
-            else: 0,
-          },
-        },
-        harmonyBoolean: {
-          $cond: {
-            if: "$harmony",
-            then: 1,
-            else: 0,
-          },
-        },
-        selfSpotlitBoolean: {
-          $cond: {
-            if: "$selfSpotlight",
             then: 1,
             else: 0,
           },
@@ -202,13 +204,6 @@ const StandFormAggregation = (eventId) => {
         stockpileBoolean: {
           $cond: {
             if: "$stockpile",
-            then: 1,
-            else: 0,
-          },
-        },
-        underStageBoolean: {
-          $cond: {
-            if: "$underStage",
             then: 1,
             else: 0,
           },
@@ -242,48 +237,96 @@ const StandFormAggregation = (eventId) => {
           totalTeleScore: {
             $sum: "$teleScore",
           },
-          totalNotes: {
-            $sum: "$totalNotes",
+          totalCoral: {
+            $sum: "$totalCoral",
           },
-          totalAutoNotes: {
-            $sum: "$totalAutoNotes",
+          totalAutoCoral: {
+            $sum: "$totalAutoCoral",
           },
-          totalTeleNotes: {
-            $sum: "$totalTeleNotes",
+          totalTeleCoral: {
+            $sum: "$totalTeleCoral",
           },
-          matchTotalNotes: {
+          totalAlgae: {
+            $sum: "$totalAlgae",
+          },
+          totalProcessedAlgae: {
+            $sum: "$totalProcessedAlgae",
+          },
+          totalNetAlgae: {
+            $sum: "$totalNetAlgae",
+          },
+          matchTotalCoral: {
             $push: {
               $cond: [
-                { $ne: ["$totalNotes", 0] },
+                { $ne: ["$totalCoral", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  score: "$totalNotes",
+                  score: "$totalCoral",
                   formId: "$_id",
                 },
                 "$$REMOVE",
               ],
             },
           },
-          matchAutoNotes: {
+          matchAutoCoral: {
             $push: {
               $cond: [
-                { $ne: ["$autoNotes", 0] },
+                { $ne: ["$autoCoral", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  score: "$totalAutoNotes",
+                  score: "$totalAutoCoral",
                   formId: "$_id",
                 },
                 "$$REMOVE",
               ],
             },
           },
-          matchTeleNotes: {
+          matchTeleCoral: {
             $push: {
               $cond: [
                 { $ne: ["$teleNotes", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  score: "$totalTeleNotes",
+                  score: "$totalTeleCoral",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchTotalAlgae: {
+            $push: {
+              $cond: [
+                { $ne: ["$totalAlgae", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$totalAlgae",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchProcessedAlgae: {
+            $push: {
+              $cond: [
+                { $ne: ["$autoAlgae", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$totalProcessedAlgae",
+                  formId: "$_id",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+          matchNetAlgae: {
+            $push: {
+              $cond: [
+                { $ne: ["$teleAlgae", 0] },
+                {
+                  matchNumber: "$matchNumber",
+                  score: "$totalNetAlgae",
                   formId: "$_id",
                 },
                 "$$REMOVE",
@@ -342,19 +385,6 @@ const StandFormAggregation = (eventId) => {
               ],
             },
           },
-          autoMiddleNotes: {
-            $push: {
-              $cond: [
-                { $ne: ["$autoMiddleNotes", []] },
-                {
-                  matchNumber: "$matchNumber",
-                  autoMiddleNotes: "$autoMiddleNotes",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
-            },
-          },
           avgTotalScore: {
             $avg: "$totalScore",
           },
@@ -364,32 +394,23 @@ const StandFormAggregation = (eventId) => {
           avgTeleScore: {
             $avg: "$teleScore",
           },
-          avgTotalNotes: {
-            $avg: "$totalNotes",
+          avgTotalCoral: {
+            $avg: "$totalCoral",
           },
-          avgAutoNotes: {
-            $avg: "$totalAutoNotes",
+          avgAutoCoral: {
+            $avg: "$totalAutoCoral",
           },
-          avgTeleNotes: {
-            $avg: "$totalTeleNotes",
+          avgTeleCoral: {
+            $avg: "$totalTeleCoral",
           },
-          avgAutoAmpsNotes: {
-            $avg: "$autoAmpsNotes",
+          avgTotalAlgae: {
+            $avg: "$totalAlgae",
           },
-          avgAutoSpeakersNotes: {
-            $avg: "$autoSpeakersNotes",
+          avgProcessedAlgae: {
+            $avg: "$totalProcessedAlgae",
           },
-          avgTeleAmpsNotes: {
-            $avg: "$teleAmpsNotes",
-          },
-          avgTeleSpeakersNotes: {
-            $avg: "$teleSpeakersNotes",
-          },
-          avgTeleAmplifiedSpeakersNotes: {
-            $avg: "$teleAmplifiedSpeakersNotes",
-          },
-          avgTeleTrapsNotes: {
-            $avg: "$teleTrapsNotes",
+          avgNetAlgae: {
+            $avg: "$totalNetAlgae",
           },
           leavePercentage: {
             $avg: "$leaveBoolean",
@@ -400,26 +421,11 @@ const StandFormAggregation = (eventId) => {
           onstagePercentage: {
             $avg: "$onstageBoolean",
           },
-          onstageSpotlitPercentage: {
-            $avg: "$onstageSpotlitBoolean",
-          },
-          harmonyPercentage: {
-            $avg: "$harmonyBoolean",
-          },
-          selfSpotlitPercentage: {
-            $avg: "$selfSpotlitBoolean",
-          },
           defensePercentage: {
             $avg: "$defenseBoolean",
           },
           defendedAgainstPercentage: {
             $avg: "$defendedAgainstBoolean",
-          },
-          stockpilePercentage: {
-            $avg: "$stockpileBoolean",
-          },
-          underStagePercentage: {
-            $avg: "$underStageBoolean",
           },
           winPercentage: {
             $avg: "$winBoolean",
@@ -473,17 +479,29 @@ const StandFormAggregation = (eventId) => {
           totalScore: { $round: ["$totalScore", 2] },
           totalAutoScore: { $round: ["$totalAutoScore", 2] },
           totalTeleScore: { $round: ["$totalTeleScore", 2] },
-          totalNotes: { $round: ["$totalNotes", 2] },
-          totalAutoNotes: { $round: ["$totalAutoNotes", 2] },
-          totalTeleNotes: { $round: ["$totalTeleNotes", 2] },
-          matchTotalNotes: {
-            $concatArrays: "$matchTotalNotes",
+          totalCoral: { $round: ["$totalCoral", 2] },
+          totalAutoCoral: { $round: ["$totalAutoCoral", 2] },
+          totalTeleCoral: { $round: ["$totalTeleCoral", 2] },
+          totalAlgae: { $round: ["$totalAlgae", 2] },
+          totalProcessedAlgae: { $round: ["$totalProcessedAlgae", 2] },
+          totalNetAlgae: { $round: ["$totalNetAlgae", 2] },
+          matchTotalCoral: {
+            $concatArrays: "$matchTotalCoral",
           },
-          matchAutoNotes: {
-            $concatArrays: "$matchAutoNotes",
+          matchAutoCoral: {
+            $concatArrays: "$matchAutoCoral",
           },
-          matchTeleNotes: {
-            $concatArrays: "$matchTeleNotes",
+          matchTeleCoral: {
+            $concatArrays: "$matchTeleCoral",
+          },
+          matchTotalAlgae: { 
+            $concatArrays: "$matchTotalAlgae" 
+          },
+          matchProcessedAlgae: {
+            $concatArrays: "$matchProcessedAlgae",
+          },
+          matchNetAlgae: {
+            $concatArrays: "$matchNetAlgae",
           },
           matchTotalScore: {
             $concatArrays: "$matchTotalScores",
@@ -497,37 +515,21 @@ const StandFormAggregation = (eventId) => {
           matchRP: {
             $concatArrays: "$matchRP",
           },
-          middleNotes: {
-            $concatArrays: "$autoMiddleNotes",
-          },
           avgTotalScore: { $round: ["$avgTotalScore", 2] },
           avgAutoScore: { $round: ["$avgAutoScore", 2] },
           avgTeleScore: { $round: ["$avgTeleScore", 2] },
-          avgTotalNotes: { $round: ["$avgTotalNotes", 2] },
-          avgAutoNotes: { $round: ["$avgAutoNotes", 2] },
-          avgTeleNotes: { $round: ["$avgTeleNotes", 2] },
-          avgAutoAmpsNotes: { $round: ["$avgAutoAmpsNotes", 2] },
-          avgAutoSpeakersNotes: { $round: ["$avgAutoSpeakersNotes", 2] },
-          avgTeleAmpsNotes: { $round: ["$avgTeleAmpsNotes", 2] },
-          avgTeleSpeakersNotes: { $round: ["$avgTeleSpeakersNotes", 2] },
-          avgTeleAmplifiedSpeakersNotes: {
-            $round: ["$avgTeleAmplifiedSpeakersNotes", 2],
-          },
-          avgTeleTrapsNotes: { $round: ["$avgTeleTrapsNotes", 2] },
+          avgTotalCoral: { $round: ["$avgTotalCoral", 2] },
+          avgAutoCoral: { $round: ["$avgAutoCoral", 2] },
+          avgTeleCoral: { $round: ["$avgTeleCoral", 2] },
+          avgTotalAlgae: { $round: ["$avgTotalAlgae", 2] },
+          avgProcessedAlgae: { $round: ["$avgProcessedAlgae", 2] },
+          avgNetAlgae: { $round: ["$avgNetAlgae", 2] },
           leavePercentage: { $round: ["$leavePercentage", 2] },
           parkPercentage: { $round: ["$parkPercentage", 2] },
-          onstagePercentage: { $round: ["$onstagePercentage", 2] },
-          onstageSpotlitPercentage: {
-            $round: ["$onstageSpotlitPercentage", 2],
-          },
-          harmonyPercentage: { $round: ["$harmonyPercentage", 2] },
-          selfSpotlitPercentage: { $round: ["$selfSpotlitPercentage", 2] },
           defensePercentage: { $round: ["$defensePercentage", 2] },
           defendedAgainstPercentage: {
             $round: ["$defendedAgainstPercentage", 2],
           },
-          stockpilePercentage: { $round: ["$stockpilePercentage", 2] },
-          underStagePercentage: { $round: ["$underStagePercentage", 2] },
           winPercentage: { $round: ["$winPercentage", 2] },
           avgRP: { $round: ["$avgRP", 2] },
           comments: {
