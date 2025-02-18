@@ -1,5 +1,4 @@
 import {getCursorPoints} from "recharts/types/util/cursor/getCursorPoints";
-
 type lexConfig = {
     brackets: {
         '(': boolean
@@ -87,7 +86,9 @@ class lexer {
                         console.log(cursor + 1, `${suspect.substring(0, cursor)}#${suspect[cursor]}#${suspect.substring(cursor + 1, suspect.length + 1)}`, "|", suspect[cursor], source[characterIndex + cursor], condition)
                         return condition
                     }))
-
+                    if (cursor + characterIndex > 100) {
+                        break
+                    }
                     if (suspects.length == 1 && suspects[0].length - 1 == cursor) {
                         completeMatch = true
                         console.log("yay")
@@ -137,7 +138,20 @@ const lingualDemo = new lexer({
     orderedSymbols: ["thing", "that", "thwarts", "me", "this", "is", "the", "wont"]
 })
 
-const output = lingualDemo.scan("thisisthethingthatwontthwartme")
+const demo = new lexer({
+    brackets: {
+        '(': false,
+        '[': false,
+        '{': false,
+        '<': false
+    },
+    orderedSymbols: ["^", "~", "*", ":", ">>", "&", "::", "#", " "]
 
-console.log("#")
-console.log(output)
+
+})
+
+
+
+
+
+console.log(demo.scan("^ ~ * :>>  &:: # "))
