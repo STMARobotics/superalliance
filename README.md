@@ -22,7 +22,7 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
     * Open a command prompt and navigate to the `app` directory, then run the following commands:
         * `npm update`
         * `npm install`
-    * Create a file named `env.local` and put the following configuration values in it:
+    * Create a file named `.env.local` and put the following configuration values in it:
         * VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
         * CLERK_SECRET_KEY=<get_value_from_admin>
         * VITE_API_URL=<get_value_from_admin>
@@ -33,7 +33,7 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
         * `npm update`
         * `npm install`
         * `npm install -g nodemon`
-    * Create a file named `env.local` and put the following configuration values in it:
+    * Create a file named `.env` and put the following configuration values in it:
         * TBA_KEY=<get_value_from_admin>
         * MONGODB_URI=<get_value_from_admin>
         * API_URL="http://localhost:3000"
