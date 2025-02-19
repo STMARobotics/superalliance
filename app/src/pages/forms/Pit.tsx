@@ -57,39 +57,30 @@ export default function PitForm() {
     initialValues: {
       event: null,
       teamNumber: null,
-      overallStrategy: "",
       aprilTags: false,
       aprilTagsUse: "",
+      notDo: "",
       protectedElectronics: "",
       batterySecured: "",
-      cameras: false,
-      cameraUsage: "",
-      drivetrainType: "",
-      drivetrainBrand: "",
-      backupSwerve: false,
+      highCenterOfMass: "",
       complimentaryRobot: "",
       robotChanges: "",
-      scoreL1: false,
-      scoreL2: false,
-      scoreL3: false,
-      scoreL4: false,
-      scoreProcessor: false,
-      scoreShallow: false,
-      scoreDeep: false,
+      coralStuck: "",
+      coachExperience: "",
+      operatorExperience: "",
+      driverExperience: "",
       pickupGround: false,
       pickupSource: false,
       pickupOther: false,
       pickupOtherExplain: "",
-      auto: false,
-      autoCount: "",
       idealAuto: "",
-      humanPlayerInfo: "",
-      robotIssues: "",
       preferredDriverStation: "",
       preferedHumanPlayerPlacement: "",
       strongestValue: "",
       weakestValue: "",
       extraComments: "",
+      pitRating: "",
+      robotRating: "",
     },
 
     validate: {
@@ -207,15 +198,6 @@ export default function PitForm() {
           Strategy
         </div>
 
-        <Textarea
-          label="Overall strategy?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("overallStrategy")}
-        />
-
         <Checkbox
           className="pb-4"
           size="md"
@@ -231,6 +213,14 @@ export default function PitForm() {
             {...pitForm.getInputProps("apriltagsUse")}
           />
         )}
+
+        <Textarea
+          label="What can your robot not do?"
+          placeholder="Type some text here."
+          className="pb-4"
+          autosize
+          {...pitForm.getInputProps("notDo")}
+        />
 
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Mechanical/Electrical
@@ -250,41 +240,12 @@ export default function PitForm() {
           {...pitForm.getInputProps("batterySecured")}
         />
 
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Do you have camera/s?"
-          {...pitForm.getInputProps("cameras", { type: "checkbox" })}
-        />
-
-        {pitForm.values?.cameras && (
-          <TextInput
-            label="How do you use the camera/s?"
-            placeholder="Type some text here."
-            className="pb-4"
-            {...pitForm.getInputProps("cameraUsage")}
-          />
-        )}
-
         <TextInput
-          label="What drivetrain type are you using?"
+          label="Does your robot have a high center of mass?"
           placeholder="Type some text here."
           className="pb-4"
-          {...pitForm.getInputProps("drivetrainType")}
-        />
-
-        <TextInput
-          label="What brand drivetrain is it?"
-          placeholder="Type some text here."
-          className="pb-4"
-          {...pitForm.getInputProps("drivetrainBrand")}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Do you have backup swerve modules?"
-          {...pitForm.getInputProps("backupSwerve", { type: "checkbox" })}
+          {...pitForm.getInputProps("highCenterOfMass")}
+          maxLength={750}
         />
 
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
@@ -309,64 +270,40 @@ export default function PitForm() {
           {...pitForm.getInputProps("robotChanges")}
         />
 
-        <Text size="sm" className="pb-2">
-          How do you score game pieces?
-        </Text>
-
-        <Checkbox
+        <Textarea
+          label="Can coral get stuck on your robot?"
+          placeholder="Type some text here."
           className="pb-4"
-          size="sm"
-          label="Score Coral L1"
-          {...pitForm.getInputProps("scoreL1", { type: "checkbox" })}
+          maxLength={750}
+          autosize
+          {...pitForm.getInputProps("coralStuck")}
         />
 
-        <Checkbox
+        <Textarea
+          label="How many competitions has your drive coach been to?"
+          placeholder="Type some text here."
           className="pb-4"
-          size="sm"
-          label="Score Coral L2"
-          {...pitForm.getInputProps("scoreL2", { type: "checkbox" })}
+          maxLength={750}
+          autosize
+          {...pitForm.getInputProps("coachExperience")}
         />
 
-        <Checkbox
+        <Textarea
+          label="How many competitions has your operator been to?"
+          placeholder="Type some text here."
           className="pb-4"
-          size="sm"
-          label="Score Coral L3"
-          {...pitForm.getInputProps("scoreL3", { type: "checkbox" })}
+          maxLength={750}
+          autosize
+          {...pitForm.getInputProps("operatorExperience")}
         />
 
-        <Checkbox
+        <Textarea
+          label="How many competitions has your driver been to?"
+          placeholder="Type some text here."
           className="pb-4"
-          size="sm"
-          label="Score Coral L4"
-          {...pitForm.getInputProps("scoreL4", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="sm"
-          label="Algae in the Processor"
-          {...pitForm.getInputProps("scoreProcessor", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="sm"
-          label="Algae in the Barge"
-          {...pitForm.getInputProps("scoreBarge", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="sm"
-          label="Shallow Climb"
-          {...pitForm.getInputProps("scoreShallow", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="sm"
-          label="Deep Climb"
-          {...pitForm.getInputProps("scoreDeep", { type: "checkbox" })}
+          maxLength={750}
+          autosize
+          {...pitForm.getInputProps("driverExperience")}
         />
 
         <Text size="sm" className="pb-2">
@@ -403,22 +340,6 @@ export default function PitForm() {
           />
         )}
 
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Do you have an auto?"
-          {...pitForm.getInputProps("auto", { type: "checkbox" })}
-        />
-
-        {pitForm.values?.auto && (
-          <TextInput
-            label="How many?"
-            placeholder="Type some text here."
-            className="pb-4"
-            {...pitForm.getInputProps("autoCount")}
-          />
-        )}
-
         <Textarea
           label="Ideal auto?"
           placeholder="Type some text here."
@@ -426,15 +347,6 @@ export default function PitForm() {
           maxLength={750}
           autosize
           {...pitForm.getInputProps("idealAuto")}
-        />
-
-        <Textarea
-          label="Issues with your robot?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("robotIssues")}
         />
 
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
@@ -480,6 +392,24 @@ export default function PitForm() {
           maxLength={750}
           autosize
           {...pitForm.getInputProps("extraComments")}
+        />
+
+        <Textarea
+          label="Pit Rating"
+          placeholder="1-10"
+          className="pb-4"
+          maxLength={2}
+          autosize
+          {...pitForm.getInputProps("pitRating")}
+        />
+
+        <Textarea
+          label="Robot Rating"
+          placeholder="1-5"
+          className="pb-4"
+          maxLength={1}
+          autosize
+          {...pitForm.getInputProps("robotRating")}
         />
 
         <Group justify="center">
