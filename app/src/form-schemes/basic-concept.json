@@ -1,0 +1,13 @@
+{
+  "tree": [
+    ["::", "title", "test thing"],
+    [
+      "something", "::", "inline",
+      {
+        "bracket": "<",
+        "tree": ["INT"]
+      },
+      "hey-there"
+    ]
+  ]
+}

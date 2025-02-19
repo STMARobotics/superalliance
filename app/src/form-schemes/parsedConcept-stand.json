@@ -1,0 +1,209 @@
+{
+  "env": {
+    "include": ["section-title"],
+    "constructs": {
+      "net-field": {
+        "arguments": ["class", "type", "src", "lock"],
+        "using": ["get"],
+        "tree": [
+          [
+            "!", "::",
+            {
+              "bracket": "[",
+              "tree": [
+                "class"
+              ]
+            },
+            {
+              "bracket": "<",
+              "tree": [
+                "type", ",", "lock"
+              ]
+            },
+            "&", "get",
+            {
+              "bracket": "<",
+              "tree": [
+                "src"
+              ]
+            }
+          ]
+        ]
+      },
+      "net-selection": {
+        "arguments": ["src", "context", "parameters", "useDefault"],
+        "using": ["get"],
+        "tree": [
+          [
+            {
+              "bracket": "(",
+              "tree": ["context", "?"]
+            },
+            ":", "ascertain", "context", ";",
+            {
+              "bracket": "[",
+              "tree": "PATH"
+            },
+            "->", "context",
+            {
+              "bracket": "[",
+              "tree": [
+                "*", "&"
+              ]
+            }
+          ],
+          [
+            "response",
+            {
+              "bracket": "[",
+              "tree": ["string"]
+            },
+            "->",
+            {
+              "bracket": "[",
+              "tree": [
+                "&", "get",
+                {
+                  "bracket": "<",
+                  "tree": [
+                    "src", ",",
+                    {
+                      "bracket": "[",
+                      "tree": [
+                        "context", ",", "parameters"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            "!", "::", "selection",
+            {
+              "bracket": "<",
+              "tree": [
+                "response", ",", "useDefault"
+              ]
+            }
+          ]
+        ],
+        "increment-table": {
+          "arguments": ["identifiers"],
+          "using": [],
+          "tree": [
+            [
+              "!", "::", "div",
+              {
+                "bracket": "{",
+                "tree": [
+                  ".", "increment-table"
+                ]
+              }
+            ],
+            [
+              "^",
+              {
+                "bracket": "(",
+                "tree": [
+                  "~", "/", "identifiers",
+                  {
+                    "bracket": "[",
+                    "tree": ["*"]
+                  }
+                ]
+              },
+              ":", "path", ">>",
+              {
+                "bracket": "[",
+                "tree": [
+                  "path", "&"
+                ]
+              },
+              "increment",
+              {
+                "bracket": "<",
+                "tree": [
+                  "#", "path"
+                ]
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "data": {
+      "reference": {
+
+      }
+    }
+  },
+  "tree": [
+    [
+      [
+        "::", "title", {
+        "quote": "`",
+        "content": "Stand Scouting Form"
+      }
+      ],
+      [
+        "::", "year", "2025"
+      ]
+    ],
+    [
+      [
+        "#", "~", ":", "/meta"
+      ],
+      [
+        "::", "section-title", "meta"
+      ],
+      [
+        "name", "::", "inline",
+        {
+          "bracket": "<",
+          "tree": ["string"]
+        }
+      ],
+      [
+        "event", "::", "net-selection",
+        {
+          "bracket": "<",
+          "tree": [
+            "EVENT", "true"
+          ]
+        },
+        "Event"
+      ],
+      "event::net-selection<EVENT, true> Event",
+      "match-number::inline<NUMBER> `match number`",
+      "team::net-selection<TEAM, [/meta/match-number, /meta/event>], []"
+    ],
+    [
+      "#~: /match",
+      [
+        "#~: /autonomous",
+        "::section-title autonomous",
+        "algae::incrementTable<[/net, /processor]>",
+        "coral::incrementTable<[/I, /II, /III, /IV]>"
+      ],
+      [
+        "#~: /teleop",
+        "::section-title teleop",
+        "algae::incrementTable<[/net, /processor]>",
+        "coral::incrementTable<[/I, /II, /III, /IV]>"
+      ],
+      [
+        "#~: /endgame",
+        "::section-title endgame",
+        "parks::check `does park`",
+        "park-type::selection<[abc, def, NA]> `park type`",
+        "park-success::check `succeeded`",
+        "performance::selection<[abc, abc]> performance"
+      ],
+      [
+        "#~: /post-match",
+        "comments::box comments"
+      ]
+    ]
+  ]
+}

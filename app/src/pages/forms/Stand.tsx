@@ -3,9 +3,12 @@
 // To use dynamic generation in the future
 
 import '@/aesthetics.css'
+import concept from "../../form-schemes/basic-concept.json"
 import {FormTitle, FormSection, FormTextInput, FormIncrementable, FormIncrementTable, CoreFormTheme} from '@/lib/FunctionalElement'
 import {Minus, Plus} from 'lucide-react'
 import {getForm} from '@/form-schemes/Stand.ts'
+
+import {compileForm} from "../../lib/form-compiler"
 
 import {useState} from "react";
 import {TextSelection} from "lucide-react";
@@ -23,9 +26,13 @@ const criticals = [
 // Define functional templates
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+import defaultConstructs from '@/lib/FunctionalElement'
 export default function StandForm() {
     // @ts-ignore
     const form = getForm()
+
+    return compileForm(concept, defaultConstructs);
 
     const formDOM =  (
         <MantineProvider theme={CoreFormTheme}>
