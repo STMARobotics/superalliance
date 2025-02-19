@@ -21,6 +21,7 @@ pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
     highCenterOfMass: data.highCenterOfMass,
     complimentaryRobot: data.complimentaryRobot,
     robotChanges: data.robotChanges,
+    coralStuck: data.coralStuck,
     coachExperience: data.coachExperience,
     operatorExperience: data.operatorExperience,
     driverExperience: data.driverExperience,

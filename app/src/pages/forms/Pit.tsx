@@ -270,12 +270,10 @@ export default function PitForm() {
           {...pitForm.getInputProps("robotChanges")}
         />
 
-        <Textarea
+        <Checkbox
           label="Can coral get stuck on your robot?"
           placeholder="Type some text here."
           className="pb-4"
-          maxLength={750}
-          autosize
           {...pitForm.getInputProps("coralStuck")}
         />
 

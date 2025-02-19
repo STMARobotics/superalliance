@@ -15,6 +15,7 @@ const PitFormSchema = new Schema(
     highCenterOfMass: String,
     complimentaryRobot: String,
     robotChanges: String,
+    coralStuck: Boolean,
     coachExperience: String,
     operatorExperience: String,
     driverExperience: String,
