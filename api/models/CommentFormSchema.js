@@ -11,4 +11,4 @@ const CommentFormSchema = new Schema(
   { timestamps: true },
 );
 
-module.exports = model("CommentForm", CommentFormSchema, "commentForms");
+module.exports = model("CommentForm", CommentFormSchema, "COMMENT_FORMS");
