@@ -198,22 +198,6 @@ export default function PitForm() {
           Strategy
         </div>
 
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Do you use April Tags?"
-          {...pitForm.getInputProps("aprilTags", { type: "checkbox" })}
-        />
-
-        {pitForm.values?.aprilTags && (
-          <TextInput
-            label="How do you use April Tags?"
-            placeholder="Type some text here."
-            className="pb-4"
-            {...pitForm.getInputProps("apriltagsUse")}
-          />
-        )}
-
         <Textarea
           label="What can your robot not do?"
           placeholder="Type some text here."
@@ -251,24 +235,6 @@ export default function PitForm() {
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Driveteam/Competition
         </div>
-
-        <Textarea
-          label="What type of robot compliments them?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("complimentaryRobot")}
-        />
-
-        <Textarea
-          label="Changes since last competition/year?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("robotChanges")}
-        />
 
         <Checkbox
           label="Can coral get stuck on your robot?"
