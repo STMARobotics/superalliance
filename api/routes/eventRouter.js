@@ -11,7 +11,7 @@ eventRouter.get(
     try {
       const { eventCode, matchNumber } = req.params;
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/match/2024${eventCode}_qm${matchNumber}`,
+        `https://www.thebluealliance.com/api/v3/match/2025${eventCode}_qm${matchNumber}`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
@@ -37,7 +37,7 @@ eventRouter.get(
     try {
       const { eventCode, teamNumber } = req.params;
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2024${eventCode}/status`,
+        `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2025${eventCode}/status`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
@@ -64,7 +64,7 @@ eventRouter.get(
     try {
       const { eventCode, matchNumber } = req.params;
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/match/2024${eventCode}_qm${matchNumber}`,
+        `https://www.thebluealliance.com/api/v3/match/2025${eventCode}_qm${matchNumber}`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
