@@ -357,6 +357,7 @@ export default function PitForm() {
         <Textarea
           label="Pit Rating"
           placeholder="1-10"
+          description="How was pit scouting them?"
           className="pb-4"
           maxLength={2}
           autosize
@@ -365,6 +366,7 @@ export default function PitForm() {
 
         <Textarea
           label="Robot Rating"
+          description="How did their robot seem?"
           placeholder="1-5"
           className="pb-4"
           maxLength={1}
