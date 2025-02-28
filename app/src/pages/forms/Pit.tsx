@@ -65,7 +65,7 @@ export default function PitForm() {
       highCenterOfMass: "",
       complimentaryRobot: "",
       robotChanges: "",
-      coralStuck: "",
+      coralStuck: false,
       coachExperience: "",
       operatorExperience: "",
       driverExperience: "",
