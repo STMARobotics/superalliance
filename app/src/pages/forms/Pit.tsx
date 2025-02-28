@@ -190,7 +190,7 @@ export default function PitForm() {
           allowDecimal={false}
           allowNegative={false}
           hideControls
-          maxLength={4}
+          maxLength={5}
           {...pitForm.getInputProps("teamNumber")}
         />
 
