@@ -310,7 +310,7 @@ export default function StandFormChad() {
                 allowDecimal={false}
                 allowNegative={false}
                 hideControls
-                maxLength={4}
+                maxLength={5}
                 inputMode="numeric"
                 {...form.getInputProps("teamNumber")}
               />
