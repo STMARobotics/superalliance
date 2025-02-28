@@ -13,30 +13,30 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("_id")}</div>,
   },
   {
-    accessorKey: "avgTotalNotes",
+    accessorKey: "avgTotalCoral",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Total Notes" />
+      <DataTableColumnHeader column={column} title="Average Total Coral" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTotalNotes")}</div>
+      <div className="w-[80px]">{row.getValue("avgTotalCoral")}</div>
     ),
   },
   {
-    accessorKey: "avgAutoNotes",
+    accessorKey: "avgAutoCoral",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Auto Notes" />
+      <DataTableColumnHeader column={column} title="Average Auto Coral" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgAutoNotes")}</div>
+      <div className="w-[80px]">{row.getValue("avgAutoCoral")}</div>
     ),
   },
   {
-    accessorKey: "avgTeleNotes",
+    accessorKey: "avgTeleCoral",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Tele Notes" />
+      <DataTableColumnHeader column={column} title="Average Tele Coral" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTeleNotes")}</div>
+      <div className="w-[80px]">{row.getValue("avgTeleCoral")}</div>
     ),
   },
   {
@@ -65,68 +65,33 @@ export const columns: ColumnDef<any>[] = [
     ),
   },
   {
-    accessorKey: "avgAutoAmpsNotes",
+    accessorKey: "avgTotalAlgae",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Auto Amps Score" />
+      <DataTableColumnHeader column={column} title="Average Total Algae Score" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgAutoAmpsNotes")}</div>
+      <div className="w-[80px]">{row.getValue("avgTotalAlgae")}</div>
     ),
   },
   {
-    accessorKey: "avgAutoSpeakersNotes",
+    accessorKey: "avgProcessedAlgae",
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Average Auto Speakers Score"
+        title="Average Processed Algae Score"
       />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgAutoSpeakersNotes")}</div>
+      <div className="w-[80px]">{row.getValue("avgProcessedAlgae")}</div>
     ),
   },
   {
-    accessorKey: "avgTeleAmpsNotes",
+    accessorKey: "avgNetAlgae",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Tele Amps Score" />
+      <DataTableColumnHeader column={column} title="Average Net Algae Score" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTeleAmpsNotes")}</div>
-    ),
-  },
-  {
-    accessorKey: "avgTeleSpeakersNotes",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Average Tele Speakers Score"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTeleSpeakersNotes")}</div>
-    ),
-  },
-  {
-    accessorKey: "avgTeleAmplifiedSpeakersNotes",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Average Tele Amplified Speakers Score"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">
-        {row.getValue("avgTeleAmplifiedSpeakersNotes")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "avgTeleTrapsNotes",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Tele Traps Score" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTeleTrapsNotes")}</div>
+      <div className="w-[80px]">{row.getValue("avgNetAlgae")}</div>
     ),
   },
   {
@@ -145,47 +110,6 @@ export const columns: ColumnDef<any>[] = [
     ),
     cell: ({ row }) => (
       <div className="w-[80px]">{row.getValue("parkPercentage")}%</div>
-    ),
-  },
-  {
-    accessorKey: "onstagePercentage",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Onstage Percentage" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("onstagePercentage")}%</div>
-    ),
-  },
-  {
-    accessorKey: "onstageSpotlitPercentage",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Onstage Spotlit Percentage"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">
-        {row.getValue("onstageSpotlitPercentage")}%
-      </div>
-    ),
-  },
-  {
-    accessorKey: "harmonyPercentage",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Harmony Percentage" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("harmonyPercentage")}%</div>
-    ),
-  },
-  {
-    accessorKey: "selfSpotlitPercentage",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Self Spotlit Percentage" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("selfSpotlitPercentage")}%</div>
     ),
   },
   {
@@ -209,24 +133,6 @@ export const columns: ColumnDef<any>[] = [
       <div className="w-[80px]">
         {row.getValue("defendedAgainstPercentage")}%
       </div>
-    ),
-  },
-  {
-    accessorKey: "stockpilePercentage",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Stockpile Percentage" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("stockpilePercentage")}%</div>
-    ),
-  },
-  {
-    accessorKey: "underStagePercentage",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Under Stage Percentage" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("underStagePercentage")}%</div>
     ),
   },
   {

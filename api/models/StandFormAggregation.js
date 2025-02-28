@@ -418,9 +418,6 @@ const StandFormAggregation = (eventId) => {
           parkPercentage: {
             $avg: "$parkBoolean",
           },
-          onstagePercentage: {
-            $avg: "$onstageBoolean",
-          },
           defensePercentage: {
             $avg: "$defenseBoolean",
           },

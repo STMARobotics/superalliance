@@ -8,7 +8,6 @@ import {
   ImageIcon,
   Medal,
   MessageCircleMore,
-  Route,
   Tally5,
   XCircle,
 } from "lucide-react";
@@ -33,19 +32,19 @@ const SelectionCompareView = ({
 }) => {
   const averages = [
     {
-      label: "Avg Notes",
-      value: aggregation?.avgTotalNotes,
-      statKey: "avgTotalNotes",
+      label: "Avg Coral",
+      value: aggregation?.avgTotalCoral,
+      statKey: "avgTotalCoral",
     },
     {
-      label: "Avg Auto Notes",
-      value: aggregation?.avgAutoNotes,
-      statKey: "avgAutoNotes",
+      label: "Avg Auto Coral",
+      value: aggregation?.avgAutoCoral,
+      statKey: "avgAutoCoral",
     },
     {
-      label: "Avg Tele Notes",
-      value: aggregation?.avgTeleNotes,
-      statKey: "avgTeleNotes",
+      label: "Avg Tele Coral",
+      value: aggregation?.avgTeleCoral,
+      statKey: "avgTeleCoral",
     },
     {
       label: "Avg Total Score",
@@ -74,34 +73,19 @@ const SelectionCompareView = ({
       statKey: "winPercentage",
     },
     {
-      label: "Avg Auto Amps Score",
-      value: aggregation?.avgAutoAmpsNotes,
-      statKey: "avgAutoAmpsNotes",
+      label: "Avg Total Algae Score",
+      value: aggregation?.avgTotalAlgae,
+      statKey: "avgTotalAlgae",
     },
     {
-      label: "Avg Auto Speakers Score",
-      value: aggregation?.avgAutoSpeakersNotes,
-      statKey: "avgAutoSpeakersNotes",
+      label: "Avg Processed Algae Score",
+      value: aggregation?.avgProcessedAlgae,
+      statKey: "avgProcessedAlgae",
     },
     {
-      label: "Avg Tele Amps Score",
-      value: aggregation?.avgTeleAmpsNotes,
-      statKey: "avgTeleAmpsNotes",
-    },
-    {
-      label: "Avg Tele Speakers Score",
-      value: aggregation?.avgTeleSpeakersNotes,
-      statKey: "avgTeleSpeakersNotes",
-    },
-    {
-      label: "Avg Tele Amped Speakers Score",
-      value: aggregation?.avgTeleAmplifiedSpeakersNotes,
-      statKey: "avgTeleAmplifiedSpeakersNotes",
-    },
-    {
-      label: "Avg Tele Traps Score",
-      value: aggregation?.avgTeleTrapsNotes,
-      statKey: "avgTeleTrapsNotes",
+      label: "Avg Net Algae Score",
+      value: aggregation?.avgNetAlgae,
+      statKey: "avgNetAlgae",
     },
     {
       label: "Leave %",
@@ -114,26 +98,6 @@ const SelectionCompareView = ({
       statKey: "parkPercentage",
     },
     {
-      label: "Onstage %",
-      value: aggregation?.onstagePercentage,
-      statKey: "onstagePercentage",
-    },
-    {
-      label: "Onstage Spotlit %",
-      value: aggregation?.onstageSpotlitPercentage,
-      statKey: "onstageSpotlitPercentage",
-    },
-    {
-      label: "Harmony %",
-      value: aggregation?.harmonyPercentage,
-      statKey: "harmonyPercentage",
-    },
-    {
-      label: "Self Spotlit %",
-      value: aggregation?.selfSpotlitPercentage,
-      statKey: "selfSpotlitPercentage",
-    },
-    {
       label: "Defense %",
       value: aggregation?.defensePercentage,
       statKey: "defensePercentage",
@@ -142,16 +106,6 @@ const SelectionCompareView = ({
       label: "Defended Against %",
       value: aggregation?.defendedAgainstPercentage,
       statKey: "defendedAgainstPercentage",
-    },
-    {
-      label: "Stockpile %",
-      value: aggregation?.stockpilePercentage,
-      statKey: "stockpilePercentage",
-    },
-    {
-      label: "Under Stage %",
-      value: aggregation?.underStagePercentage,
-      statKey: "underStagePercentage",
     },
   ];
   return (
@@ -201,24 +155,24 @@ const SelectionCompareView = ({
                 <Card className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Average Notes
+                      Average Coral
                     </CardTitle>
                     <Tally5 className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgTotalNotes} Notes{" "}
-                      {Math.sign(statsDifference.avgTotalNotes) == 1 ? (
+                      {aggregation?.avgTotalCoral} Coral{" "}
+                      {Math.sign(statsDifference.avgTotalCoral) == 1 ? (
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgTotalNotes}
+                            +{statsDifference.avgTotalCoral}
                           </span>
                         </>
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalNotes} notes across{" "}
+                      {aggregation?.totalCoral} notes across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
@@ -226,24 +180,24 @@ const SelectionCompareView = ({
                 <Card className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Average Auto Notes
+                      Average Auto Coral
                     </CardTitle>
                     <IconRobot className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgAutoNotes} Notes
-                      {Math.sign(statsDifference.avgAutoNotes) == 1 ? (
+                      {aggregation?.avgAutoCoral} Coral
+                      {Math.sign(statsDifference.avgAutoCoral) == 1 ? (
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgAutoNotes}
+                            +{statsDifference.avgAutoCoral}
                           </span>
                         </>
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalAutoNotes} notes across{" "}
+                      {aggregation?.totalAutoCoral} notes across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
@@ -398,20 +352,6 @@ const SelectionCompareView = ({
                     >
                       <ClipboardList className="mr-2 h-6 w-6" />
                       View Forms
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (
-                          !aggregation?.middleNotes ||
-                          aggregation?.middleNotes?.length == 0
-                        )
-                          return toast.error("No Middle Note Data Found!");
-                        // setMiddleNotesOpened(true);
-                      }}
-                      className="w-full h-14 text-lg font-bold"
-                    >
-                      <Route className="mr-2 h-6 w-6" />
-                      View Auto Middle Path
                     </Button>
                     <Button
                       onClick={() => {
