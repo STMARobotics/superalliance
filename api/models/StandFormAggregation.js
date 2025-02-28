@@ -413,19 +413,19 @@ const StandFormAggregation = (eventId) => {
             $avg: "$totalNetAlgae",
           },
           leavePercentage: {
-            $avg: "$leaveBoolean",
+            $avg:  { $multiply: ["$leaveBoolean", 100]},
           },
           parkPercentage: {
-            $avg: "$parkBoolean",
+            $avg:  { $multiply: ["$parkBoolean", 100]},
           },
           defensePercentage: {
-            $avg: "$defenseBoolean",
+            $avg:  { $multiply: ["$defenseBoolean", 100]},
           },
           defendedAgainstPercentage: {
-            $avg: "$defendedAgainstBoolean",
+            $avg:  { $multiply: ["$defendedAgainstBoolean", 100]},
           },
           winPercentage: {
-            $avg: "$winBoolean",
+            $avg:  { $multiply: ["$winBoolean", 100]},
           },
           avgRP: {
             $avg: "$rpEarned",
