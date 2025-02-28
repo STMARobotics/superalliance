@@ -29,29 +29,12 @@ const PitFormView = ({ pitFormData }: { pitFormData: any }) => {
   return (
     <>
       <Accordion
-        defaultValue={["strategy"]}
+        defaultValue={["mechanical"]}
         pt={10}
         multiple
         variant="contained"
         classNames={classes}
       >
-        <Accordion.Item value="strategy">
-          <Accordion.Control>Strategy</Accordion.Control>
-          <Accordion.Panel>
-            <Group p={12}>
-              <Textarea
-                placeholder="Description..."
-                label="Overall Strategy"
-                description="What was the team's overall strategy?"
-                autosize
-                minRows={1}
-                value={pitFormData?.overallStrategy}
-                readOnly
-              />
-
-            </Group>
-          </Accordion.Panel>
-        </Accordion.Item>
         <Accordion.Item value="mechanical">
           <Accordion.Control>Mechanical/Electrical</Accordion.Control>
           <Accordion.Panel>
@@ -203,6 +186,26 @@ const PitFormView = ({ pitFormData }: { pitFormData: any }) => {
                 autosize
                 minRows={1}
                 value={pitFormData?.extraComments}
+                readOnly
+              />
+
+              <Textarea
+                placeholder="Description..."
+                label="Pit Rating"
+                description="How was pit scouting them?"
+                autosize
+                minRows={1}
+                value={pitFormData.pitRating}
+                readOnly
+              />
+
+              <Textarea
+                placeholder="Description..."
+                label="Robot Rating"
+                description="How would you rate their robot?"
+                autosize
+                minRows={1}
+                value={pitFormData.robotRating}
                 readOnly
               />
             </Group>

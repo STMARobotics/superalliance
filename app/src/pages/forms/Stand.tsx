@@ -944,7 +944,7 @@ export default function StandFormChad() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Was the your team's bot defended against?"
+          label="Was your team's bot defended against?"
           {...form.getInputProps("defendedAgainst", { type: "checkbox" })}
         />
 
