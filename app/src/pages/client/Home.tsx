@@ -32,6 +32,15 @@ export default function Home() {
           >
             New Stand Form
           </Link>
+          <Link
+            to="/new/pit"
+            className={cn(
+              buttonVariants(),
+              "bg-red-600 text-white hover:bg-red-800"
+            )}
+          >
+            New Pit Form
+          </Link>
         </PageActions>
       </PageHeader>
     </div>
