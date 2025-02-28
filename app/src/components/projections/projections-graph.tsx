@@ -61,17 +61,17 @@ const ProjectionsGraph = ({
   }, []);
 
   const xAxis = {
-    label: selectedStat == "averages" ? "Avg Auto Notes" : "Total Auto Notes",
+    label: selectedStat == "averages" ? "Avg Auto Coral" : "Total Auto Coral",
     accessor: (datum: any) =>
       round(
-        datum[selectedStat == "averages" ? "avgAutoNotes" : "totalAutoNotes"]
+        datum[selectedStat == "averages" ? "avgAutoCoral" : "totalAutoCoral"]
       ),
   };
   const yAxis = {
-    label: selectedStat == "averages" ? "Avg Tele Notes" : "Total Tele Notes",
+    label: selectedStat == "averages" ? "Avg Tele Coral" : "Total Tele Coral",
     accessor: (datum: any) =>
       round(
-        datum[selectedStat == "averages" ? "avgTeleNotes" : "totalTeleNotes"]
+        datum[selectedStat == "averages" ? "avgTeleCoral" : "totalTeleCoral"]
       ),
   };
   const zAxis = { label: "Constant", accessor: (_datum: any) => 1 };
