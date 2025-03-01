@@ -221,7 +221,7 @@ export default function PitForm() {
         />
 
         <TextInput
-          label="Does your robot have a high center of mass?"
+          label="Does your robot have a high center of mass? (look & ask)"
           placeholder="Type some text here."
           className="pb-4"
           {...pitForm.getInputProps("highCenterOfMass")}
@@ -366,7 +366,7 @@ export default function PitForm() {
 
         <Textarea
           label="Robot Rating"
-          description="How did their robot seem?"
+          description="How would you rate their robot overall?"
           placeholder="1-5"
           className="pb-4"
           maxLength={1}

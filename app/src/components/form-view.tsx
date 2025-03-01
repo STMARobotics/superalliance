@@ -179,7 +179,7 @@ const FormView = ({ formData }: { formData: any }) => {
       />
 
       <Checkbox
-        checked={formData?.shallowClimb}
+        checked={formData?.deepClimb}
         readOnly
         className="pb-4"
         size="md"
