@@ -861,7 +861,7 @@ export default function StandFormChad() {
           className="pb-4"
           size="md"
           label="Did the robot shallow climb?"
-          description="The robot successfully climbed the short cage."
+          description="The robot successfully climbed the higher cage."
           {...form.getInputProps("shallowClimb", { type: "checkbox" })}
         />
 
@@ -869,7 +869,7 @@ export default function StandFormChad() {
           className="pb-4"
           size="md"
           label="Did the robot deep climb?"
-          description="The robot successfully climbed the long chain."
+          description="The robot successfully climbed the lower cage."
           {...form.getInputProps("deepClimb", { type: "checkbox" })}
         />
 
