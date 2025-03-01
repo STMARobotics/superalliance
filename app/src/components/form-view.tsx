@@ -175,7 +175,7 @@ const FormView = ({ formData }: { formData: any }) => {
         className="pb-4"
         size="md"
         label="Did the robot PARK?"
-        description="The robot was "
+        description="The robot was parked at the end of the match"
       />
 
       <Checkbox
