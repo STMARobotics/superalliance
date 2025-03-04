@@ -201,9 +201,16 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
-        stockpileBoolean: {
+        shallowClimbBoolean: {
           $cond: {
-            if: "$stockpile",
+            if: "$shallowClimb",
+            then: 1,
+            else: 0,
+          },
+        },
+        deepClimbBoolean: {
+          $cond: {
+            if: "$deepClimb",
             then: 1,
             else: 0,
           },
@@ -424,6 +431,12 @@ const StandFormAggregation = (eventId) => {
           defendedAgainstPercentage: {
             $avg:  { $multiply: ["$defendedAgainstBoolean", 100]},
           },
+          shallowClimbPercentage: {
+            $avg:  { $multiply: ["$shallowClimbBoolean", 100]},
+          },
+          deepClimbPercentage: {
+            $avg:  { $multiply: ["$deepClimbBoolean", 100]},
+          },
           winPercentage: {
             $avg:  { $multiply: ["$winBoolean", 100]},
           },
@@ -523,6 +536,10 @@ const StandFormAggregation = (eventId) => {
           avgNetAlgae: { $round: ["$avgNetAlgae", 2] },
           leavePercentage: { $round: ["$leavePercentage", 2] },
           parkPercentage: { $round: ["$parkPercentage", 2] },
+          shallowClimbPercentage: {
+            $round: ["$shallowClimbPercentage", 2],
+          },
+          deepClimbPercentage: { $round: ["$deepClimbPercentage", 2] },
           defensePercentage: { $round: ["$defensePercentage", 2] },
           defendedAgainstPercentage: {
             $round: ["$defendedAgainstPercentage", 2],
