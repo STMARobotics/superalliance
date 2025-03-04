@@ -61,7 +61,7 @@ export default function PitForm() {
       protectedElectronics: "",
       batterySecured: "",
       highCenterOfMass: "",
-      coralStuck: false,
+      coralStuck: "",
       coachExperience: "",
       operatorExperience: "",
       driverExperience: "",
@@ -232,10 +232,12 @@ export default function PitForm() {
           Driveteam/Competition
         </div>
 
-        <Checkbox
+        <Textarea
           label="Can coral get stuck on your robot?"
           placeholder="Type some text here."
           className="pb-4"
+          maxLength={750}
+          autosize
           {...pitForm.getInputProps("coralStuck")}
         />
 
