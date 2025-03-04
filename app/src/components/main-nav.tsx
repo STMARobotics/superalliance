@@ -78,7 +78,7 @@ export function MainNav() {
           >
             Analysis
           </Link>
-          {user?.organizationMemberships[0]?.role == "org:admin" && (
+          {user?.publicMetadata.role == "admin" && (
             <Link
               to="/admin"
               className={cn(

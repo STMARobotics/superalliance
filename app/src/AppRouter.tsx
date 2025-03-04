@@ -264,7 +264,7 @@ function AppRouter() {
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
-                {user?.organizationMemberships[0]?.role == "org:admin" ? (
+                {user?.publicMetadata.role == "admin" ? (
                   <Navigate to="/admin/settings" />
                 ) : (
                   <Navigate to="/" />
@@ -281,11 +281,7 @@ function AppRouter() {
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
               <SignedIn>
-                {user?.organizationMemberships[0]?.role == "org:admin" ? (
                   <AdministrationSettings />
-                ) : (
-                  <Navigate to="/" />
-                )}
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />
