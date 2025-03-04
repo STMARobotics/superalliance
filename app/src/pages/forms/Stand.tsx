@@ -10,7 +10,6 @@ import {
   Transition,
   Select,
   ActionIcon,
-  Radio,
 } from "@mantine/core";
 import { useForm, isNotEmpty } from "@mantine/form";
 import { useUser } from "@clerk/clerk-react";
@@ -24,9 +23,6 @@ import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { getTeamsFromMatch } from "@/lib/superallianceapi.ts";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSub, RadioGroup } from "@radix-ui/react-dropdown-menu";
-import { DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 interface StandFormValues {
   event: null | number;
@@ -566,7 +562,7 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Algae Net"
+            label="Algae Barge"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -830,7 +826,8 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Algae Net"
+            label="Algae Barge"
+            description="The ROBOT (not the human player) shot algae into the Barge"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -851,6 +848,7 @@ export default function StandFormChad() {
           >
             <Plus />
           </ActionIcon>
+
         </div>
 
         <Checkbox
