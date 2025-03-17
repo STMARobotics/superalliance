@@ -23,12 +23,14 @@ const SelectionCompareView = ({
   teams,
   statsDifference,
   side,
+  opr,
 }: {
   aggregation: any;
   pitForm: any;
   teams: any;
   statsDifference: any;
   side: any;
+  opr: any;
 }) => {
   const averages = [
     {
@@ -45,6 +47,21 @@ const SelectionCompareView = ({
       label: "Avg Tele Coral",
       value: aggregation?.avgTeleCoral,
       statKey: "avgTeleCoral",
+    },
+    {
+      label: "Avg Total Algae Score",
+      value: aggregation?.avgTotalAlgae,
+      statKey: "avgTotalAlgae",
+    },
+    {
+      label: "Avg Processed Algae Score",
+      value: aggregation?.avgProcessedAlgae,
+      statKey: "avgProcessedAlgae",
+    },
+    {
+      label: "Avg Net Algae Score",
+      value: aggregation?.avgNetAlgae,
+      statKey: "avgNetAlgae",
     },
     {
       label: "Avg Total Score",
@@ -73,21 +90,6 @@ const SelectionCompareView = ({
       statKey: "winPercentage",
     },
     {
-      label: "Avg Total Algae Score",
-      value: aggregation?.avgTotalAlgae,
-      statKey: "avgTotalAlgae",
-    },
-    {
-      label: "Avg Processed Algae Score",
-      value: aggregation?.avgProcessedAlgae,
-      statKey: "avgProcessedAlgae",
-    },
-    {
-      label: "Avg Net Algae Score",
-      value: aggregation?.avgNetAlgae,
-      statKey: "avgNetAlgae",
-    },
-    {
       label: "Leave %",
       value: aggregation?.leavePercentage,
       statKey: "leavePercentage",
@@ -96,6 +98,14 @@ const SelectionCompareView = ({
       label: "Park %",
       value: aggregation?.parkPercentage,
       statKey: "parkPercentage",
+    },
+    { label: "Shallow Climb %",
+      value: aggregation?.shallowClimbPercentage,
+      statKey: "shallowClimbPercentage",
+    },
+    { label: "Deep Climb %",
+      value: aggregation?.deepClimbPercentage,
+      statKey: "deepClimbPercentage",
     },
     {
       label: "Defense %",
@@ -172,7 +182,7 @@ const SelectionCompareView = ({
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalCoral} notes across{" "}
+                      {aggregation?.totalCoral} coral across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
@@ -197,7 +207,7 @@ const SelectionCompareView = ({
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalAutoCoral} notes across{" "}
+                      {aggregation?.totalAutoCoral} coral across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
@@ -257,6 +267,27 @@ const SelectionCompareView = ({
                     </p>
                   </CardContent>
                 </Card>
+                <Card className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      OPR
+                    </CardTitle>
+                    <Medal className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold flex justify-between">
+                      {Number.parseFloat(opr).toFixed(2)}
+                      {Math.sign(statsDifference.teamOPR) == 1 ? (
+                        <>
+                          {" "}
+                          <span className="text-green-500 underline text-[1.2rem]">
+                            +{Number.parseFloat(opr).toFixed(2)}
+                          </span>
+                        </>
+                      ) : null}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
               {side == "right" && (
                 <Card className="col-span-1">
@@ -310,6 +341,14 @@ const SelectionCompareView = ({
                               className={cn("text-background dark:text-white")}
                             >
                               {item.value}
+                              {Math.sign(statsDifference[item.statKey]) == 1 ? (
+                                <>
+                                  {" "}
+                                  <span className="text-green-500 underline text-[1rem]">
+                                    +{statsDifference[item.statKey]}
+                                  </span>
+                                </>
+                              ) : null}
                             </span>
                           </div>
                         ))}

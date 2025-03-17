@@ -1,8 +1,9 @@
 import { Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getPitFormByTeam } from "@/lib/superallianceapi";
+import { getPitFormByTeam, getOPRData } from "@/lib/superallianceapi";
 import SelectionCompareView from "./selection-compare-view";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
 const round = (num: number, digits: number = 1) => {
   const factor = 100 ** digits;
@@ -30,6 +31,8 @@ const SelectionCompare = ({
   const [compareData, setCompareData] = useState<any>();
   const [pitFormData, setPitFormData] = useState<any>();
   const [statsDifference, setStatsDifference] = useState<any>();
+  const [opr, setOPRData] = useState<any>();
+  const { appSettings } = useSuperAlliance();
 
   const handleSubmit = () => {
     (async function () {
@@ -51,6 +54,11 @@ const SelectionCompare = ({
         right: await getPitFormByTeam(rightTeam).catch(() => null),
       };
       setPitFormData(pitStruct);
+      const oprStruct = {
+        left: await getOPRData(appSettings.event, leftTeam).catch(() => console.log("error getting left")),
+        right: await getOPRData(appSettings.event, rightTeam).catch(() => console.log("error getting right")),
+      };
+      setOPRData(oprStruct);
     })();
   };
 
@@ -62,40 +70,35 @@ const SelectionCompare = ({
   useEffect(() => {
     if (!compareData) return;
     const stats = [
-      "avgTotalNotes",
-      "avgAutoNotes",
-      "avgTeleNotes",
+      "avgTotalCoral",
+      "avgAutoCoral",
+      "avgTeleCoral",
       "avgTotalScore",
       "avgAutoScore",
       "avgTeleScore",
       "avgRP",
       "criticalCount",
       "winPercentage",
-      "avgAutoAmpsNotes",
-      "avgAutoSpeakersNotes",
-      "avgTeleAmpsNotes",
-      "avgTeleSpeakersNotes",
-      "avgTeleAmplifiedSpeakersNotes",
-      "avgTeleTrapsNotes",
+      "avgTotalAlgae",
+      "avgProcessedAlgae",
+      "avgNetAlgae",
       "leavePercentage",
       "parkPercentage",
-      "onstagePercentage",
-      "onstageSpotlitPercentage",
-      "harmonyPercentage",
-      "selfSpotlitPercentage",
+      "shallowClimbPercentage",
+      "deepClimbPercentage",
       "defensePercentage",
       "defendedAgainstPercentage",
-      "stockpilePercentage",
-      "underStagePercentage",
     ];
 
     const data = {
       left: stats.reduce(function (map: any, stat: any) {
         map[stat] = round(compareData?.left[stat] - compareData?.right[stat]);
+        map["teamOPR"] = round(opr?.left - opr?.right);
         return map;
       }, {}),
       right: stats.reduce(function (map: any, stat: any) {
         map[stat] = round(compareData?.right[stat] - compareData?.left[stat]);
+        map["teamOPR"] = round(opr?.right - opr?.left);
         return map;
       }, {}),
     };
@@ -135,6 +138,7 @@ const SelectionCompare = ({
                   teams={teams}
                   statsDifference={statsDifference.left}
                   side={"left"}
+                  opr={opr?.left}
                 />
               </>
             )}
@@ -148,6 +152,7 @@ const SelectionCompare = ({
                   teams={teams}
                   statsDifference={statsDifference.right}
                   side={"right"}
+                  opr={opr?.right}
                 />
               </>
             )}

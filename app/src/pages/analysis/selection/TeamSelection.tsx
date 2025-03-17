@@ -27,6 +27,7 @@ function TeamSelection() {
   const [compareMode, setCompareMode] = useState(false);
   const [leftTeam, setLeftTeam] = useState<any>();
   const [rightTeam, setRightTeam] = useState<any>();
+  const [eventCode, setEventCode] = useState<any>();
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
