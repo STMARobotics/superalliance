@@ -281,7 +281,7 @@ const SelectionCompareView = ({
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{Number.parseFloat(opr).toFixed(2)}
+                            +{Number.parseFloat(statsDifference.teamOPR).toFixed(2)}
                           </span>
                         </>
                       ) : null}

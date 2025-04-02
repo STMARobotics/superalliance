@@ -103,7 +103,7 @@ const SelectionCompare = ({
       }, {}),
     };
     setStatsDifference(data);
-  }, [compareData]);
+  }, [compareData, opr]);
 
   return (
     <>
