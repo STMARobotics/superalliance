@@ -34,7 +34,7 @@ function TeamSelection() {
     (async function () {
       setPitFormData(
         selectedTeam
-          ? await getPitFormByTeam(selectedTeam).catch(() => null)
+          ? await getPitFormByTeam(selectedEvent, selectedTeam).catch(() => null)
           : null
       );
     })();

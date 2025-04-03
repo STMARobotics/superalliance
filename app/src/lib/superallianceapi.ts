@@ -77,10 +77,10 @@ export const getFormById = async (id: string) => {
   }
 };
 
-export const getPitFormByTeam = async (team: string) => {
+export const getPitFormByTeam = async (eventCode: string, team: string) => {
   try {
     const res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/form/pit/${team}`
+      `${import.meta.env.VITE_API_URL}/api/form/pit/${eventCode}/${team}`
     );
     const data = res.data;
     return data;
