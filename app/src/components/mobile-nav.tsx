@@ -25,7 +25,7 @@ export function MobileNav() {
   return (
     <div className="flex gap-3 flex-row">
       <div className="py-0 px-0 pt-1">
-        {user?.organizationMemberships[0]?.role == "org:admin" && (
+        {user?.publicMetadata.role == "admin" && (
           <OrganizationSwitcher hidePersonal />
         )}
       </div>
@@ -93,7 +93,7 @@ export function MobileNav() {
               <MobileLink href={"/analysis"} onOpenChange={setOpen}>
                 Analysis
               </MobileLink>
-              {user?.organizationMemberships[0]?.role == "org:admin" && (
+              {user?.publicMetadata.role == "admin" && (
                 <MobileLink href={"/admin"} onOpenChange={setOpen}>
                   Admin
                 </MobileLink>

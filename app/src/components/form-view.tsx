@@ -8,7 +8,7 @@ const FormView = ({ formData }: { formData: any }) => {
   const { teams } = useSuperAlliance();
   const { user } = useUser();
 
-  const isAdmin = user?.organizationMemberships[0]?.role == "org:admin";
+  const isAdmin = user?.publicMetadata.role == "admin";
 
   return (
     <>

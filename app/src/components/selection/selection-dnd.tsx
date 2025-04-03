@@ -156,7 +156,7 @@ const SelectionDND = ({
   return (
     <div className="flex flex-col w-full">
       <div className="w-full flex flex-row items-center justify-center pb-4 gap-2">
-        {user?.organizationMemberships[0]?.role == "org:admin" && (
+        {user?.publicMetadata.role == "admin"  && (
           <>
             <Button onClick={getApiSelection}>
               <Download className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />{" "}

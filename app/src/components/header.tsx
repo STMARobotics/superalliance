@@ -30,7 +30,7 @@ const Header = () => {
           <nav className="flex items-center gap-2">
             <SignedIn>
               <div className="px-0 py-0 pt-2">
-                {user?.organizationMemberships[0]?.role == "org:admin" && (
+                {user?.publicMetadata.role == "admin" && (
                   <OrganizationSwitcher hidePersonal />
                 )}
               </div>

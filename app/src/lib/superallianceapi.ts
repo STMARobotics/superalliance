@@ -53,6 +53,18 @@ export const getTeamsFromMatch = async (
   }
 };
 
+export const getOPRData = async (eventCode: string, team: string) => {
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/event/${eventCode}/opr`
+    );
+    const data = res.data.oprs[`frc${team}`];
+    return data;
+  } catch (err) {
+    throw new Error("OPR not found");
+  }
+}
+
 export const getFormById = async (id: string) => {
   try {
     const res = await axios.get(

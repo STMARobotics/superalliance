@@ -221,6 +221,8 @@ export const DataDisplay = ({
     { label: "Win %", value: aggregationData?.winPercentage },
     { label: "Leave %", value: aggregationData?.leavePercentage },
     { label: "Park %", value: aggregationData?.parkPercentage },
+    { label: "Shallow Climb %", value: aggregationData?.shallowClimbPercentage },
+    { label: "Deep Climb %", value: aggregationData?.deepClimbPercentage },
     { label: "Defense %", value: aggregationData?.defensePercentage },
     {
       label: "Defended Against %",

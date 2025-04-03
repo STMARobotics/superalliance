@@ -10,6 +10,7 @@ import {
   Transition,
   Select,
   ActionIcon,
+  RadioGroup
 } from "@mantine/core";
 import { useForm, isNotEmpty } from "@mantine/form";
 import { useUser } from "@clerk/clerk-react";
@@ -22,6 +23,7 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import { Radio } from "@mantine/core";
 import { getTeamsFromMatch } from "@/lib/superallianceapi.ts";
 
 interface StandFormValues {
@@ -562,7 +564,7 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Algae Net"
+            label="Algae Barge"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -826,7 +828,8 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Algae Net"
+            label="Algae Barge"
+            description="The ROBOT (not the human player) shot algae into the Barge"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
@@ -847,31 +850,42 @@ export default function StandFormChad() {
           >
             <Plus />
           </ActionIcon>
+
         </div>
 
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Did the robot PARK?"
-          description="Any part of the robot's bumpers were in the stage zone at the end of the match."
-          {...form.getInputProps("park", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Did the robot shallow climb?"
-          description="The robot successfully climbed the higher cage."
-          {...form.getInputProps("shallowClimb", { type: "checkbox" })}
-        />
-
-        <Checkbox
-          className="pb-4"
-          size="md"
-          label="Did the robot deep climb?"
-          description="The robot successfully climbed the lower cage."
-          {...form.getInputProps("deepClimb", { type: "checkbox" })}
-        />
+      <RadioGroup
+        label="Endgame"
+        size="md"
+        required
+        >
+      <Radio
+        value="park"
+        checked={!form.values.park}
+        onChange={(event) =>
+          form.setFieldValue("park", event.currentTarget.checked)
+        }
+        label="Did the Robot PARK?"
+        description="Any part of the robots bumpers were in the PARK zone"
+      />
+      <Radio
+        value="shallowClimb"
+        checked={!form.values.shallowClimb}
+        onChange={(event) =>
+          form.setFieldValue("shallowClimb", event.currentTarget.checked)
+        }
+        label="Did the robot shallow climb?"
+        description="The Robot Successfully climbed the higher cage"
+      />
+      <Radio
+        value="deepClimb"
+        checked={!form.values.deepClimb}
+        onChange={(event) =>
+          form.setFieldValue("deepClimb", event.currentTarget.checked)
+        }
+        label="Did the robot deep climb?"
+        description="The Robot Successfully climbed the lower cage"
+      />
+      </RadioGroup>
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Post-Match

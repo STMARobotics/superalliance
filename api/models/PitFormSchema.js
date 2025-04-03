@@ -11,7 +11,7 @@ const PitFormSchema = new Schema(
     protectedElectronics: String,
     batterySecured: String,
     highCenterOfMass: String,
-    coralStuck: Boolean,
+    coralStuck: String,
     coachExperience: String,
     operatorExperience: String,
     driverExperience: String,
