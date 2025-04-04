@@ -50,8 +50,8 @@ const SelectionCompare = ({
         return toast.error("One or both of the teams do not exist");
       setCompareData(aggregationStruct);
       const pitStruct = {
-        left: await getPitFormByTeam(leftTeam).catch(() => null),
-        right: await getPitFormByTeam(rightTeam).catch(() => null),
+        left: await getPitFormByTeam(appSettings.event, leftTeam).catch(() => null),
+        right: await getPitFormByTeam(appSettings.event, rightTeam).catch(() => null),
       };
       setPitFormData(pitStruct);
       const oprStruct = {

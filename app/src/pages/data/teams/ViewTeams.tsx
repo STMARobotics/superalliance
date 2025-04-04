@@ -12,7 +12,7 @@ function DataTeams() {
         <>
           {forms && (
             <div className="h-full flex-col md:flex">
-              <TeamForms forms={forms} teams={teams} events={events} />
+              <TeamForms forms={forms} teams={teams} events={events} event={selectedEvent} />
             </div>
           )}
         </>
@@ -24,6 +24,7 @@ function DataTeams() {
                 forms={eventForms}
                 teams={eventTeams}
                 events={events}
+                event={selectedEvent}
               />
             </div>
           )}

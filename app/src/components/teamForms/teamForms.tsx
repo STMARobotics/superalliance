@@ -30,10 +30,12 @@ function TeamForms({
   forms,
   teams,
   events,
+  event,
 }: {
   forms: any;
   teams: any;
   events: any;
+  event: any;
 }) {
   const [selectedTeam, setSelectedTeam] = useState<any>("");
   const [selectedForm, setSelectedForm] = useState<any>("");
@@ -55,7 +57,7 @@ function TeamForms({
   useEffect(() => {
     (async function () {
       if (!selectedTeam) return;
-      const pitForm = await getPitFormByTeam(selectedTeam).catch(() => null);
+      const pitForm = await getPitFormByTeam(event, selectedTeam).catch(() => null);
       setPitFormData(pitForm);
     })();
   }, [selectedTeam]);
