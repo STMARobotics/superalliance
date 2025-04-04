@@ -75,10 +75,10 @@ eventRouter.get(
       if (!data)
         return res
           .status(404)
-          .json({ error: "Event not found!" });
+          .json({ error: "Event match or teams not found!" });
       return res.send(data);
     } catch {
-      return res.status(404).json({ error: "Event not found!" });
+      return res.status(404).json({ error: "Event match or teams not found!" });
     }
   }
 );
