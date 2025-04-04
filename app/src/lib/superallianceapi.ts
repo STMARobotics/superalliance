@@ -182,7 +182,7 @@ export const getEventTeamRank = async (eventCode: string, team: any) => {
     const res = await axios.get(
       `${import.meta.env.VITE_API_URL}/api/event/${eventCode}/team/${team}/rank`
     );
-    const data = res.data;
+    const data = res.data.qual.ranking.rank;
     return data;
   } catch {
     throw new Error("Team Rank not found");
