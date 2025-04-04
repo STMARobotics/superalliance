@@ -25,6 +25,8 @@ import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { getTeamEventAlliance } from "@/lib/superallianceapi";
+import { getEventTeamRank } from "@/lib/superallianceapi";
+import { get } from "http";
 
 const SelectionTeamView = ({
   teams,
@@ -44,6 +46,7 @@ const SelectionTeamView = ({
   const [criticalsOpened, setCriticalsOpened] = useState(false);
   const [commentsOpened, setCommentsOpened] = useState(false);
   const [setAllianceData] = useState<any>();
+  const [eventTeamRank, setEventTeamRank] = useState(false);
   const { appSettings } = useSuperAlliance();
 
   useEffect(() => {
@@ -57,6 +60,16 @@ const SelectionTeamView = ({
         appSettings.event
       );
       setAllianceData(data);
+    })();
+  }, [aggregationData]);
+
+  useEffect(() => {
+    (async function() {
+      const data = await getEventTeamRank(
+        appSettings.event,
+        aggregationData._id
+      );
+      setEventTeamRank(data);
     })();
   }, [aggregationData]);
 
@@ -84,6 +97,7 @@ const SelectionTeamView = ({
         <DataDisplay
           teams={teams}
           aggregationData={aggregationData}
+          rank={eventTeamRank}
           pitFormData={pitFormData}
           setMainOpened={setMainOpened}
           setSelectedTeam={setSelectedTeam}
@@ -186,6 +200,7 @@ const SelectionTeamView = ({
 export const DataDisplay = ({
   teams,
   aggregationData,
+  rank,
   pitFormData,
   setMainOpened,
   setSelectedTeam,
@@ -197,6 +212,7 @@ export const DataDisplay = ({
 }: {
   teams: any;
   aggregationData: any;
+  rank: any;
   pitFormData: any;
   setMainOpened: any;
   setSelectedTeam: any;
@@ -332,18 +348,11 @@ export const DataDisplay = ({
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      Rank #
-                      {
-                        teams.filter(
-                          (team: any) => team.teamNumber == aggregationData?._id
-                        )[0].teamRank
-                      }
+                      Rank # {rank}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Rank{" "}
-                      {teams.filter(
-                        (team: any) => team.teamNumber == aggregationData?._id
-                      )[0].teamRank + " "}
+                      {rank + " "}
                       /{" " + teams.length}
                     </p>
                   </CardContent>
