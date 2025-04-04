@@ -26,7 +26,6 @@ import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { getTeamEventAlliance } from "@/lib/superallianceapi";
 import { getEventTeamRank } from "@/lib/superallianceapi";
-import { get } from "http";
 
 const SelectionTeamView = ({
   teams,
