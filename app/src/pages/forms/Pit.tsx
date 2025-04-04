@@ -88,7 +88,7 @@ export default function PitForm() {
   const submitForm = (values: any) => {
     (async function () {
       const pitForm = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.teamNumber}`
+        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.event}/${values?.teamNumber}`
       );
       if (pitForm.data !== "" && pitForm.data.eventCode === values.event)
         return toast.error(
