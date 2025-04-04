@@ -24,7 +24,6 @@ import SelectionPitFormView from "@/components/selection/selection-pit-form-view
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
-import { getTeamEventAlliance } from "@/lib/superallianceapi";
 
 const SelectionTeamView = ({
   teams,
@@ -43,21 +42,10 @@ const SelectionTeamView = ({
   const [imageOpened, setImageOpened] = useState(false);
   const [criticalsOpened, setCriticalsOpened] = useState(false);
   const [commentsOpened, setCommentsOpened] = useState(false);
-  const [setAllianceData] = useState<any>();
   const { appSettings } = useSuperAlliance();
 
   useEffect(() => {
     if (aggregationData) return setMainOpened(true);
-  }, [aggregationData]);
-
-  useEffect(() => {
-    (async function () {
-      const data = await getTeamEventAlliance(
-        aggregationData._id,
-        appSettings.event
-      );
-      setAllianceData(data);
-    })();
   }, [aggregationData]);
 
   return (

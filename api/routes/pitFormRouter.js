@@ -47,7 +47,7 @@ pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", async (req, res) => {
   const eventCode = req.params?.eventCode;
   const data = await PitFormSchema.find({
     teamNumber: teamNumber,
-    eventCode: eventCode,
+    event: eventCode,
   }).catch((err) => null);
   if (!data) return res.status(404).json({ error: "Form not found" });
   return res.send(data[0]);
