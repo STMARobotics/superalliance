@@ -25,7 +25,7 @@ const SelectionPitFormView = ({
                         value={pitFormData?.protectedElectronics ? "Yes" : "No"}
                         readOnly
                       />
-        
+
                       <Textarea
                         placeholder="Description..."
                         label="Battery Secured"
@@ -53,7 +53,7 @@ const SelectionPitFormView = ({
                   <Accordion.Panel>
                     <Group p={12}>
 
-                      <Textarea
+                      <TextInput
                         label="Coral Stuck"
                         description="Can coral get stuck on your robot?"
                         value={pitFormData?.coralStuck ? "Yes" : "No"}
