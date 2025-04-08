@@ -27,21 +27,15 @@ const SelectionPitFormView = ({
                       />
 
                       <Textarea
-                        placeholder="Description..."
                         label="Battery Secured"
                         description="How was the battery secured?"
-                        autosize
-                        minRows={1}
                         value={pitFormData?.batterySecured ? "Yes" : "No"}
                         readOnly
                       />
 
                       <Textarea
-                        placeholder="Description..."
                         label="High Center Of Mass"
                         description="Does the robot have a high center of mass?"
-                        autosize
-                        minRows={1}
                         value={pitFormData?.highCenterOfMass ? "Yes" : "No"}
                         readOnly
                       />
