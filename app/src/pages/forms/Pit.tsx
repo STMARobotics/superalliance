@@ -58,20 +58,15 @@ export default function PitForm() {
       event: null,
       teamNumber: null,
       notDo: "",
-      protectedElectronics: "",
-      batterySecured: "",
-      highCenterOfMass: "",
-      coralStuck: "",
-      coachExperience: "",
-      operatorExperience: "",
-      driverExperience: "",
+      protectedElectronics: false,
+      batterySecured: false,
+      highCenterOfMass: false,
+      coralStuck: false,
       pickupGround: false,
       pickupSource: false,
       pickupOther: false,
       pickupOtherExplain: "",
       idealAuto: "",
-      preferredDriverStation: "",
-      preferedHumanPlayerPlacement: "",
       strongestValue: "",
       weakestValue: "",
       extraComments: "",
@@ -206,66 +201,36 @@ export default function PitForm() {
           Mechanical/Electrical
         </div>
 
-        <TextInput
-          label="Protected electronics? (look & ask)"
-          placeholder="Type some text here."
+        <Checkbox
           className="pb-4"
-          {...pitForm.getInputProps("protectedElectronics")}
+          size="sm"
+          label="Are your electronics protected?"
+          {...pitForm.getInputProps("protectedElectronics", { type: "checkbox" })}
         />
 
-        <TextInput
-          label="Is your battery secured? How is it secured?"
-          placeholder="Type some text here."
+        <Checkbox
           className="pb-4"
-          {...pitForm.getInputProps("batterySecured")}
+          size="sm"
+          label="Is your battery secured?"
+          {...pitForm.getInputProps("batterySecured", { type: "checkbox" })}
         />
 
-        <TextInput
-          label="Does your robot have a high center of mass? (look & ask)"
-          placeholder="Type some text here."
+        <Checkbox
           className="pb-4"
-          {...pitForm.getInputProps("highCenterOfMass")}
-          maxLength={750}
+          size="sm"
+          label="Does your robot have a high center of mass?"
+          {...pitForm.getInputProps("highCenterOfMass", { type: "checkbox" })}
         />
 
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Driveteam/Competition
         </div>
 
-        <Textarea
+        <Checkbox
+          className="pb-4"
+          size="sm"
           label="Can coral get stuck on your robot?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("coralStuck")}
-        />
-
-        <Textarea
-          label="How many competitions has your drive coach been to?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("coachExperience")}
-        />
-
-        <Textarea
-          label="How many competitions has your operator been to?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("operatorExperience")}
-        />
-
-        <Textarea
-          label="How many competitions has your driver been to?"
-          placeholder="Type some text here."
-          className="pb-4"
-          maxLength={750}
-          autosize
-          {...pitForm.getInputProps("driverExperience")}
+          {...pitForm.getInputProps("CoralStuck", { type: "checkbox" })}
         />
 
         <Text size="sm" className="pb-2">
@@ -314,20 +279,6 @@ export default function PitForm() {
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           General
         </div>
-
-        <TextInput
-          label="Prefered driver station?"
-          placeholder="Type some text here."
-          className="pb-4"
-          {...pitForm.getInputProps("preferredDriverStation")}
-        />
-
-        <TextInput
-          label="Preferred human player placement?"
-          placeholder="Type some text here."
-          className="pb-4"
-          {...pitForm.getInputProps("preferedHumanPlayerPlacement")}
-        />
 
         <Textarea
           label="Strongest value on robot?"

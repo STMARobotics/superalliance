@@ -39,22 +39,16 @@ const PitFormView = ({ pitFormData }: { pitFormData: any }) => {
           <Accordion.Control>Mechanical/Electrical</Accordion.Control>
           <Accordion.Panel>
             <Group p={12}>
-              <Textarea
-                placeholder="Description..."
+              <TextInput
                 label="Protected Electronics"
-                description="How were the electronics protected?"
-                autosize
-                minRows={1}
+                description="Were the electronics protected?"
                 value={pitFormData?.protectedElectronics}
                 readOnly
               />
 
-              <Textarea
-                placeholder="Description..."
+              <TextInput
                 label="Battery Secured"
-                description="How was the battery secured?"
-                autosize
-                minRows={1}
+                description="Was the battery secured?"
                 value={pitFormData?.batterySecured}
                 readOnly
               />
