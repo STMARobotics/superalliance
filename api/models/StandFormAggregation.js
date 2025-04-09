@@ -173,6 +173,18 @@ const StandFormAggregation = (eventId) => {
                  "$teleopAlgaeNet"
               ],
         },
+        totalL1Coral : {
+          $add: ["$teleopCoralL1"],
+        },
+        totalL2Coral : {
+          $add: ["$teleopCoralL2"],
+        },
+        totalL3Coral : {
+          $add: ["$teleopCoralL3"],
+        },
+        totalL4Coral : {
+          $add: ["$teleopCoralL4"],
+        },
         leaveBoolean: {
           $cond: {
             if: "$leave",
@@ -280,6 +292,18 @@ const StandFormAggregation = (eventId) => {
           },
           totalNetAlgae: {
             $sum: "$totalNetAlgae",
+          },
+          totalL1Coral: {
+            $sum: "$totalL1Coral",
+          },
+          totalL2Coral: {
+            $sum: "$totalL2Coral",
+          },
+          totalL3Coral: {
+            $sum: "$totalL3Coral",
+          },
+          totalL4Coral: {
+            $sum: "$totalL4Coral",
           },
           matchTotalCoral: {
             $push: {
@@ -520,6 +544,10 @@ const StandFormAggregation = (eventId) => {
           totalAlgae: { $round: ["$totalAlgae", 2] },
           totalProcessedAlgae: { $round: ["$totalProcessedAlgae", 2] },
           totalNetAlgae: { $round: ["$totalNetAlgae", 2] },
+          totalL1Coral: { $round: ["$totalL1Coral", 2] },
+          totalL2Coral: { $round: ["$totalL2Coral", 2] },
+          totalL3Coral: { $round: ["$totalL3Coral", 2] },
+          totalL4Coral: { $round: ["$totalL4Coral", 2] },
           matchTotalCoral: {
             $concatArrays: "$matchTotalCoral",
           },

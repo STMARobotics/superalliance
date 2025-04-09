@@ -240,11 +240,19 @@ export const DataDisplay = ({
     { label: "Deep Climb Rate", value: aggregationData?.deepClimbPercentage + "%" },
     { label: "Defense Rate", value: aggregationData?.defensePercentage + "%" },
     {
-      label: "Defended Against %",
-      value: aggregationData?.defendedAgainstPercentage,
+      label: "Defended Rate",
+      value: aggregationData?.defendedAgainstPercentage + "%",
     },
     { label: "Pit Rating", value: pitFormData?.pitRating + "/10"},
     { label: "Robot Rating", value: pitFormData?.robotRating + "/5"},
+    { label: "Coral L1 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL1Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
+    { label: "Coral L2 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL2Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
+    { label: "Coral L3 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL3Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
+    { label: "Coral L4 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL4Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
   ];
 
   const navigate = useNavigate();
