@@ -243,6 +243,8 @@ export const DataDisplay = ({
       label: "Defended Against %",
       value: aggregationData?.defendedAgainstPercentage,
     },
+    { label: "Pit Rating", value: pitFormData?.pitRating + "/10"},
+    { label: "Robot Rating", value: pitFormData?.robotRating + "/5"},
   ];
 
   const navigate = useNavigate();
@@ -301,16 +303,31 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Pit Rating
+                    Robot Type
                   </CardTitle>
                   <IconRobot className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {pitFormData?.pitRating} / 10
+                    {aggregationData?.coralBotPercentage === 0 
+                    && aggregationData?.algaeBotPercentage === 0 
+                    ? "None" : 
+                    aggregationData?.coralBotPercentage > 0 
+                    && aggregationData?.algaeBotPercentage === 0 
+                    ? "Coral Bot" :
+                    aggregationData?.coralBotPercentage === 0
+                    && aggregationData?.algaeBotPercentage > 0 ? "Algae Bot" : "Coral & Algae Bot"}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                  Robot Rating {" "} {pitFormData?.robotRating} / 5
+                    {aggregationData?.coralBotPercentage === 0 
+                    && aggregationData?.algaeBotPercentage === 0 
+                    ? "" : 
+                    aggregationData?.coralBotPercentage > 0 
+                    && aggregationData?.algaeBotPercentage === 0 
+                    ? "Met the requirements during " + aggregationData?.coralBotPercentage + "% of matches" :
+                    aggregationData?.coralBotPercentage === 0
+                    && aggregationData?.algaeBotPercentage > 0 
+                    ? "Met the requirements during " + aggregationData?.algaeBotPercentage + "% of matches" : ""}
                   </p>
                 </CardContent>
               </Card>

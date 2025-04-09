@@ -222,6 +222,25 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
+        coralBotBoolean: {
+          $cond: {
+            if: { $gt: [{ $add: [
+              "$teleopCoralL1",
+              "$teleopCoralL2",
+              "$teleopCoralL3",
+              "$teleopCoralL4",
+            ] }, 6] },
+            then: 1,
+            else: 0,
+          }
+        },
+        algaeBotBoolean: {
+          $cond: {
+            if: { $gt: ["$teleopAlgaeNet", 2] },
+            then: 1,
+            else: 0,
+          }
+        },
         criticalCount: {
           $size: "$criticals",
         },
@@ -440,6 +459,12 @@ const StandFormAggregation = (eventId) => {
           winPercentage: {
             $avg:  { $multiply: ["$winBoolean", 100]},
           },
+          coralBotPercentage: {
+            $avg:  { $multiply: ["$coralBotBoolean", 100]},
+          },
+          algaeBotPercentage: {
+            $avg:  { $multiply: ["$algaeBotBoolean", 100]},
+          },
           avgRP: {
             $avg: "$rpEarned",
           },
@@ -545,6 +570,8 @@ const StandFormAggregation = (eventId) => {
             $round: ["$defendedAgainstPercentage", 2],
           },
           winPercentage: { $round: ["$winPercentage", 2] },
+          coralBotPercentage: { $round: ["$coralBotPercentage", 2] },
+          algaeBotPercentage: { $round: ["$algaeBotPercentage", 2] },
           avgRP: { $round: ["$avgRP", 2] },
           comments: {
             $concatArrays: "$comments",
