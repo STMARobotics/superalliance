@@ -324,7 +324,7 @@ export const DataDisplay = ({
                     && aggregationData?.algaeBotPercentage === 0 
                     ? "Coral Bot" :
                     aggregationData?.coralBotPercentage === 0
-                    && aggregationData?.algaeBotPercentage > 0 ? "Algae Bot" : "Coral & Algae Bot"}
+                    && aggregationData?.algaeBotPercentage > 0 ? "Algae Bot" : "Hybrid Bot"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {aggregationData?.coralBotPercentage === 0 
@@ -335,7 +335,8 @@ export const DataDisplay = ({
                     ? "Met the requirements during " + aggregationData?.coralBotPercentage + "% of matches" :
                     aggregationData?.coralBotPercentage === 0
                     && aggregationData?.algaeBotPercentage > 0 
-                    ? "Met the requirements during " + aggregationData?.algaeBotPercentage + "% of matches" : ""}
+                    ? "Met the requirements during " + aggregationData?.algaeBotPercentage + "% of matches" : 
+                    "Met both of the requirements"}
                   </p>
                 </CardContent>
               </Card>
