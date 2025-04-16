@@ -98,8 +98,8 @@ teamRouter.get("/api/listTeams", async (req, res) => {
         teamName: nickname ? nickname : "Unknown Team",
         teamLocation:
           city && state_prov ? `${city}, ${state_prov}` : "Unknown Location",
-        teamRank: rank?.data?.qual.ranking.rank
-          ? rank?.data?.qual.ranking.rank
+        teamRank: rank?.data?.qual?.ranking?.rank
+          ? rank?.data?.qual?.ranking?.rank
           : 0,
       };
     })
