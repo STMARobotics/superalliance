@@ -173,6 +173,18 @@ const StandFormAggregation = (eventId) => {
                  "$teleopAlgaeNet"
               ],
         },
+        totalL1Coral : {
+          $add: ["$teleopCoralL1"],
+        },
+        totalL2Coral : {
+          $add: ["$teleopCoralL2"],
+        },
+        totalL3Coral : {
+          $add: ["$teleopCoralL3"],
+        },
+        totalL4Coral : {
+          $add: ["$teleopCoralL4"],
+        },
         leaveBoolean: {
           $cond: {
             if: "$leave",
@@ -222,6 +234,25 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
+        coralBotBoolean: {
+          $cond: {
+            if: { $gt: [{ $add: [
+              "$teleopCoralL1",
+              "$teleopCoralL2",
+              "$teleopCoralL3",
+              "$teleopCoralL4",
+            ] }, 6] },
+            then: 1,
+            else: 0,
+          }
+        },
+        algaeBotBoolean: {
+          $cond: {
+            if: { $gt: ["$teleopAlgaeNet", 2] },
+            then: 1,
+            else: 0,
+          }
+        },
         criticalCount: {
           $size: "$criticals",
         },
@@ -261,6 +292,18 @@ const StandFormAggregation = (eventId) => {
           },
           totalNetAlgae: {
             $sum: "$totalNetAlgae",
+          },
+          totalL1Coral: {
+            $sum: "$totalL1Coral",
+          },
+          totalL2Coral: {
+            $sum: "$totalL2Coral",
+          },
+          totalL3Coral: {
+            $sum: "$totalL3Coral",
+          },
+          totalL4Coral: {
+            $sum: "$totalL4Coral",
           },
           matchTotalCoral: {
             $push: {
@@ -440,6 +483,12 @@ const StandFormAggregation = (eventId) => {
           winPercentage: {
             $avg:  { $multiply: ["$winBoolean", 100]},
           },
+          coralBotPercentage: {
+            $avg:  { $multiply: ["$coralBotBoolean", 100]},
+          },
+          algaeBotPercentage: {
+            $avg:  { $multiply: ["$algaeBotBoolean", 100]},
+          },
           avgRP: {
             $avg: "$rpEarned",
           },
@@ -495,6 +544,10 @@ const StandFormAggregation = (eventId) => {
           totalAlgae: { $round: ["$totalAlgae", 2] },
           totalProcessedAlgae: { $round: ["$totalProcessedAlgae", 2] },
           totalNetAlgae: { $round: ["$totalNetAlgae", 2] },
+          totalL1Coral: { $round: ["$totalL1Coral", 2] },
+          totalL2Coral: { $round: ["$totalL2Coral", 2] },
+          totalL3Coral: { $round: ["$totalL3Coral", 2] },
+          totalL4Coral: { $round: ["$totalL4Coral", 2] },
           matchTotalCoral: {
             $concatArrays: "$matchTotalCoral",
           },
@@ -545,6 +598,8 @@ const StandFormAggregation = (eventId) => {
             $round: ["$defendedAgainstPercentage", 2],
           },
           winPercentage: { $round: ["$winPercentage", 2] },
+          coralBotPercentage: { $round: ["$coralBotPercentage", 2] },
+          algaeBotPercentage: { $round: ["$algaeBotPercentage", 2] },
           avgRP: { $round: ["$avgRP", 2] },
           comments: {
             $concatArrays: "$comments",

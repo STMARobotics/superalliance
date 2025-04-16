@@ -19,7 +19,7 @@ import SelectionCriticals from "@/components/selection/selection-view-criticals"
 import { toast } from "sonner";
 import { IconRobot } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn, getRobotType } from "@/lib/utils";
 import SelectionPitFormView from "@/components/selection/selection-pit-form-view";
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionComments from "@/components/selection/selection-view-comments";
@@ -233,16 +233,26 @@ export const DataDisplay = ({
     { label: "Avg Tele Score", value: aggregationData?.avgTeleScore },
     { label: "Avg RP", value: aggregationData?.avgRP },
     { label: "Total Crits", value: aggregationData?.criticalCount },
-    { label: "Win %", value: aggregationData?.winPercentage },
-    { label: "Leave %", value: aggregationData?.leavePercentage },
-    { label: "Park %", value: aggregationData?.parkPercentage },
-    { label: "Shallow Climb %", value: aggregationData?.shallowClimbPercentage },
-    { label: "Deep Climb %", value: aggregationData?.deepClimbPercentage },
-    { label: "Defense %", value: aggregationData?.defensePercentage },
+    { label: "Win Rate", value: aggregationData?.winPercentage + "%" },
+    { label: "Leave Rate", value: aggregationData?.leavePercentage + "%" },
+    { label: "Park Rate", value: aggregationData?.parkPercentage + "%" },
+    { label: "Shallow Climb Rate", value: aggregationData?.shallowClimbPercentage + "%" },
+    { label: "Deep Climb Rate", value: aggregationData?.deepClimbPercentage + "%" },
+    { label: "Defense Rate", value: aggregationData?.defensePercentage + "%" },
     {
-      label: "Defended Against %",
-      value: aggregationData?.defendedAgainstPercentage,
+      label: "Defended Rate",
+      value: aggregationData?.defendedAgainstPercentage + "%",
     },
+    { label: "Pit Rating", value: pitFormData?.pitRating + "/10"},
+    { label: "Robot Rating", value: pitFormData?.robotRating + "/5"},
+    { label: "Coral L1 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL1Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
+    { label: "Coral L2 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL2Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
+    { label: "Coral L3 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL3Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
+    { label: "Coral L4 Percent" , value: aggregationData?.totalCoral > 0 ? 
+      (aggregationData?.totalL4Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
   ];
 
   const navigate = useNavigate();
@@ -301,16 +311,16 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Pit Rating
+                    Robot Type
                   </CardTitle>
                   <IconRobot className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {pitFormData?.pitRating} / 10
+                    {getRobotType(aggregationData)[0]}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                  Robot Rating {" "} {pitFormData?.robotRating} / 5
+                    {getRobotType(aggregationData)[1]}
                   </p>
                 </CardContent>
               </Card>

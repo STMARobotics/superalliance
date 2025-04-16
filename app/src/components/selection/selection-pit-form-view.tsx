@@ -19,33 +19,24 @@ const SelectionPitFormView = ({
                   <Accordion.Control>Mechanical/Electrical</Accordion.Control>
                   <Accordion.Panel>
                     <Group p={12}>
-                      <Textarea
-                        placeholder="Description..."
+                      <TextInput
                         label="Protected Electronics"
-                        description="How were the electronics protected?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.protectedElectronics}
-                        readOnly
-                      />
-        
-                      <Textarea
-                        placeholder="Description..."
-                        label="Battery Secured"
-                        description="How was the battery secured?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.batterySecured}
+                        description="Were the electronics protected?"
+                        value={pitFormData?.protectedElectronics ? "Yes" : "No"}
                         readOnly
                       />
 
                       <Textarea
-                        placeholder="Description..."
+                        label="Battery Secured"
+                        description="How was the battery secured?"
+                        value={pitFormData?.batterySecured ? "Yes" : "No"}
+                        readOnly
+                      />
+
+                      <Textarea
                         label="High Center Of Mass"
                         description="Does the robot have a high center of mass?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.highCenterOfMass}
+                        value={pitFormData?.highCenterOfMass ? "Yes" : "No"}
                         readOnly
                       />
                     </Group>
@@ -56,31 +47,10 @@ const SelectionPitFormView = ({
                   <Accordion.Panel>
                     <Group p={12}>
 
-                      <Textarea
+                      <TextInput
                         label="Coral Stuck"
                         description="Can coral get stuck on your robot?"
                         value={pitFormData?.coralStuck ? "Yes" : "No"}
-                        readOnly
-                      />
-                      
-                      <Textarea
-                        label="Drive Coach Experience"
-                        description="How many competitions has the drive coach been to?"
-                        value={pitFormData?.coachExperience}
-                        readOnly
-                      />
-
-                      <Textarea
-                        label="Driver Experience"
-                        description="How many competitions has the driver been to?"
-                        value={pitFormData?.driverExperience}
-                        readOnly
-                      />
-
-                      <Textarea
-                        label="Operator Experience"
-                        description="How many competitions has the operator been to?"
-                        value={pitFormData?.operatorExperience}
                         readOnly
                       />
         
@@ -134,21 +104,6 @@ const SelectionPitFormView = ({
                   <Accordion.Control>General</Accordion.Control>
                   <Accordion.Panel>
                     <Group p={12}>
-                      <TextInput
-                        placeholder="Description..."
-                        label="Preferred Driver Station"
-                        description="Preferred Driver Station?"
-                        value={pitFormData?.preferredDriverStation}
-                        readOnly
-                      />
-
-                      <TextInput
-                        placeholder="Description..."
-                        label="Preferred Human Player Placement"
-                        description="Preferred Human Player Placement?"
-                        value={pitFormData?.preferedHumanPlayerPlacement}
-                        readOnly
-                      />
         
                       <Textarea
                         placeholder="Description..."
