@@ -19,7 +19,7 @@ import SelectionCriticals from "@/components/selection/selection-view-criticals"
 import { toast } from "sonner";
 import { IconRobot } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn, getRobotType } from "@/lib/utils";
 import SelectionPitFormView from "@/components/selection/selection-pit-form-view";
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionComments from "@/components/selection/selection-view-comments";
@@ -317,26 +317,10 @@ export const DataDisplay = ({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.coralBotPercentage === 0 
-                    && aggregationData?.algaeBotPercentage === 0 
-                    ? "None" : 
-                    aggregationData?.coralBotPercentage > 0 
-                    && aggregationData?.algaeBotPercentage === 0 
-                    ? "Coral Bot" :
-                    aggregationData?.coralBotPercentage === 0
-                    && aggregationData?.algaeBotPercentage > 0 ? "Algae Bot" : "Hybrid Bot"}
+                    {getRobotType(aggregationData)[0]}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.coralBotPercentage === 0 
-                    && aggregationData?.algaeBotPercentage === 0 
-                    ? "" : 
-                    aggregationData?.coralBotPercentage > 0 
-                    && aggregationData?.algaeBotPercentage === 0 
-                    ? "Met the requirements during " + aggregationData?.coralBotPercentage + "% of matches" :
-                    aggregationData?.coralBotPercentage === 0
-                    && aggregationData?.algaeBotPercentage > 0 
-                    ? "Met the requirements during " + aggregationData?.algaeBotPercentage + "% of matches" : 
-                    "Met both of the requirements"}
+                    {getRobotType(aggregationData)[1]}
                   </p>
                 </CardContent>
               </Card>
