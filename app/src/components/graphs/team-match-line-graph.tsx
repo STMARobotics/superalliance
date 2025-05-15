@@ -97,7 +97,7 @@ const TeamMatchLineGraph = ({
               className="bg-white rounded shadow p-2"
               style={{ color: "black" }}
             >
-              <div className="text-sm font-bold">{`Team ${point.serieId}`}</div>
+              <div className="text-sm font-bold">{`Team ${point.seriesId}`}</div>
               <div className="text-xs mb-1">{xLabel}</div>
               <div className="text-sm">{`${yAxis}: ${round(
                 parseFloat(y)
