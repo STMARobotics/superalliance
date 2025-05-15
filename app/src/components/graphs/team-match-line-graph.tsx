@@ -91,7 +91,7 @@ const TeamMatchLineGraph = ({
         tooltip={({ point }) => {
           const y: any = point.data.yFormatted;
           //@ts-ignore
-          const xLabel = xLabels[point.serieId][point.data.x];
+          const xLabel = xLabels[point.seriesId][point.data.x];
           return (
             <div
               className="bg-white rounded shadow p-2"
