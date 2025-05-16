@@ -24,9 +24,8 @@ import { hasDraggableData } from "@/components/selection/selection-utils";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Diff, Download, Printer, Save } from "lucide-react";
-import { getTeamSelection } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { useUser } from "@clerk/clerk-react";
-import axios from "axios";
 import { toast } from "sonner";
 import { useMediaQuery } from "@mantine/hooks";
 import { em } from "@mantine/core";
@@ -82,6 +81,7 @@ const SelectionDND = ({
   });
 
   const { user } = useUser();
+  const { getTeamSelection, api } = useSuperAllianceApi();
 
   const [columns, setColumns] = useState<any[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -140,7 +140,7 @@ const SelectionDND = ({
 
   const saveSelection = () => {
     (async function () {
-      await axios
+      await api
         .post(`${import.meta.env.VITE_API_URL}/api/teamSelection/save`, {
           teams: teams,
         })

@@ -24,7 +24,7 @@ import { useLocation } from "react-router-dom";
 import TeamList from "./team-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import PitFormView from "../pit-form-view";
-import { getPitFormByTeam } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 
 function TeamForms({
   forms,
@@ -43,6 +43,7 @@ function TeamForms({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchContent, setSearchContent] = useState("");
   const [teamFormsOpened, setTeamFormsOpened] = useState(false);
+  const { getPitFormByTeam } = useSuperAllianceApi();
   const pathname = useLocation().pathname;
   const newEvents = [{ short_name: "All Events", event_code: "all" }].concat(
     events

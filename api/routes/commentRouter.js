@@ -4,8 +4,9 @@ const commentRouter = Router();
 
 const CommentFormSchema = require("../models/CommentFormSchema");
 const mongoose = require("mongoose");
+const { requireAuth } = require("@clerk/express");
 
-commentRouter.get("/api/form/comments/:formId", async (req, res) => {
+commentRouter.get("/api/form/comments/:formId", requireAuth(), async (req, res) => {
   const formId = req.params?.formId;
   const data = await CommentFormSchema.find({
     _id: formId,
@@ -14,14 +15,14 @@ commentRouter.get("/api/form/comments/:formId", async (req, res) => {
   return res.send(data[0]);
 });
 
-commentRouter.get("/api/forms/comments", async (req, res) => {
+commentRouter.get("/api/forms/comments", requireAuth(), async (req, res) => {
   const forms = await CommentFormSchema.find({}).sort({
     _id: -1,
   });
   return res.send(forms);
 });
 
-commentRouter.post("/api/form/comments/submit", async (req, res) => {
+commentRouter.post("/api/form/comments/submit", requireAuth(), async (req, res) => {
   const data = req.body;
   const sendForm = await new CommentFormSchema({
     _id: new mongoose.Types.ObjectId(),

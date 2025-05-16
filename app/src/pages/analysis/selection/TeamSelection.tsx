@@ -4,7 +4,7 @@ import SelectionCompare from "@/components/selection/selection-compare";
 import SelectionDND from "@/components/selection/selection-dnd";
 import SelectionTeamView from "@/components/selection/selection-team-view";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
-import { getPitFormByTeam } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { Drawer, Modal, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -27,6 +27,7 @@ function TeamSelection() {
   const [compareMode, setCompareMode] = useState(false);
   const [leftTeam, setLeftTeam] = useState<any>();
   const [rightTeam, setRightTeam] = useState<any>();
+  const { getPitFormByTeam } = useSuperAllianceApi();
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 

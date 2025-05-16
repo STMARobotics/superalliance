@@ -1,6 +1,6 @@
 "use client";
 
-import { getFormById } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { Affix, Button, LoadingOverlay, Transition } from "@mantine/core";
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
@@ -13,6 +13,7 @@ function DataStandForm() {
   const [formData, setFormData] = useState<any>(null);
   const [visible, setVisible] = useState(true);
   const { formId } = useParams();
+  const { getFormById } = useSuperAllianceApi();
   useEffect(() => {
     (async function () {
       if (formId) {

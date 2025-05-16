@@ -15,7 +15,6 @@ import {
 import { useForm, isNotEmpty } from "@mantine/form";
 import { useUser } from "@clerk/clerk-react";
 import { IconArrowUp } from "@tabler/icons-react";
-import axios from "axios";
 import { useWindowScroll } from "@mantine/hooks";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +23,7 @@ import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { Radio } from "@mantine/core";
-import { getTeamsFromMatch } from "@/lib/superallianceapi.ts";
+import { useSuperAllianceApi } from "@/lib/superallianceapi.ts";
 
 interface StandFormValues {
   event: null | number;
@@ -63,6 +62,7 @@ export default function StandFormChad() {
   const [eventData, setEventData] = useState([]);
   const [matchTeams, setMatchTeams] = useState<any>();
   const [submitPress, setSubmitPress] = useState(false);
+  const { getTeamsFromMatch, api } = useSuperAllianceApi();
 
   useEffect(() => {
     if (!events) return;
@@ -147,7 +147,7 @@ export default function StandFormChad() {
       usersName: user?.fullName,
       ...values,
     };
-    await axios
+    await api
       .post(`${import.meta.env.VITE_API_URL}/api/form/stand/submit`, struct)
       .then(function () {
         toast.success("The form has been submitted successfully!");

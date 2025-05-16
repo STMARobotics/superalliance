@@ -8,12 +8,10 @@ import { Settings } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 function AdminSettings() {
-  const { events, appSettings, refreshSA } = useSuperAlliance();
+  const { events, appSettings } = useSuperAlliance();
   const pathname = useLocation().pathname;
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-
-  refreshSA!.appSettings();
 
   return (
     <div className="flex flex-row h-full">
