@@ -1,5 +1,5 @@
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
-import { getMatchData } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { cn } from "@/lib/utils";
 import { AspectRatio, Badge, Button, Modal } from "@mantine/core";
 import { formatDistanceToNow } from "date-fns";
@@ -24,6 +24,7 @@ function FormList({
   const [youtubeLink, setYoutubeLink] = useState<any>();
 
   const [opened, setOpened] = useState<boolean>(false);
+  const { getMatchData } = useSuperAllianceApi();
 
   const handleYoutube = (matchNumber: any) => {
     (async function () {

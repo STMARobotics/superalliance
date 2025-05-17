@@ -4,9 +4,11 @@ const eventRouter = Router();
 
 const mongoose = require("mongoose");
 const axios = require("axios");
+const { requireAuth } = require("@clerk/express");
 
 eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/data",
+  requireAuth(),
   async (req, res) => {
     try {
       const { eventCode, matchNumber } = req.params;
@@ -33,6 +35,7 @@ eventRouter.get(
 
 eventRouter.get(
   "/api/event/:eventCode/team/:teamNumber/rank",
+  requireAuth(),
   async (req, res) => {
     try {
       const { eventCode, teamNumber } = req.params;
@@ -59,6 +62,7 @@ eventRouter.get(
 
 eventRouter.get(
   "/api/event/:eventCode/opr",
+  requireAuth(),
   async (req, res) => {
     try {
       const { eventCode, teamNumber } = req.params;
@@ -85,6 +89,7 @@ eventRouter.get(
 
 eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/teams",
+  requireAuth(),
   async (req, res) => {
     try {
       const { eventCode, matchNumber } = req.params;
@@ -117,7 +122,7 @@ eventRouter.get(
   }
 );
 
-eventRouter.get("/api/listEvents/:team/:year", async (req, res) => {
+eventRouter.get("/api/listEvents/:team/:year", requireAuth(), async (req, res) => {
   const { team, year } = req.params;
   if (!team || !year)
     return res.status(500).json({ error: "Missing team or year" });

@@ -1,4 +1,4 @@
-import { getMatchData } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import {
   Button,
   Avatar,
@@ -24,6 +24,8 @@ const SelectionComments = ({
   const [youtubeLink, setYoutubeLink] = useState<any>();
 
   const [opened, setOpened] = useState<boolean>(false);
+
+  const { getMatchData } = useSuperAllianceApi();
 
   const handleYoutube = (matchNumber: any) => {
     (async function () {

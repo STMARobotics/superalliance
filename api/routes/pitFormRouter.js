@@ -4,8 +4,9 @@ const pitFormRouter = Router();
 
 const PitFormSchema = require("../models/PitFormSchema");
 const mongoose = require("mongoose");
+const { requireAuth, getAuth } = require("@clerk/express");
 
-pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
+pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
   const data = req.body;
   const sendForm = await new PitFormSchema({
     _id: new mongoose.Types.ObjectId(),
@@ -37,7 +38,7 @@ pitFormRouter.post("/api/form/pit/submit", async (req, res) => {
   return res.send("Submitted Form!");
 });
 
-pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", async (req, res) => {
+pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (req, res) => {
   const teamNumber = req.params?.teamNumber;
   const eventCode = req.params?.eventCode;
   const data = await PitFormSchema.find({

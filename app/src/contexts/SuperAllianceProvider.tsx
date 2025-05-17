@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  getEvents,
-  getForms,
-  getAppSettings,
-  getTeams,
-  getTotalAggregation,
-  getEventAggregation,
-} from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { createContext, useContext, useEffect, useState } from "react";
 import { appConfig } from "@/config/app";
 
@@ -50,6 +43,7 @@ export function SuperAllianceProvider(props: any) {
   const [appSettings, setAppSettings] = useState<any>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>("all");
   const [loading, setLoading] = useState<boolean>(true);
+  const { getForms, getTeams, getEvents, getTotalAggregation, getEventAggregation, getAppSettings } = useSuperAllianceApi();
 
   const refreshSA = {
     all: () => {

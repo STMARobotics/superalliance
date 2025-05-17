@@ -3,7 +3,7 @@ import FormList from "@/components/forms/form-list";
 import SelectionTeamView from "@/components/selection/selection-team-view";
 import Sorting from "@/components/sorting/sorting";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
-import { getPitFormByTeam } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { Drawer, Modal, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -25,6 +25,7 @@ function DataSorting() {
   const [selectedForm, setSelectedForm] = useState<any>("");
   const [formListOpened, setFormListOpened] = useState(false);
   const [formOpened, setFormOpened] = useState(false);
+  const { getPitFormByTeam } = useSuperAllianceApi();
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   useEffect(() => {

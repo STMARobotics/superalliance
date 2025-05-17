@@ -13,10 +13,10 @@ import {
 import { useForm, isNotEmpty } from "@mantine/form";
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 
 interface CommentsFormValues {
   event: null | number;
@@ -30,6 +30,7 @@ export default function CommentsForm() {
   const navigate = useNavigate();
   const { events, appSettings } = useSuperAlliance();
   const [eventData, setEventData] = useState([]);
+  const { api } = useSuperAllianceApi();
 
   useEffect(() => {
     if (!events) return;
@@ -69,7 +70,7 @@ export default function CommentsForm() {
       usersName: user?.fullName,
       ...values,
     };
-    await axios
+    await api
       .post(`${import.meta.env.VITE_API_URL}/api/form/comments/submit`, struct)
       .then(function () {
         toast.success("The form has been submitted successfully!");

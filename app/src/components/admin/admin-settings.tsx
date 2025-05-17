@@ -21,8 +21,8 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios from "axios";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 
 const adminSettingsSchema = z.object({
   event: z.string({
@@ -50,10 +50,11 @@ function AdminSettingsForm({
   });
 
   const { setSelectedEvent } = useSuperAlliance();
+  const { api } = useSuperAllianceApi();
 
   function onSubmit(data: SettingsFormValues) {
     (async function () {
-      await axios
+      await api
         .post(`${import.meta.env.VITE_API_URL}/api/settings/app/save`, data)
         .then(function () {
           toast.success("Settings saved successfully!");
