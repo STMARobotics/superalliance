@@ -5,7 +5,7 @@ import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useUser } from "@clerk/clerk-react";
 
 const FormView = ({ formData }: { formData: any }) => {
-  const { teams } = useSuperAlliance();
+  const { eventTeams } = useSuperAlliance();
   const { user } = useUser();
 
   const isAdmin = user?.publicMetadata.role == "admin";
@@ -30,9 +30,9 @@ const FormView = ({ formData }: { formData: any }) => {
 
       <div className="text-red-500 pb-6 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
         #{formData?.teamNumber}
-        {teams?.length > 0 &&
+        {eventTeams?.length > 0 &&
           ` • ${
-            teams?.filter(
+            eventTeams?.filter(
               (team: any) => team.teamNumber == formData?.teamNumber
             )[0]?.teamName
           }`}

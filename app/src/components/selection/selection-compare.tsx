@@ -1,7 +1,7 @@
 import { Modal } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getPitFormByTeam, getOPRData } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import SelectionCompareView from "./selection-compare-view";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
@@ -33,6 +33,7 @@ const SelectionCompare = ({
   const [statsDifference, setStatsDifference] = useState<any>();
   const [opr, setOPRData] = useState<any>();
   const { appSettings } = useSuperAlliance();
+  const { getPitFormByTeam, getOPRData } = useSuperAllianceApi();
 
   const handleSubmit = () => {
     (async function () {

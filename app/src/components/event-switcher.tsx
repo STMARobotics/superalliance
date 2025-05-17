@@ -23,7 +23,7 @@ export function EventSwitcher({ isCollapsed, events }: EventSwitcherProps) {
   const { selectedEvent, setSelectedEvent } = useSuperAlliance();
   return (
     <Select
-      defaultValue={!selectedEvent ? "all" : selectedEvent}
+      defaultValue={selectedEvent}
       value={selectedEvent}
       onValueChange={setSelectedEvent}
     >

@@ -5,40 +5,9 @@ const teamRouter = Router();
 const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 const axios = require("axios");
+const { requireAuth } = require("@clerk/express");
 
-teamRouter.get(
-  "/api/team/:teamNumber/event/:eventCode/matches/alliance",
-  async (req, res) => {
-    const { teamNumber, eventCode } = req.params;
-    const response = await axios
-      .get(
-        `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2025${eventCode}/matches/simple`,
-        {
-          method: "GET",
-          headers: {
-            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
-            accept: "application/json",
-          },
-        }
-      )
-      .catch(() => "Error");
-    if (response === "Error") return res.send("");
-    const data = response.data;
-    const matches = data?.map((match) => {
-      return {
-        matchNumber: match.match_number,
-        alliance:
-          match.alliances.red.team_keys.includes(`frc${teamNumber}`) ??
-          match.alliances.blue.team_keys.includes(`frc${teamNumber}`)
-            ? "red"
-            : "blue",
-      };
-    });
-    return res.send(matches);
-  }
-);
-
-teamRouter.get("/api/team/:teamNumber", async (req, res) => {
+teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
   const { teamNumber } = req.params;
   const response = await axios
     .get(`https://www.thebluealliance.com/api/v3/team/frc${teamNumber}`, {
@@ -53,8 +22,16 @@ teamRouter.get("/api/team/:teamNumber", async (req, res) => {
   return res.send(response.data);
 });
 
-teamRouter.get("/api/listTeams", async (req, res) => {
+teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) => {
+  const { eventCode, year } = req.params;
+  if (!eventCode || !year)
+    return res.status(500).json({ error: "Missing year or event code" });
+
+
   const teamList = await StandFormSchema.aggregate([
+    {
+      $match: { event: eventCode }
+    },
     {
       $group: {
         _id: "$teamNumber",
@@ -83,7 +60,7 @@ teamRouter.get("/api/listTeams", async (req, res) => {
         .catch(() => "Error");
       if (response === "Error") return res.send("");
       const rank = await axios.get(
-        `https://www.thebluealliance.com/api/v3/team/frc${_id}/event/2025cur/status`,
+        `https://www.thebluealliance.com/api/v3/team/frc${_id}/event/${year}${eventCode}/status`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,

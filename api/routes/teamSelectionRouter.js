@@ -4,8 +4,14 @@ const teamSelectionRouter = Router();
 
 const TeamSelectionSchema = require("../models/TeamSelectionSchema");
 const mongoose = require("mongoose");
+const { requireAuth, getAuth } = require("@clerk/express");
 
-teamSelectionRouter.post("/api/teamSelection/save", async (req, res) => {
+teamSelectionRouter.post("/api/teamSelection/save", requireAuth(), async (req, res) => {
+  const userRole = getAuth(req).sessionClaims?.data?.role;
+
+  if (userRole !== "admin") {
+    return res.status(403).json({ error: "Forbidden: Admins only" });
+  }
   const data = req.body;
 
   const currSelection = await TeamSelectionSchema.findOne({});
@@ -26,7 +32,12 @@ teamSelectionRouter.post("/api/teamSelection/save", async (req, res) => {
   return res.send("Submitted Team Selection!");
 });
 
-teamSelectionRouter.get("/api/teamSelection", async (req, res) => {
+teamSelectionRouter.get("/api/teamSelection", requireAuth(), async (req, res) => {
+  const userRole = getAuth(req).sessionClaims?.data?.role;
+
+  if (userRole !== "admin") {
+    return res.status(403).json({ error: "Forbidden: Admins only" });
+  }
   const selection = await TeamSelectionSchema.findOne({});
   if (!selection) return res.send({});
   return res.send(selection);

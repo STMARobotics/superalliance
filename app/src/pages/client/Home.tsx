@@ -7,7 +7,6 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/page-header";
-import { Announcement } from "@/components/announcement";
 import { Link } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -15,7 +14,6 @@ export default function Home() {
   return (
     <div className="container relative">
       <PageHeader>
-        <Announcement />
         <PageHeaderHeading>The Most Advanced Scouting Tool</PageHeaderHeading>
         <PageHeaderDescription>
           Super Alliance is the most technologically advanced scouting tool for

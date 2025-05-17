@@ -56,29 +56,29 @@ export function MainNav() {
           >
             Pit Form
           </Link>
-          <Link
-            to="/data"
-            className={cn(
-              "transition-colors hover:text-foreground/80",
-              pathname?.startsWith("/data")
-                ? "text-foreground"
-                : "text-foreground/60"
-            )}
-          >
-            Data
-          </Link>
-          <Link
-            to="/analysis"
-            className={cn(
-              "transition-colors hover:text-foreground/80",
-              pathname?.startsWith("/analysis")
-                ? "text-foreground"
-                : "text-foreground/60"
-            )}
-          >
-            Analysis
-          </Link>
-          {user?.publicMetadata.role == "admin" && (
+          {user?.publicMetadata.role == "admin" && (<>
+            <Link
+              to="/data"
+              className={cn(
+                "transition-colors hover:text-foreground/80",
+                pathname?.startsWith("/data")
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              )}
+            >
+              Data
+            </Link>
+            <Link
+              to="/analysis"
+              className={cn(
+                "transition-colors hover:text-foreground/80",
+                pathname?.startsWith("/analysis")
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              )}
+            >
+              Analysis
+            </Link>
             <Link
               to="/admin"
               className={cn(
@@ -90,6 +90,7 @@ export function MainNav() {
             >
               Admin
             </Link>
+            </>
           )}
         </nav>
       )}

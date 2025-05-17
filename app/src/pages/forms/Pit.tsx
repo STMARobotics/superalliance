@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import FormData from "form-data";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 
 export default function PitForm() {
   const [scroll, scrollTo] = useWindowScroll();
@@ -33,6 +34,7 @@ export default function PitForm() {
 
   const { events, appSettings } = useSuperAlliance();
   const [eventData, setEventData] = useState([]);
+  const { api } = useSuperAllianceApi();
 
   useEffect(() => {
     if (!events) return;
@@ -82,7 +84,7 @@ export default function PitForm() {
 
   const submitForm = (values: any) => {
     (async function () {
-      const pitForm = await axios.get(
+      const pitForm = await api.get(
         `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.event}/${values?.teamNumber}`
       );
       if (pitForm.data !== "" && pitForm.data.eventCode === values.event)
@@ -111,7 +113,7 @@ export default function PitForm() {
         robotImage: res.data.data.url,
         ...values,
       };
-      await axios
+      await api
         .post(`${import.meta.env.VITE_API_URL}/api/form/pit/submit`, struct)
         .then(function () {
           toast.success("The form has been submitted successfully!");

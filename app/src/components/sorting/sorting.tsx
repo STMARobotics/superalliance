@@ -32,9 +32,6 @@ export default function Sorting({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = useLocation().pathname;
-  const newEvents = [{ short_name: "All Events", event_code: "all" }].concat(
-    events
-  );
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup
@@ -60,7 +57,7 @@ export default function Sorting({
             )}
           >
             {events && (
-              <EventSwitcher isCollapsed={isCollapsed} events={newEvents} />
+              <EventSwitcher isCollapsed={isCollapsed} events={events} />
             )}
           </div>
           <Separator />

@@ -7,7 +7,7 @@ import SelectionMiddleNotesPath from "@/components/selection/selection-middle-no
 import { useMediaQuery } from "@mantine/hooks";
 
 function DataMiddlePath() {
-  const { selectedEvent, totalAggregation, eventAggregation } =
+  const { selectedEvent, eventAggregation } =
     useSuperAlliance();
 
   const [inputTeam, setInputTeam] = useState<any>(null);
@@ -22,10 +22,7 @@ function DataMiddlePath() {
 
   useEffect(() => {
     if (!selectedTeam) return;
-    const aggregation =
-      selectedEvent !== "all"
-        ? eventAggregation.filter((team: any) => team._id == selectedTeam)
-        : totalAggregation.filter((team: any) => team._id == selectedTeam);
+    const aggregation = eventAggregation.filter((team: any) => team._id == selectedTeam)
     if (!aggregation[0]) return;
     const aggregationData = aggregation[0];
     if (
