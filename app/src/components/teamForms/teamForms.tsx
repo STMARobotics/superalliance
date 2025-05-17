@@ -45,9 +45,6 @@ function TeamForms({
   const [teamFormsOpened, setTeamFormsOpened] = useState(false);
   const { getPitFormByTeam } = useSuperAllianceApi();
   const pathname = useLocation().pathname;
-  const newEvents = [{ short_name: "All Events", event_code: "all" }].concat(
-    events
-  );
   const handleSearch = (e: any) => {
     e.preventDefault();
     setSearchContent(e.target.value);
@@ -112,7 +109,7 @@ function TeamForms({
               )}
             >
               {events && (
-                <EventSwitcher isCollapsed={isCollapsed} events={newEvents} />
+                <EventSwitcher isCollapsed={isCollapsed} events={events} />
               )}
             </div>
             <Separator />

@@ -11,9 +11,6 @@ import { useEffect, useState } from "react";
 
 function TeamSelection() {
   const {
-    teams,
-    totalAggregation,
-    forms,
     selectedEvent,
     eventTeams,
     eventAggregation,
@@ -51,23 +48,9 @@ function TeamSelection() {
         Team Selection
       </h1>
       <div className="h-full flex justify-center items-center w-full">
-        {selectedEvent == "all" ? (
-          <>
-            {teams?.length > 0 && (
-              <SelectionDND
-                propTeams={teams}
-                setSelectedTeam={setSelectedTeam}
-                compareMode={compareMode}
-                setCompareMode={setCompareMode}
-                leftTeam={leftTeam}
-                rightTeam={rightTeam}
-                setLeftTeam={setLeftTeam}
-                setRightTeam={setRightTeam}
-              />
-            )}
-            <SelectionCompare
-              teams={teams}
-              aggregation={totalAggregation}
+            <SelectionDND
+              propTeams={eventTeams}
+              setSelectedTeam={setSelectedTeam}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
               leftTeam={leftTeam}
@@ -75,83 +58,8 @@ function TeamSelection() {
               setLeftTeam={setLeftTeam}
               setRightTeam={setRightTeam}
             />
-            {selectedTeam !== "" && totalAggregation && (
-              <>
-                <SelectionTeamView
-                  teams={teams}
-                  aggregationData={
-                    totalAggregation?.filter((team: any) => {
-                      return team._id == Number(selectedTeam);
-                    })[0]
-                  }
-                  setSelectedTeam={setSelectedTeam}
-                  pitFormData={pitFormData}
-                  setFormsOpened={setFormListOpened}
-                />
-                <Modal
-                  classNames={{
-                    content: "bg-[#18181b]",
-                    header: "bg-[#18181b]",
-                  }}
-                  opened={formListOpened}
-                  onClose={() => setFormListOpened(false)}
-                  title={"Forms"}
-                  radius={"lg"}
-                  size={"xl"}
-                  overlayProps={{
-                    backgroundOpacity: 0.55,
-                    blur: 3,
-                  }}
-                  centered
-                >
-                  <FormList
-                    teamsPage={false}
-                    forms={forms?.filter(
-                      (form: any) => form.teamNumber == selectedTeam
-                    )}
-                    selectedForm={selectedForm}
-                    setSelectedForm={setSelectedForm}
-                    selectedEvent={selectedEvent}
-                  />
-                </Modal>
-                <Drawer
-                  offset={isMobile ? 0 : 8}
-                  radius={isMobile ? "" : "md"}
-                  opened={formOpened}
-                  position="right"
-                  onClose={() => {
-                    setSelectedForm("");
-                    setFormOpened(false);
-                  }}
-                  title="Form View"
-                >
-                  {selectedForm && (
-                    <FormView
-                      formData={
-                        forms.filter((form: any) => form._id == selectedForm)[0]
-                      }
-                    />
-                  )}
-                </Drawer>
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            {eventTeams?.length > 0 && (
-              <SelectionDND
-                propTeams={eventTeams}
-                setSelectedTeam={setSelectedTeam}
-                compareMode={compareMode}
-                setCompareMode={setCompareMode}
-                leftTeam={leftTeam}
-                rightTeam={rightTeam}
-                setLeftTeam={setLeftTeam}
-                setRightTeam={setRightTeam}
-              />
-            )}
             <SelectionCompare
-              teams={teams}
+              teams={eventTeams}
               aggregation={eventAggregation}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
@@ -213,15 +121,13 @@ function TeamSelection() {
                   {selectedForm && (
                     <FormView
                       formData={
-                        forms.filter((form: any) => form._id == selectedForm)[0]
+                        eventForms.filter((form: any) => form._id == selectedForm)[0]
                       }
                     />
                   )}
                 </Drawer>
               </>
             )}
-          </>
-        )}
       </div>
     </div>
   );

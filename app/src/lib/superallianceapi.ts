@@ -16,10 +16,10 @@ export function useSuperAllianceApi() {
     return config;
   });
 
-  const getForms = async () => {
+  const getForms = async (eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/forms/stand`
+        `${import.meta.env.VITE_API_URL}/api/forms/stand/${eventCode}`
       );
       const data = res.data;
       return data;
@@ -28,10 +28,10 @@ export function useSuperAllianceApi() {
     }
   };
 
-  const getTeams = async () => {
+  const getTeams = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/listTeams`
+        `${import.meta.env.VITE_API_URL}/api/teams/${year}/${eventCode}`
       );
       const data = res.data;
       return data;

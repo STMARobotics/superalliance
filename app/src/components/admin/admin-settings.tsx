@@ -62,7 +62,7 @@ function AdminSettingsForm({
         .catch(function () {
           toast.error("The settings failed to save. Please contact an admin!");
         });
-      setSelectedEvent(data.event == "none" ? "all" : data.event);
+      setSelectedEvent(data.event);
     })();
   }
   return (
