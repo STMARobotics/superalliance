@@ -23,8 +23,10 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
         * `npm update`
         * `npm install`
     * Create a file named `.env.local` and put the following configuration values in it:
-        * VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
-        * VITE_API_URL=<get_value_from_admin>
+        ```
+        VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
+        VITE_API_URL=<get_value_from_admin>
+        ```
     * `npm run dev` to start the application
 
 3. Set up the API application
@@ -33,14 +35,16 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
         * `npm install`
         * `npm install -g nodemon`
     * Create a file named `.env` and put the following configuration values in it:
-        * TBA_KEY=<get_value_from_admin>
-        * MONGODB_URI=<get_value_from_admin>
-        * CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
-        * CLERK_SECRET_KEY=<get_value_from_admin>
-        * ROBOT_IMAGE_DISTRO=robot-images.stmarobotics.org
-        * AWS_REGION=us-east-2
+        ```
+        TBA_KEY=<get_value_from_admin>
+        MONGODB_URI=<get_value_from_admin>
+        CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
+        CLERK_SECRET_KEY=<get_value_from_admin>
+        ROBOT_IMAGE_DISTRO=robot-images.stmarobotics.org
+        AWS_REGION=us-east-2
+        ```
     * In order to upload pit forms with images:
-      1) log in to the [AWS access portal](https://d-9067879019.awsapps.com/start) with your stmarobotics.org Google account
+      1) Log in to the [AWS access portal](https://d-9067879019.awsapps.com/start) with your stmarobotics.org Google account
       2) Choose _Access keys_
       3) Configure your access keys with an environment variable or credentials file
     * `npm run dev` to start the application
