@@ -36,7 +36,8 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
     * Create a file named `.env` and put the following configuration values in it:
         * TBA_KEY=<get_value_from_admin>
         * MONGODB_URI=<get_value_from_admin>
-        * API_URL="http://localhost:3000"
+        * VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
+        * CLERK_SECRET_KEY=<get_value_from_admin>
     * `npm run dev` to start the application
 
 ## Helper Scripts 
