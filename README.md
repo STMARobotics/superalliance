@@ -24,7 +24,6 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
         * `npm install`
     * Create a file named `.env.local` and put the following configuration values in it:
         * VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
-        * CLERK_SECRET_KEY=<get_value_from_admin>
         * VITE_API_URL=<get_value_from_admin>
     * `npm run dev` to start the application
 
