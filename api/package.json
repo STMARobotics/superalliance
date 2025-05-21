@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@clerk/express": "^1.4.19",
+    "@aws-sdk/client-s3": "^3.812.0",
+    "@aws-sdk/s3-request-presigner": "^3.812.0",
     "aws-serverless-express": "^3.4.0",
     "axios": "^1.9.0",
     "body-parser": "^1.20.2",

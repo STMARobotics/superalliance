@@ -21,9 +21,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import FormData from "form-data";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
+import { appConfig } from "@/config/app";
 
 export default function PitForm() {
   const [scroll, scrollTo] = useWindowScroll();
@@ -84,33 +84,42 @@ export default function PitForm() {
 
   const submitForm = (values: any) => {
     (async function () {
-      const pitForm = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.event}/${values?.teamNumber}`
-      );
-      if (pitForm.data !== "" && pitForm.data.eventCode === values.event)
-        return toast.error(
-          "A pit form for this team has already been submitted!"
-        );
+      let formExists = true;
+      try {
+        await api.get(
+          `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.event}/${values?.teamNumber}`)
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          formExists = false;
+        }
+      }
+      if (formExists) {
+        return toast.error("A pit form for this team has already been submitted!");
+      }
 
       if (!file) return toast.error("Please upload an image!");
-      var data = new FormData();
-      data.append("image", file);
 
-      var config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "https://api.imgbb.com/1/upload?key=1fa1a436f62b86f55a9ee6cda8cbb393",
+      // Get signed S3 URL from backend
+      const { data: s3Data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/form/pit/image-upload`,
+        {
+          "year": appConfig?.year,
+          "eventCode": values?.event,
+          "teamNumber": values?.teamNumber,
+          "fileType": file.type,
+        }
+      );
+
+      // Upload the image to S3
+      await axios.put(s3Data.url, file, {
         headers: {
-          Accept: "application/json",
+          "Content-Type": file.type,
         },
-        data: data,
-      };
-
-      const res = await axios(config);
+      });
 
       const struct = {
         usersName: user?.fullName,
-        robotImage: res.data.data.url,
+        robotImage: `${s3Data.fileUrl}`,
         ...values,
       };
       await api

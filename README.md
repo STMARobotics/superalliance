@@ -36,7 +36,15 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
     * Create a file named `.env` and put the following configuration values in it:
         * TBA_KEY=<get_value_from_admin>
         * MONGODB_URI=<get_value_from_admin>
-        * API_URL="http://localhost:3000"
+        * CLERK_PUBLISHABLE_KEY
+        * CLERK_SECRET_KEY
+        * API_URL=http://localhost:3000
+        * ROBOT_IMAGE_DISTRO=robot-images.stmarobotics.org
+        * AWS_REGION=us-east-2
+    * In order to upload pit forms with images:
+      1) log in to the [AWS access portal](https://d-9067879019.awsapps.com/start) with your stmarobotics.org Google account
+      2) Choose _Access keys_
+      3) Configure your access keys with an environment variable or credentials file
     * `npm run dev` to start the application
 
 ## Helper Scripts 
