@@ -31,8 +31,12 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
     .catch((err) => res.status(500).json({ error: err.message }));
 });
 
-formRouter.get("/api/forms/stand", requireAuth(), async (req, res) => {
-  const forms = await StandFormSchema.find({}).sort({
+formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) => {
+  const { eventCode } = req.params;
+  if (!eventCode)
+    return res.status(500).json({ error: "Missing event code" });
+
+  const forms = await StandFormSchema.find({event: eventCode}).sort({
     _id: -1,
   });
   return res.send(forms);

@@ -6,7 +6,7 @@ const CommentFormSchema = new Schema(
     event: String,
     teamNumber: Number,
     usersName: String,
-    comment: String,
+    comments: String,
   },
   { timestamps: true },
 );

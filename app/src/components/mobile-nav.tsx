@@ -87,16 +87,18 @@ export function MobileNav() {
               <MobileLink href={"/new/pit"} onOpenChange={setOpen}>
                 Pit Form
               </MobileLink>
-              <MobileLink href={"/data"} onOpenChange={setOpen}>
-                Data
-              </MobileLink>
-              <MobileLink href={"/analysis"} onOpenChange={setOpen}>
-                Analysis
-              </MobileLink>
               {user?.publicMetadata.role == "admin" && (
+                <>
+                <MobileLink href={"/data"} onOpenChange={setOpen}>
+                  Data
+                </MobileLink>
+                <MobileLink href={"/analysis"} onOpenChange={setOpen}>
+                  Analysis
+                </MobileLink>
                 <MobileLink href={"/admin"} onOpenChange={setOpen}>
                   Admin
                 </MobileLink>
+                </>
               )}
             </div>
           </ScrollArea>

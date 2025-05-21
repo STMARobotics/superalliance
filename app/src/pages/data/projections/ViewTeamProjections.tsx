@@ -10,9 +10,6 @@ import { useEffect, useState } from "react";
 
 function DataTeamProjections() {
   const {
-    forms,
-    teams,
-    totalAggregation,
     events,
     selectedEvent,
     eventForms,
@@ -44,162 +41,76 @@ function DataTeamProjections() {
 
   return (
     <>
-      {selectedEvent == "all" ? (
-        <>
-          {totalAggregation && (
-            <div className="h-full flex-col md:flex">
-              <TeamProjections
-                forms={forms}
-                teams={teams}
-                events={events}
-                aggregation={totalAggregation}
-                selectedTeam={selectedTeam}
-                setSelectedTeam={setSelectedTeam}
-              />
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          {eventAggregation && (
-            <div className="h-full flex-col md:flex">
-              <TeamProjections
-                forms={eventForms}
-                teams={eventTeams}
-                events={events}
-                aggregation={eventAggregation}
-                selectedTeam={selectedTeam}
-                setSelectedTeam={setSelectedTeam}
-              />
-            </div>
-          )}
-        </>
+      {eventAggregation && (
+        <div className="h-full flex-col md:flex">
+          <TeamProjections
+            forms={eventForms}
+            teams={eventTeams}
+            events={events}
+            aggregation={eventAggregation}
+            selectedTeam={selectedTeam}
+            setSelectedTeam={setSelectedTeam}
+          />
+        </div>
       )}
-      {selectedEvent == "all" ? (
+      {selectedTeam !== "" && eventAggregation && (
         <>
-          {selectedTeam !== "" && totalAggregation && (
-            <>
-              <SelectionTeamView
-                teams={teams}
-                aggregationData={
-                  totalAggregation?.filter((team: any) => {
-                    return team._id == Number(selectedTeam);
-                  })[0]
+          <SelectionTeamView
+            teams={eventTeams}
+            aggregationData={
+              eventAggregation?.filter((team: any) => {
+                return team._id == Number(selectedTeam);
+              })[0]
+            }
+            setSelectedTeam={setSelectedTeam}
+            pitFormData={pitFormData}
+            setFormsOpened={setFormListOpened}
+          />
+          <Modal
+            classNames={{
+              content: "bg-[#18181b]",
+              header: "bg-[#18181b]",
+            }}
+            opened={formListOpened}
+            onClose={() => setFormListOpened(false)}
+            title={"Forms"}
+            radius={"lg"}
+            size={"xl"}
+            overlayProps={{
+              backgroundOpacity: 0.55,
+              blur: 3,
+            }}
+            centered
+          >
+            <FormList
+              teamsPage={false}
+              forms={eventForms?.filter(
+                (form: any) => form.teamNumber == selectedTeam
+              )}
+              selectedForm={selectedForm}
+              setSelectedForm={setSelectedForm}
+              selectedEvent={selectedEvent}
+            />
+          </Modal>
+          <Drawer
+            offset={isMobile ? 0 : 8}
+            radius={isMobile ? "" : "md"}
+            opened={formOpened}
+            position="right"
+            onClose={() => {
+              setSelectedForm("");
+              setFormOpened(false);
+            }}
+            title="Form View"
+          >
+            {selectedForm && (
+              <FormView
+                formData={
+                  eventForms.filter((form: any) => form._id == selectedForm)[0]
                 }
-                setSelectedTeam={setSelectedTeam}
-                pitFormData={pitFormData}
-                setFormsOpened={setFormListOpened}
               />
-              <Modal
-                classNames={{
-                  content: "bg-[#18181b]",
-                  header: "bg-[#18181b]",
-                }}
-                opened={formListOpened}
-                onClose={() => setFormListOpened(false)}
-                title={"Forms"}
-                radius={"lg"}
-                size={"xl"}
-                overlayProps={{
-                  backgroundOpacity: 0.55,
-                  blur: 3,
-                }}
-                centered
-              >
-                <FormList
-                  teamsPage={false}
-                  forms={forms?.filter(
-                    (form: any) => form.teamNumber == selectedTeam
-                  )}
-                  selectedForm={selectedForm}
-                  setSelectedForm={setSelectedForm}
-                  selectedEvent={selectedEvent}
-                />
-              </Modal>
-              <Drawer
-                offset={isMobile ? 0 : 8}
-                radius={isMobile ? "" : "md"}
-                opened={formOpened}
-                position="right"
-                onClose={() => {
-                  setSelectedForm("");
-                  setFormOpened(false);
-                }}
-                title="Form View"
-              >
-                {selectedForm && (
-                  <FormView
-                    formData={
-                      forms.filter((form: any) => form._id == selectedForm)[0]
-                    }
-                  />
-                )}
-              </Drawer>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          {selectedTeam !== "" && eventAggregation && (
-            <>
-              <SelectionTeamView
-                teams={teams}
-                aggregationData={
-                  eventAggregation?.filter((team: any) => {
-                    return team._id == Number(selectedTeam);
-                  })[0]
-                }
-                setSelectedTeam={setSelectedTeam}
-                pitFormData={pitFormData}
-                setFormsOpened={setFormListOpened}
-              />
-              <Modal
-                classNames={{
-                  content: "bg-[#18181b]",
-                  header: "bg-[#18181b]",
-                }}
-                opened={formListOpened}
-                onClose={() => setFormListOpened(false)}
-                title={"Forms"}
-                radius={"lg"}
-                size={"xl"}
-                overlayProps={{
-                  backgroundOpacity: 0.55,
-                  blur: 3,
-                }}
-                centered
-              >
-                <FormList
-                  teamsPage={false}
-                  forms={eventForms?.filter(
-                    (form: any) => form.teamNumber == selectedTeam
-                  )}
-                  selectedForm={selectedForm}
-                  setSelectedForm={setSelectedForm}
-                  selectedEvent={selectedEvent}
-                />
-              </Modal>
-              <Drawer
-                offset={isMobile ? 0 : 8}
-                radius={isMobile ? "" : "md"}
-                opened={formOpened}
-                position="right"
-                onClose={() => {
-                  setSelectedForm("");
-                  setFormOpened(false);
-                }}
-                title="Form View"
-              >
-                {selectedForm && (
-                  <FormView
-                    formData={
-                      forms.filter((form: any) => form._id == selectedForm)[0]
-                    }
-                  />
-                )}
-              </Drawer>
-            </>
-          )}
+            )}
+          </Drawer>
         </>
       )}
     </>

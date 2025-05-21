@@ -20,7 +20,7 @@ function FormList({
   teamsPage: any;
   selectedEvent?: any;
 }) {
-  const { teams } = useSuperAlliance();
+  const { eventTeams } = useSuperAlliance();
   const [youtubeLink, setYoutubeLink] = useState<any>();
 
   const [opened, setOpened] = useState<boolean>(false);
@@ -98,9 +98,9 @@ function FormList({
               </div>
             </div>
             <div className="text-xs font-medium">
-              {teams?.length > 0 &&
+              {eventTeams?.length > 0 &&
                 `${
-                  teams?.filter(
+                  eventTeams?.filter(
                     (team: any) => team.teamNumber == item.teamNumber
                   )[0]?.teamName
                 } • `}

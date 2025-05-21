@@ -31,9 +31,6 @@ export default function TeamProjections({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = useLocation().pathname;
-  const newEvents = [{ short_name: "All Events", event_code: "all" }].concat(
-    events
-  );
   const [stat, setStat] = useState<string | null>("averages");
 
   useEffect(() => {
@@ -65,7 +62,7 @@ export default function TeamProjections({
             )}
           >
             {events && (
-              <EventSwitcher isCollapsed={isCollapsed} events={newEvents} />
+              <EventSwitcher isCollapsed={isCollapsed} events={events} />
             )}
           </div>
           <Separator />

@@ -22,8 +22,16 @@ teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
   return res.send(response.data);
 });
 
-teamRouter.get("/api/listTeams", requireAuth(), async (req, res) => {
+teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) => {
+  const { eventCode, year } = req.params;
+  if (!eventCode || !year)
+    return res.status(500).json({ error: "Missing year or event code" });
+
+
   const teamList = await StandFormSchema.aggregate([
+    {
+      $match: { event: eventCode }
+    },
     {
       $group: {
         _id: "$teamNumber",
@@ -52,7 +60,7 @@ teamRouter.get("/api/listTeams", requireAuth(), async (req, res) => {
         .catch(() => "Error");
       if (response === "Error") return res.send("");
       const rank = await axios.get(
-        `https://www.thebluealliance.com/api/v3/team/frc${_id}/event/2025cur/status`,
+        `https://www.thebluealliance.com/api/v3/team/frc${_id}/event/${year}${eventCode}/status`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
