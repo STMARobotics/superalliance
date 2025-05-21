@@ -85,6 +85,4 @@ pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res)
   }
 });
 
-// ...existing code...
-
 module.exports = pitFormRouter;
