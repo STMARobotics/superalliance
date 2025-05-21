@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { getMatchData } from "@/lib/superallianceapi";
+import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { toast } from "sonner";
 
 const SelectionCriticals = ({
@@ -21,6 +21,7 @@ const SelectionCriticals = ({
 }) => {
   const [youtubeLink, setYoutubeLink] = useState<any>();
   const [opened, setOpened] = useState<boolean>(false);
+  const { getMatchData } = useSuperAllianceApi();
 
   const handleYoutube = (matchNumber: any) => {
     (async function () {

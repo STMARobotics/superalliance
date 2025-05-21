@@ -4,8 +4,9 @@ const formRouter = Router();
 
 const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
+const { requireAuth, getAuth } = require("@clerk/express");
 
-formRouter.get("/api/form/stand/:formId", async (req, res) => {
+formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
   const formId = req.params?.formId;
   const data = await StandFormSchema.find({
     _id: formId,
@@ -14,7 +15,12 @@ formRouter.get("/api/form/stand/:formId", async (req, res) => {
   return res.send(data[0]);
 });
 
-formRouter.delete("/api/form/stand/:formId", async (req, res) => {
+formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => {
+  const userRole = getAuth(req).sessionClaims?.data?.role;
+  if (userRole !== "admin") {
+    return res.status(403).json({ error: "Forbidden: Admins only" });
+  }
+
   const formId = req.params?.formId;
   await StandFormSchema.deleteOne({
     _id: formId,
@@ -25,14 +31,14 @@ formRouter.delete("/api/form/stand/:formId", async (req, res) => {
     .catch((err) => res.status(500).json({ error: err.message }));
 });
 
-formRouter.get("/api/forms/stand", async (req, res) => {
+formRouter.get("/api/forms/stand", requireAuth(), async (req, res) => {
   const forms = await StandFormSchema.find({}).sort({
     _id: -1,
   });
   return res.send(forms);
 });
 
-formRouter.post("/api/form/stand/submit", async (req, res) => {
+formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
   const data = req.body;
   const sendForm = await new StandFormSchema({
     _id: new mongoose.Types.ObjectId(),
