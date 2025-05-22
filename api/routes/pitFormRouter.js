@@ -74,6 +74,7 @@ pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res)
     Bucket: bucket,
     Key: key,
     ContentType: fileType,
+    CacheControl: "public, max-age=31536000, immutable", // file name is unique, content will never change
   });
 
   try {
