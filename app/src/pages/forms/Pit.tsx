@@ -100,7 +100,7 @@ export default function PitForm() {
       if (!file) return toast.error("Please upload an image!");
 
       // Get signed S3 URL from backend
-      const { data: s3Data } = await axios.post(
+      const { data: s3Data } = await api.post(
         `${import.meta.env.VITE_API_URL}/api/form/pit/image-upload`,
         {
           "year": appConfig?.year,
@@ -114,6 +114,7 @@ export default function PitForm() {
       await axios.put(s3Data.url, file, {
         headers: {
           "Content-Type": file.type,
+          "Cache-Control": "public, max-age=31536000, immutable"
         },
       });
 
