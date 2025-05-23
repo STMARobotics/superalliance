@@ -46,7 +46,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy
-        uses: reggionick/s3-deploy@v3
+        uses: reggionick/s3-deploy@v4
         with:
           folder: app/dist
           bucket: ${{ secrets.S3_BUCKET }}
@@ -54,5 +54,6 @@ jobs:
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
           invalidation: /
           delete-removed: true
-          no-cache: true
+          # Browser cache for 20 minutes, CloudFront cache for 24 hours since we manually invalidate on deploy
+          cache-control: 'public, max-age=1200, s-maxage=86400, must-revalidate'
           private: true
