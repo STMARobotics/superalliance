@@ -1,4 +1,4 @@
-import { Image, ScrollArea } from "@mantine/core";
+import { Image } from "@mantine/core";
 import { TabsContent, TabsTrigger, Tabs, TabsList } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import {
 import { toast } from "sonner";
 import { IconRobot } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import SelectionPitFormView from "@/components/selection/selection-pit-form-view";
+import PitFormView from "../pit-form-view";
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
 
 const SelectionCompareView = ({
@@ -142,22 +142,20 @@ const SelectionCompareView = ({
                     <CardTitle>Image</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Card className="h-[45vh] flex justify-center items-center">
-                      {pitForm?.robotImage ? (
-                        <Image
-                          fit="contain"
-                          radius={"md"}
-                          mah={"100%"}
-                          src={`${pitForm?.robotImage}`}
-                        />
-                      ) : (
-                        <div className="flex justify-center flex-col gap-5 items-center h-full">
-                          <h1 className="text-3xl font-bold tracking-tight text-center">
-                            No Image Found!
-                          </h1>
-                        </div>
-                      )}
-                    </Card>
+                    {pitForm?.robotImage ? (
+                      <Image
+                        fit="contain"
+                        radius={"md"}
+                        mah={"100%"}
+                        src={`${pitForm?.robotImage}`}
+                      />
+                    ) : (
+                      <div className="flex justify-center flex-col gap-5 items-center h-full">
+                        <h1 className="text-3xl font-bold tracking-tight text-center">
+                          No Image Found!
+                        </h1>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -295,22 +293,20 @@ const SelectionCompareView = ({
                     <CardTitle>Image</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Card className="h-[45vh] flex justify-center items-center">
-                      {pitForm?.robotImage ? (
-                        <Image
-                          fit="contain"
-                          radius={"md"}
-                          mah={"100%"}
-                          src={`${pitForm?.robotImage}`}
-                        />
-                      ) : (
-                        <div className="flex justify-center flex-col gap-5 items-center h-full">
-                          <h1 className="text-3xl font-bold tracking-tight text-center">
-                            No Image Found!
-                          </h1>
-                        </div>
-                      )}
-                    </Card>
+                    {pitForm?.robotImage ? (
+                      <Image
+                        fit="contain"
+                        radius={"md"}
+                        mah={"100%"}
+                        src={`${pitForm?.robotImage}`}
+                      />
+                    ) : (
+                      <div className="flex justify-center flex-col gap-5 items-center h-full">
+                        <h1 className="text-3xl font-bold tracking-tight text-center">
+                          No Image Found!
+                        </h1>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -321,39 +317,37 @@ const SelectionCompareView = ({
                   <CardHeader>
                     <CardTitle>Quick Stats</CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[45vh]">
-                    <ScrollArea className="h-[45vh] w-full">
-                      <div className="space-y-2">
-                        {averages.map((item: any, index: any) => (
-                          <div
-                            key={index}
-                            className={cn(
-                              buttonVariants({
-                                variant: "default",
-                                size: "sm",
-                              }),
-                              "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
-                              "justify-between w-full"
-                            )}
+                  <CardContent>
+                    <div className="space-y-2">
+                      {averages.map((item: any, index: any) => (
+                        <div
+                          key={index}
+                          className={cn(
+                            buttonVariants({
+                              variant: "default",
+                              size: "sm",
+                            }),
+                            "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                            "justify-between w-full"
+                          )}
+                        >
+                          {item.label}
+                          <span
+                            className={cn("text-background dark:text-white")}
                           >
-                            {item.label}
-                            <span
-                              className={cn("text-background dark:text-white")}
-                            >
-                              {item.value}
-                              {Math.sign(statsDifference[item.statKey]) == 1 ? (
-                                <>
-                                  {" "}
-                                  <span className="text-green-500 underline text-[1rem]">
-                                    +{statsDifference[item.statKey]}
-                                  </span>
-                                </>
-                              ) : null}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
+                            {item.value}
+                            {Math.sign(statsDifference[item.statKey]) == 1 ? (
+                              <>
+                                {" "}
+                                <span className="text-green-500 underline text-[1rem]">
+                                  +{statsDifference[item.statKey]}
+                                </span>
+                              </>
+                            ) : null}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -411,39 +405,37 @@ const SelectionCompareView = ({
                   <CardHeader>
                     <CardTitle>Quick Stats</CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[45vh]">
-                    <ScrollArea className="h-[45vh] w-full">
-                      <div className="space-y-2">
-                        {averages.map((item: any, index: any) => (
-                          <div
-                            key={index}
-                            className={cn(
-                              buttonVariants({
-                                variant: "default",
-                                size: "sm",
-                              }),
-                              "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
-                              "justify-between w-full"
-                            )}
+                  <CardContent>
+                    <div className="space-y-2">
+                      {averages.map((item: any, index: any) => (
+                        <div
+                          key={index}
+                          className={cn(
+                            buttonVariants({
+                              variant: "default",
+                              size: "sm",
+                            }),
+                            "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                            "justify-between w-full"
+                          )}
+                        >
+                          {item.label}
+                          <span
+                            className={cn("text-background dark:text-white")}
                           >
-                            {item.label}
-                            <span
-                              className={cn("text-background dark:text-white")}
-                            >
-                              {item.value}
-                              {Math.sign(statsDifference[item.statKey]) == 1 ? (
-                                <>
-                                  {" "}
-                                  <span className="text-green-500 underline text-[1rem]">
-                                    +{statsDifference[item.statKey]}
-                                  </span>
-                                </>
-                              ) : null}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
+                            {item.value}
+                            {Math.sign(statsDifference[item.statKey]) == 1 ? (
+                              <>
+                                {" "}
+                                <span className="text-green-500 underline text-[1rem]">
+                                  +{statsDifference[item.statKey]}
+                                </span>
+                              </>
+                            ) : null}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -454,9 +446,8 @@ const SelectionCompareView = ({
           value="pitform"
           className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"
         >
-          <SelectionPitFormView
+          <PitFormView
             pitFormData={pitForm}
-            aggregationData={aggregation}
           />
         </TabsContent>
         <TabsContent

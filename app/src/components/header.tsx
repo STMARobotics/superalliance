@@ -9,13 +9,9 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
-  OrganizationSwitcher,
-  useUser,
 } from "@clerk/clerk-react";
 
 const Header = () => {
-  const { user } = useUser();
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="px-4 flex h-14 w-full items-center">
@@ -29,11 +25,6 @@ const Header = () => {
         <div className="flex-1 items-center justify-between space-x-2 md:justify-end hidden sm:flex">
           <nav className="flex items-center gap-2">
             <SignedIn>
-              <div className="px-0 py-0 pt-2">
-                {user?.publicMetadata.role == "admin" && (
-                  <OrganizationSwitcher hidePersonal />
-                )}
-              </div>
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
