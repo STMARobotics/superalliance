@@ -4,7 +4,7 @@ import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 import path, { resolve } from "path";
 
 const manifestForPlugin: Partial<VitePWAOptions> = {
-  registerType: "prompt",
+  registerType: "autoUpdate",
   includeAssets: ["favicon.ico", "images/superalliancelogo.png"],
   manifest: {
     name: "SuperAlliance",
