@@ -55,5 +55,5 @@ jobs:
           invalidation: /
           delete-removed: true
           # Browser cache for 20 minutes, CloudFront cache for 24 hours since we manually invalidate on deploy
-          cache-control: 'public, max-age=1200, s-maxage=86400, must-revalidate'
+          cacheControl: 'public, max-age=1200, s-maxage=86400, must-revalidate'
           private: true
