@@ -4,7 +4,6 @@ import {
   Affix,
   Button,
   Group,
-  NumberInput,
   Select,
   TextInput,
   Textarea,
@@ -28,9 +27,24 @@ export default function CommentsForm() {
   const [scroll, scrollTo] = useWindowScroll();
   const { user } = useUser();
   const navigate = useNavigate();
-  const { events, appSettings } = useSuperAlliance();
-  const [eventData, setEventData] = useState([]);
+  const { events, appSettings, eventTeams } = useSuperAlliance();
+  const [ eventData, setEventData] = useState([]);
+  const [ eventTeamsData, setEventTeamsData ] = useState([]);
   const { api } = useSuperAllianceApi();
+
+  const form = useForm<CommentsFormValues>({
+    initialValues: {
+      event: null,
+      teamNumber: null,
+      comments: "",
+    },
+
+    validate: {
+      event: isNotEmpty("This cannot be empty"),
+      teamNumber: isNotEmpty("This cannot be empty"),
+      comments: isNotEmpty("This cannot be empty"),
+    },
+  });
 
   useEffect(() => {
     if (!events) return;
@@ -49,21 +63,16 @@ export default function CommentsForm() {
     if (appSettings?.event !== "none") {
       form.setFieldValue("event", appSettings?.event);
     }
-  });
+  }, [appSettings?.event]);
 
-  const form = useForm<CommentsFormValues>({
-    initialValues: {
-      event: null,
-      teamNumber: null,
-      comments: "",
-    },
-
-    validate: {
-      event: isNotEmpty("This cannot be empty"),
-      teamNumber: isNotEmpty("This cannot be empty"),
-      comments: isNotEmpty("This cannot be empty"),
-    },
-  });
+  useEffect(() => {
+    if (!eventTeams) return;
+    if (eventTeams?.length > 0) {
+      setEventTeamsData(
+        eventTeams.map((team: any) => team.teamNumber.toString())
+      );
+    }
+  }, [eventTeams]);
 
   const submitForm = async (values: any) => {
     const struct = {
@@ -137,14 +146,20 @@ export default function CommentsForm() {
           />
         )}
 
-        <NumberInput
-          label="Team Number"
-          placeholder="7028"
+        <Select
+          data={eventTeamsData.map((team: any) => {
+            return {
+              label: team,
+              value: team,
+            };
+          })}
+          label="Team number"
+          placeholder="Team number"
           className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          maxLength={4}
+          description={
+            "The number of the team for the robot you are scouting."
+          }
+          required
           {...form.getInputProps("teamNumber")}
         />
 

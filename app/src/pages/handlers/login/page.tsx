@@ -11,7 +11,6 @@ export default function SignInPage() {
             },
           }}
           path="/login"
-          routing="virtual"
         />
       </section>
     </div>

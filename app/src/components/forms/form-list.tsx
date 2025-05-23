@@ -58,13 +58,14 @@ function FormList({
         </AspectRatio>
       </Modal>
       {forms.map((item: any, index: any) => (
-        <button
+        <div
           key={index}
           className={cn(
             "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent]",
             selectedForm === item._id && !teamsPage && "bg-muted"
           )}
           onClick={() => setSelectedForm(item._id)}
+          style={{ cursor: "pointer" }}
         >
           <div className="flex w-full flex-col gap-1">
             <div className="flex items-center">
@@ -127,7 +128,7 @@ function FormList({
               </div>
             ) : null}
           </div>
-        </button>
+        </div>
       ))}
     </div>
   );
