@@ -23,7 +23,7 @@ const settingsRouter = require("./routes/settingsRouter");
 const commentRouter = require("./routes/commentRouter");
 const teamSelectionRouter = require("./routes/teamSelectionRouter");
 app.use(cors(corsOptions));
-app.options("/api/*", cors());
+app.options("/^\/api\/.*$/", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(aggregationRouter);
