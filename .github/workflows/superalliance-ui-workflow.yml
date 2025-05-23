@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'app/**'
+      - '.github/workflows/superalliance-ui-workflow.yml'
   workflow_dispatch: # this enables you to manually trigger the build
   
 jobs:
@@ -45,15 +46,14 @@ jobs:
           role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Deploy
-        uses: reggionick/s3-deploy@v4
-        with:
-          folder: app/dist
-          bucket: ${{ secrets.S3_BUCKET }}
-          bucket-region: ${{ secrets.S3_BUCKET_REGION }}
-          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          invalidation: /
-          delete-removed: true
-          # Browser cache for 20 minutes, CloudFront cache for 24 hours since we manually invalidate on deploy
-          cacheControl: 'public, max-age=1200, s-maxage=86400, must-revalidate'
-          private: true
+      - name: Sync to AWS S3
+        run: |
+          aws s3 sync \
+          app/dist \
+          s3://${{ secrets.S3_BUCKET }} \
+          --no-progress \
+          --delete \
+          --cache-control "public, max-age=1200, s-maxage=86400, must-revalidate"
+
+      - name: Invalidate Cloudfront Cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths '/*'
