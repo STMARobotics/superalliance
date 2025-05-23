@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'api/**'
+      - '.github/workflows/superalliance-api-workflow.yml'
   workflow_dispatch: # this enables you to manually trigger the build
   
 jobs:
