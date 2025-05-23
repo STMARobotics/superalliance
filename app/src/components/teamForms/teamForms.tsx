@@ -214,16 +214,9 @@ function TeamForms({
                   </ScrollArea>
                 </TabsContent>
                 <TabsContent value="pit" className="m-0">
-                  {pitFormData ? (
+                  <ScrollArea className="h-[calc(100vh-7.85rem)]">
                     <PitFormView pitFormData={pitFormData} />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <h1 className="text-4xl font-bold">No pit form found!</h1>
-                      <p className="text-xl text-center text-muted-foreground">
-                        Please submit a pit form for this team!
-                      </p>
-                    </div>
-                  )}
+                  </ScrollArea>
                 </TabsContent>
               </Tabs>
             ) : (

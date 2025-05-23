@@ -1,5 +1,5 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { Modal, Image, ScrollArea, Drawer } from "@mantine/core";
+import { Modal, Image, Drawer } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { TabsContent, TabsTrigger, Tabs, TabsList } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { IconRobot } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { cn, getRobotType } from "@/lib/utils";
-import SelectionPitFormView from "@/components/selection/selection-pit-form-view";
+import PitFormView from "../pit-form-view";
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
@@ -380,29 +380,27 @@ export const DataDisplay = ({
                   <CardTitle>Image</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Card className="h-[45vh] flex justify-center items-center">
-                    {pitFormData?.robotImage ? (
-                      <Image
-                        fit="contain"
-                        radius={"md"}
-                        mah={"100%"}
-                        src={`${pitFormData?.robotImage}`}
-                      />
-                    ) : (
-                      <div className="flex justify-center flex-col gap-5 items-center h-full">
-                        <h1 className="text-3xl font-bold tracking-tight text-center">
-                          No Image Found!
-                        </h1>
-                        <Button
-                          className="text-lg"
-                          onClick={() => navigate("/new/pit")}
-                        >
-                          <ClipboardCopy className="mr-2 h-6 w-6" />
-                          Submit Pit Form
-                        </Button>
-                      </div>
-                    )}
-                  </Card>
+                  {pitFormData?.robotImage ? (
+                    <Image
+                      fit="contain"
+                      radius={"md"}
+                      mah={"100%"}
+                      src={`${pitFormData?.robotImage}`}
+                    />
+                  ) : (
+                    <div className="flex justify-center flex-col gap-5 items-center h-full">
+                      <h1 className="text-3xl font-bold tracking-tight text-center">
+                        No Image Found!
+                      </h1>
+                      <Button
+                        className="text-lg"
+                        onClick={() => navigate("/new/pit")}
+                      >
+                        <ClipboardCopy className="mr-2 h-6 w-6" />
+                        Submit Pit Form
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               <Card className="col-span-3 md:col-span-2">
@@ -410,31 +408,29 @@ export const DataDisplay = ({
                   <CardTitle>Quick Stats</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-[45vh] w-full">
-                    <div className="space-y-2">
-                      {averages.map((item: any, index: any) => (
-                        <div
-                          key={index}
-                          className={cn(
-                            buttonVariants({
-                              variant: "default",
-                              size: "sm",
-                            }),
-                            "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
-                            "justify-between w-full"
-                          )}
+                  <div className="space-y-2">
+                    {averages.map((item: any, index: any) => (
+                      <div
+                        key={index}
+                        className={cn(
+                          buttonVariants({
+                            variant: "default",
+                            size: "sm",
+                          }),
+                          "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                          "justify-between w-full"
+                        )}
+                      >
+                        <BadgeIcon className="mr-2 h-4 w-4" />
+                        {item.label}
+                        <span
+                          className={cn("text-background dark:text-white")}
                         >
-                          <BadgeIcon className="mr-2 h-4 w-4" />
-                          {item.label}
-                          <span
-                            className={cn("text-background dark:text-white")}
-                          >
-                            {item.value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
               <Card className="col-span-3 md:col-span-2">
@@ -493,9 +489,8 @@ export const DataDisplay = ({
           value="pitform"
           className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"
         >
-          <SelectionPitFormView
+          <PitFormView
             pitFormData={pitFormData}
-            aggregationData={aggregationData}
           />
         </TabsContent>
         <TabsContent

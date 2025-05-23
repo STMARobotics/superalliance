@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
-  OrganizationSwitcher,
   SignedIn,
   SignedOut,
   UserButton,
@@ -24,11 +23,6 @@ export function MobileNav() {
 
   return (
     <div className="flex gap-3 flex-row">
-      <div className="py-0 px-0 pt-1">
-        {user?.publicMetadata.role == "admin" && (
-          <OrganizationSwitcher hidePersonal />
-        )}
-      </div>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button

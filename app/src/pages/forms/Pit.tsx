@@ -11,7 +11,6 @@ import {
   FileButton,
   Card,
   Image,
-  NumberInput,
   Select,
 } from "@mantine/core";
 import { useForm, isNotEmpty } from "@mantine/form";
@@ -32,8 +31,9 @@ export default function PitForm() {
 
   const [file, setFile] = useState<File | null>(null);
 
-  const { events, appSettings } = useSuperAlliance();
-  const [eventData, setEventData] = useState([]);
+  const { events, appSettings, eventTeams } = useSuperAlliance();
+  const [ eventData, setEventData ] = useState([]);
+  const [ eventTeamsData, setEventTeamsData ] = useState([]);
   const { api } = useSuperAllianceApi();
 
   useEffect(() => {
@@ -54,6 +54,15 @@ export default function PitForm() {
       pitForm.setFieldValue("event", appSettings?.event);
     }
   }, [appSettings]);
+
+  useEffect(() => {
+    if (!eventTeams) return;
+    if (eventTeams?.length > 0) {
+      setEventTeamsData(
+        eventTeams.map((team: any) => team.teamNumber.toString())
+      );
+    }
+  }, [eventTeams]);
 
   const pitForm = useForm({
     initialValues: {
@@ -186,14 +195,20 @@ export default function PitForm() {
           />
         )}
 
-        <NumberInput
+        <Select
+          data={eventTeamsData.map((team: any) => {
+            return {
+              label: team,
+              value: team,
+            };
+          })}
           label="Team number"
-          placeholder="7028"
+          placeholder="Team number"
           className="pb-4"
-          allowDecimal={false}
-          allowNegative={false}
-          hideControls
-          maxLength={5}
+          description={
+            "The number of the team for the robot you are scouting."
+          }
+          required
           {...pitForm.getInputProps("teamNumber")}
         />
 
