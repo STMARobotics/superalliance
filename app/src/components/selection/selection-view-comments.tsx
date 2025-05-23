@@ -75,7 +75,7 @@ const SelectionComments = ({
                   {match.comments}
                 </Text>
 
-                <Group justify="space-between" className={`mt-[1rem]`}>
+                <Group justify="space-between" className={`mt-4`}>
                   <Center>
                     <Avatar size={24} radius="xl" mr="xs" color="red">
                       {(() => {

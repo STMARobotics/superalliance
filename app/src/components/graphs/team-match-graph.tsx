@@ -38,7 +38,7 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
     <div className="w-full flex flex-col">
       <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
         <Select
-          className="flex-shrink-0 w-auto h-10 text-sm mr-2"
+          className="shrink-0 w-auto h-10 text-sm mr-2"
           data={yAxisOptions}
           onChange={(e: any) => setYAxis(e)}
           value={yAxis}

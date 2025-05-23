@@ -69,7 +69,7 @@ export function BoardColumn({
   const variants = cva(
     `${
       printMode ? "" : "h-[66vh] max-h-[66vh]"
-    } md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col flex-shrink-0 snap-center`,
+    } md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col shrink-0 snap-center`,
     {
       variants: {
         dragging: {
@@ -98,7 +98,7 @@ export function BoardColumn({
       </CardHeader>
       <ScrollArea>
         <CardContent
-          className={`flex flex-grow flex-col gap-2 p-2 ${
+          className={`flex grow flex-col gap-2 p-2 ${
             printMode ? "mb-10" : ""
           }`}
         >

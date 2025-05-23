@@ -2,7 +2,7 @@
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import HC_more from "highcharts/highcharts-more";
+import "highcharts/highcharts-more";
 
 import { useEffect, useState } from "react";
 
@@ -20,10 +20,6 @@ const formatNumber = (num: number) => {
   }
   return num.toString();
 };
-
-if (typeof Highcharts === "object") {
-  HC_more(Highcharts);
-}
 
 type ScatterData = {
   x: number;

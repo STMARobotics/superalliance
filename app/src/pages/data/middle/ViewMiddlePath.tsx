@@ -39,7 +39,7 @@ function DataMiddlePath() {
   return (
     <div className="flex flex-col gap-4 items-center justify-center p-10">
       {selectedEvent && (
-        <div className="flex flex-col gap-4 w-[100vw] md:w-[20vw] items-center justify-center">
+        <div className="flex flex-col gap-4 w-screen md:w-[20vw] items-center justify-center">
           event: {selectedEvent}
           <NumberInput
             w={"90%"}

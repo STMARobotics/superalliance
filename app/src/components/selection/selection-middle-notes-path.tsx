@@ -38,7 +38,7 @@ const SelectionMiddleNotesPath = ({
                     <Accordion.Panel>
                       <Card
                         key={index}
-                        className={`h-[100%] w-[${
+                        className={`h-full w-[${
                           fullWidth ? "100vw" : "55vw"
                         }]`}
                       >

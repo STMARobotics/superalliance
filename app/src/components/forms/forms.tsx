@@ -134,7 +134,7 @@ function Forms({
             />
           </div>
           <Separator />
-          <div className="h-[4.25rem] bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="h-17 bg-background/95 p-4 backdrop-blur supports-backdrop-filter:bg-background/60">
             <form>
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />

@@ -13,7 +13,7 @@ import {
 
 const Header = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="px-4 flex h-14 w-full items-center">
         <MainNav />
         <div className="flex w-full flex-row items-center justify-between space-x-0 sm:hidden">
