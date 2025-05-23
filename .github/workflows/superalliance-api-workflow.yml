@@ -26,6 +26,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
 
       - name: Install Claudia.js
         run: npm install claudia -g
