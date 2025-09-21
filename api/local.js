@@ -1,11 +1,5 @@
 const app = require("./index");
-const mongoose = require("mongoose");
-require("dotenv").config()
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(console.log("Connected to Mongo!"))
-  .catch(console.error);
-// run the server locally
-app.listen(3000, () =>
-  console.log("Server listening at http://localhost:3000")
-);
+require("dotenv").config();
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server listening at http://localhost:${PORT}`));

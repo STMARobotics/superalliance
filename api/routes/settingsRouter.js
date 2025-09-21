@@ -2,8 +2,7 @@ const { Router } = require("express");
 
 const settingsRouter = Router();
 
-const SuperAllianceConfig = require("../models/SuperAllianceConfig");
-const mongoose = require("mongoose");
+const { putConfig, getConfig } = require("../dynamo/configModel");
 const { requireAuth, getAuth } = require("@clerk/express");
 
 settingsRouter.post("/api/settings/app/save", requireAuth(), async (req, res) => {
@@ -14,26 +13,13 @@ settingsRouter.post("/api/settings/app/save", requireAuth(), async (req, res) =>
   }
   const data = req.body;
 
-  const currSettings = await SuperAllianceConfig.findOne({});
-
-  if (!currSettings) {
-    const sendSettings = await new SuperAllianceConfig({
-      _id: new mongoose.Types.ObjectId(),
-      event: data.event,
-    });
-
-    await sendSettings.save().catch((err) => {
-      return res.status(500).send(err);
-    });
-  } else {
-    await SuperAllianceConfig.findOneAndReplace({}, data);
-  }
+  await putConfig({ event: data.event }, req.query?.year || "DEFAULT");
 
   return res.send("Submitted Settings!");
 });
 
 settingsRouter.get("/api/settings/app", requireAuth(), async (req, res) => {
-  const settings = await SuperAllianceConfig.findOne({});
+  const settings = await getConfig(req.query?.year || "DEFAULT");
   if (!settings) return res.send({});
   return res.send(settings);
 });

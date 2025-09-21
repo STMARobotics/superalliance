@@ -1,72 +1,68 @@
-const { Router } = require("express");
+const express = require("express");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { putPitForm: createPitForm, getPitForm, getPitFormsForEvent: listPitFormsByEvent } = require("../dynamo/pitFormModel");
 
-const pitFormRouter = Router();
+const router = express.Router();
 
-const PitFormSchema = require("../models/PitFormSchema");
-const mongoose = require("mongoose");
-const { requireAuth, getAuth } = require("@clerk/express");
-
-pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
-  const data = req.body;
-  const sendForm = await new PitFormSchema({
-    _id: new mongoose.Types.ObjectId(),
-    event: data.event,
-    teamNumber: data.teamNumber,
-    usersName: data.usersName,
-    robotImage: data.robotImage,
-    notDo: data.notDo,
-    protectedElectronics: data.protectedElectronics,
-    batterySecured: data.batterySecured,
-    highCenterOfMass: data.highCenterOfMass,
-    coralStuck: data.coralStuck,
-    pickupGround: data.pickupGround,
-    pickupSource: data.pickupSource,
-    pickupOther: data.pickupOther,
-    pickupOtherExplain: data.pickupOtherExplain,
-    idealAuto: data.idealAuto,
-    strongestValue: data.strongestValue,
-    weakestValue: data.weakestValue,
-    extraComments: data.extraComments,
-    pitRating: data.pitRating,
-    robotRating: data.robotRating,
-  });
-
-  const exists = await PitFormSchema.exists({
-    teamNumber: sendForm.teamNumber,
-    event: sendForm.event,
-  });
-
-  if (exists) return res.status(400).json({ error: "Pit form already exists for this team and event" });
-
-  await sendForm.save().catch((err) => {
-    return res.status(500).send(err);
-  });
-
-  return res.send("Submitted Form!");
+// GET /api/form/pit/:eventCode - list pit forms for an event
+router.get("/:eventCode", async (req, res) => {
+  try {
+    const { eventCode } = req.params;
+    const items = await listPitFormsByEvent(eventCode);
+    res.json(items);
+  } catch (err) {
+    console.error("listPitFormsByEvent error", err);
+    res.status(500).json({ message: "Failed to list pit forms" });
+  }
 });
 
-pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (req, res) => {
-  const teamNumber = req.params?.teamNumber;
-  const eventCode = req.params?.eventCode;
-  const data = await PitFormSchema.find({
-    teamNumber: teamNumber,
-    event: eventCode,
-  }).catch((err) => null);
-  if (!data || data.length == 0) return res.status(404).json({ error: "Form not found" });
-  return res.json(data[0]);
+// GET /api/form/pit/:eventCode/:teamNumber - get one team's pit form
+router.get("/:eventCode/:teamNumber", async (req, res) => {
+  try {
+    const { eventCode, teamNumber } = req.params;
+    const item = await getPitForm(eventCode, teamNumber);
+    if (!item) return res.status(404).json({ message: "Not found" });
+    res.json(item);
+  } catch (err) {
+    console.error("getPitForm error", err);
+    res.status(500).json({ message: "Failed to get pit form" });
+  }
+});
+
+// POST /api/form/pit/submit - create a pit form (one per event+team)
+router.post("/submit", async (req, res) => {
+  try {
+    const body = req.body || {};
+    if (!body.event || !body.teamNumber) {
+      return res.status(400).json({ message: "event and teamNumber are required" });
+    }
+    // Check if a form already exists for this event+team
+    const existing = await getPitForm(body.event, body.teamNumber);
+    if (existing) {
+      return res.status(409).json({ message: "Pit form already exists for this team at this event" });
+    }
+    // Create the new pit form
+    const item = await createPitForm(body);
+    res.status(201).json(item);
+  } catch (err) {
+    if (err?.name === "ConditionalCheckFailedException") {
+      return res.status(409).json({ message: "Pit form already exists" });
+    }
+    console.error("createPitForm error", err);
+    res.status(500).json({ message: "Failed to create pit form" });
+  }
 });
 
 // Create a signed URL for uploading robot pit images to S3
-pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res) => {
+router.post("/image-upload", async (req, res) => {
   const { year, teamNumber, eventCode, fileType } = req.body;
   if (!year || !teamNumber || !eventCode || !fileType) {
     return res.status(400).json({ error: "year, teamNumber, eventCode, and fileType are required" });
   }
 
-  const s3 = new S3Client({ region: process.env.AWS_REGION });
-  const bucket = process.env.ROBOT_IMAGE_BUCKET;
+  const s3 = new S3Client({ region: process.env.S3_REGION || process.env.AWS_REGION });
+  const bucket = process.env.S3_BUCKET;
   const extension = fileType.split("/")[1];
   const key = `${year}/${eventCode}/${teamNumber}_${Date.now()}.${extension}`;
 
@@ -78,12 +74,14 @@ pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res)
   });
 
   try {
-    const url = await getSignedUrl(s3, command, { expiresIn: 300 }); // 5 minutes
-    const fileUrl = `https://${process.env.ROBOT_IMAGE_DISTRO}/${key}`;
+  const expiresIn = Number(process.env.SIGNED_URL_TTL || 300);
+  const url = await getSignedUrl(s3, command, { expiresIn });
+  const distro = process.env.ROBOT_IMAGE_DISTRO || `${bucket}.s3.${process.env.S3_REGION || process.env.AWS_REGION}.amazonaws.com`;
+  const fileUrl = `https://${distro}/${key}`;
     return res.json({ url, fileUrl, key });
   } catch (err) {
     return res.status(500).json({ error: "Failed to generate signed URL" });
   }
 });
 
-module.exports = pitFormRouter;
+module.exports = router;

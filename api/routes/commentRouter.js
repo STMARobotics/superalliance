@@ -2,17 +2,18 @@ const { Router } = require("express");
 
 const commentRouter = Router();
 
-const CommentFormSchema = require("../models/CommentFormSchema");
-const mongoose = require("mongoose");
+const { addComment, getCommentsForEventTeam } = require("../dynamo/commentFormModel");
 const { requireAuth } = require("@clerk/express");
 
-commentRouter.get("/api/form/comments/:formId", requireAuth(), async (req, res) => {
-  const formId = req.params?.formId;
-  const data = await CommentFormSchema.find({
-    _id: formId,
-  }).catch((err) => null);
-  if (!data) return res.status(404).json({ error: "Form not found" });
-  return res.send(data[0]);
+// New pattern: fetch by event/team instead of formId (Dynamo doesn't use single-id access by default here)
+commentRouter.get("/api/forms/comments/:event/:teamNumber", requireAuth(), async (req, res) => {
+  try {
+    const { event, teamNumber } = req.params;
+    const items = await getCommentsForEventTeam(event, Number(teamNumber));
+    return res.send(items);
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to list comments" });
+  }
 });
 
 commentRouter.get("/api/forms/comments", requireAuth(), async (req, res) => {
@@ -23,20 +24,21 @@ commentRouter.get("/api/forms/comments", requireAuth(), async (req, res) => {
 });
 
 commentRouter.post("/api/form/comments/submit", requireAuth(), async (req, res) => {
-  const data = req.body;
-  const sendForm = await new CommentFormSchema({
-    _id: new mongoose.Types.ObjectId(),
-    event: data.event,
-    teamNumber: data.teamNumber,
-    usersName: data.usersName,
-    comments: data.comments,
-  });
-
-  await sendForm.save().catch((err) => {
-    return res.status(500).send(err);
-  });
-
-  return res.send("Submitted Form!");
+  try {
+    const data = req.body;
+    if (!data?.event || data?.teamNumber == null) {
+      return res.status(400).json({ error: "event and teamNumber are required" });
+    }
+    await addComment({
+      event: data.event,
+      teamNumber: data.teamNumber,
+      usersName: data.usersName,
+      comments: data.comments,
+    });
+    return res.send("Submitted Form!");
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to submit comment" });
+  }
 });
 
 module.exports = commentRouter;
