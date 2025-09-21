@@ -2,7 +2,8 @@ const { Router } = require("express");
 
 const teamRouter = Router();
 
-const { getStandFormsByEvent } = require("../dynamo/standFormModel");
+const { queryAll } = require("../dynamo/queryAll");
+const { TABLES } = require("../dynamo/tables");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const { requireAuth } = require("@clerk/express");
@@ -28,7 +29,12 @@ teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) =>
     return res.status(500).json({ error: "Missing year or event code" });
 
 
-  const forms = await getStandFormsByEvent(eventCode);
+  const forms = await queryAll({
+    TableName: TABLES.STAND_FORMS,
+    KeyConditionExpression: "PK = :pk",
+    ExpressionAttributeValues: { ":pk": `EVENT#${eventCode}` },
+    ProjectionExpression: "teamNumber",
+  });
   const teamSet = new Set(forms.map(f => f.teamNumber));
   const teamList = Array.from(teamSet).sort((a,b)=>a-b).map(tn => ({ _id: tn, event: [eventCode] }));
 

@@ -1,5 +1,6 @@
 // DynamoDB-backed aggregation replacement for StandFormAggregation
-const { getStandFormsByEvent } = require("../dynamo/standFormModel");
+const { queryAll } = require("../dynamo/queryAll");
+const { TABLES } = require("../dynamo/tables");
 
 function toNum(n) { return typeof n === 'number' ? n : (n ? Number(n) : 0); }
 
@@ -44,7 +45,14 @@ function pushIfNonZero(arr, value, score, formId, matchNumber) {
 }
 
 async function StandFormAggregationDynamo(eventId) {
-  const forms = await getStandFormsByEvent(eventId);
+  // Fetch all stand forms for the event using Query on the partition key
+  const forms = await queryAll({
+    TableName: TABLES.STAND_FORMS,
+    KeyConditionExpression: "#pk = :pk",
+    ExpressionAttributeNames: { "#pk": "PK" },
+    ExpressionAttributeValues: { ":pk": `EVENT#${eventId}` },
+    ScanIndexForward: false,
+  });
   const byTeam = new Map();
   for (const f of forms) {
     const d = calcDerived(f);

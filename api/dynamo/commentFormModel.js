@@ -28,19 +28,23 @@ async function addComment(item) {
   await docClient.send(new PutCommand({
     TableName: TABLES.COMMENT_FORMS,
     Item: putItem,
+    ConditionExpression: "attribute_not_exists(PK) AND attribute_not_exists(SK)",
   }));
   return putItem;
 }
 
-async function getCommentsForEventTeam(event, teamNumber, limit = 50) {
+async function getCommentsForEventTeam(event, teamNumber, { limit, nextToken, strong } = {}) {
   const q = await docClient.send(new QueryCommand({
     TableName: TABLES.COMMENT_FORMS,
     KeyConditionExpression: "PK = :pk",
     ExpressionAttributeValues: { ":pk": pk(event, teamNumber) },
     ScanIndexForward: false,
     Limit: limit,
+    ExclusiveStartKey: nextToken,
+    ConsistentRead: !!strong,
+    ProjectionExpression: "id, usersName, comments, createdAt, teamNumber, event",
   }));
-  return q.Items || [];
+  return { items: q.Items || [], nextToken: q.LastEvaluatedKey || null };
 }
 
 module.exports = { addComment, getCommentsForEventTeam };

@@ -2,7 +2,7 @@ const { Router } = require("express");
 
 const formRouter = Router();
 
-const { createStandForm, getStandFormById, getStandFormsByEvent } = require("../dynamo/standFormModel");
+const { createStandForm, getStandFormById, getStandFormsByEvent, deleteStandFormById } = require("../dynamo/standFormModel");
 const { requireAuth, getAuth } = require("@clerk/express");
 
 formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
@@ -21,23 +21,27 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
   if (userRole !== "admin") {
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
-
-  const formId = req.params?.formId;
-  await StandFormSchema.deleteOne({
-    _id: formId,
-  })
-    .then(() => {
-      return res.send("Form deleted successfully.");
-    })
-    .catch((err) => res.status(500).json({ error: err.message }));
+  try {
+    const deleted = await deleteStandFormById(req.params?.formId);
+    if (!deleted) return res.status(404).json({ error: "Form not found" });
+    return res.status(204).send();
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to delete form" });
+  }
 });
 
 formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) => {
   const { eventCode } = req.params;
   if (!eventCode) return res.status(500).json({ error: "Missing event code" });
   try {
-    const forms = await getStandFormsByEvent(eventCode);
-    return res.send(forms);
+    const { limit, nextToken } = req.query;
+    const q = await getStandFormsByEvent(eventCode, {
+      limit: limit ? Number(limit) : undefined,
+      nextToken: nextToken ? JSON.parse(Buffer.from(nextToken, 'base64').toString('utf8')) : undefined,
+    });
+    if (!limit && !nextToken) return res.send(q.items);
+    const token = q.nextToken ? Buffer.from(JSON.stringify(q.nextToken)).toString('base64') : null;
+    return res.send({ items: q.items, nextToken: token });
   } catch (err) {
     return res.status(500).json({ error: "Failed to list forms" });
   }
@@ -49,7 +53,10 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
     if (!data?.event || data?.teamNumber == null || data?.matchNumber == null) {
       return res.status(400).json({ error: "event, teamNumber, and matchNumber are required" });
     }
-    await createStandForm({
+    if (req.headers["idempotency-key"]) {
+      data._id = String(req.headers["idempotency-key"]);
+    }
+    const created = await createStandForm({
       usersName: data.usersName,
       event: data.event,
       teamNumber: data.teamNumber,
@@ -78,7 +85,8 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
       defense: data.defense,
       win: data.win,
     });
-    return res.send("Submitted Form!");
+    res.setHeader('Location', `/api/form/stand/${encodeURIComponent(created.id)}`);
+    return res.status(201).json(created);
   } catch (err) {
     if (err?.name === "ConditionalCheckFailedException") {
       return res.status(409).json({ error: "Form already exists for this team+match" });

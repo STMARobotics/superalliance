@@ -9,8 +9,15 @@ const router = express.Router();
 router.get("/:eventCode", async (req, res) => {
   try {
     const { eventCode } = req.params;
-    const items = await listPitFormsByEvent(eventCode);
-    res.json(items);
+    const { limit, nextToken } = req.query;
+    const q = await listPitFormsByEvent(eventCode, {
+      limit: limit ? Number(limit) : undefined,
+      nextToken: nextToken ? JSON.parse(Buffer.from(nextToken, 'base64').toString('utf8')) : undefined,
+    });
+    // backward-compat: default to array when no pagination requested
+    if (!limit && !nextToken) return res.json(q.items);
+    const token = q.nextToken ? Buffer.from(JSON.stringify(q.nextToken)).toString('base64') : null;
+    res.json({ items: q.items, nextToken: token });
   } catch (err) {
     console.error("listPitFormsByEvent error", err);
     res.status(500).json({ message: "Failed to list pit forms" });
@@ -37,6 +44,9 @@ router.post("/submit", async (req, res) => {
     if (!body.event || !body.teamNumber) {
       return res.status(400).json({ message: "event and teamNumber are required" });
     }
+    if (req.headers["idempotency-key"]) {
+      body._id = String(req.headers["idempotency-key"]);
+    }
     // Check if a form already exists for this event+team
     const existing = await getPitForm(body.event, body.teamNumber);
     if (existing) {
@@ -44,6 +54,7 @@ router.post("/submit", async (req, res) => {
     }
     // Create the new pit form
     const item = await createPitForm(body);
+    res.setHeader('Location', `/api/form/pit/${encodeURIComponent(item.event)}/${encodeURIComponent(item.teamNumber)}`);
     res.status(201).json(item);
   } catch (err) {
     if (err?.name === "ConditionalCheckFailedException") {

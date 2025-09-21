@@ -1,7 +1,7 @@
 const { docClient } = require("./dynamoClient");
 const { TABLES } = require("./tables");
 const { v4: uuidv4 } = require("uuid");
-const { PutCommand, GetCommand, QueryCommand } = require("@aws-sdk/lib-dynamodb");
+const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require("@aws-sdk/lib-dynamodb");
 
 function pk(event) {
   return `EVENT#${event}`;
@@ -58,22 +58,28 @@ async function getStandFormById(id) {
   return q.Items?.[0] || null;
 }
 
-async function getStandFormsByEvent(event) {
+async function getStandFormsByEvent(event, { limit, nextToken, strong } = {}) {
   const q = await docClient.send(new QueryCommand({
     TableName: TABLES.STAND_FORMS,
     KeyConditionExpression: "PK = :pk",
     ExpressionAttributeValues: { ":pk": pk(event) },
+    Limit: limit,
+    ExclusiveStartKey: nextToken,
+    ConsistentRead: !!strong,
   }));
-  return q.Items || [];
+  return { items: q.Items || [], nextToken: q.LastEvaluatedKey || null };
 }
 
-async function getStandFormsByEventTeam(event, teamNumber) {
+async function getStandFormsByEventTeam(event, teamNumber, { limit, nextToken, strong } = {}) {
   const q = await docClient.send(new QueryCommand({
     TableName: TABLES.STAND_FORMS,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :skprefix)",
     ExpressionAttributeValues: { ":pk": pk(event), ":skprefix": `TEAM#${teamNumber}` },
+    Limit: limit,
+    ExclusiveStartKey: nextToken,
+    ConsistentRead: !!strong,
   }));
-  return q.Items || [];
+  return { items: q.Items || [], nextToken: q.LastEvaluatedKey || null };
 }
 
 module.exports = {
@@ -81,4 +87,22 @@ module.exports = {
   getStandFormById,
   getStandFormsByEvent,
   getStandFormsByEventTeam,
+  deleteStandFormById: async (id) => {
+    const found = await docClient.send(new QueryCommand({
+      TableName: TABLES.STAND_FORMS,
+      IndexName: GSI_BY_ID,
+      KeyConditionExpression: "GSI2PK = :id",
+      ExpressionAttributeValues: { ":id": gsi2pk(id) },
+      Limit: 1,
+      ProjectionExpression: "PK, SK",
+    }));
+    const item = found.Items?.[0];
+    if (!item) return false;
+    await docClient.send(new DeleteCommand({
+      TableName: TABLES.STAND_FORMS,
+      Key: { PK: item.PK, SK: item.SK },
+      ConditionExpression: "attribute_exists(PK) AND attribute_exists(SK)",
+    }));
+    return true;
+  },
 };

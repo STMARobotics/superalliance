@@ -1,7 +1,7 @@
 const { docClient } = require("./dynamoClient");
 const { TABLES } = require("./tables");
 const { v4: uuidv4 } = require("uuid");
-const { PutCommand, QueryCommand } = require("@aws-sdk/lib-dynamodb");
+const { PutCommand, QueryCommand, GetCommand } = require("@aws-sdk/lib-dynamodb");
 
 function pk(event) { return `EVENT#${event}`; }
 function sk(teamNumber) { return `TEAM#${teamNumber}`; }
@@ -33,22 +33,24 @@ async function putPitForm(item) {
 }
 
 async function getPitForm(event, teamNumber) {
-  const q = await docClient.send(new QueryCommand({
+  const g = await docClient.send(new GetCommand({
     TableName: TABLES.PIT_FORMS,
-    KeyConditionExpression: "PK = :pk AND SK = :sk",
-    ExpressionAttributeValues: { ":pk": pk(event), ":sk": sk(teamNumber) },
-    Limit: 1,
+    Key: { PK: pk(event), SK: sk(teamNumber) },
+    ConsistentRead: true,
   }));
-  return q.Items?.[0] || null;
+  return g.Item || null;
 }
 
-async function getPitFormsForEvent(event) {
+async function getPitFormsForEvent(event, { limit, nextToken, strong } = {}) {
   const q = await docClient.send(new QueryCommand({
     TableName: TABLES.PIT_FORMS,
     KeyConditionExpression: "PK = :pk",
     ExpressionAttributeValues: { ":pk": pk(event) },
+    Limit: limit,
+    ExclusiveStartKey: nextToken,
+    ConsistentRead: !!strong,
   }));
-  return q.Items || [];
+  return { items: q.Items || [], nextToken: q.LastEvaluatedKey || null };
 }
 
 module.exports = { putPitForm, getPitForm, getPitFormsForEvent };
