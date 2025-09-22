@@ -2,41 +2,50 @@ const { Router } = require("express");
 
 const commentRouter = Router();
 
-const CommentFormSchema = require("../models/CommentFormSchema");
-const mongoose = require("mongoose");
+const { addComment, getCommentsForEventTeam } = require("../dynamo/commentFormModel");
 const { requireAuth } = require("@clerk/express");
 
-commentRouter.get("/api/form/comments/:formId", requireAuth(), async (req, res) => {
-  const formId = req.params?.formId;
-  const data = await CommentFormSchema.find({
-    _id: formId,
-  }).catch((err) => null);
-  if (!data) return res.status(404).json({ error: "Form not found" });
-  return res.send(data[0]);
+// New pattern: fetch by event/team instead of formId (Dynamo doesn't use single-id access by default here)
+commentRouter.get("/api/forms/comments/:event/:teamNumber", requireAuth(), async (req, res) => {
+  try {
+    const { event, teamNumber } = req.params;
+    const { limit, nextToken } = req.query;
+    const q = await getCommentsForEventTeam(event, Number(teamNumber), {
+      limit: limit ? Number(limit) : undefined,
+      nextToken: nextToken ? JSON.parse(Buffer.from(nextToken, 'base64').toString('utf8')) : undefined,
+    });
+    if (!limit && !nextToken) return res.send(q.items);
+    const token = q.nextToken ? Buffer.from(JSON.stringify(q.nextToken)).toString('base64') : null;
+    return res.send({ items: q.items, nextToken: token });
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to list comments" });
+  }
 });
 
+// Deprecated: listing all comments across all events is not supported in Dynamo without an admin-only scan.
 commentRouter.get("/api/forms/comments", requireAuth(), async (req, res) => {
-  const forms = await CommentFormSchema.find({}).sort({
-    _id: -1,
-  });
-  return res.send(forms);
+  return res.status(410).json({ error: "Deprecated. Use /api/forms/comments/:event/:teamNumber with pagination." });
 });
 
 commentRouter.post("/api/form/comments/submit", requireAuth(), async (req, res) => {
-  const data = req.body;
-  const sendForm = await new CommentFormSchema({
-    _id: new mongoose.Types.ObjectId(),
-    event: data.event,
-    teamNumber: data.teamNumber,
-    usersName: data.usersName,
-    comments: data.comments,
-  });
-
-  await sendForm.save().catch((err) => {
-    return res.status(500).send(err);
-  });
-
-  return res.send("Submitted Form!");
+  try {
+    const data = req.body;
+    if (!data?.event || data?.teamNumber == null) {
+      return res.status(400).json({ error: "event and teamNumber are required" });
+    }
+    if (req.headers["idempotency-key"]) {
+      data._id = String(req.headers["idempotency-key"]);
+    }
+    const created = await addComment({
+      event: data.event,
+      teamNumber: data.teamNumber,
+      usersName: data.usersName,
+      comments: data.comments,
+    });
+    return res.status(201).json(created);
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to submit comment" });
+  }
 });
 
 module.exports = commentRouter;

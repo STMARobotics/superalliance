@@ -26,6 +26,21 @@ app.use(cors(corsOptions));
 app.options("/^\/api\/.*$/", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+// simple health endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    region: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION,
+    ddbEndpoint: process.env.DYNAMODB_ENDPOINT || null,
+    tables: {
+      stand: process.env.DDB_STAND_FORMS_TABLE,
+      pit: process.env.DDB_PIT_FORMS_TABLE,
+      comments: process.env.DDB_COMMENT_FORMS_TABLE,
+      selection: process.env.DDB_TEAM_SELECTION_TABLE,
+      config: process.env.DDB_CONFIG_TABLE,
+    }
+  });
+});
 app.use(aggregationRouter);
 app.use(eventRouter);
 app.use(formRouter);

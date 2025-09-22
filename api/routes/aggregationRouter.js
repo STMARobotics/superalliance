@@ -4,7 +4,7 @@ const aggregationRouter = Router();
 
 const mongoose = require("mongoose");
 const axios = require("axios");
-const StandFormAggregation = require("../models/StandFormAggregation");
+const StandFormAggregation = require("../models/StandFormAggregation.dynamo");
 const { requireAuth } = require("@clerk/express");
 
 aggregationRouter.get("/api/aggregation/event/:eventId", requireAuth(), async (req, res) => {
