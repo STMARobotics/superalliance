@@ -35,9 +35,17 @@ formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) =>
   if (!eventCode) return res.status(500).json({ error: "Missing event code" });
   try {
     const { limit, nextToken } = req.query;
+    let parsedNextToken;
+    if (nextToken) {
+      try {
+        parsedNextToken = JSON.parse(Buffer.from(nextToken, 'base64').toString('utf8'));
+      } catch (err) {
+        return res.status(400).json({ error: "Malformed nextToken" });
+      }
+    }
     const q = await getStandFormsByEvent(eventCode, {
       limit: limit ? Number(limit) : undefined,
-      nextToken: nextToken ? JSON.parse(Buffer.from(nextToken, 'base64').toString('utf8')) : undefined,
+      nextToken: parsedNextToken,
     });
     if (!limit && !nextToken) return res.send(q.items);
     const token = q.nextToken ? Buffer.from(JSON.stringify(q.nextToken)).toString('base64') : null;
