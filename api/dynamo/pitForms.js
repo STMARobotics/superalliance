@@ -1,6 +1,6 @@
 import { ddbDoc } from "./dynamoClient.js";
 import { GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { randomUUID } from "crypto";
+const { randomUUID } = require("crypto");
 
 const TABLE = process.env.DDB_PIT_FORMS_TABLE;
 
