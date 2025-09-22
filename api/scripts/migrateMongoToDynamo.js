@@ -55,7 +55,8 @@ async function batchWriteAll(tableName, puts) {
   // DynamoDB BatchWriteItem max 25 per request
   const batches = chunk(puts, 25);
   for (const b of batches) {
-    let requestItems = {}; requestItems[tableName] = b.map(Item => ({ PutRequest: { Item } }));
+    let requestItems = {};
+    requestItems[tableName] = b.map(Item => ({ PutRequest: { Item } }));
     let unprocessed = null;
     let attempt = 0;
     do {
