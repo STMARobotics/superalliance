@@ -44,6 +44,7 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
         CLERK_SECRET_KEY=<get_value_from_admin>
         ROBOT_IMAGE_DISTRO=robot-images.stmarobotics.org
         AWS_REGION=us-east-2
+        ROBOT_IMAGE_BUCKET=super-alliance-robot-images
         ```
     * In order to upload pit forms with images:
       1) Log in to the [AWS access portal](https://d-9067879019.awsapps.com/start) with your stmarobotics.org Google account
