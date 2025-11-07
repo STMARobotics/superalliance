@@ -7,6 +7,8 @@ The SuperAlliance is a cloud-based application deployed to AWS that is made up o
 ## Build and Deployment
 We have an automated process that uses [GitHub actions](https://github.com/features/actions) to deploy both the UI and the API to our Production environment in AWS. At a high level, GitHub actions starts a virtual machine that runs scripts to build and deploy the applications. The following sections outline the application-specific build and deployment details.
 
+Secrets and environment variables for production are stored as GitHub repo secrets or variables. They are placed into the lambda environment during the Claudia deployment (so don't change them in the AWS UI, they'll be overwritten by the next deploy.)
+
 ### Frontend UI
 The workflow for deploying the UI is defined in `superalliance-ui-workflow.yml` and is currently configured to automatically deploy the application when changes are pushed to the `main` branch of the `/app` directory in the [superalliance repository](https://github.com/STMARobotics/superalliance). The build process compiles the application into static website assets and copies them to an [Amazon S3](https://aws.amazon.com/s3/) bucket named `super-alliance-ui`. We use [AWS CloudFront](https://aws.amazon.com/cloudfront/) to serve the assets from the S3 bucket. The process of copying the website assets to S3 is handled by a GitHub action called [s3-deploy](https://github.com/Reggionick/s3-deploy), this action also invalidated the CloudFront cache. For more details about how the build and deployment process works, see the `superalliance-ui-workflow.yml` file.
 
