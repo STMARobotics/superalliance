@@ -19,21 +19,23 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
     * SSH: `git clone git@github.com:STMARobotics/superalliance.git`
 
 2. Set up the frontend application
-    * Open a command prompt and navigate to the `app` directory, then run the following commands:
+    * Open a terminal and navigate to the `app` directory, then run the following commands:
         * `npm update`
         * `npm install`
     * Create a file named `.env.local` and put the following configuration values in it:
         ```
         VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
-        VITE_API_URL=<get_value_from_admin>
+        VITE_API_URL=http://localhost:3000
         ```
     * `npm run dev` to start the application
 
 3. Set up the API application
-    * Open a command prompt and navigate to the `api` directory, then run the following commands:
+
+    💡 TIP: In VS Code, you can use the [JavaScript Debug Terminal](https://code.visualstudio.com/docs/nodejs/nodejs-debugging) to run the app so you can set breakpoints and debug the API.
+
+    * Open a terminal and navigate to the `api` directory, then run the following commands:
         * `npm update`
         * `npm install`
-        * `npm install -g nodemon`
     * Create a file named `.env` and put the following configuration values in it:
         ```
         TBA_KEY=<get_value_from_admin>
