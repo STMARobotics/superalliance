@@ -26,7 +26,7 @@ import { useSuperAllianceApi } from "@/lib/superallianceapi";
 
 const adminSettingsSchema = z.object({
   event: z.string({
-    required_error: "Please select an event to lock.",
+    error: "Please select an event to lock.",
   }),
 });
 
