@@ -7,8 +7,13 @@ var cors = require("cors");
 
 const environment = process.env.ENVIRONMENT || "local";
 
-var corsOptions = {
-  origin: "*",
+const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173").split(",").map(o => o.trim()).filter(Boolean);
+
+const corsOptions = {
+  origin(origin, cb) {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
+  },
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
