@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { validateYearParam, validateEventCodeParam, validateTeamNumberParam } = require("../validation/paramValidators");
+const { yearSchema, eventCodeSchema, teamNumberSchema } = require("../validation/paramValidators");
 
 const teamRouter = Router();
 
@@ -8,12 +8,15 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 const { requireAuth } = require("@clerk/express");
 
-teamRouter.param("teamNumber", validateTeamNumberParam);
-teamRouter.param("eventCode", validateEventCodeParam);
-teamRouter.param("year", validateYearParam);
-
 teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
-  const { teamNumber } = req.params;
+  const validated = teamNumberSchema.safeParse(req.params.teamNumber);
+  if (!validated.success) {
+    return res.status(400).json({ 
+      error: "Invalid team number",
+      details: validated.error.issues.map((e) => e.message)
+    });
+  }
+  const teamNumber = validated.data;
   const response = await axios
     .get(`https://www.thebluealliance.com/api/v3/team/frc${teamNumber}`, {
       method: "GET",
@@ -28,10 +31,25 @@ teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
 });
 
 teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) => {
-  const { eventCode, year } = req.params;
-  if (!eventCode)
-    return res.status(400).json({ error: "Missing event code" });
+  const validatedYear = yearSchema.safeParse(req.params.year);
+  const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+  
+  if (!validatedYear.success) {
+    return res.status(400).json({ 
+      error: "Invalid year",
+      details: validatedYear.error.issues.map((e) => e.message)
+    });
+  }
+  
+  if (!validatedEventCode.success) {
+    return res.status(400).json({ 
+      error: "Invalid eventCode",
+      details: validatedEventCode.error.issues.map((e) => e.message)
+    });
+  }
 
+  const year = validatedYear.data;
+  const eventCode = validatedEventCode.data;
 
   const teamList = await StandFormSchema.aggregate([
     {

@@ -7,10 +7,7 @@ const pitFormRouter = Router();
 const PitFormSchema = require("../models/PitFormSchema");
 const mongoose = require("mongoose");
 const { requireAuth, getAuth } = require("@clerk/express");
-const { validateYearBody, validateEventCodeParam, validateTeamNumberParam, validatePitImageUploadBody, ACCEPTED_IMAGE_TYPES } = require("../validation/paramValidators");
-
-pitFormRouter.param("eventCode", validateEventCodeParam);
-pitFormRouter.param("teamNumber", validateTeamNumberParam);
+const { pitImageUploadSchema, eventCodeSchema, teamNumberSchema, ACCEPTED_IMAGE_TYPES } = require("../validation/paramValidators");
 
 pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
   const data = req.body;
@@ -52,8 +49,26 @@ pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
 });
 
 pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (req, res) => {
-  const teamNumber = req.params?.teamNumber;
-  const eventCode = req.params?.eventCode;
+  const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+  const validatedTeamNumber = teamNumberSchema.safeParse(req.params.teamNumber);
+  
+  if (!validatedEventCode.success) {
+    return res.status(400).json({ 
+      error: "Invalid eventCode",
+      details: validatedEventCode.error.issues.map((e) => e.message)
+    });
+  }
+  
+  if (!validatedTeamNumber.success) {
+    return res.status(400).json({ 
+      error: "Invalid teamNumber",
+      details: validatedTeamNumber.error.issues.map((e) => e.message)
+    });
+  }
+  
+  const teamNumber = validatedTeamNumber.data;
+  const eventCode = validatedEventCode.data;
+  
   const data = await PitFormSchema.find({
     teamNumber: teamNumber,
     event: eventCode,
@@ -63,8 +78,16 @@ pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (
 });
 
 // Create a signed URL for uploading robot pit images to S3
-pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), validatePitImageUploadBody, async (req, res) => {
-  const { year, teamNumber, eventCode, fileType } = req.body;
+pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res) => {
+  const validated = pitImageUploadSchema.safeParse(req.body);
+  if (!validated.success) {
+    return res.status(400).json({
+      error: "Invalid image upload body",
+      details: validated.error.issues.map((e) => e.message),
+    });
+  }
+  
+  const { year, teamNumber, eventCode, fileType } = validated.data;
   const EXTENSION_BY_TYPE = {
     'image/jpeg': 'jpg',
     'image/jpg': 'jpg',

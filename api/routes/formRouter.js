@@ -5,13 +5,18 @@ const formRouter = Router();
 const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 const { requireAuth, getAuth } = require("@clerk/express");
-const { validateFormIdParam, validateEventCodeParam } = require("../validation/paramValidators");
-
-formRouter.param("formId", validateFormIdParam);
-formRouter.param("eventCode", validateEventCodeParam);
+const { formIdSchema, eventCodeSchema } = require("../validation/paramValidators");
 
 formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
-  const formId = req.params?.formId;
+  const validated = formIdSchema.safeParse(req.params.formId);
+  if (!validated.success) {
+    return res.status(400).json({ 
+      error: "Invalid formId",
+      details: validated.error.issues.map((e) => e.message)
+    });
+  }
+  
+  const formId = validated.data;
   const data = await StandFormSchema.find({
     _id: formId,
   }).catch((err) => null);
@@ -25,7 +30,15 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
 
-  const formId = req.params?.formId;
+  const validated = formIdSchema.safeParse(req.params.formId);
+  if (!validated.success) {
+    return res.status(400).json({ 
+      error: "Invalid formId",
+      details: validated.error.issues.map((e) => e.message)
+    });
+  }
+  
+  const formId = validated.data;
   await StandFormSchema.deleteOne({
     _id: formId,
   })
@@ -36,9 +49,15 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
 });
 
 formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) => {
-  const { eventCode } = req.params;
-  if (!eventCode)
-    return res.status(500).json({ error: "Missing event code" });
+  const validated = eventCodeSchema.safeParse(req.params.eventCode);
+  if (!validated.success) {
+    return res.status(400).json({ 
+      error: "Invalid event code",
+      details: validated.error.issues.map((e) => e.message)
+    });
+  }
+  
+  const eventCode = validated.data;
 
   const forms = await StandFormSchema.find({event: eventCode}).sort({
     _id: -1,

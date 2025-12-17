@@ -6,25 +6,37 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 const { requireAuth } = require("@clerk/express");
 const {
-  validateYearParam,
-  validateEventCodeParam,
-  validateMatchNumberParam,
-  validateTeamNumberParam,
-  validateTeamParam,
+  yearSchema,
+  eventCodeSchema,
+  matchNumberSchema,
+  teamNumberSchema,
 } = require("../validation/paramValidators");
-
-eventRouter.param("year", validateYearParam);
-eventRouter.param("eventCode", validateEventCodeParam);
-eventRouter.param("matchNumber", validateMatchNumberParam);
-eventRouter.param("teamNumber", validateTeamNumberParam);
-eventRouter.param("team", validateTeamParam);
 
 eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/data",
   requireAuth(),
   async (req, res) => {
     try {
-      const { eventCode, matchNumber } = req.params;
+      const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+      const validatedMatchNumber = matchNumberSchema.safeParse(req.params.matchNumber);
+      
+      if (!validatedEventCode.success) {
+        return res.status(400).json({ 
+          error: "Invalid eventCode",
+          details: validatedEventCode.error.issues.map((e) => e.message)
+        });
+      }
+      
+      if (!validatedMatchNumber.success) {
+        return res.status(400).json({ 
+          error: "Invalid matchNumber",
+          details: validatedMatchNumber.error.issues.map((e) => e.message)
+        });
+      }
+      
+      const eventCode = validatedEventCode.data;
+      const matchNumber = validatedMatchNumber.data;
+      
       const response = await axios.get(
         `https://www.thebluealliance.com/api/v3/match/2025${eventCode}_qm${matchNumber}`,
         {
@@ -51,7 +63,26 @@ eventRouter.get(
   requireAuth(),
   async (req, res) => {
     try {
-      const { eventCode, teamNumber } = req.params;
+      const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+      const validatedTeamNumber = teamNumberSchema.safeParse(req.params.teamNumber);
+      
+      if (!validatedEventCode.success) {
+        return res.status(400).json({ 
+          error: "Invalid eventCode",
+          details: validatedEventCode.error.issues.map((e) => e.message)
+        });
+      }
+      
+      if (!validatedTeamNumber.success) {
+        return res.status(400).json({ 
+          error: "Invalid teamNumber",
+          details: validatedTeamNumber.error.issues.map((e) => e.message)
+        });
+      }
+      
+      const eventCode = validatedEventCode.data;
+      const teamNumber = validatedTeamNumber.data;
+      
       const response = await axios.get(
         `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2025${eventCode}/status`,
         {
@@ -78,7 +109,17 @@ eventRouter.get(
   requireAuth(),
   async (req, res) => {
     try {
-      const { eventCode, teamNumber } = req.params;
+      const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+      
+      if (!validatedEventCode.success) {
+        return res.status(400).json({ 
+          error: "Invalid event code",
+          details: validatedEventCode.error.issues.map((e) => e.message)
+        });
+      }
+      
+      const eventCode = validatedEventCode.data;
+      
       const response = await axios.get(
         `https://www.thebluealliance.com/api/v3/event/2025${eventCode}/oprs`,
         {
@@ -105,7 +146,26 @@ eventRouter.get(
   requireAuth(),
   async (req, res) => {
     try {
-      const { eventCode, matchNumber } = req.params;
+      const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+      const validatedMatchNumber = matchNumberSchema.safeParse(req.params.matchNumber);
+      
+      if (!validatedEventCode.success) {
+        return res.status(400).json({ 
+          error: "Invalid eventCode",
+          details: validatedEventCode.error.issues.map((e) => e.message)
+        });
+      }
+      
+      if (!validatedMatchNumber.success) {
+        return res.status(400).json({ 
+          error: "Invalid matchNumber",
+          details: validatedMatchNumber.error.issues.map((e) => e.message)
+        });
+      }
+      
+      const eventCode = validatedEventCode.data;
+      const matchNumber = validatedMatchNumber.data;
+      
       const response = await axios.get(
         `https://www.thebluealliance.com/api/v3/match/2025${eventCode}_qm${matchNumber}`,
         {
@@ -136,8 +196,26 @@ eventRouter.get(
 );
 
 eventRouter.get("/api/listEvents/:team/:year", requireAuth(), async (req, res) => {
-  const { team, year } = req.params;
-  if (!team) return res.status(400).json({ error: "Missing team" });
+  const validatedTeam = teamNumberSchema.safeParse(req.params.team);
+  const validatedYear = yearSchema.safeParse(req.params.year);
+  
+  if (!validatedTeam.success) {
+    return res.status(400).json({ 
+      error: "Invalid team",
+      details: validatedTeam.error.issues.map((e) => e.message)
+    });
+  }
+  
+  if (!validatedYear.success) {
+    return res.status(400).json({ 
+      error: "Invalid year",
+      details: validatedYear.error.issues.map((e) => e.message)
+    });
+  }
+  
+  const team = validatedTeam.data;
+  const year = validatedYear.data;
+  
   const data = await axios.get(
     `https://www.thebluealliance.com/api/v3/team/frc${team}/events/${year}`,
     {
