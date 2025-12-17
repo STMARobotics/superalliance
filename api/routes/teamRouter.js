@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const { validateYearParam, validateEventCodeParam, validateTeamNumberParam } = require("../validation/paramValidators");
 
 const teamRouter = Router();
 
@@ -6,6 +7,10 @@ const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const { requireAuth } = require("@clerk/express");
+
+teamRouter.param("teamNumber", validateTeamNumberParam);
+teamRouter.param("eventCode", validateEventCodeParam);
+teamRouter.param("year", validateYearParam);
 
 teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
   const { teamNumber } = req.params;
@@ -24,8 +29,8 @@ teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
 
 teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) => {
   const { eventCode, year } = req.params;
-  if (!eventCode || !year)
-    return res.status(500).json({ error: "Missing year or event code" });
+  if (!eventCode)
+    return res.status(400).json({ error: "Missing event code" });
 
 
   const teamList = await StandFormSchema.aggregate([

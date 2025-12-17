@@ -5,6 +5,9 @@ const commentRouter = Router();
 const CommentFormSchema = require("../models/CommentFormSchema");
 const mongoose = require("mongoose");
 const { requireAuth } = require("@clerk/express");
+const { validateFormIdParam, validateCommentSubmitBody } = require("../validation/paramValidators");
+
+commentRouter.param("formId", validateFormIdParam);
 
 commentRouter.get("/api/form/comments/:formId", requireAuth(), async (req, res) => {
   const formId = req.params?.formId;
@@ -22,7 +25,7 @@ commentRouter.get("/api/forms/comments", requireAuth(), async (req, res) => {
   return res.send(forms);
 });
 
-commentRouter.post("/api/form/comments/submit", requireAuth(), async (req, res) => {
+commentRouter.post("/api/form/comments/submit", requireAuth(), validateCommentSubmitBody, async (req, res) => {
   const data = req.body;
   const sendForm = await new CommentFormSchema({
     _id: new mongoose.Types.ObjectId(),

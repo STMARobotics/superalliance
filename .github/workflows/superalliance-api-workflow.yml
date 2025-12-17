@@ -40,6 +40,10 @@ jobs:
         run: npm install
         working-directory: api
 
+      - name: Run tests
+        run: npm run test
+        working-directory: api
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5.1.0
         with:

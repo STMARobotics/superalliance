@@ -5,6 +5,10 @@ const formRouter = Router();
 const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 const { requireAuth, getAuth } = require("@clerk/express");
+const { validateFormIdParam, validateEventCodeParam } = require("../validation/paramValidators");
+
+formRouter.param("formId", validateFormIdParam);
+formRouter.param("eventCode", validateEventCodeParam);
 
 formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
   const formId = req.params?.formId;

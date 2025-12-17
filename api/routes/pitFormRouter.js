@@ -7,6 +7,10 @@ const pitFormRouter = Router();
 const PitFormSchema = require("../models/PitFormSchema");
 const mongoose = require("mongoose");
 const { requireAuth, getAuth } = require("@clerk/express");
+const { validateYearBody, validateEventCodeParam, validateTeamNumberParam, validatePitImageUploadBody, ACCEPTED_IMAGE_TYPES } = require("../validation/paramValidators");
+
+pitFormRouter.param("eventCode", validateEventCodeParam);
+pitFormRouter.param("teamNumber", validateTeamNumberParam);
 
 pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
   const data = req.body;
@@ -59,21 +63,26 @@ pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (
 });
 
 // Create a signed URL for uploading robot pit images to S3
-pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res) => {
+pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), validatePitImageUploadBody, async (req, res) => {
   const { year, teamNumber, eventCode, fileType } = req.body;
-  if (!year || !teamNumber || !eventCode || !fileType) {
-    return res.status(400).json({ error: "year, teamNumber, eventCode, and fileType are required" });
-  }
+  const EXTENSION_BY_TYPE = {
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+    'image/heic': 'heic',
+    'image/heif': 'heif',
+  };
 
   const s3 = new S3Client({ region: process.env.AWS_REGION });
   const bucket = process.env.ROBOT_IMAGE_BUCKET;
-  const extension = fileType.split("/")[1];
+  const extension = EXTENSION_BY_TYPE[fileType];
   const key = `${year}/${eventCode}/${teamNumber}_${Date.now()}.${extension}`;
 
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: key,
-    ContentType: fileType,
+    ContentType: fileType === 'image/jpg' ? 'image/jpeg' : fileType,
     CacheControl: "public, max-age=31536000, immutable", // file name is unique, content will never change
   });
 

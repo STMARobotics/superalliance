@@ -5,6 +5,19 @@ const eventRouter = Router();
 const mongoose = require("mongoose");
 const axios = require("axios");
 const { requireAuth } = require("@clerk/express");
+const {
+  validateYearParam,
+  validateEventCodeParam,
+  validateMatchNumberParam,
+  validateTeamNumberParam,
+  validateTeamParam,
+} = require("../validation/paramValidators");
+
+eventRouter.param("year", validateYearParam);
+eventRouter.param("eventCode", validateEventCodeParam);
+eventRouter.param("matchNumber", validateMatchNumberParam);
+eventRouter.param("teamNumber", validateTeamNumberParam);
+eventRouter.param("team", validateTeamParam);
 
 eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/data",
@@ -124,8 +137,7 @@ eventRouter.get(
 
 eventRouter.get("/api/listEvents/:team/:year", requireAuth(), async (req, res) => {
   const { team, year } = req.params;
-  if (!team || !year)
-    return res.status(500).json({ error: "Missing team or year" });
+  if (!team) return res.status(400).json({ error: "Missing team" });
   const data = await axios.get(
     `https://www.thebluealliance.com/api/v3/team/frc${team}/events/${year}`,
     {
