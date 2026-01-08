@@ -41,6 +41,7 @@ function AppRouter() {
         {/* CLIENT ROUTES */}
         <Route index element={<Home />} />
         <Route path="/login" element={<SignInPage />} />
+        <Route path="/login/*" element={<SignInPage />} />
         {/* NEW FORM ROUTES */}
         <Route
           path="/new/stand"
