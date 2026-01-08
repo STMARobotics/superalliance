@@ -63,16 +63,17 @@ function Forms({
         </Transition>
       </Affix>
       <ResizablePanelGroup
-        direction="horizontal"
+        orientation="horizontal"
         className="h-full items-stretch"
       >
         <ResizablePanel
           collapsible={true}
           minSize={15}
-          maxSize={20}
+          maxSize={"50%"}
           defaultSize={265}
-          onCollapse={() => setIsCollapsed(true)}
-          onExpand={() => setIsCollapsed(false)}
+          onResize={(nextSize) => {
+            setIsCollapsed(nextSize.inPixels < 60);
+          }}
           className={cn(
             isCollapsed &&
               "min-w-[50px] transition-all duration-300 ease-in-out"
