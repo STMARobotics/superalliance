@@ -57,17 +57,17 @@ const ProjectionsGraph = ({
   }, []);
 
   const xAxis = {
-    label: selectedStat == "averageCoral" ? "Avg Auto Coral" : selectedStat == "averageAlgae" ? "Avg Net Algae" : "Total Auto Coral",
+    label: selectedStat == "averageFuel" ? "Avg Auto Fuel" : "Total Auto Fuel",
     accessor: (datum: any) =>
       round(
-        datum[selectedStat == "averageCoral" ? "avgAutoCoral" : selectedStat == "averageAlgae" ? "avgNetAlgae" : "totalAutoCoral"]
+        datum[selectedStat == "averageFuel" ? "avgAutoFuel" : "totalAutoFuel"]
       ),
   };
   const yAxis = {
-    label: selectedStat == "averageCoral" ? "Avg Tele Coral" : selectedStat == "averageAlgae" ? "Avg Processor Algae" : "Total Tele Coral",
+    label: selectedStat == "averageFuel" ? "Avg Tele Fuel" : "Total Tele Fuel",
     accessor: (datum: any) =>
       round(
-        datum[selectedStat == "averageCoral" ? "avgTeleCoral" : selectedStat == "averageAlgae" ? "avgProcessedAlgae" : "totalTeleCoral"]
+        datum[selectedStat == "averageFuel" ? "avgTeleFuel" : "totalTeleFuel"]
       ),
   };
   const zAxis = { label: "Constant", accessor: (_datum: any) => 1 };

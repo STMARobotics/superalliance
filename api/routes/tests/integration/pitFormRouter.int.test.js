@@ -51,7 +51,7 @@ describe('pitFormRouter body validation (integration)', () => {
   test('returns 400 for invalid eventCode in image upload body', async () => {
     const res = await request(app)
       .post('/api/form/pit/image-upload')
-      .send({ year: 2025, teamNumber: '1234', eventCode: '!@', fileType: 'image/png' });
+      .send({ year: 2026, teamNumber: '1234', eventCode: '!@', fileType: 'image/png' });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid image upload body');
@@ -60,7 +60,7 @@ describe('pitFormRouter body validation (integration)', () => {
   test('returns 400 for invalid teamNumber in image upload body', async () => {
     const res = await request(app)
       .post('/api/form/pit/image-upload')
-      .send({ year: 2025, teamNumber: 0, eventCode: 'TEST', fileType: 'image/png' });
+      .send({ year: 2026, teamNumber: 0, eventCode: 'TEST', fileType: 'image/png' });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid image upload body');
@@ -69,7 +69,7 @@ describe('pitFormRouter body validation (integration)', () => {
   test('returns 400 for missing fileType in image upload body', async () => {
     const res = await request(app)
       .post('/api/form/pit/image-upload')
-      .send({ year: 2025, teamNumber: 1234, eventCode: 'TEST' });
+      .send({ year: 2026, teamNumber: 1234, eventCode: 'TEST' });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid image upload body');
@@ -78,7 +78,7 @@ describe('pitFormRouter body validation (integration)', () => {
   test('returns 400 for unsupported fileType in image upload body', async () => {
     const res = await request(app)
       .post('/api/form/pit/image-upload')
-      .send({ year: 2025, teamNumber: 1234, eventCode: 'TEST', fileType: 'text/plain' });
+      .send({ year: 2026, teamNumber: 1234, eventCode: 'TEST', fileType: 'text/plain' });
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid image upload body');
@@ -89,7 +89,7 @@ describe('pitFormRouter body validation (integration)', () => {
   test('returns 400 for invalid eventCode in image upload body', async () => {
     const res = await request(app)
       .post('/api/form/pit/image-upload')
-      .send({ year: 2025, eventCode: '!@', teamNumber: 1234, fileType: 'image/png' });
+      .send({ year: 2026, eventCode: '!@', teamNumber: 1234, fileType: 'image/png' });
     
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid image upload body');
@@ -98,7 +98,7 @@ describe('pitFormRouter body validation (integration)', () => {
   test('returns 400 for invalid teamNumber in image upload body', async () => {
     const res = await request(app)
       .post('/api/form/pit/image-upload')
-      .send({ year: 2025, eventCode: 'TEST', teamNumber: 0, fileType: 'image/png' });
+      .send({ year: 2026, eventCode: 'TEST', teamNumber: 0, fileType: 'image/png' });
     
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid image upload body');
