@@ -7,7 +7,7 @@ const StandFormSchema = new Schema(
     event: String,
     teamNumber: Number,
     matchNumber: Number,
-    leave: Boolean,
+    auto: Boolean,
     autoFuel: Number,
     autoClimb: Boolean,
     teleFuel: Number,

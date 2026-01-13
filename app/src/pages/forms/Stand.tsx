@@ -29,7 +29,7 @@ interface StandFormValues {
   event: null | number;
   teamNumber: null | string | number;
   matchNumber: null | number;
-  leave: boolean;
+  auto: boolean;
   autoFuel: null | number;
   autoClimb: boolean;
   teleFuel: null | number;
@@ -102,7 +102,7 @@ export default function StandFormChad() {
       event: null,
       teamNumber: null,
       matchNumber: null,
-      leave: false,
+      auto: false,
       autoFuel: 0,
       autoClimb: false,
       teleFuel: 0,
@@ -391,9 +391,8 @@ export default function StandFormChad() {
         <Checkbox
           className="pb-4"
           size="md"
-          label="Did the robot LEAVE?"
-          description="The robot's bumpers fully left the starting area at any point during the autonomous period."
-          {...form.getInputProps("leave", { type: "checkbox" })}
+          label="Did the robot move during auto?"
+          {...form.getInputProps("auto", { type: "checkbox" })}
         />
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -488,7 +487,6 @@ export default function StandFormChad() {
           className="pb-4"
           size="md"
           label="Did the robot (successfully) drive over the bump?"
-          description="The robot successfully drove over the bump."
           {...form.getInputProps("bump", { type: "checkbox" })}
         />
 
@@ -496,7 +494,6 @@ export default function StandFormChad() {
           className="pb-4"
           size="md"
           label="Did the robot go under the trench?"
-          description="The robot went under the trench during the match."
           {...form.getInputProps("trench", { type: "checkbox" })}
         />
 

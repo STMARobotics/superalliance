@@ -78,7 +78,7 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
   teamNumber: data.teamNumber,
   matchNumber: data.matchNumber,
   usersName: data.usersName,
-  leave: data.leave,
+  auto: data.auto,
   criticals: data.criticals,
   comments: data.comments,
   strategy: data.strategy,

@@ -96,9 +96,9 @@ const StandFormAggregation = (eventId) => {
         totalTeleFuel: {
           $add: "$teleFuel",
         },
-        leaveBoolean: {
+        autoBoolean: {
           $cond: {
-            if: "$leave",
+            if: "$auto",
             then: 1,
             else: 0,
           },
@@ -355,8 +355,8 @@ const StandFormAggregation = (eventId) => {
           avgTeleFuel: {
             $avg: "$totalTeleFuel",
           },
-          leavePercentage: {
-            $avg:  { $multiply: ["$leaveBoolean", 100]},
+          autoPercentage: {
+            $avg:  { $multiply: ["$autoBoolean", 100]},
           },
           bumpPercentage: {
             $avg:  { $multiply: ["$bumpBoolean", 100]},
@@ -497,7 +497,7 @@ const StandFormAggregation = (eventId) => {
           avgTotalFuel: { $round: ["$avgTotalFuel", 2] },
           avgAutoFuel: { $round: ["$avgAutoFuel", 2] },
           avgTeleFuel: { $round: ["$avgTeleFuel", 2] },
-          leavePercentage: { $round: ["$leavePercentage", 2] },
+          autoPercentage: { $round: ["$autoPercentage", 2] },
           bumpPercentage: { $round: ["$bumpPercentage", 2] },
           trenchPercentage: { $round: ["$trenchPercentage", 2] },
           leftClimbLevelOnePercentage: { $round: ["$leftClimbLevelOnePercentage", 2] },
