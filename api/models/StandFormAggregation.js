@@ -412,12 +412,6 @@ const StandFormAggregation = (eventId) => {
           winPercentage: {
             $avg:  { $multiply: ["$winBoolean", 100]},
           },
-          coralBotPercentage: {
-            $avg:  { $multiply: ["$coralBotBoolean", 100]},
-          },
-          algaeBotPercentage: {
-            $avg:  { $multiply: ["$algaeBotBoolean", 100]},
-          },
           avgRP: {
             $avg: "$rpEarned",
           },
