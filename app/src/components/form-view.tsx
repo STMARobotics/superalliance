@@ -10,6 +10,25 @@ const FormView = ({ formData }: { formData: any }) => {
 
   const isAdmin = user?.publicMetadata.role == "admin";
 
+  const getClimbInfo = () => {
+    const positions = ["left", "center", "right"];
+    const levels = ["One", "Two", "Three"];
+    for (const position of positions) {
+      for (const level of levels) {
+        const fieldName = `${position}ClimbLevel${level}`;
+        if (formData?.[fieldName]) {
+          return {
+            position: position.charAt(0).toUpperCase() + position.slice(1),
+            level: level === "One" ? "Top" : level === "Two" ? "Middle" : "Bottom"
+          };
+        }
+      }
+    }
+    return null;
+  };
+
+  const climbInfo = getClimbInfo();
+
   return (
     <>
       <div className="pb-4 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1] flex flex-row items-center justify-center">
@@ -73,54 +92,27 @@ const FormView = ({ formData }: { formData: any }) => {
       </div>
 
       <TextInput
-        value={formData?.autoCoralL1}
+        value={formData?.autoFuel}
         readOnly
-        label="Auto Coral Scored in L1"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.autoCoralL2}
-        readOnly
-        label="Auto Coral Scored in L2"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.autoCoralL3}
-        readOnly
-        label="Auto Coral Scored in L3"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.autoCoralL4}
-        readOnly
-        label="Auto Coral Scored in L4"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.autoAlgaeProcessor}
-        readOnly
-        label="Auto Algae Scored in the Algae Processor"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.autoAlgaeNet}
-        readOnly
-        label="Auto Algae Scored in the Algae Net"
+        label="Auto Fuel Scored"
         className="pb-4"
       />
 
       <Checkbox
-        checked={formData?.leave}
+        checked={formData?.autoClimb}
         readOnly
         className="pb-4"
         size="md"
-        label="Did the robot LEAVE?"
-        description="The robot's bumpers fully left the starting area at any point during the autonomous period."
+        label="Did the robot climb during auto?"
+        description="The robot successfully climbed during the autonomous period."
+      />
+
+      <Checkbox
+        checked={formData?.auto}
+        readOnly
+        className="pb-4"
+        size="md"
+        label="Did the robot move during auto?"
       />
 
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -128,73 +120,74 @@ const FormView = ({ formData }: { formData: any }) => {
       </div>
 
       <TextInput
-        value={formData?.teleopCoralL1}
+        value={formData?.teleFuel}
         readOnly
-        label="Teleop Coral Scored in L1"
+        label="Teleop Fuel Scored"
         className="pb-4"
       />
 
       <TextInput
-        value={formData?.teleopCoralL2}
+        value={formData?.shotsMissed}
         readOnly
-        label="Teleop Coral Scored in L2"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.teleopCoralL3}
-        readOnly
-        label="Teleop Coral Scored in L3"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.teleopCoralL4}
-        readOnly
-        label="Teleop Coral Scored in L4"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.teleopAlgaeProcessor}
-        readOnly
-        label="Teleop Algae Scored in the Algae Processor"
-        className="pb-4"
-      />
-
-      <TextInput
-        value={formData?.teleopAlgaeNet}
-        readOnly
-        label="Teleop Algae Scored in the Algae Net"
+        label="Shots Missed"
         className="pb-4"
       />
 
       <Checkbox
-        checked={formData?.park}
+        checked={formData?.bump}
         readOnly
         className="pb-4"
         size="md"
-        label="Did the robot PARK?"
-        description="The robot was parked at the end of the match"
+        label="Did the robot (successfully) drive over the bump?"
       />
 
       <Checkbox
-        checked={formData?.deepClimb}
+        checked={formData?.trench}
         readOnly
         className="pb-4"
         size="md"
-        label="Did the robot deep climb?"
-        description="The robot successfully climbed and earned deep climb points."
+        label="Did the robot go under the trench?"
       />
 
+      <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
+        Endgame
+      </div>
+
       <Checkbox
-        checked={formData?.shallowClimb}
+        checked={formData?.didClimb}
         readOnly
         className="pb-4"
         size="md"
-        label="Did the robot shallow climb?"
-        description="The robot successfully climbed and earned shallow climb points."
+        label="Did the robot climb?"
+        description="The robot successfully climbed during the endgame."
       />
+
+      {formData?.didClimb && climbInfo && (
+        <>
+          <TextInput
+            value={climbInfo.position}
+            readOnly
+            label="Climb Position"
+            className="pb-4"
+          />
+
+          <TextInput
+            value={`${climbInfo.level} Level`}
+            readOnly
+            label="Climb Level"
+            className="pb-4"
+          />
+
+          <Checkbox
+            checked={formData?.backClimb}
+            readOnly
+            className="pb-4"
+            size="md"
+            label="Did they climb at the back?"
+            description="The robot climbed at the back of the tower."
+          />
+        </>
+      )}
 
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
         Post-Match
@@ -212,7 +205,7 @@ const FormView = ({ formData }: { formData: any }) => {
       />
 
       <Textarea
-        value={formData?.comments ? formData?.strategy : "No strategy."}
+        value={formData?.strategy ? formData?.strategy : "No strategy."}
         readOnly
         label="Overall strategy"
         className="pb-4"
@@ -220,7 +213,7 @@ const FormView = ({ formData }: { formData: any }) => {
         autosize
       />
 
-<Textarea
+      <Textarea
         value={formData?.comments ? formData?.comments : "No comments."}
         readOnly
         label="Extra Comments"
@@ -250,6 +243,24 @@ const FormView = ({ formData }: { formData: any }) => {
         className="pb-4"
         size="md"
         label="Did your team defend?"
+      />
+
+      <Checkbox
+        checked={formData?.shuttle}
+        readOnly
+        className="pb-4"
+        size="md"
+        label="Did the robot shuttle?"
+        description="The robot moved game pieces between zones."
+      />
+
+      <Checkbox
+        checked={formData?.moveWhileShoot}
+        readOnly
+        className="pb-4"
+        size="md"
+        label="Could the robot move while shooting?"
+        description="The robot was able to shoot while in motion."
       />
 
       <Separator />
