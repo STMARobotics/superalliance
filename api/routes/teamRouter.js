@@ -51,59 +51,46 @@ teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) =>
   const year = validatedYear.data;
   const eventCode = validatedEventCode.data;
 
-  const teamList = await StandFormSchema.aggregate([
-    {
-      $match: { event: eventCode }
-    },
-    {
-      $group: {
-        _id: "$teamNumber",
-        event: {
-          $addToSet: "$event",
+  // Fetch team statuses and team info in parallel
+  const [statusResponse, teamsResponse] = await Promise.all([
+    axios
+      .get(`https://www.thebluealliance.com/api/v3/event/${year}${eventCode}/teams/statuses`, {
+        headers: {
+          "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+          accept: "application/json",
         },
-      },
-    },
-    {
-      $sort: {
-        _id: 1,
-      },
-    },
+      })
+      .catch(() => null),
+    axios
+      .get(`https://www.thebluealliance.com/api/v3/event/${year}${eventCode}/teams`, {
+        headers: {
+          "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+          accept: "application/json",
+        },
+      })
+      .catch(() => null),
   ]);
 
-  const teamArray = await Promise.all(
-    teamList.map(async ({ _id, event }) => {
-      const response = await axios
-        .get(`https://www.thebluealliance.com/api/v3/team/frc${_id}`, {
-          method: "GET",
-          headers: {
-            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
-            accept: "application/json",
-          },
-        })
-        .catch(() => "Error");
-      if (response === "Error") return res.send("");
-      const rank = await axios.get(
-        `https://www.thebluealliance.com/api/v3/team/frc${_id}/event/${year}${eventCode}/status`,
-        {
-          headers: {
-            "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
-            accept: "application/json",
-          },
-        }
-      );
-      const { nickname, city, state_prov } = response.data;
-      return {
-        teamNumber: _id,
-        teamEvent: event,
-        teamName: nickname ? nickname : "Unknown Team",
-        teamLocation:
-          city && state_prov ? `${city}, ${state_prov}` : "Unknown Location",
-        teamRank: rank?.data?.qual?.ranking?.rank
-          ? rank?.data?.qual?.ranking?.rank
-          : 0,
-      };
-    })
-  );
+  if (!statusResponse || !teamsResponse) {
+    return res.status(500).json({ error: "Failed to fetch team data from TBA" });
+  }
+
+  const teamStatuses = statusResponse.data;
+  const teams = teamsResponse.data;
+
+  // Combine team info with their statuses
+  const teamArray = teams.map((team) => {
+    const teamKey = team.key;
+    const statusInfo = teamStatuses[teamKey];
+
+    return {
+      teamNumber: team.team_number,
+      teamName: team.nickname ? team.nickname : "Unknown Team",
+      teamLocation:
+        team.city && team.state_prov ? `${team.city}, ${team.state_prov}` : "Unknown Location",
+      teamRank: statusInfo?.qual?.ranking?.rank || 0,
+    };
+  });
 
   res.send(teamArray);
 });
