@@ -13,30 +13,30 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("_id")}</div>,
   },
   {
-    accessorKey: "avgTotalCoral",
+    accessorKey: "avgTotalFuel",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Total Coral" />
+      <DataTableColumnHeader column={column} title="Average Total Fuel" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTotalCoral")}</div>
+      <div className="w-[80px]">{row.getValue("avgTotalFuel")}</div>
     ),
   },
   {
-    accessorKey: "avgAutoCoral",
+    accessorKey: "avgAutoFuel",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Auto Coral" />
+      <DataTableColumnHeader column={column} title="Average Auto Fuel" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgAutoCoral")}</div>
+      <div className="w-[80px]">{row.getValue("avgAutoFuel")}</div>
     ),
   },
   {
-    accessorKey: "avgTeleCoral",
+    accessorKey: "avgTeleFuel",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Tele Coral" />
+      <DataTableColumnHeader column={column} title="Average Tele Fuel" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTeleCoral")}</div>
+      <div className="w-[80px]">{row.getValue("avgTeleFuel")}</div>
     ),
   },
   {
@@ -65,51 +65,48 @@ export const columns: ColumnDef<any>[] = [
     ),
   },
   {
-    accessorKey: "avgTotalAlgae",
+    accessorKey: "autoPercentage",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Total Algae Score" />
+      <DataTableColumnHeader column={column} title="Auto Percentage" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgTotalAlgae")}</div>
+      <div className="w-[80px]">{row.getValue("autoPercentage")}%</div>
     ),
   },
   {
-    accessorKey: "avgProcessedAlgae",
+    accessorKey: "bumpPercentage",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Average Processed Algae Score"
-      />
+      <DataTableColumnHeader column={column} title="Bump Percentage" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgProcessedAlgae")}</div>
+      <div className="w-[80px]">{row.getValue("bumpPercentage")}%</div>
     ),
   },
   {
-    accessorKey: "avgNetAlgae",
+    accessorKey: "trenchPercentage",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Average Net Algae Score" />
+      <DataTableColumnHeader column={column} title="Trench Percentage" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("avgNetAlgae")}</div>
+      <div className="w-[80px]">{row.getValue("trenchPercentage")}%</div>
     ),
   },
   {
-    accessorKey: "leavePercentage",
+    accessorKey: "shuttlePercentage",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Leave Percentage" />
+      <DataTableColumnHeader column={column} title="Shuttle Percentage" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("leavePercentage")}%</div>
+      <div className="w-[80px]">{row.getValue("shuttlePercentage")}%</div>
     ),
   },
   {
-    accessorKey: "parkPercentage",
+    accessorKey: "moveWhileShootPercentage",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Park Percentage" />
+      <DataTableColumnHeader column={column} title="Move While Shoot" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">{row.getValue("parkPercentage")}%</div>
+      <div className="w-[80px]">{row.getValue<number>("moveWhileShootPercentage") > 0 ? "Yes" : "No"}</div>
     ),
   },
   {

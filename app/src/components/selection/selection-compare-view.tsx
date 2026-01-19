@@ -34,34 +34,19 @@ const SelectionCompareView = ({
 }) => {
   const averages = [
     {
-      label: "Avg Coral",
-      value: aggregation?.avgTotalCoral,
-      statKey: "avgTotalCoral",
+      label: "Avg Fuel",
+      value: aggregation?.avgTotalFuel,
+      statKey: "avgTotalFuel",
     },
     {
-      label: "Avg Auto Coral",
-      value: aggregation?.avgAutoCoral,
-      statKey: "avgAutoCoral",
+      label: "Avg Auto Fuel",
+      value: aggregation?.avgAutoFuel,
+      statKey: "avgAutoFuel",
     },
     {
-      label: "Avg Tele Coral",
-      value: aggregation?.avgTeleCoral,
-      statKey: "avgTeleCoral",
-    },
-    {
-      label: "Avg Total Algae Score",
-      value: aggregation?.avgTotalAlgae,
-      statKey: "avgTotalAlgae",
-    },
-    {
-      label: "Avg Processed Algae Score",
-      value: aggregation?.avgProcessedAlgae,
-      statKey: "avgProcessedAlgae",
-    },
-    {
-      label: "Avg Net Algae Score",
-      value: aggregation?.avgNetAlgae,
-      statKey: "avgNetAlgae",
+      label: "Avg Tele Fuel",
+      value: aggregation?.avgTeleFuel,
+      statKey: "avgTeleFuel",
     },
     {
       label: "Avg Total Score",
@@ -90,22 +75,74 @@ const SelectionCompareView = ({
       statKey: "winPercentage",
     },
     {
-      label: "Leave %",
-      value: aggregation?.leavePercentage,
-      statKey: "leavePercentage",
+      label: "Auto %",
+      value: aggregation?.autoPercentage,
+      statKey: "autoPercentage",
     },
     {
-      label: "Park %",
-      value: aggregation?.parkPercentage,
-      statKey: "parkPercentage",
+      label: "Bump %",
+      value: aggregation?.bumpPercentage,
+      statKey: "bumpPercentage",
     },
-    { label: "Shallow Climb %",
-      value: aggregation?.shallowClimbPercentage,
-      statKey: "shallowClimbPercentage",
+    {
+      label: "Trench %",
+      value: aggregation?.trenchPercentage,
+      statKey: "trenchPercentage",
     },
-    { label: "Deep Climb %",
-      value: aggregation?.deepClimbPercentage,
-      statKey: "deepClimbPercentage",
+    {
+      label: "Left Climb L1 %",
+      value: aggregation?.leftClimbLevelOnePercentage,
+      statKey: "leftClimbLevelOnePercentage",
+    },
+    {
+      label: "Center Climb L1 %",
+      value: aggregation?.centerClimbLevelOnePercentage,
+      statKey: "centerClimbLevelOnePercentage",
+    },
+    {
+      label: "Right Climb L1 %",
+      value: aggregation?.rightClimbLevelOnePercentage,
+      statKey: "rightClimbLevelOnePercentage",
+    },
+    {
+      label: "Left Climb L2 %",
+      value: aggregation?.leftClimbLevelTwoPercentage,
+      statKey: "leftClimbLevelTwoPercentage",
+    },
+    {
+      label: "Center Climb L2 %",
+      value: aggregation?.centerClimbLevelTwoPercentage,
+      statKey: "centerClimbLevelTwoPercentage",
+    },
+    {
+      label: "Right Climb L2 %",
+      value: aggregation?.rightClimbLevelTwoPercentage,
+      statKey: "rightClimbLevelTwoPercentage",
+    },
+    {
+      label: "Left Climb L3 %",
+      value: aggregation?.leftClimbLevelThreePercentage,
+      statKey: "leftClimbLevelThreePercentage",
+    },
+    {
+      label: "Center Climb L3 %",
+      value: aggregation?.centerClimbLevelThreePercentage,
+      statKey: "centerClimbLevelThreePercentage",
+    },
+    {
+      label: "Right Climb L3 %",
+      value: aggregation?.rightClimbLevelThreePercentage,
+      statKey: "rightClimbLevelThreePercentage",
+    },
+    {
+      label: "Shuttle %",
+      value: aggregation?.shuttlePercentage,
+      statKey: "shuttlePercentage",
+    },
+    {
+      label: "Move While Shoot %",
+      value: aggregation?.moveWhileShootPercentage,
+      statKey: "moveWhileShootPercentage",
     },
     {
       label: "Defense %",
@@ -163,24 +200,24 @@ const SelectionCompareView = ({
                 <Card className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Average Coral
+                      Average Fuel
                     </CardTitle>
                     <Tally5 className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgTotalCoral} Coral{" "}
-                      {Math.sign(statsDifference.avgTotalCoral) == 1 ? (
+                      {aggregation?.avgTotalFuel} Fuel{" "}
+                      {Math.sign(statsDifference.avgTotalFuel) == 1 ? (
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgTotalCoral}
+                            +{statsDifference.avgTotalFuel}
                           </span>
                         </>
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalCoral} coral across{" "}
+                      {aggregation?.totalFuel} fuel across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
@@ -188,24 +225,24 @@ const SelectionCompareView = ({
                 <Card className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Average Auto Coral
+                      Average Auto Fuel
                     </CardTitle>
                     <IconRobot className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgAutoCoral} Coral
-                      {Math.sign(statsDifference.avgAutoCoral) == 1 ? (
+                      {aggregation?.avgAutoFuel} Fuel
+                      {Math.sign(statsDifference.avgAutoFuel) == 1 ? (
                         <>
                           {" "}
                           <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgAutoCoral}
+                            +{statsDifference.avgAutoFuel}
                           </span>
                         </>
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalAutoCoral} coral across{" "}
+                      {aggregation?.totalAutoFuel} fuel across{" "}
                       {aggregation?.matchCount} matches.
                     </p>
                   </CardContent>
