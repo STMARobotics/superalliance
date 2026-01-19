@@ -30,10 +30,7 @@ interface StandFormValues {
   teamNumber: null | string | number;
   matchNumber: null | number;
   auto: boolean;
-  autoFuel: null | number;
   autoClimb: boolean;
-  teleFuel: null | number;
-  shotsMissed: null | number;
   bump: boolean;
   trench: boolean;
   didClimb: boolean;
@@ -103,10 +100,7 @@ export default function StandFormChad() {
       teamNumber: null,
       matchNumber: null,
       auto: false,
-      autoFuel: 0,
       autoClimb: false,
-      teleFuel: 0,
-      shotsMissed: 0,
       bump: false,
       trench: false,
       didClimb: false,
@@ -136,9 +130,6 @@ export default function StandFormChad() {
       event: isNotEmpty("This cannot be empty"),
       teamNumber: isNotEmpty("This cannot be empty"),
       matchNumber: isNotEmpty("This cannot be empty"),
-      autoFuel: isNotEmpty("This cannot be empty"),
-      teleFuel: isNotEmpty("This cannot be empty"),
-      shotsMissed: isNotEmpty("This cannot be empty"),
       rpEarned: isNotEmpty("This cannot be empty"),
     },
   });
@@ -338,48 +329,6 @@ export default function StandFormChad() {
           Autonomous
         </div>
 
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.autoFuel !== null &&
-                form.values.autoFuel > 0
-              ) {
-                form.setFieldValue(
-                  "autoFuel",
-                  Number(form.values.autoFuel - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Auto Fuel"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("autoFuel")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "autoFuel",
-                Number(form.values.autoFuel! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
         <Checkbox
           className="pb-4"
           size="md"
@@ -397,90 +346,6 @@ export default function StandFormChad() {
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Teleop
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.teleFuel !== null &&
-                form.values.teleFuel > 0
-              ) {
-                form.setFieldValue(
-                  "teleFuel",
-                  Number(form.values.teleFuel - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Teleop Fuel"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("teleFuel")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "teleFuel",
-                Number(form.values.teleFuel! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.shotsMissed !== null &&
-                form.values.shotsMissed > 0
-              ) {
-                form.setFieldValue(
-                  "shotsMissed",
-                  Number(form.values.shotsMissed - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Shots Missed"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("shotsMissed")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "shotsMissed",
-                Number(form.values.shotsMissed! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
         </div>
 
         <Checkbox

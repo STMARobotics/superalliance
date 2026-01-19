@@ -51,7 +51,7 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
 formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) => {
   const validated = eventCodeSchema.safeParse(req.params.eventCode);
   if (!validated.success) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: "Invalid event code",
       details: validated.error.issues.map((e) => e.message)
     });
@@ -69,35 +69,32 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
   const data = req.body;
   const sendForm = await new StandFormSchema({
     _id: new mongoose.Types.ObjectId(),
-  autofuel: data.autofuel,
-  autoClimb: data.autoClimb,
-  teleFuel: data.teleFuel,
-  shotsMissed: data.shotsMissed,
-  win: data.win,
-  event: data.event,
-  teamNumber: data.teamNumber,
-  matchNumber: data.matchNumber,
-  usersName: data.usersName,
-  auto: data.auto,
-  criticals: data.criticals,
-  comments: data.comments,
-  strategy: data.strategy,
-  rpEarned: data.rpEarned,
-  defendedAgainst: data.defendedAgainst,
-  defense: data.defense,
-  shuttle: data.shuttle,
-  moveWhileShoot: data.moveWhileShoot,
-  bump: data.bump,
-  trench: data.trench,
-  leftClimbLevelOne: data.leftClimbLevelOne,
-  centerClimbLevelOne: data.centerClimbLevelOne,
-  rightClimbLevelOne: data.rightClimbLevelOne,
-  leftClimbLevelTwo: data.leftClimbLevelTwo,
-  centerClimbLevelTwo: data.centerClimbLevelTwo,
-  rightClimbLevelTwo: data.rightClimbLevelTwo,
-  leftClimbLevelThree: data.leftClimbLevelThree,
-  centerClimbLevelThree: data.centerClimbLevelThree,
-  rightClimbLevelThree: data.rightClimbLevelThree,
+    autoClimb: data.autoClimb,
+    win: data.win,
+    event: data.event,
+    teamNumber: data.teamNumber,
+    matchNumber: data.matchNumber,
+    usersName: data.usersName,
+    auto: data.auto,
+    criticals: data.criticals,
+    comments: data.comments,
+    strategy: data.strategy,
+    rpEarned: data.rpEarned,
+    defendedAgainst: data.defendedAgainst,
+    defense: data.defense,
+    shuttle: data.shuttle,
+    moveWhileShoot: data.moveWhileShoot,
+    bump: data.bump,
+    trench: data.trench,
+    leftClimbLevelOne: data.leftClimbLevelOne,
+    centerClimbLevelOne: data.centerClimbLevelOne,
+    rightClimbLevelOne: data.rightClimbLevelOne,
+    leftClimbLevelTwo: data.leftClimbLevelTwo,
+    centerClimbLevelTwo: data.centerClimbLevelTwo,
+    rightClimbLevelTwo: data.rightClimbLevelTwo,
+    leftClimbLevelThree: data.leftClimbLevelThree,
+    centerClimbLevelThree: data.centerClimbLevelThree,
+    rightClimbLevelThree: data.rightClimbLevelThree,
   });
 
   await sendForm.save().catch((err) => {
