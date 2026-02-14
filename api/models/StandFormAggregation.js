@@ -96,6 +96,12 @@ const StandFormAggregation = (eventId) => {
         totalTeleFuel: {
           $add: "$teleFuel",
         },
+        accuracy: {
+          $divide: [
+            "$teleFuel",
+            { $add: ["$teleFuel", "$shotsMissed"] }
+          ]
+        },
         autoBoolean: {
           $cond: {
             if: "$auto",
@@ -355,6 +361,9 @@ const StandFormAggregation = (eventId) => {
           avgTeleFuel: {
             $avg: "$totalTeleFuel",
           },
+          avgAccuracy: {
+            $avg: "accuracy",
+          },
           autoPercentage: {
             $avg:  { $multiply: ["$autoBoolean", 100]},
           },
@@ -491,6 +500,7 @@ const StandFormAggregation = (eventId) => {
           avgTotalFuel: { $round: ["$avgTotalFuel", 2] },
           avgAutoFuel: { $round: ["$avgAutoFuel", 2] },
           avgTeleFuel: { $round: ["$avgTeleFuel", 2] },
+          avgAccuracy: { $round: ["avgAccuracy", 2] },
           autoPercentage: { $round: ["$autoPercentage", 2] },
           bumpPercentage: { $round: ["$bumpPercentage", 2] },
           trenchPercentage: { $round: ["$trenchPercentage", 2] },

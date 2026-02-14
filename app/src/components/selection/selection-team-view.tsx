@@ -217,6 +217,7 @@ export const DataDisplay = ({
     { label: "Avg Total Score", value: aggregationData?.avgTotalScore },
     { label: "Avg Auto Score", value: aggregationData?.avgAutoScore },
     { label: "Avg Tele Score", value: aggregationData?.avgTeleScore },
+    { label: "Avg Accuracy", value: aggregationData?.avgAccuracy },
     { label: "Avg RP", value: aggregationData?.avgRP },
     { label: "Total Crits", value: aggregationData?.criticalCount },
     { label: "Win Rate", value: aggregationData?.winPercentage + "%" },
