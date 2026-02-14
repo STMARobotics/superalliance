@@ -31,6 +31,9 @@ interface StandFormValues {
   matchNumber: null | number;
   auto: boolean;
   autoClimb: boolean;
+  autoFuel: null | number;
+  teleFuel: null | number;
+  shotsMissed: null | number;
   bump: boolean;
   trench: boolean;
   didClimb: boolean;
@@ -101,6 +104,9 @@ export default function StandFormChad() {
       matchNumber: null,
       auto: false,
       autoClimb: false,
+      autoFuel: 0,
+      teleFuel: 0,
+      shotsMissed: 0,
       bump: false,
       trench: false,
       didClimb: false,
@@ -274,10 +280,10 @@ export default function StandFormChad() {
           )}
 
         {appSettings?.event !== "none" &&
-        appSettings?.event !== "gnrprac" &&
-        appSettings?.event !== "worldsprac" &&
-        appSettings?.event !== "gcrprac" &&
-        matchTeams?.length > 0 ? (
+          appSettings?.event !== "gnrprac" &&
+          appSettings?.event !== "worldsprac" &&
+          appSettings?.event !== "gcrprac" &&
+          matchTeams?.length > 0 ? (
           <Select
             data={matchTeams}
             placeholder="Pick one"
@@ -292,10 +298,10 @@ export default function StandFormChad() {
         ) : (
           <>
             {(matchTeams && appSettings?.event !== "none") ||
-            appSettings?.event == "none" ||
-            appSettings?.event == "gnrprac" ||
-            appSettings?.event == "worldsprac" ||
-            appSettings?.event == "gcrprac" ? (
+              appSettings?.event == "none" ||
+              appSettings?.event == "gnrprac" ||
+              appSettings?.event == "worldsprac" ||
+              appSettings?.event == "gcrprac" ? (
               <NumberInput
                 label="Team Number"
                 description={
@@ -328,6 +334,49 @@ export default function StandFormChad() {
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Autonomous
         </div>
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.autoFuel !== null &&
+                form.values.autoFuel > 0
+              ) {
+                form.setFieldValue(
+                  "autoFuel",
+                  Number(form.values.autoFuel - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Auto Fuel"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("autoFuel")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "autoFuel",
+                Number(form.values.autoFuel! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+
 
         <Checkbox
           className="pb-4"
@@ -346,6 +395,90 @@ export default function StandFormChad() {
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Teleop
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.teleFuel !== null &&
+                form.values.teleFuel > 0
+              ) {
+                form.setFieldValue(
+                  "teleFuel",
+                  Number(form.values.teleFuel - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Teleop Fuel"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("teleFuel")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "teleFuel",
+                Number(form.values.teleFuel! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
+        </div>
+
+        <div className="flex flex-row justify-between items-center w-full gap-5">
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              if (
+                form.values.shotsMissed !== null &&
+                form.values.shotsMissed > 0
+              ) {
+                form.setFieldValue(
+                  "shotsMissed",
+                  Number(form.values.shotsMissed - 1)
+                );
+              }
+            }}
+          >
+            <Minus />
+          </ActionIcon>
+          <NumberInput
+            label="Shots Missed"
+            placeholder="0"
+            className="pb-4 w-full"
+            allowDecimal={false}
+            allowNegative={false}
+            hideControls
+            inputMode="numeric"
+            {...form.getInputProps("shotsMissed")}
+          />
+          <ActionIcon
+            size={"2rem"}
+            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
+            onClick={() => {
+              form.setFieldValue(
+                "shotsMissed",
+                Number(form.values.shotsMissed! + 1)
+              );
+            }}
+          >
+            <Plus />
+          </ActionIcon>
         </div>
 
         <Checkbox

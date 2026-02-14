@@ -50,10 +50,9 @@ const FormView = ({ formData }: { formData: any }) => {
       <div className="text-red-500 pb-6 text-center text-4xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
         #{formData?.teamNumber}
         {eventTeams?.length > 0 &&
-          ` • ${
-            eventTeams?.filter(
-              (team: any) => team.teamNumber == formData?.teamNumber
-            )[0]?.teamName
+          ` • ${eventTeams?.filter(
+            (team: any) => team.teamNumber == formData?.teamNumber
+          )[0]?.teamName
           }`}
       </div>
 
@@ -91,6 +90,12 @@ const FormView = ({ formData }: { formData: any }) => {
         Autonomous
       </div>
 
+      <TextInput
+        value={formData?.autoFuel}
+        readOnly
+        label="Auto Fuel Scored"
+        className="pb-4"
+      />
 
       <Checkbox
         checked={formData?.autoClimb}
@@ -112,6 +117,20 @@ const FormView = ({ formData }: { formData: any }) => {
       <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
         Teleop
       </div>
+
+      <TextInput
+        value={formData?.teleFuel}
+        readOnly
+        label="Teleop Fuel Scored"
+        className="pb-4"
+      />
+      <TextInput
+        value={formData?.shotsMissed}
+        readOnly
+        label="Shots Missed"
+        className="pb-4"
+      />
+
 
       <Checkbox
         checked={formData?.bump}

@@ -8,7 +8,6 @@ import Home from "./pages/client/Home";
 import Header from "./components/header";
 import SignInPage from "./pages/handlers/login/page";
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
-import QuantStandForm from "./pages/forms/StandQaunt";
 import StandForm from "./pages/forms/Stand";
 import NotFound from "./pages/NotFound";
 import DataStandForm from "./pages/data/form/stand/ViewForm";
@@ -50,19 +49,6 @@ function AppRouter() {
             <>
               <SignedIn>
                 <StandForm />
-              </SignedIn>
-              <SignedOut>
-                <Navigate to="/login" />
-              </SignedOut>
-            </>
-          }
-        />
-        <Route
-          path="/new/quantstand"
-          element={
-            <>
-              <SignedIn>
-                <QuantStandForm />
               </SignedIn>
               <SignedOut>
                 <Navigate to="/login" />

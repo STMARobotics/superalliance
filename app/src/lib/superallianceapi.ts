@@ -191,18 +191,6 @@ export function useSuperAllianceApi() {
     }
   }
 
-  const getQuantFormById = async (id: string) => {
-    try {
-      const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/form/standquant/${id}`
-      );
-      const data = res.data;
-      return data;
-    } catch (err) {
-      throw new Error("Quant Stand Form not found");
-    }
-  };
-
   return {
     getForms,
     getTeams,
@@ -218,7 +206,6 @@ export function useSuperAllianceApi() {
     getTeamSelection,
     getMatchData,
     getEventTeamRank,
-    getQuantFormById,
     api
   }
 };

@@ -28,7 +28,7 @@ export default function Home() {
               "bg-red-600 text-white hover:bg-red-800"
             )}
           >
-            New Qualatative Stand Form
+            New Stand Form
           </Link>
           <Link
             to="/new/pit"
@@ -38,15 +38,6 @@ export default function Home() {
             )}
           >
             New Pit Form
-          </Link>
-          <Link
-            to="/new/quantstand"
-            className={cn(
-              buttonVariants(),
-              "bg-red-600 text-white hover:bg-red-800"
-            )}
-          >
-            New Quantatative Stand Form
           </Link>
         </PageActions>
       </PageHeader>
