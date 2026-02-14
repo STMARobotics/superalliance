@@ -7,59 +7,36 @@ const StandFormAggregation = (eventId) => {
         totalScore: {
           $add: [
             {
-              $multiply: ["$autoCoralL1", 3],
+              $multiply: ["$autoFuel", 1],
             },
             {
-              $multiply: ["$autoCoralL2", 4],
-            },
-            {
-              $multiply: ["$autoCoralL3", 6],
-            },
-            {
-              $multiply: ["$autoCoralL4", 7],
-            },
-            {
-              $multiply: ["$autoAlgaeProcessor", 6],
-            },
-            {
-              $multiply: ["$autoAlgaeNet", 4],
-            },
-            {
-              $multiply: ["$teleopCoralL1", 2],
-            },
-            {
-              $multiply: ["$teleopCoralL2", 3],
-            },
-            {
-              $multiply: ["$teleopCoralL3", 4],
-            },
-            {
-              $multiply: ["$teleopCoralL4", 5],
-            },
-            {
-              $multiply: ["$teleopAlgaeProcessor", 6],
-            },
-            {
-              $multiply: ["$teleopAlgaeNet", 4],
+              $multiply: ["$teleFuel", 1],
             },
             {
               $cond: {
-                if: "$park",
-                then: 2,
+                if: "$autoClimb",
+                then: 15,
                 else: 0,
               },
             },
             {
               $cond: {
-                if: "$shallowClimb",
-                then: 6,
+                if: { $or: ["$centerClimbLevelOne", "$sideClimbLevelOne"] },
+                then: 10,
                 else: 0,
               },
             },
             {
               $cond: {
-                if: "$deepClimb",
-                then: 12,
+                if: { $or: ["$centerClimbLevelTwo", "$sideClimbLevelTwo"] },
+                then: 20,
+                else: 0,
+              },
+            },
+            {
+              $cond: {
+                if: { $or: ["$centerClimbLevelThree", "$sideClimbLevelThree"] },
+                then: 30,
                 else: 0,
               },
             },
@@ -68,133 +45,66 @@ const StandFormAggregation = (eventId) => {
         autoScore: {
           $add: [
             {
-              $multiply: ["$autoCoralL1", 3],
+              $multiply: ["$autoFuel", 1],
             },
             {
-              $multiply: ["$autoCoralL2", 4],
-            },
-            {
-              $multiply: ["$autoCoralL3", 6],
-            },
-            {
-              $multiply: ["$autoCoralL4", 7],
-            },
-            {
-              $multiply: ["$autoAlgaeProcessor", 6],
-            },
-            {
-              $multiply: ["$autoAlgaeNet", 4],
+              $cond: {
+                if: "$autoClimb",
+                then: 15,
+                else: 0,
+              },
             },
           ],
         },
         teleScore: {
           $add: [
             {
-              $multiply: ["$teleopCoralL1", 2],
-            },
-            {
-              $multiply: ["$teleopCoralL2", 3],
-            },
-            {
-              $multiply: ["$teleopCoralL3", 4],
-            },
-            {
-              $multiply: ["$teleopCoralL4", 5],
-            },
-            {
-              $multiply: ["$teleopAlgaeProcessor", 6],
-            },
-            {
-              $multiply: ["$teleopAlgaeNet", 4],
+              $multiply: ["$teleFuel", 1],
             },
             {
               $cond: {
-                if: "$park",
-                then: 2,
+                if: { $or: ["$leftClimbLevelOne", "$centerClimbLevelOne", "$rightClimbLevelOne"] },
+                then: 10,
                 else: 0,
               },
             },
             {
               $cond: {
-                if: "$shallowClimb",
-                then: 6,
+                if: { $or: ["$leftClimbLevelTwo", "$centerClimbLevelTwo", "$rightClimbLevelTwo"] },
+                then: 20,
                 else: 0,
               },
             },
             {
               $cond: {
-                if: "$deepClimb",
-                then: 12,
+                if: { $or: ["$leftClimbLevelThree", "$centerClimbLevelThree", "$rightClimbLevelThree"] },
+                then: 30,
                 else: 0,
               },
             },
           ],
         },
-        totalCoral: {
+        totalFuel: {
           $add: [
-            "$autoCoralL1",
-            "$autoCoralL2",
-            "$autoCoralL3",
-            "$autoCoralL4",
-            "$teleopCoralL1",
-            "$teleopCoralL2",
-            "$teleopCoralL3",
-            "$teleopCoralL4",
+            "$autoFuel",
+            "$teleFuel",
           ],
         },
-        totalAutoCoral: {
-          $add: ["$autoCoralL1",
-            "$autoCoralL2",
-            "$autoCoralL3",
-            "$autoCoralL4",],
+        totalAutoFuel: {
+          $add: "$autoFuel",
         },
-        totalTeleCoral: {
-          $add: [
-            "$teleopCoralL1",
-            "$teleopCoralL2",
-            "$teleopCoralL3",
-            "$teleopCoralL4",
-          ],
+        totalTeleFuel: {
+          $add: "$teleFuel",
         },
-        totalAlgae : {
-          $add: ["$autoAlgaeProcessor",
-                 "$autoAlgaeNet", 
-                 "$teleopAlgaeProcessor", 
-                 "$teleopAlgaeNet"
-              ],
+        accuracy: {
+          $divide: [
+            "$teleFuel",
+            { $add: ["$teleFuel", "$shotsMissed"] }
+          ]
         },
-        totalProcessedAlgae : {
-          $add: ["$autoAlgaeProcessor", 
-                 "$teleopAlgaeProcessor"
-              ],
-        },
-        totalNetAlgae : {
-          $add: ["$autoAlgaeNet", 
-                 "$teleopAlgaeNet"
-              ],
-        },
-        totalL1Coral : {
-          $add: ["$teleopCoralL1"],
-        },
-        totalL2Coral : {
-          $add: ["$teleopCoralL2"],
-        },
-        totalL3Coral : {
-          $add: ["$teleopCoralL3"],
-        },
-        totalL4Coral : {
-          $add: ["$teleopCoralL4"],
-        },
-        leaveBoolean: {
+        autoBoolean: {
           $cond: {
-            if: "$leave",
-            then: 1,
-            else: 0,
-          },
-        },
-        parkBoolean: {
-          $cond: {
-            if: "$park",
+            if: "$auto",
             then: 1,
             else: 0,
           },
@@ -213,16 +123,72 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
-        shallowClimbBoolean: {
+        shuttleBoolean: {
           $cond: {
-            if: "$shallowClimb",
+            if: "$shuttle",
             then: 1,
             else: 0,
           },
         },
-        deepClimbBoolean: {
+        moveWhileShootBoolean: {
           $cond: {
-            if: "$deepClimb",
+            if: "$moveWhileShoot",
+            then: 1,
+            else: 0,
+          },
+        },
+        bumpBoolean: {
+          $cond: {
+            if: "$bump",
+            then: 1,
+            else: 0,
+          },
+        },
+        trenchBoolean: {
+          $cond: {
+            if: "$trench",
+            then: 1,
+            else: 0,
+          },
+        },
+        centerClimbLevelOneBoolean: {
+          $cond: {
+            if: "$centerClimbLevelOne",
+            then: 1,
+            else: 0,
+          },
+        },
+        sideClimbLevelOneBoolean: {
+          $cond: {
+            if: "$sideClimbLevelOne",
+            then: 1,
+            else: 0,
+          },
+        },
+        centerClimbLevelTwoBoolean: {
+          $cond: {
+            if: "$centerClimbLevelTwo",
+            then: 1,
+            else: 0,
+          },
+        },
+        sideClimbLevelTwoBoolean: {
+          $cond: {
+            if: "$sideClimbLevelTwo",
+            then: 1,
+            else: 0,
+          },
+        },
+        centerClimbLevelThreeBoolean: {
+          $cond: {
+            if: "$centerClimbLevelThree",
+            then: 1,
+            else: 0,
+          },
+        },
+        sideClimbLevelThreeBoolean: {
+          $cond: {
+            if: "$sideClimbLevelThree",
             then: 1,
             else: 0,
           },
@@ -233,25 +199,6 @@ const StandFormAggregation = (eventId) => {
             then: 1,
             else: 0,
           },
-        },
-        coralBotBoolean: {
-          $cond: {
-            if: { $gt: [{ $add: [
-              "$teleopCoralL1",
-              "$teleopCoralL2",
-              "$teleopCoralL3",
-              "$teleopCoralL4",
-            ] }, 6] },
-            then: 1,
-            else: 0,
-          }
-        },
-        algaeBotBoolean: {
-          $cond: {
-            if: { $gt: ["$teleopAlgaeNet", 2] },
-            then: 1,
-            else: 0,
-          }
         },
         criticalCount: {
           $size: "$criticals",
@@ -275,108 +222,48 @@ const StandFormAggregation = (eventId) => {
           totalTeleScore: {
             $sum: "$teleScore",
           },
-          totalCoral: {
-            $sum: "$totalCoral",
+          totalFuel: {
+            $sum: "$totalFuel",
           },
-          totalAutoCoral: {
-            $sum: "$totalAutoCoral",
+          totalAutoFuel: {
+            $sum: "$totalAutoFuel",
           },
-          totalTeleCoral: {
-            $sum: "$totalTeleCoral",
+          totalTeleFuel: {
+            $sum: "$totalTeleFuel",
           },
-          totalAlgae: {
-            $sum: "$totalAlgae",
-          },
-          totalProcessedAlgae: {
-            $sum: "$totalProcessedAlgae",
-          },
-          totalNetAlgae: {
-            $sum: "$totalNetAlgae",
-          },
-          totalL1Coral: {
-            $sum: "$totalL1Coral",
-          },
-          totalL2Coral: {
-            $sum: "$totalL2Coral",
-          },
-          totalL3Coral: {
-            $sum: "$totalL3Coral",
-          },
-          totalL4Coral: {
-            $sum: "$totalL4Coral",
-          },
-          matchTotalCoral: {
+          matchTotalFuel: {
             $push: {
               $cond: [
-                { $ne: ["$totalCoral", 0] },
+                { $ne: ["$totalFuel", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  score: "$totalCoral",
+                  score: "$totalFuel",
                   formId: "$_id",
                 },
                 "$$REMOVE",
               ],
             },
           },
-          matchAutoCoral: {
+          matchAutoFuel: {
             $push: {
               $cond: [
-                { $ne: ["$autoCoral", 0] },
+                { $ne: ["$autoFuel", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  score: "$totalAutoCoral",
+                  score: "$totalAutoFuel",
                   formId: "$_id",
                 },
                 "$$REMOVE",
               ],
             },
           },
-          matchTeleCoral: {
+          matchTeleFuel: {
             $push: {
               $cond: [
-                { $ne: ["$teleNotes", 0] },
+                { $ne: ["$teleFuel", 0] },
                 {
                   matchNumber: "$matchNumber",
-                  score: "$totalTeleCoral",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
-            },
-          },
-          matchTotalAlgae: {
-            $push: {
-              $cond: [
-                { $ne: ["$totalAlgae", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalAlgae",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
-            },
-          },
-          matchProcessedAlgae: {
-            $push: {
-              $cond: [
-                { $ne: ["$autoAlgae", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalProcessedAlgae",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
-            },
-          },
-          matchNetAlgae: {
-            $push: {
-              $cond: [
-                { $ne: ["$teleAlgae", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalNetAlgae",
+                  score: "$totalTeleFuel",
                   formId: "$_id",
                 },
                 "$$REMOVE",
@@ -444,29 +331,59 @@ const StandFormAggregation = (eventId) => {
           avgTeleScore: {
             $avg: "$teleScore",
           },
-          avgTotalCoral: {
-            $avg: "$totalCoral",
+          avgTotalFuel: {
+            $avg: "$totalFuel",
           },
-          avgAutoCoral: {
-            $avg: "$totalAutoCoral",
+          avgAutoFuel: {
+            $avg: "$totalAutoFuel",
           },
-          avgTeleCoral: {
-            $avg: "$totalTeleCoral",
+          avgTeleFuel: {
+            $avg: "$totalTeleFuel",
           },
-          avgTotalAlgae: {
-            $avg: "$totalAlgae",
+          avgAccuracy: {
+            $avg: "accuracy",
           },
-          avgProcessedAlgae: {
-            $avg: "$totalProcessedAlgae",
+          autoPercentage: {
+            $avg:  { $multiply: ["$autoBoolean", 100]},
           },
-          avgNetAlgae: {
-            $avg: "$totalNetAlgae",
+          bumpPercentage: {
+            $avg:  { $multiply: ["$bumpBoolean", 100]},
           },
-          leavePercentage: {
-            $avg:  { $multiply: ["$leaveBoolean", 100]},
+          trenchPercentage: {
+            $avg:  { $multiply: ["$trenchBoolean", 100]},
           },
-          parkPercentage: {
-            $avg:  { $multiply: ["$parkBoolean", 100]},
+          leftClimbLevelOnePercentage: {
+            $avg:  { $multiply: ["$leftClimbLevelOneBoolean", 100]},
+          },
+          centerClimbLevelOnePercentage: {
+            $avg:  { $multiply: ["$centerClimbLevelOneBoolean", 100]},
+          },
+          rightClimbLevelOnePercentage: {
+            $avg:  { $multiply: ["$rightClimbLevelOneBoolean", 100]},
+          },
+          leftClimbLevelTwoPercentage: {
+            $avg:  { $multiply: ["$leftClimbLevelTwoBoolean", 100]},
+          },
+          centerClimbLevelTwoPercentage: {
+            $avg:  { $multiply: ["$centerClimbLevelTwoBoolean", 100]},
+          },
+          rightClimbLevelTwoPercentage: {
+            $avg:  { $multiply: ["$rightClimbLevelTwoBoolean", 100]},
+          },
+          leftClimbLevelThreePercentage: {
+            $avg:  { $multiply: ["$leftClimbLevelThreeBoolean", 100]},
+          },
+          centerClimbLevelThreePercentage: {
+            $avg:  { $multiply: ["$centerClimbLevelThreeBoolean", 100]},
+          },
+          rightClimbLevelThreePercentage: {
+            $avg:  { $multiply: ["$rightClimbLevelThreeBoolean", 100]},
+          },
+          shuttlePercentage: {
+            $avg:  { $multiply: ["$shuttleBoolean", 100]},
+          },
+          moveWhileShootPercentage: {
+            $avg:  { $multiply: ["$moveWhileShootBoolean", 100]},
           },
           defensePercentage: {
             $avg:  { $multiply: ["$defenseBoolean", 100]},
@@ -482,12 +399,6 @@ const StandFormAggregation = (eventId) => {
           },
           winPercentage: {
             $avg:  { $multiply: ["$winBoolean", 100]},
-          },
-          coralBotPercentage: {
-            $avg:  { $multiply: ["$coralBotBoolean", 100]},
-          },
-          algaeBotPercentage: {
-            $avg:  { $multiply: ["$algaeBotBoolean", 100]},
           },
           avgRP: {
             $avg: "$rpEarned",
@@ -538,33 +449,17 @@ const StandFormAggregation = (eventId) => {
           totalScore: { $round: ["$totalScore", 2] },
           totalAutoScore: { $round: ["$totalAutoScore", 2] },
           totalTeleScore: { $round: ["$totalTeleScore", 2] },
-          totalCoral: { $round: ["$totalCoral", 2] },
-          totalAutoCoral: { $round: ["$totalAutoCoral", 2] },
-          totalTeleCoral: { $round: ["$totalTeleCoral", 2] },
-          totalAlgae: { $round: ["$totalAlgae", 2] },
-          totalProcessedAlgae: { $round: ["$totalProcessedAlgae", 2] },
-          totalNetAlgae: { $round: ["$totalNetAlgae", 2] },
-          totalL1Coral: { $round: ["$totalL1Coral", 2] },
-          totalL2Coral: { $round: ["$totalL2Coral", 2] },
-          totalL3Coral: { $round: ["$totalL3Coral", 2] },
-          totalL4Coral: { $round: ["$totalL4Coral", 2] },
-          matchTotalCoral: {
-            $concatArrays: "$matchTotalCoral",
+          totalFuel: { $round: ["$totalFuel", 2] },
+          totalAutoFuel: { $round: ["$totalAutoFuel", 2] },
+          totalTeleFuel: { $round: ["$totalTeleFuel", 2] },
+          matchTotalFuel: {
+            $concatArrays: "$matchTotalFuel",
           },
-          matchAutoCoral: {
-            $concatArrays: "$matchAutoCoral",
+          matchAutoFuel: {
+            $concatArrays: "$matchAutoFuel",
           },
-          matchTeleCoral: {
-            $concatArrays: "$matchTeleCoral",
-          },
-          matchTotalAlgae: { 
-            $concatArrays: "$matchTotalAlgae" 
-          },
-          matchProcessedAlgae: {
-            $concatArrays: "$matchProcessedAlgae",
-          },
-          matchNetAlgae: {
-            $concatArrays: "$matchNetAlgae",
+          matchTeleFuel: {
+            $concatArrays: "$matchTeleFuel",
           },
           matchTotalScore: {
             $concatArrays: "$matchTotalScores",
@@ -581,25 +476,29 @@ const StandFormAggregation = (eventId) => {
           avgTotalScore: { $round: ["$avgTotalScore", 2] },
           avgAutoScore: { $round: ["$avgAutoScore", 2] },
           avgTeleScore: { $round: ["$avgTeleScore", 2] },
-          avgTotalCoral: { $round: ["$avgTotalCoral", 2] },
-          avgAutoCoral: { $round: ["$avgAutoCoral", 2] },
-          avgTeleCoral: { $round: ["$avgTeleCoral", 2] },
-          avgTotalAlgae: { $round: ["$avgTotalAlgae", 2] },
-          avgProcessedAlgae: { $round: ["$avgProcessedAlgae", 2] },
-          avgNetAlgae: { $round: ["$avgNetAlgae", 2] },
-          leavePercentage: { $round: ["$leavePercentage", 2] },
-          parkPercentage: { $round: ["$parkPercentage", 2] },
-          shallowClimbPercentage: {
-            $round: ["$shallowClimbPercentage", 2],
-          },
-          deepClimbPercentage: { $round: ["$deepClimbPercentage", 2] },
+          avgTotalFuel: { $round: ["$avgTotalFuel", 2] },
+          avgAutoFuel: { $round: ["$avgAutoFuel", 2] },
+          avgTeleFuel: { $round: ["$avgTeleFuel", 2] },
+          avgAccuracy: { $round: ["$avgAccuracy", 2] },
+          autoPercentage: { $round: ["$autoPercentage", 2] },
+          bumpPercentage: { $round: ["$bumpPercentage", 2] },
+          trenchPercentage: { $round: ["$trenchPercentage", 2] },
+          leftClimbLevelOnePercentage: { $round: ["$leftClimbLevelOnePercentage", 2] },
+          centerClimbLevelOnePercentage: { $round: ["$centerClimbLevelOnePercentage", 2] },
+          rightClimbLevelOnePercentage: { $round: ["$rightClimbLevelOnePercentage", 2] },
+          leftClimbLevelTwoPercentage: { $round: ["$leftClimbLevelTwoPercentage", 2] },
+          centerClimbLevelTwoPercentage: { $round: ["$centerClimbLevelTwoPercentage", 2] },
+          rightClimbLevelTwoPercentage: { $round: ["$rightClimbLevelTwoPercentage", 2] },
+          leftClimbLevelThreePercentage: { $round: ["$leftClimbLevelThreePercentage", 2] },
+          centerClimbLevelThreePercentage: { $round: ["$centerClimbLevelThreePercentage", 2] },
+          rightClimbLevelThreePercentage: { $round: ["$rightClimbLevelThreePercentage", 2] },
+          shuttlePercentage: { $round: ["$shuttlePercentage", 2] },
+          moveWhileShootPercentage: { $round: ["$moveWhileShootPercentage", 2] },
           defensePercentage: { $round: ["$defensePercentage", 2] },
           defendedAgainstPercentage: {
             $round: ["$defendedAgainstPercentage", 2],
           },
           winPercentage: { $round: ["$winPercentage", 2] },
-          coralBotPercentage: { $round: ["$coralBotPercentage", 2] },
-          algaeBotPercentage: { $round: ["$algaeBotPercentage", 2] },
           avgRP: { $round: ["$avgRP", 2] },
           comments: {
             $concatArrays: "$comments",

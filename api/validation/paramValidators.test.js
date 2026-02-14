@@ -143,9 +143,9 @@ describe('eventCode schema', () => {
 
 describe('eventId schema', () => {
   test('accepts 2-8 alphanumeric', () => {
-    const result = eventIdSchema.safeParse('EVT2025');
+    const result = eventIdSchema.safeParse(`EVT${new Date().getFullYear()}`);
     expect(result.success).toBe(true);
-    expect(result.data).toBe('EVT2025');
+    expect(result.data).toBe(`EVT${new Date().getFullYear()}`);
   });
 });
 

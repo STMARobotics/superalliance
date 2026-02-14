@@ -29,28 +29,31 @@ interface StandFormValues {
   event: null | number;
   teamNumber: null | string | number;
   matchNumber: null | number;
-  leave: boolean;
-  autoCoralL1: null | number;
-  autoCoralL2: null | number;
-  autoCoralL3: null | number;
-  autoCoralL4: null | number;
-  autoAlgaeProcessor: null | number;
-  autoAlgaeNet: null | number;
-  teleopCoralL1: null | number;
-  teleopCoralL2: null | number;
-  teleopCoralL3: null | number;
-  teleopCoralL4: null | number;
-  teleopAlgaeProcessor: null | number;
-  teleopAlgaeNet: null | number;
-  park: boolean;
-  shallowClimb: boolean;
-  deepClimb: boolean;
+  auto: boolean;
+  autoClimb: boolean;
+  autoFuel: null | number;
+  teleFuel: null | number;
+  shotsMissed: null | number;
+  bump: boolean;
+  trench: boolean;
+  didClimb: boolean;
+  climbPosition: null | string;
+  climbLevel: null | string;
+  backClimb: boolean;
+  centerClimbLevelOne: boolean;
+  sideClimbLevelOne: boolean;
+  centerClimbLevelTwo: boolean;
+  sideClimbLevelTwo: boolean;
+  centerClimbLevelThree: boolean;
+  sideClimbLevelThree: boolean;
   criticals: any[];
   comments: string;
   strategy: string;
   rpEarned: null | number;
   defendedAgainst: boolean;
   defense: boolean;
+  shuttle: boolean;
+  moveWhileShoot: boolean;
   win: boolean;
 }
 
@@ -96,46 +99,37 @@ export default function StandFormChad() {
       event: null,
       teamNumber: null,
       matchNumber: null,
-      leave: false,
-      autoCoralL1: 0,
-      autoCoralL2: 0,
-      autoCoralL3: 0,
-      autoCoralL4: 0,
-      autoAlgaeProcessor: 0,
-      autoAlgaeNet: 0,
-      teleopCoralL1: 0,
-      teleopCoralL2: 0,
-      teleopCoralL3: 0,
-      teleopCoralL4: 0,
-      teleopAlgaeProcessor: 0,
-      teleopAlgaeNet: 0,
-      park: false,
-      shallowClimb: false,
-      deepClimb: false,
+      auto: false,
+      autoClimb: false,
+      autoFuel: 0,
+      teleFuel: 0,
+      shotsMissed: 0,
+      bump: false,
+      trench: false,
+      didClimb: false,
+      climbPosition: "",
+      climbLevel: "",
+      backClimb: false,
+      centerClimbLevelOne: false,
+      centerClimbLevelTwo: false,
+      centerClimbLevelThree: false,
+  sideClimbLevelOne: false,
+  sideClimbLevelTwo: false,
+  sideClimbLevelThree: false,
       criticals: [],
       comments: "",
-      strategy: "",      
+      strategy: "",
       rpEarned: 0,
       defendedAgainst: false,
       defense: false,
+      shuttle: false,
+      moveWhileShoot: false,
       win: false,
     },
     validate: {
       event: isNotEmpty("This cannot be empty"),
       teamNumber: isNotEmpty("This cannot be empty"),
       matchNumber: isNotEmpty("This cannot be empty"),
-      autoCoralL1: isNotEmpty("This cannot be empty"),
-      autoCoralL2: isNotEmpty("This cannot be empty"),
-      autoCoralL3: isNotEmpty("This cannot be empty"),
-      autoCoralL4: isNotEmpty("This cannot be empty"),
-      autoAlgaeProcessor: isNotEmpty("This cannot be empty"),
-      autoAlgaeNet: isNotEmpty("This cannot be empty"),
-      teleopCoralL1: isNotEmpty("This cannot be empty"),
-      teleopCoralL2: isNotEmpty("This cannot be empty"),
-      teleopCoralL3: isNotEmpty("This cannot be empty"),
-      teleopCoralL4: isNotEmpty("This cannot be empty"),
-      teleopAlgaeProcessor: isNotEmpty("This cannot be empty"),
-      teleopAlgaeNet: isNotEmpty("This cannot be empty"),
       rpEarned: isNotEmpty("This cannot be empty"),
     },
   });
@@ -280,10 +274,10 @@ export default function StandFormChad() {
           )}
 
         {appSettings?.event !== "none" &&
-        appSettings?.event !== "gnrprac" &&
-        appSettings?.event !== "worldsprac" &&
-        appSettings?.event !== "gcrprac" &&
-        matchTeams?.length > 0 ? (
+          appSettings?.event !== "gnrprac" &&
+          appSettings?.event !== "worldsprac" &&
+          appSettings?.event !== "gcrprac" &&
+          matchTeams?.length > 0 ? (
           <Select
             data={matchTeams}
             placeholder="Pick one"
@@ -298,10 +292,10 @@ export default function StandFormChad() {
         ) : (
           <>
             {(matchTeams && appSettings?.event !== "none") ||
-            appSettings?.event == "none" ||
-            appSettings?.event == "gnrprac" ||
-            appSettings?.event == "worldsprac" ||
-            appSettings?.event == "gcrprac" ? (
+              appSettings?.event == "none" ||
+              appSettings?.event == "gnrprac" ||
+              appSettings?.event == "worldsprac" ||
+              appSettings?.event == "gcrprac" ? (
               <NumberInput
                 label="Team Number"
                 description={
@@ -334,19 +328,18 @@ export default function StandFormChad() {
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Autonomous
         </div>
-
         <div className="flex flex-row justify-between items-center w-full gap-5">
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.autoCoralL1 !== null &&
-                form.values.autoCoralL1 > 0
+                form.values.autoFuel !== null &&
+                form.values.autoFuel > 0
               ) {
                 form.setFieldValue(
-                  "autoCoralL1",
-                  Number(form.values.autoCoralL1 - 1)
+                  "autoFuel",
+                  Number(form.values.autoFuel - 1)
                 );
               }
             }}
@@ -354,22 +347,22 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Coral Level 1"
+            label="Auto Fuel"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("autoCoralL1")}
+            {...form.getInputProps("autoFuel")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "autoCoralL1",
-                Number(form.values.autoCoralL1! + 1)
+                "autoFuel",
+                Number(form.values.autoFuel! + 1)
               );
             }}
           >
@@ -377,222 +370,21 @@ export default function StandFormChad() {
           </ActionIcon>
         </div>
 
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.autoCoralL2 !== null &&
-                form.values.autoCoralL2 > 0
-              ) {
-                form.setFieldValue(
-                  "autoCoralL2",
-                  Number(form.values.autoCoralL2 - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Coral Level 2"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("autoCoralL2")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "autoCoralL2",
-                Number(form.values.autoCoralL2! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
 
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.autoCoralL3 !== null &&
-                form.values.autoCoralL3 > 0
-              ) {
-                form.setFieldValue(
-                  "autoCoralL3",
-                  Number(form.values.autoCoralL3 - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Coral Level 3"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("autoCoralL3")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "autoCoralL3",
-                Number(form.values.autoCoralL3! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.autoCoralL4 !== null &&
-                form.values.autoCoralL4 > 0
-              ) {
-                form.setFieldValue(
-                  "autoCoralL4",
-                  Number(form.values.autoCoralL4 - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Coral Level 4"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("autoCoralL4")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "autoCoralL4",
-                Number(form.values.autoCoralL4! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.autoAlgaeProcessor !== null &&
-                form.values.autoAlgaeProcessor > 0
-              ) {
-                form.setFieldValue(
-                  "autoAlgaeProcessor",
-                  Number(form.values.autoAlgaeProcessor - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Algae Processor"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("autoAlgaeProcessor")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "autoAlgaeProcessor",
-                Number(form.values.autoAlgaeProcessor! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.autoAlgaeNet !== null &&
-                form.values.autoAlgaeNet > 0
-              ) {
-                form.setFieldValue(
-                  "autoAlgaeNet",
-                  Number(form.values.autoAlgaeNet - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Algae Barge"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("autoAlgaeNet")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "autoAlgaeNet",
-                Number(form.values.autoAlgaeNet! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
 
         <Checkbox
           className="pb-4"
           size="md"
-          label="Did the robot LEAVE?"
-          description="The robot's bumpers fully left the starting area at any point during the autonomous period."
-          {...form.getInputProps("leave", { type: "checkbox" })}
+          label="Did the robot climb during auto?"
+          description="The robot successfully climbed during the autonomous period."
+          {...form.getInputProps("autoClimb", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Did the robot move during auto?"
+          {...form.getInputProps("auto", { type: "checkbox" })}
         />
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
@@ -605,12 +397,12 @@ export default function StandFormChad() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.teleopCoralL1 !== null &&
-                form.values.teleopCoralL1 > 0
+                form.values.teleFuel !== null &&
+                form.values.teleFuel > 0
               ) {
                 form.setFieldValue(
-                  "teleopCoralL1",
-                  Number(form.values.teleopCoralL1 - 1)
+                  "teleFuel",
+                  Number(form.values.teleFuel - 1)
                 );
               }
             }}
@@ -618,22 +410,22 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Coral L1"
+            label="Teleop Fuel"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleopCoralL1")}
+            {...form.getInputProps("teleFuel")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleopCoralL1",
-                Number(form.values.teleopCoralL1! + 1)
+                "teleFuel",
+                Number(form.values.teleFuel! + 1)
               );
             }}
           >
@@ -647,12 +439,12 @@ export default function StandFormChad() {
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               if (
-                form.values.teleopCoralL2 !== null &&
-                form.values.teleopCoralL2 > 0
+                form.values.shotsMissed !== null &&
+                form.values.shotsMissed > 0
               ) {
                 form.setFieldValue(
-                  "teleopCoralL2",
-                  Number(form.values.teleopCoralL2 - 1)
+                  "shotsMissed",
+                  Number(form.values.shotsMissed - 1)
                 );
               }
             }}
@@ -660,22 +452,22 @@ export default function StandFormChad() {
             <Minus />
           </ActionIcon>
           <NumberInput
-            label="Coral L2"
+            label="Shots Missed"
             placeholder="0"
             className="pb-4 w-full"
             allowDecimal={false}
             allowNegative={false}
             hideControls
             inputMode="numeric"
-            {...form.getInputProps("teleopCoralL2")}
+            {...form.getInputProps("shotsMissed")}
           />
           <ActionIcon
             size={"2rem"}
             className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
             onClick={() => {
               form.setFieldValue(
-                "teleopCoralL2",
-                Number(form.values.teleopCoralL2! + 1)
+                "shotsMissed",
+                Number(form.values.shotsMissed! + 1)
               );
             }}
           >
@@ -683,209 +475,110 @@ export default function StandFormChad() {
           </ActionIcon>
         </div>
 
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.teleopCoralL3 !== null &&
-                form.values.teleopCoralL3 > 0
-              ) {
-                form.setFieldValue(
-                  "teleopCoralL3",
-                  Number(form.values.teleopCoralL3 - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Coral L3"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("teleopCoralL3")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "teleopCoralL3",
-                Number(form.values.teleopCoralL3! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Did the robot (successfully) drive over the bump?"
+          {...form.getInputProps("bump", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Did the robot go under the trench?"
+          {...form.getInputProps("trench", { type: "checkbox" })}
+        />
+
+        <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
+          Endgame
         </div>
 
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.teleopCoralL4 !== null &&
-                form.values.teleopCoralL4 > 0
-              ) {
-                form.setFieldValue(
-                  "teleopCoralL4",
-                  Number(form.values.teleopCoralL4 - 1)
-                );
-              }
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Did the robot climb?"
+          description="The robot successfully climbed during the endgame."
+          checked={form.values.didClimb}
+          onChange={(event) => {
+            const checked = event.currentTarget.checked;
+            form.setFieldValue("didClimb", checked);
+            if (!checked) {
+              form.setFieldValue("climbPosition", "");
+              form.setFieldValue("climbLevel", "");
+              form.setFieldValue("backClimb", false);
+              form.setFieldValue("centerClimbLevelOne", false);
+              form.setFieldValue("centerClimbLevelTwo", false);
+              form.setFieldValue("centerClimbLevelThree", false);
+              form.setFieldValue("sideClimbLevelOne", false);
+              form.setFieldValue("sideClimbLevelTwo", false);
+              form.setFieldValue("sideClimbLevelThree", false);
+            }
+          }}
+        />
+
+        {form.values.didClimb && (
+          <RadioGroup
+            label="Climb Position"
+            description="Where did the robot climb?"
+            size="md"
+            className="pb-4"
+            value={form.values.climbPosition || ""}
+            onChange={(value) => {
+              form.setFieldValue("climbPosition", value as "side" | "center");
+              form.setFieldValue("climbLevel", "");
+              form.setFieldValue("backClimb", false);
+              form.setFieldValue("centerClimbLevelOne", false);
+              form.setFieldValue("centerClimbLevelTwo", false);
+              form.setFieldValue("centerClimbLevelThree", false);
+              form.setFieldValue("sideClimbLevelOne", false);
+              form.setFieldValue("sideClimbLevelTwo", false);
+              form.setFieldValue("sideClimbLevelThree", false);
             }}
           >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Coral L4"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("teleopCoralL4")}
+            <Radio value="center" label="Center" className="pb-2" />
+            <Radio value="side" label="Side (not center)" className="pb-2" />
+          </RadioGroup>
+        )}
+
+        {form.values.didClimb && form.values.climbPosition && (
+          <RadioGroup
+            label="Climb Level"
+            description="What level did the robot climb to?"
+            size="md"
+            className="pb-4"
+            value={form.values.climbLevel || ""}
+            onChange={(value) => {
+              const level = value as "one" | "two" | "three";
+              form.setFieldValue("climbLevel", level);
+              // Reset all 9 fields first
+              form.setFieldValue("centerClimbLevelOne", false);
+              form.setFieldValue("centerClimbLevelTwo", false);
+              form.setFieldValue("centerClimbLevelThree", false);
+              form.setFieldValue("sideClimbLevelOne", false);
+              form.setFieldValue("sideClimbLevelTwo", false);
+              form.setFieldValue("sideClimbLevelThree", false);
+              // Set the correct combined field
+              const position = form.values.climbPosition;
+              const levelMap = { one: "One", two: "Two", three: "Three" };
+              const fieldName = `${position}ClimbLevel${levelMap[level]}` as keyof StandFormValues;
+              form.setFieldValue(fieldName, true);
+            }}
+          >
+            <Radio value="one" label="Top Level" className="pb-2" />
+            <Radio value="two" label="Middle Level" className="pb-2" />
+            <Radio value="three" label="Bottom Level" className="pb-2" />
+          </RadioGroup>
+        )}
+
+        {form.values.didClimb && form.values.climbPosition && form.values.climbLevel && (
+          <Checkbox
+            className="pb-4"
+            size="md"
+            label="Did they climb at the back?"
+            description="The robot climbed at the back of the tower."
+            {...form.getInputProps("backClimb", { type: "checkbox" })}
           />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "teleopCoralL4",
-                Number(form.values.teleopCoralL4! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.teleopAlgaeProcessor !== null &&
-                form.values.teleopAlgaeProcessor > 0
-              ) {
-                form.setFieldValue(
-                  "teleopAlgaeProcessor",
-                  Number(form.values.teleopAlgaeProcessor - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Algae Processor"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("teleopAlgaeProcessor")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "teleopAlgaeProcessor",
-                Number(form.values.teleopAlgaeProcessor! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-        </div>
-
-        <div className="flex flex-row justify-between items-center w-full gap-5">
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              if (
-                form.values.teleopAlgaeNet !== null &&
-                form.values.teleopAlgaeNet > 0
-              ) {
-                form.setFieldValue(
-                  "teleopAlgaeNet",
-                  Number(form.values.teleopAlgaeNet - 1)
-                );
-              }
-            }}
-          >
-            <Minus />
-          </ActionIcon>
-          <NumberInput
-            label="Algae Barge"
-            description="The ROBOT (not the human player) shot algae into the Barge"
-            placeholder="0"
-            className="pb-4 w-full"
-            allowDecimal={false}
-            allowNegative={false}
-            hideControls
-            inputMode="numeric"
-            {...form.getInputProps("teleopAlgaeNet")}
-          />
-          <ActionIcon
-            size={"2rem"}
-            className="bg-[#2e2e2e] border-[0.0625rem] border-solid border-[#424242]"
-            onClick={() => {
-              form.setFieldValue(
-                "teleopAlgaeNet",
-                Number(form.values.teleopAlgaeNet! + 1)
-              );
-            }}
-          >
-            <Plus />
-          </ActionIcon>
-
-        </div>
-
-      <RadioGroup
-        label="Endgame"
-        size="md"
-        required
-        >
-      <Radio
-        value="park"
-        checked={!form.values.park}
-        onChange={(event) =>
-          form.setFieldValue("park", event.currentTarget.checked)
-        }
-        label="Did the Robot PARK?"
-        description="Any part of the robots bumpers were in the PARK zone"
-      />
-      <Radio
-        value="shallowClimb"
-        checked={!form.values.shallowClimb}
-        onChange={(event) =>
-          form.setFieldValue("shallowClimb", event.currentTarget.checked)
-        }
-        label="Did the robot shallow climb?"
-        description="The Robot Successfully climbed the higher cage"
-      />
-      <Radio
-        value="deepClimb"
-        checked={!form.values.deepClimb}
-        onChange={(event) =>
-          form.setFieldValue("deepClimb", event.currentTarget.checked)
-        }
-        label="Did the robot deep climb?"
-        description="The Robot Successfully climbed the lower cage"
-      />
-      </RadioGroup>
+        )}
 
         <div className="text-gray-300 pb-6 text-center text-3xl font-bold leading-tight tracking-tighter md:text-3xl lg:leading-[1.1]">
           Post-Match
@@ -967,6 +660,22 @@ export default function StandFormChad() {
           size="md"
           label="Did your team defend?"
           {...form.getInputProps("defense", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Did the robot shuttle?"
+          description="The robot moved game pieces between zones."
+          {...form.getInputProps("shuttle", { type: "checkbox" })}
+        />
+
+        <Checkbox
+          className="pb-4"
+          size="md"
+          label="Could the robot move while shooting?"
+          description="The robot was able to shoot while in motion."
+          {...form.getInputProps("moveWhileShoot", { type: "checkbox" })}
         />
 
         <Separator />

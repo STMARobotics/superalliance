@@ -111,8 +111,7 @@ export default function TeamProjections({
               </h2>
               <Select
                 data={[
-                  { label: "Average Coral", value: "averageCoral" },
-                  { label: "Average Algae", value: "averageAlgae" },
+                  { label: "Average Fuel", value: "averageFuel" },
                   { label: "Totals", value: "totals" },
                 ]}
                 value={stat}

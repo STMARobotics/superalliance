@@ -10,12 +10,12 @@ const { formIdSchema, eventCodeSchema } = require("../validation/paramValidators
 formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: "Invalid formId",
       details: validated.error.issues.map((e) => e.message)
     });
   }
-  
+
   const formId = validated.data;
   const data = await StandFormSchema.find({
     _id: formId,
@@ -32,12 +32,12 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
 
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: "Invalid formId",
       details: validated.error.issues.map((e) => e.message)
     });
   }
-  
+
   const formId = validated.data;
   await StandFormSchema.deleteOne({
     _id: formId,
@@ -51,15 +51,15 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
 formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) => {
   const validated = eventCodeSchema.safeParse(req.params.eventCode);
   if (!validated.success) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: "Invalid event code",
       details: validated.error.issues.map((e) => e.message)
     });
   }
-  
+
   const eventCode = validated.data;
 
-  const forms = await StandFormSchema.find({event: eventCode}).sort({
+  const forms = await StandFormSchema.find({ event: eventCode }).sort({
     _id: -1,
   });
   return res.send(forms);
@@ -69,33 +69,36 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
   const data = req.body;
   const sendForm = await new StandFormSchema({
     _id: new mongoose.Types.ObjectId(),
-  autoCoralL1: data.autoCoralL1,
-  autoCoralL2: data.autoCoralL2,
-  autoCoralL3: data.autoCoralL3,
-  autoCoralL4: data.autoCoralL4,
-  autoAlgaeProcessor: data.autoAlgaeProcessor,
-  autoAlgaeNet: data.autoAlgaeNet,
-  teleopCoralL1: data.teleopCoralL1,
-  teleopCoralL2: data.teleopCoralL2,
-  teleopCoralL3: data.teleopCoralL3,
-  teleopCoralL4: data.teleopCoralL4,
-  teleopAlgaeProcessor: data.teleopAlgaeProcessor,
-  teleopAlgaeNet: data.teleopAlgaeNet,
-  shallowClimb: data.shallowClimb,
-  deepClimb: data.deepClimb,
-  win: data.win,
-  event: data.event,
-  teamNumber: data.teamNumber,
-  matchNumber: data.matchNumber,
-  usersName: data.usersName,
-  leave: data.leave,
-  park: data.park,
-  criticals: data.criticals,
-  comments: data.comments,
-  strategy: data.strategy,
-  rpEarned: data.rpEarned,
-  defendedAgainst: data.defendedAgainst,
-  defense: data.defense,
+    autoClimb: data.autoClimb,
+    win: data.win,
+    event: data.event,
+    teamNumber: data.teamNumber,
+    matchNumber: data.matchNumber,
+    usersName: data.usersName,
+    auto: data.auto,
+    autoFuel: data.autoFuel,
+    teleFuel: data.teleFuel,
+    shotsMissed: data.shotsMissed,
+    didClimb: data.didClimb,
+    climbPosition: data.climbPosition,
+    climbLevel: data.climbLevel,
+    backClimb: data.backClimb,
+    criticals: data.criticals,
+    comments: data.comments,
+    strategy: data.strategy,
+    rpEarned: data.rpEarned,
+    defendedAgainst: data.defendedAgainst,
+    defense: data.defense,
+    shuttle: data.shuttle,
+    moveWhileShoot: data.moveWhileShoot,
+    bump: data.bump,
+    trench: data.trench,
+  centerClimbLevelOne: data.centerClimbLevelOne,
+  sideClimbLevelOne: data.sideClimbLevelOne,
+  centerClimbLevelTwo: data.centerClimbLevelTwo,
+  sideClimbLevelTwo: data.sideClimbLevelTwo,
+  centerClimbLevelThree: data.centerClimbLevelThree,
+  sideClimbLevelThree: data.sideClimbLevelThree,
   });
 
   await sendForm.save().catch((err) => {

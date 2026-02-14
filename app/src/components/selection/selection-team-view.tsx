@@ -211,22 +211,30 @@ export const DataDisplay = ({
   appSettings: any;
 }) => {
   const averages = [
-    { label: "Avg Coral", value: aggregationData?.avgTotalCoral },
-    { label: "Avg Auto Coral", value: aggregationData?.avgAutoCoral },
-    { label: "Avg Tele Coral", value: aggregationData?.avgTeleCoral },
-    { label: "Avg Algae", value: aggregationData?.avgTotalAlgae },
-    { label: "Avg Processed Algae", value: aggregationData?.avgProcessedAlgae },
-    { label: "Avg Net Algae", value: aggregationData?.avgNetAlgae },
+    { label: "Avg Total Fuel", value: aggregationData?.avgTotalFuel },
+    { label: "Avg Auto Fuel", value: aggregationData?.avgAutoFuel },
+    { label: "Avg Tele Fuel", value: aggregationData?.avgTeleFuel },
     { label: "Avg Total Score", value: aggregationData?.avgTotalScore },
     { label: "Avg Auto Score", value: aggregationData?.avgAutoScore },
     { label: "Avg Tele Score", value: aggregationData?.avgTeleScore },
+    { label: "Avg Accuracy", value: aggregationData?.avgAccuracy },
     { label: "Avg RP", value: aggregationData?.avgRP },
     { label: "Total Crits", value: aggregationData?.criticalCount },
     { label: "Win Rate", value: aggregationData?.winPercentage + "%" },
-    { label: "Leave Rate", value: aggregationData?.leavePercentage + "%" },
-    { label: "Park Rate", value: aggregationData?.parkPercentage + "%" },
-    { label: "Shallow Climb Rate", value: aggregationData?.shallowClimbPercentage + "%" },
-    { label: "Deep Climb Rate", value: aggregationData?.deepClimbPercentage + "%" },
+    { label: "Auto Rate", value: aggregationData?.autoPercentage + "%" },
+    { label: "Bump Rate", value: aggregationData?.bumpPercentage + "%" },
+    { label: "Trench Rate", value: aggregationData?.trenchPercentage + "%" },
+    { label: "Left Climb L1 Rate", value: aggregationData?.leftClimbLevelOnePercentage + "%" },
+    { label: "Center Climb L1 Rate", value: aggregationData?.centerClimbLevelOnePercentage + "%" },
+    { label: "Right Climb L1 Rate", value: aggregationData?.rightClimbLevelOnePercentage + "%" },
+    { label: "Left Climb L2 Rate", value: aggregationData?.leftClimbLevelTwoPercentage + "%" },
+    { label: "Center Climb L2 Rate", value: aggregationData?.centerClimbLevelTwoPercentage + "%" },
+    { label: "Right Climb L2 Rate", value: aggregationData?.rightClimbLevelTwoPercentage + "%" },
+    { label: "Left Climb L3 Rate", value: aggregationData?.leftClimbLevelThreePercentage + "%" },
+    { label: "Center Climb L3 Rate", value: aggregationData?.centerClimbLevelThreePercentage + "%" },
+    { label: "Right Climb L3 Rate", value: aggregationData?.rightClimbLevelThreePercentage + "%" },
+    { label: "Shuttle Rate", value: aggregationData?.shuttlePercentage > 0 ? "Yes" : "No" },
+    { label: "Move and Shoot?", value: aggregationData?.moveWhileShootPercentage > 0 ? "Yes" : "No" },
     { label: "Defense Rate", value: aggregationData?.defensePercentage + "%" },
     {
       label: "Defended Rate",
@@ -234,14 +242,6 @@ export const DataDisplay = ({
     },
     { label: "Pit Rating", value: pitFormData?.pitRating + "/10"},
     { label: "Robot Rating", value: pitFormData?.robotRating + "/5"},
-    { label: "Coral L1 Percent" , value: aggregationData?.totalCoral > 0 ? 
-      (aggregationData?.totalL1Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
-    { label: "Coral L2 Percent" , value: aggregationData?.totalCoral > 0 ? 
-      (aggregationData?.totalL2Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
-    { label: "Coral L3 Percent" , value: aggregationData?.totalCoral > 0 ? 
-      (aggregationData?.totalL3Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
-    { label: "Coral L4 Percent" , value: aggregationData?.totalCoral > 0 ? 
-      (aggregationData?.totalL4Coral / aggregationData?.totalCoral * 100).toFixed(0) + "%" : "0%"},
   ];
 
   const navigate = useNavigate();
@@ -283,16 +283,16 @@ export const DataDisplay = ({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Average Coral
+                    Average Total Fuel
                   </CardTitle>
                   <Tally5 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {aggregationData?.avgTotalCoral} Coral
+                    {aggregationData?.avgTotalFuel} Fuel
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalCoral} coral across{" "}
+                    {aggregationData?.totalFuel} fuel across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>
