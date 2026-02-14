@@ -10,12 +10,12 @@ const { formIdSchema, eventCodeSchema } = require("../validation/paramValidators
 formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: "Invalid formId",
       details: validated.error.issues.map((e) => e.message)
     });
   }
-  
+
   const formId = validated.data;
   const data = await StandFormSchema.find({
     _id: formId,
@@ -32,12 +32,12 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
 
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: "Invalid formId",
       details: validated.error.issues.map((e) => e.message)
     });
   }
-  
+
   const formId = validated.data;
   await StandFormSchema.deleteOne({
     _id: formId,
@@ -56,10 +56,10 @@ formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) =>
       details: validated.error.issues.map((e) => e.message)
     });
   }
-  
+
   const eventCode = validated.data;
 
-  const forms = await StandFormSchema.find({event: eventCode}).sort({
+  const forms = await StandFormSchema.find({ event: eventCode }).sort({
     _id: -1,
   });
   return res.send(forms);
@@ -76,6 +76,13 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
     matchNumber: data.matchNumber,
     usersName: data.usersName,
     auto: data.auto,
+    autoFuel: data.autoFuel,
+    teleFuel: data.teleFuel,
+    shotsMissed: data.shotsMissed,
+    didClimb: data.didClimb,
+    climbPosition: data.climbPosition,
+    climbLevel: data.climbLevel,
+    backClimb: data.backClimb,
     criticals: data.criticals,
     comments: data.comments,
     strategy: data.strategy,
