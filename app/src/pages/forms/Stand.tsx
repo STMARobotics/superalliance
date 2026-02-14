@@ -509,8 +509,8 @@ export default function StandFormChad() {
             const checked = event.currentTarget.checked;
             form.setFieldValue("didClimb", checked);
             if (!checked) {
-              form.setFieldValue("climbPosition", null);
-              form.setFieldValue("climbLevel", null);
+              form.setFieldValue("climbPosition", "");
+              form.setFieldValue("climbLevel", "");
               form.setFieldValue("backClimb", false);
               form.setFieldValue("leftClimbLevelOne", false);
               form.setFieldValue("centerClimbLevelOne", false);
