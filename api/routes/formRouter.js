@@ -93,15 +93,12 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
     moveWhileShoot: data.moveWhileShoot,
     bump: data.bump,
     trench: data.trench,
-    leftClimbLevelOne: data.leftClimbLevelOne,
-    centerClimbLevelOne: data.centerClimbLevelOne,
-    rightClimbLevelOne: data.rightClimbLevelOne,
-    leftClimbLevelTwo: data.leftClimbLevelTwo,
-    centerClimbLevelTwo: data.centerClimbLevelTwo,
-    rightClimbLevelTwo: data.rightClimbLevelTwo,
-    leftClimbLevelThree: data.leftClimbLevelThree,
-    centerClimbLevelThree: data.centerClimbLevelThree,
-    rightClimbLevelThree: data.rightClimbLevelThree,
+  centerClimbLevelOne: data.centerClimbLevelOne,
+  sideClimbLevelOne: data.sideClimbLevelOne,
+  centerClimbLevelTwo: data.centerClimbLevelTwo,
+  sideClimbLevelTwo: data.sideClimbLevelTwo,
+  centerClimbLevelThree: data.centerClimbLevelThree,
+  sideClimbLevelThree: data.sideClimbLevelThree,
   });
 
   await sendForm.save().catch((err) => {

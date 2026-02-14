@@ -21,21 +21,21 @@ const StandFormAggregation = (eventId) => {
             },
             {
               $cond: {
-                if: { $or: ["$leftClimbLevelOne", "$centerClimbLevelOne", "$rightClimbLevelOne"] },
+                if: { $or: ["$centerClimbLevelOne", "$sideClimbLevelOne"] },
                 then: 10,
                 else: 0,
               },
             },
             {
               $cond: {
-                if: { $or: ["$leftClimbLevelTwo", "$centerClimbLevelTwo", "$rightClimbLevelTwo"] },
+                if: { $or: ["$centerClimbLevelTwo", "$sideClimbLevelTwo"] },
                 then: 20,
                 else: 0,
               },
             },
             {
               $cond: {
-                if: { $or: ["$leftClimbLevelThree", "$centerClimbLevelThree", "$rightClimbLevelThree"] },
+                if: { $or: ["$centerClimbLevelThree", "$sideClimbLevelThree"] },
                 then: 30,
                 else: 0,
               },
@@ -151,13 +151,6 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
-        leftClimbLevelOneBoolean: {
-          $cond: {
-            if: "$leftClimbLevelOne",
-            then: 1,
-            else: 0,
-          },
-        },
         centerClimbLevelOneBoolean: {
           $cond: {
             if: "$centerClimbLevelOne",
@@ -165,16 +158,9 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
-        rightClimbLevelOneBoolean: {
+        sideClimbLevelOneBoolean: {
           $cond: {
-            if: "$rightClimbLevelOne",
-            then: 1,
-            else: 0,
-          },
-        },
-        leftClimbLevelTwoBoolean: {
-          $cond: {
-            if: "$leftClimbLevelTwo",
+            if: "$sideClimbLevelOne",
             then: 1,
             else: 0,
           },
@@ -186,16 +172,9 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
-        rightClimbLevelTwoBoolean: {
+        sideClimbLevelTwoBoolean: {
           $cond: {
-            if: "$rightClimbLevelTwo",
-            then: 1,
-            else: 0,
-          },
-        },
-        leftClimbLevelThreeBoolean: {
-          $cond: {
-            if: "$leftClimbLevelThree",
+            if: "$sideClimbLevelTwo",
             then: 1,
             else: 0,
           },
@@ -207,9 +186,9 @@ const StandFormAggregation = (eventId) => {
             else: 0,
           },
         },
-        rightClimbLevelThreeBoolean: {
+        sideClimbLevelThreeBoolean: {
           $cond: {
-            if: "$rightClimbLevelThree",
+            if: "$sideClimbLevelThree",
             then: 1,
             else: 0,
           },

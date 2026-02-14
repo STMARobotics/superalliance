@@ -11,14 +11,14 @@ const FormView = ({ formData }: { formData: any }) => {
   const isAdmin = user?.publicMetadata.role == "admin";
 
   const getClimbInfo = () => {
-    const positions = ["left", "center", "right"];
+  const positions = ["center", "side"];
     const levels = ["One", "Two", "Three"];
     for (const position of positions) {
       for (const level of levels) {
         const fieldName = `${position}ClimbLevel${level}`;
         if (formData?.[fieldName]) {
           return {
-            position: position.charAt(0).toUpperCase() + position.slice(1),
+            position: position === "side" ? "Side" : "Center",
             level: level === "One" ? "Top" : level === "Two" ? "Middle" : "Bottom"
           };
         }

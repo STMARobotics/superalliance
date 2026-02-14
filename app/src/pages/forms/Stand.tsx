@@ -40,15 +40,12 @@ interface StandFormValues {
   climbPosition: null | string;
   climbLevel: null | string;
   backClimb: boolean;
-  leftClimbLevelOne: boolean;
   centerClimbLevelOne: boolean;
-  rightClimbLevelOne: boolean;
-  leftClimbLevelTwo: boolean;
+  sideClimbLevelOne: boolean;
   centerClimbLevelTwo: boolean;
-  rightClimbLevelTwo: boolean;
-  leftClimbLevelThree: boolean;
+  sideClimbLevelTwo: boolean;
   centerClimbLevelThree: boolean;
-  rightClimbLevelThree: boolean;
+  sideClimbLevelThree: boolean;
   criticals: any[];
   comments: string;
   strategy: string;
@@ -113,15 +110,12 @@ export default function StandFormChad() {
       climbPosition: "",
       climbLevel: "",
       backClimb: false,
-      leftClimbLevelOne: false,
       centerClimbLevelOne: false,
-      rightClimbLevelOne: false,
-      leftClimbLevelTwo: false,
       centerClimbLevelTwo: false,
-      rightClimbLevelTwo: false,
-      leftClimbLevelThree: false,
       centerClimbLevelThree: false,
-      rightClimbLevelThree: false,
+  sideClimbLevelOne: false,
+  sideClimbLevelTwo: false,
+  sideClimbLevelThree: false,
       criticals: [],
       comments: "",
       strategy: "",
@@ -512,15 +506,12 @@ export default function StandFormChad() {
               form.setFieldValue("climbPosition", "");
               form.setFieldValue("climbLevel", "");
               form.setFieldValue("backClimb", false);
-              form.setFieldValue("leftClimbLevelOne", false);
               form.setFieldValue("centerClimbLevelOne", false);
-              form.setFieldValue("rightClimbLevelOne", false);
-              form.setFieldValue("leftClimbLevelTwo", false);
               form.setFieldValue("centerClimbLevelTwo", false);
-              form.setFieldValue("rightClimbLevelTwo", false);
-              form.setFieldValue("leftClimbLevelThree", false);
               form.setFieldValue("centerClimbLevelThree", false);
-              form.setFieldValue("rightClimbLevelThree", false);
+              form.setFieldValue("sideClimbLevelOne", false);
+              form.setFieldValue("sideClimbLevelTwo", false);
+              form.setFieldValue("sideClimbLevelThree", false);
             }
           }}
         />
@@ -533,23 +524,19 @@ export default function StandFormChad() {
             className="pb-4"
             value={form.values.climbPosition || ""}
             onChange={(value) => {
-              form.setFieldValue("climbPosition", value as "left" | "center" | "right");
+              form.setFieldValue("climbPosition", value as "side" | "center");
               form.setFieldValue("climbLevel", "");
               form.setFieldValue("backClimb", false);
-              form.setFieldValue("leftClimbLevelOne", false);
               form.setFieldValue("centerClimbLevelOne", false);
-              form.setFieldValue("rightClimbLevelOne", false);
-              form.setFieldValue("leftClimbLevelTwo", false);
               form.setFieldValue("centerClimbLevelTwo", false);
-              form.setFieldValue("rightClimbLevelTwo", false);
-              form.setFieldValue("leftClimbLevelThree", false);
               form.setFieldValue("centerClimbLevelThree", false);
-              form.setFieldValue("rightClimbLevelThree", false);
+              form.setFieldValue("sideClimbLevelOne", false);
+              form.setFieldValue("sideClimbLevelTwo", false);
+              form.setFieldValue("sideClimbLevelThree", false);
             }}
           >
-            <Radio value="left" label="Left" className="pb-2" />
             <Radio value="center" label="Center" className="pb-2" />
-            <Radio value="right" label="Right" className="pb-2" />
+            <Radio value="side" label="Side (not center)" className="pb-2" />
           </RadioGroup>
         )}
 
@@ -564,15 +551,12 @@ export default function StandFormChad() {
               const level = value as "one" | "two" | "three";
               form.setFieldValue("climbLevel", level);
               // Reset all 9 fields first
-              form.setFieldValue("leftClimbLevelOne", false);
               form.setFieldValue("centerClimbLevelOne", false);
-              form.setFieldValue("rightClimbLevelOne", false);
-              form.setFieldValue("leftClimbLevelTwo", false);
               form.setFieldValue("centerClimbLevelTwo", false);
-              form.setFieldValue("rightClimbLevelTwo", false);
-              form.setFieldValue("leftClimbLevelThree", false);
               form.setFieldValue("centerClimbLevelThree", false);
-              form.setFieldValue("rightClimbLevelThree", false);
+              form.setFieldValue("sideClimbLevelOne", false);
+              form.setFieldValue("sideClimbLevelTwo", false);
+              form.setFieldValue("sideClimbLevelThree", false);
               // Set the correct combined field
               const position = form.values.climbPosition;
               const levelMap = { one: "One", two: "Two", three: "Three" };
