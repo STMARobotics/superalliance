@@ -80,10 +80,7 @@ export default function PitForm() {
       idealAuto: "",
       strongestValue: "",
       weakestValue: "",
-      extraComments: "",
-      pitRating: "",
-      robotRating: "",
-    },
+      extraComments: "",    },
 
     validate: {
       event: isNotEmpty("This cannot be empty"),

@@ -134,24 +134,6 @@ const PitFormView = ({
                         readOnly
                       />
 
-                      <Textarea
-                        placeholder="1-10"
-                        label="Pit Rating"
-                        description="How good the pit was to scout"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.pitRating}
-                        readOnly 
-                      />
-                      <Textarea
-                        placeholder="1-5"
-                        label="Robot Rating"
-                        description="How good the robot was"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.robotRating}
-                        readOnly
-                      />
                     </Group>
                   </Accordion.Panel>
                 </Accordion.Item>
