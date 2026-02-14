@@ -38,7 +38,7 @@ eventRouter.get(
       const matchNumber = validatedMatchNumber.data;
       
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/match/2026${eventCode}_qm${matchNumber}`,
+        `https://www.thebluealliance.com/api/v3/match/${new Date().getFullYear()}${eventCode}_qm${matchNumber}`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
@@ -84,7 +84,7 @@ eventRouter.get(
       const teamNumber = validatedTeamNumber.data;
       
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/2026${eventCode}/status`,
+        `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/event/${new Date().getFullYear()}${eventCode}/status`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
@@ -121,7 +121,7 @@ eventRouter.get(
       const eventCode = validatedEventCode.data;
       
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/event/2026${eventCode}/oprs`,
+        `https://www.thebluealliance.com/api/v3/event/${new Date().getFullYear()}${eventCode}/oprs`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
@@ -167,7 +167,7 @@ eventRouter.get(
       const matchNumber = validatedMatchNumber.data;
       
       const response = await axios.get(
-        `https://www.thebluealliance.com/api/v3/match/2026${eventCode}_qm${matchNumber}`,
+        `https://www.thebluealliance.com/api/v3/match/${new Date().getFullYear()}${eventCode}_qm${matchNumber}`,
         {
           headers: {
             "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,

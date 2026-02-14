@@ -28,7 +28,7 @@ describe('eventRouter param validation', () => {
   });
 
   test('rejects invalid team param on listEvents', async () => {
-    const res = await request(app).get('/api/listEvents/0/2026');
+    const res = await request(app).get(`/api/listEvents/0/${new Date().getFullYear()}`);
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty('error', 'Invalid team');
   });
