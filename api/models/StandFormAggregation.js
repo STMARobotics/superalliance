@@ -479,7 +479,7 @@ const StandFormAggregation = (eventId) => {
           avgTotalFuel: { $round: ["$avgTotalFuel", 2] },
           avgAutoFuel: { $round: ["$avgAutoFuel", 2] },
           avgTeleFuel: { $round: ["$avgTeleFuel", 2] },
-          avgAccuracy: { $round: ["avgAccuracy", 2] },
+          avgAccuracy: { $round: ["$avgAccuracy", 2] },
           autoPercentage: { $round: ["$autoPercentage", 2] },
           bumpPercentage: { $round: ["$bumpPercentage", 2] },
           trenchPercentage: { $round: ["$trenchPercentage", 2] },
