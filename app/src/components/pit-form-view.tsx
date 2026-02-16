@@ -46,13 +46,7 @@ const PitFormView = ({
                   <Accordion.Panel>
                     <Group p={12}>
 
-                      <TextInput
-                        label="Coral Stuck"
-                        description="Can coral get stuck on your robot?"
-                        value={pitFormData?.coralStuck ? "Yes" : "No"}
-                        readOnly
-                      />
-        
+                    
                       <TextInput
                         label="Pickup Ground"
                         description="Did the robot pickup from the ground?"

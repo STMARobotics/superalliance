@@ -249,14 +249,6 @@ export default function PitForm() {
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Driveteam/Competition
         </div>
-
-        <Checkbox
-          className="pb-4"
-          size="sm"
-          label="Can coral get stuck on your robot?"
-          {...pitForm.getInputProps("CoralStuck", { type: "checkbox" })}
-        />
-
         <Text size="sm" className="pb-2">
           How do you pickup game pieces?
         </Text>
