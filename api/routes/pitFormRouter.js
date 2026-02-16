@@ -21,7 +21,6 @@ pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
     protectedElectronics: data.protectedElectronics,
     batterySecured: data.batterySecured,
     highCenterOfMass: data.highCenterOfMass,
-    coralStuck: data.coralStuck,
     pickupGround: data.pickupGround,
     pickupSource: data.pickupSource,
     pickupOther: data.pickupOther,
@@ -30,8 +29,6 @@ pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
     strongestValue: data.strongestValue,
     weakestValue: data.weakestValue,
     extraComments: data.extraComments,
-    pitRating: data.pitRating,
-    robotRating: data.robotRating,
   });
 
   const exists = await PitFormSchema.exists({

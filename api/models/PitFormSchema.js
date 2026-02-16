@@ -11,7 +11,6 @@ const PitFormSchema = new Schema(
     protectedElectronics: Boolean,
     batterySecured: Boolean,
     highCenterOfMass: Boolean,
-    coralStuck: Boolean,
     pickupGround: Boolean,
     pickupSource: Boolean,
     pickupOther: Boolean,
@@ -20,8 +19,6 @@ const PitFormSchema = new Schema(
     strongestValue: String,
     weakestValue: String,
     extraComments: String,
-    pitRating: Number,
-    robotRating: Number,
   },
   { timestamps: true }
 );

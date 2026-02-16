@@ -72,7 +72,6 @@ export default function PitForm() {
       protectedElectronics: false,
       batterySecured: false,
       highCenterOfMass: false,
-      coralStuck: false,
       pickupGround: false,
       pickupSource: false,
       pickupOther: false,
@@ -321,26 +320,6 @@ export default function PitForm() {
           maxLength={750}
           autosize
           {...pitForm.getInputProps("extraComments")}
-        />
-
-        <Textarea
-          label="Pit Rating"
-          placeholder="1-10"
-          description="How was pit scouting them?"
-          className="pb-4"
-          maxLength={2}
-          autosize
-          {...pitForm.getInputProps("pitRating")}
-        />
-
-        <Textarea
-          label="Robot Rating"
-          description="How would you rate their robot overall?"
-          placeholder="1-5"
-          className="pb-4"
-          maxLength={1}
-          autosize
-          {...pitForm.getInputProps("robotRating")}
         />
 
         <Group justify="center">

@@ -240,8 +240,6 @@ export const DataDisplay = ({
       label: "Defended Rate",
       value: aggregationData?.defendedAgainstPercentage + "%",
     },
-    { label: "Pit Rating", value: pitFormData?.pitRating + "/10"},
-    { label: "Robot Rating", value: pitFormData?.robotRating + "/5"},
   ];
 
   const navigate = useNavigate();
