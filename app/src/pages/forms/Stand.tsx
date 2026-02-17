@@ -92,6 +92,8 @@ export default function StandFormChad() {
     "Red Card",
     "Mechanism Broke",
     "Bumper Malfunction",
+    "Stuck On Bump",
+    "Stuck On Fuel"
   ];
 
   const form = useForm<StandFormValues>({
