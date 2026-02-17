@@ -12,6 +12,7 @@ const StandFormSchema = new Schema(
     autoClimb: Boolean,
     teleFuel: Number,
     shotsMissed: Number,
+    shootPosition: String,
     bump: Boolean,
     trench: Boolean,
     didClimb: Boolean,

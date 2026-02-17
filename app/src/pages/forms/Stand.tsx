@@ -34,6 +34,7 @@ interface StandFormValues {
   autoFuel: null | number;
   teleFuel: null | number;
   shotsMissed: null | number;
+  shotPosition: null | string;
   bump: boolean;
   trench: boolean;
   didClimb: boolean;
@@ -95,6 +96,10 @@ export default function StandFormChad() {
     "Stuck On Bump",
     "Stuck On Fuel"
   ];
+  const shotPositions = [
+    "One Place",
+    "Multiple Places"
+  ];
 
   const form = useForm<StandFormValues>({
     initialValues: {
@@ -106,6 +111,7 @@ export default function StandFormChad() {
       autoFuel: 0,
       teleFuel: 0,
       shotsMissed: 0,
+      shotPosition: null,
       bump: false,
       trench: false,
       didClimb: false,
@@ -473,9 +479,21 @@ export default function StandFormChad() {
               );
             }}
           >
+            
             <Plus />
           </ActionIcon>
         </div>
+
+        <Select
+          data={shotPositions}
+          label="Shot Position"
+          placeholder="Choose Position"
+          searchable
+          className="pb-4"
+           nothingFoundMessage="No Positions Found"
+          {...form.getInputProps("shotPosition")}
+        />
+
 
         <Checkbox
           className="pb-4"
