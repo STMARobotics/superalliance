@@ -35,6 +35,7 @@ interface StandFormValues {
   teleFuel: null | number;
   shotsMissed: null | number;
   shotPosition: null | string;
+  intakePostion: any[];
   bump: boolean;
   trench: boolean;
   didClimb: boolean;
@@ -100,6 +101,10 @@ export default function StandFormChad() {
     "One Place",
     "Multiple Places"
   ];
+  const intakePostion = [
+   "Ground",
+   "Human Player Station"
+  ]
 
   const form = useForm<StandFormValues>({
     initialValues: {
@@ -112,6 +117,7 @@ export default function StandFormChad() {
       teleFuel: 0,
       shotsMissed: 0,
       shotPosition: null,
+      intakePostion: [],
       bump: false,
       trench: false,
       didClimb: false,
@@ -492,6 +498,15 @@ export default function StandFormChad() {
           className="pb-4"
            nothingFoundMessage="No Positions Found"
           {...form.getInputProps("shotPosition")}
+        />
+
+         <MultiSelect
+          data={intakePostion}
+          label="Intake Postion"
+          placeholder="Choose Position"
+          searchable
+          className="pb-4"
+          {...form.getInputProps("intakePosition")}
         />
 
 
