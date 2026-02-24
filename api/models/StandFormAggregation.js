@@ -97,11 +97,12 @@ const StandFormAggregation = (eventId) => {
           $add: "$teleFuel",
         },
         accuracy: {
-          $divide: [
-            "$teleFuel",
-            { $add: ["$teleFuel", "$shotsMissed"] }
-          ]
+          $cond: {
+            if: {$eq:[{$add: ["$teleFuel", "$shotsMissed"]}, 0]},
+            then: 0,
+            else: {$divide: ["$teleFuel", {$add: ["$teleFuel", "$shotsMissed"]}]}
         },
+      },   
         autoBoolean: {
           $cond: {
             if: "$auto",
