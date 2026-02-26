@@ -35,7 +35,7 @@ interface StandFormValues {
   teleFuel: null | number;
   shotsMissed: null | number;
   shotPosition: null | string;
-  intakePostion: any[];
+  intakePosition: any[];
   bump: boolean;
   trench: boolean;
   didClimb: boolean;
@@ -101,7 +101,7 @@ export default function StandFormChad() {
     "One Place",
     "Multiple Places"
   ];
-  const intakePostion = [
+  const intakePosition = [
    "Ground",
    "Human Player Station"
   ]
@@ -117,7 +117,7 @@ export default function StandFormChad() {
       teleFuel: 0,
       shotsMissed: 0,
       shotPosition: null,
-      intakePostion: [],
+      intakePosition: [],
       bump: false,
       trench: false,
       didClimb: false,
@@ -501,8 +501,8 @@ export default function StandFormChad() {
         />
 
          <MultiSelect
-          data={intakePostion}
-          label="Intake Postion"
+          data={intakePosition}
+          label="Intake Position"
           placeholder="Choose Position"
           searchable
           className="pb-4"

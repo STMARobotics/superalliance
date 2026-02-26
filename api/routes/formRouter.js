@@ -80,7 +80,7 @@ formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
     teleFuel: data.teleFuel,
     shotsMissed: data.shotsMissed,
     shotPosition: data.shotPosition,
-    intakePostion: data.intakePostion,
+    intakePosition: data.intakePosition,
     didClimb: data.didClimb,
     climbPosition: data.climbPosition,
     climbLevel: data.climbLevel,
