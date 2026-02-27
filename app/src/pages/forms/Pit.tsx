@@ -72,7 +72,6 @@ export default function PitForm() {
       protectedElectronics: false,
       batterySecured: false,
       highCenterOfMass: false,
-      coralStuck: false,
       pickupGround: false,
       pickupSource: false,
       pickupOther: false,
@@ -80,10 +79,7 @@ export default function PitForm() {
       idealAuto: "",
       strongestValue: "",
       weakestValue: "",
-      extraComments: "",
-      pitRating: "",
-      robotRating: "",
-    },
+      extraComments: "",    },
 
     validate: {
       event: isNotEmpty("This cannot be empty"),
@@ -252,14 +248,6 @@ export default function PitForm() {
         <div className="pb-6 text-center text-3xl font-bold leading-tight tracking-tighter text-gray-300 md:text-3xl lg:leading-[1.1]">
           Driveteam/Competition
         </div>
-
-        <Checkbox
-          className="pb-4"
-          size="sm"
-          label="Can coral get stuck on your robot?"
-          {...pitForm.getInputProps("CoralStuck", { type: "checkbox" })}
-        />
-
         <Text size="sm" className="pb-2">
           How do you pickup game pieces?
         </Text>
@@ -332,26 +320,6 @@ export default function PitForm() {
           maxLength={750}
           autosize
           {...pitForm.getInputProps("extraComments")}
-        />
-
-        <Textarea
-          label="Pit Rating"
-          placeholder="1-10"
-          description="How was pit scouting them?"
-          className="pb-4"
-          maxLength={2}
-          autosize
-          {...pitForm.getInputProps("pitRating")}
-        />
-
-        <Textarea
-          label="Robot Rating"
-          description="How would you rate their robot overall?"
-          placeholder="1-5"
-          className="pb-4"
-          maxLength={1}
-          autosize
-          {...pitForm.getInputProps("robotRating")}
         />
 
         <Group justify="center">

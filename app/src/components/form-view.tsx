@@ -1,4 +1,4 @@
-import { Checkbox, MultiSelect, TextInput, Textarea } from "@mantine/core";
+import { Checkbox, MultiSelect, Select, TextInput, Textarea } from "@mantine/core";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
@@ -26,6 +26,8 @@ const FormView = ({ formData }: { formData: any }) => {
     }
     return null;
   };
+
+  console.log(formData?.shotPosition)
 
   const climbInfo = getClimbInfo();
 
@@ -128,6 +130,22 @@ const FormView = ({ formData }: { formData: any }) => {
         value={formData?.shotsMissed}
         readOnly
         label="Shots Missed"
+        className="pb-4"
+      />
+     <TextInput
+        value={formData?.shotPosition}
+        readOnly
+        label="Shot Position"
+        className="pb-4"
+      />
+      <MultiSelect
+        value={
+          formData?.intakePosition?.length > 0
+            ? formData?.intakePosition
+            : ["No intake Position"]
+        }
+        readOnly
+        label="Position"
         className="pb-4"
       />
 
