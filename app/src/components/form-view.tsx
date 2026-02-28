@@ -1,4 +1,4 @@
-import { Checkbox, MultiSelect, Select, TextInput, Textarea } from "@mantine/core";
+import { Checkbox, MultiSelect, TextInput, Textarea } from "@mantine/core";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
