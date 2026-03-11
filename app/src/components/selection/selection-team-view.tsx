@@ -477,6 +477,15 @@ export const DataDisplay = ({
                       <XCircle className="mr-2 h-6 w-6" />
                       View Criticals
                     </Button>
+                    <Button
+                      onClick={() => {
+                        window.open(`https://beta.thebluealliance.com/team/${aggregationData?._id}/#2026${appSettings?.event}`, "_blank");
+                      }}
+                      className="w-full h-14 text-lg font-bold"
+                    >
+                      <img src="/images/tba.svg" alt="The Blue Alliance" className="w-6 h-6 mr-2 invert" />
+                      View on The Blue Alliance
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
