@@ -102,9 +102,9 @@ export function SuperAllianceProvider(props: any) {
   useEffect(() => {
     (async function () {
       if (selectedEvent && selectedEvent !== "none") {
+        const eventTeams = await getTeams(appConfig.year, selectedEvent);
+        setEventTeams(eventTeams);
         if (user?.publicMetadata.role === "admin") {
-          const eventTeams = await getTeams(appConfig.year, selectedEvent);
-          setEventTeams(eventTeams);
           const eventForms = await getForms(selectedEvent);
           setEventForms(eventForms);
           const eventAggregation = await getEventAggregation(selectedEvent);
