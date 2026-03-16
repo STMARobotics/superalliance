@@ -23,8 +23,9 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { hasDraggableData } from "@/components/selection/selection-utils";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
-import { Diff, Download, Printer, Save } from "lucide-react";
+import { Scale, Download, CloudDownload, CloudUpload } from "lucide-react";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import { useMediaQuery } from "@mantine/hooks";
@@ -81,7 +82,8 @@ const SelectionDND = ({
   });
 
   const { user } = useUser();
-  const { getTeamSelection, api } = useSuperAllianceApi();
+  const { selectedEvent } = useSuperAlliance();
+  const { getTeamSelection, saveTeamSelection, exportTeamSelection } = useSuperAllianceApi();
 
   const [columns, setColumns] = useState<any[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -90,8 +92,6 @@ const SelectionDND = ({
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
-
-  const [printMode, setPrintMode] = useState<boolean>(false);
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
@@ -128,9 +128,9 @@ const SelectionDND = ({
   const getApiSelection = () => {
     (async function () {
       try {
-        const data = await getTeamSelection();
+        const data = await getTeamSelection(selectedEvent);
         toast.success("Team Selection retrieved successfully!");
-        const teams = data.teams;
+        const teams = data.teams || [];
         setTeams(teams);
       } catch {
         toast.error("The team selections failed to retrieve.");
@@ -140,16 +140,36 @@ const SelectionDND = ({
 
   const saveSelection = () => {
     (async function () {
-      await api
-        .post(`${import.meta.env.VITE_API_URL}/api/teamSelection/save`, {
-          teams: teams,
-        })
-        .then(function () {
-          toast.success("Team Selection saved successfully!");
-        })
-        .catch(function () {
-          toast.error("The team selections failed to save.");
-        });
+      try {
+        await saveTeamSelection(selectedEvent!, teams);
+        toast.success("Team Selection saved successfully!");
+      } catch {
+        toast.error("The team selections failed to save.");
+      }
+    })();
+  };
+
+  const exportSelection = () => {
+    (async function () {
+      try {
+        // Save current selection so we export the latest data
+        await saveTeamSelection(selectedEvent!, teams);
+        
+        // Export the saved data
+        const blob = await exportTeamSelection(selectedEvent!);
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `team-selection-${selectedEvent}-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        toast.success("Team Selection saved and exported successfully!");
+      } catch {
+        toast.error("The team selection save/export failed.");
+      }
     })();
   };
 
@@ -159,19 +179,19 @@ const SelectionDND = ({
         {user?.publicMetadata.role == "admin"  && (
           <>
             <Button onClick={getApiSelection}>
-              <Download className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />{" "}
-              {isMobile ? null : "Get from DB"}
+              <CloudDownload className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />{" "}
+              {isMobile ? null : "Load"}
             </Button>
             <Button onClick={saveSelection}>
-              <Save className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
-              {isMobile ? null : "Save to DB"}
+              <CloudUpload className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
+              {isMobile ? null : "Save"}
             </Button>
             <Button
-              variant={printMode ? "secondary" : "default"}
-              onClick={() => setPrintMode(printMode ? false : true)}
+              variant={"default"}
+              onClick={exportSelection}
             >
-              <Printer className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
-              {isMobile ? null : "Print Mode"}
+              <Download className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
+              {isMobile ? null : "Export"}
             </Button>
             <Button
               variant={compareMode ? "secondary" : "default"}
@@ -183,8 +203,8 @@ const SelectionDND = ({
                 setCompareMode(compareMode ? false : true);
               }}
             >
-              <Diff className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
-              {isMobile ? null : "Compare Mode"}
+              <Scale className={`h-4 w-4 ${isMobile ? "" : "mr-2"}`} />
+              {isMobile ? null : "Compare"}
             </Button>
           </>
         )}
@@ -195,7 +215,7 @@ const SelectionDND = ({
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <BoardContainer printMode={printMode}>
+        <BoardContainer>
           <SortableContext items={columnsId}>
             {columns.map((col) => (
               <BoardColumn
@@ -204,7 +224,6 @@ const SelectionDND = ({
                 teams={teams.filter((team) => team.columnId === col.id)}
                 totalTeamCount={teams.length}
                 setSelectedTeam={setSelectedTeam}
-                printMode={printMode}
                 compareMode={compareMode}
                 leftTeam={leftTeam}
                 rightTeam={rightTeam}
@@ -226,7 +245,6 @@ const SelectionDND = ({
                   )}
                   totalTeamCount={teams.length}
                   setSelectedTeam={setSelectedTeam}
-                  printMode={printMode}
                   compareMode={compareMode}
                   leftTeam={leftTeam}
                   rightTeam={rightTeam}

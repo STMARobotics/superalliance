@@ -19,7 +19,6 @@ interface TeamCardProps {
   team: Team;
   isOverlay?: boolean;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
-  printMode?: boolean;
   compareMode?: boolean;
   leftTeam?: UniqueIdentifier;
   rightTeam?: UniqueIdentifier;
@@ -38,7 +37,6 @@ export function TeamCard({
   team,
   isOverlay,
   setSelectedTeam,
-  printMode,
   compareMode,
   leftTeam,
   rightTeam,
@@ -133,7 +131,7 @@ export function TeamCard({
             {team?.teamName}
           </span>
         </span>
-        {!printMode && (
+        {(
           <>
             {team?.rank > 0 ? (
               <Badge

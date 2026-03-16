@@ -25,7 +25,6 @@ interface BoardColumnProps {
   isOverlay?: boolean;
   totalTeamCount: number;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
-  printMode?: boolean;
   compareMode?: boolean;
   leftTeam?: UniqueIdentifier;
   rightTeam?: UniqueIdentifier;
@@ -39,7 +38,6 @@ export function BoardColumn({
   isOverlay,
   totalTeamCount,
   setSelectedTeam,
-  printMode,
   compareMode,
   leftTeam,
   rightTeam,
@@ -67,9 +65,7 @@ export function BoardColumn({
   };
 
   const variants = cva(
-    `${
-      printMode ? "" : "h-[66vh] max-h-[66vh]"
-    } md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col shrink-0 snap-center`,
+    "h-[66vh] max-h-[66vh] md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col shrink-0 snap-center",
     {
       variants: {
         dragging: {
@@ -98,9 +94,7 @@ export function BoardColumn({
       </CardHeader>
       <ScrollArea>
         <CardContent
-          className={`flex grow flex-col gap-2 p-2 ${
-            printMode ? "mb-10" : ""
-          }`}
+          className={`flex grow flex-col gap-2 p-2`}
         >
           <SortableContext items={teamsIds}>
             {teams.map((team) => {
@@ -109,7 +103,6 @@ export function BoardColumn({
                   key={team.id}
                   team={team}
                   setSelectedTeam={setSelectedTeam!}
-                  printMode={printMode}
                   compareMode={compareMode}
                   leftTeam={leftTeam}
                   rightTeam={rightTeam}
@@ -127,10 +120,8 @@ export function BoardColumn({
 
 export function BoardContainer({
   children,
-  printMode,
 }: {
   children: React.ReactNode;
-  printMode: boolean;
 }) {
   const dndContext = useDndContext();
 
@@ -150,11 +141,7 @@ export function BoardContainer({
       })}
     >
       <div
-        className={`flex gap-4 ${
-          printMode
-            ? "items-start flex-row"
-            : "items-center flex-col md:flex-row"
-        } justify-center`}
+        className={"flex gap-4 items-center flex-col md:flex-row justify-center"}
       >
         {children}
       </div>
