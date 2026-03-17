@@ -29,7 +29,8 @@ teamSelectionRouter.post("/api/teamSelection/save/:eventCode", requireAuth(), as
     await newSelection.save();
     return res.send("Submitted Team Selection!");
   } catch (err) {
-    return res.status(500).send(err);
+    console.error("Error saving team selection:", err);
+    return res.status(500).json({ error: "Failed to save team selection" });
   }
 });
 
