@@ -1,10 +1,15 @@
 import {
   BoardColumn,
   BoardContainer,
+  type ColumnDragData,
   type Column,
 } from "@/components/selection/selection-column";
-import { useMemo, useState } from "react";
-import { Team, TeamCard } from "@/components/selection/selection-team-card";
+import { Dispatch, SetStateAction, useMemo, useState, useRef, useEffect } from "react";
+import {
+  Team,
+  TeamCard,
+  type TeamDragData,
+} from "@/components/selection/selection-team-card";
 import {
   DndContext,
   DragEndEvent,
@@ -51,6 +56,13 @@ const defaultCols = [
 ] satisfies Column[];
 
 export type ColumnId = (typeof defaultCols)[number]["id"];
+type PendingDragData = TeamDragData | ColumnDragData;
+type PendingDragOver = {
+  activeId: UniqueIdentifier;
+  overId: UniqueIdentifier;
+  activeData: PendingDragData;
+  overData: PendingDragData;
+};
 
 const SelectionDND = ({
   teams,
@@ -63,27 +75,149 @@ const SelectionDND = ({
   setLeftTeam,
   setRightTeam,
 }: {
-  teams: any[];
-  setTeams: (teams: any[]) => void;
+  teams: Team[];
+  setTeams: Dispatch<SetStateAction<Team[]>>;
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   compareMode: boolean;
   setCompareMode: (compareMode: boolean) => void;
-  leftTeam: any;
-  rightTeam: any;
-  setLeftTeam: (leftTeam: any) => void;
-  setRightTeam: (rightTeam: any) => void;
+  leftTeam: UniqueIdentifier | null | undefined;
+  rightTeam: UniqueIdentifier | null | undefined;
+  setLeftTeam: Dispatch<SetStateAction<UniqueIdentifier | null | undefined>>;
+  setRightTeam: Dispatch<SetStateAction<UniqueIdentifier | null | undefined>>;
 }) => {
 
   const { user } = useUser();
   const { selectedEvent } = useSuperAlliance();
   const { getTeamSelection, saveTeamSelection, exportTeamSelection } = useSuperAllianceApi();
 
-  const [columns, setColumns] = useState<any[]>(defaultCols);
+  const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
+  const dragOverFrameRef = useRef<number | null>(null);
+  const pendingDragOverRef = useRef<PendingDragOver | null>(null);
+
+  const applyDragOverUpdate = (
+    currentTeams: Team[],
+    pending: PendingDragOver
+  ): Team[] => {
+    const { activeId, overId, activeData, overData } = pending;
+
+    if (activeData?.type !== "Team") {
+      return currentTeams;
+    }
+
+    if (overData?.type === "Column") {
+      const activeIndex = currentTeams.findIndex((t) => t.id === activeId);
+      if (activeIndex === -1) {
+        return currentTeams;
+      }
+
+      const activeTeam = currentTeams[activeIndex];
+      if (!activeTeam || activeTeam.columnId === overId) {
+        return currentTeams;
+      }
+
+      const nextTeams = [...currentTeams];
+      nextTeams[activeIndex] = { ...activeTeam, columnId: overId as ColumnId };
+      return nextTeams;
+    }
+
+    if (overData?.type !== "Team") {
+      return currentTeams;
+    }
+
+    const activeIndex = currentTeams.findIndex((t) => t.id === activeId);
+    const overIndex = currentTeams.findIndex((t) => t.id === overId);
+
+    if (activeIndex === -1 || overIndex === -1 || activeIndex === overIndex) {
+      return currentTeams;
+    }
+
+    const nextTeams = [...currentTeams];
+    const activeTeam = nextTeams[activeIndex];
+    const overTeam = nextTeams[overIndex];
+
+    if (!activeTeam || !overTeam) {
+      return currentTeams;
+    }
+
+    if (activeTeam.columnId !== overTeam.columnId) {
+      nextTeams[activeIndex] = { ...activeTeam, columnId: overTeam.columnId };
+      return arrayMove(
+        nextTeams,
+        activeIndex,
+        overIndex === 0 ? overIndex : overIndex - 1
+      );
+    }
+
+    return arrayMove(nextTeams, activeIndex, overIndex);
+  };
+
+  const processPendingDragOver = () => {
+    const pending = pendingDragOverRef.current;
+    if (!pending) return;
+    pendingDragOverRef.current = null;
+    setTeams((currentTeams) => applyDragOverUpdate(currentTeams, pending));
+  };
+
+  const sortUnsortedTeams = (sortBy: "number" | "rank") => {
+    const unsortedTeams = teams.filter((team) => team.columnId === "unsorted");
+
+    if (unsortedTeams.length < 2) {
+      return;
+    }
+
+    const sortedUnsortedTeams = [...unsortedTeams].sort((a, b) => {
+      if (sortBy === "number") {
+        return Number(a.teamNumber) - Number(b.teamNumber);
+      }
+
+      const aRank = Number(a.rank);
+      const bRank = Number(b.rank);
+      const aHasRank = Number.isFinite(aRank) && aRank > 0;
+      const bHasRank = Number.isFinite(bRank) && bRank > 0;
+
+      if (aHasRank && bHasRank) {
+        return aRank - bRank;
+      }
+
+      if (aHasRank) {
+        return -1;
+      }
+
+      if (bHasRank) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    let unsortedIndex = 0;
+    setTeams(
+      teams.map((team) => {
+        if (team.columnId !== "unsorted") {
+          return team;
+        }
+
+        const nextTeam = sortedUnsortedTeams[unsortedIndex];
+        unsortedIndex += 1;
+        return nextTeam;
+      })
+    );
+  };
+
+  useEffect(() => {
+    return () => {
+      if (dragOverFrameRef.current !== null) {
+        cancelAnimationFrame(dragOverFrameRef.current);
+        dragOverFrameRef.current = null;
+      }
+    };
+  }, []);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -199,10 +333,20 @@ const SelectionDND = ({
                 column={col}
                 teams={teams.filter((team) => team.columnId === col.id)}
                 totalTeamCount={teams.length}
+                onSortByNumber={
+                  col.id === "unsorted"
+                    ? () => sortUnsortedTeams("number")
+                    : undefined
+                }
+                onSortByRank={
+                  col.id === "unsorted"
+                    ? () => sortUnsortedTeams("rank")
+                    : undefined
+                }
                 setSelectedTeam={setSelectedTeam}
                 compareMode={compareMode}
-                leftTeam={leftTeam}
-                rightTeam={rightTeam}
+                leftTeam={leftTeam ?? undefined}
+                rightTeam={rightTeam ?? undefined}
                 setLeftTeam={setLeftTeam}
                 setRightTeam={setRightTeam}
               />
@@ -222,8 +366,8 @@ const SelectionDND = ({
                   totalTeamCount={teams.length}
                   setSelectedTeam={setSelectedTeam}
                   compareMode={compareMode}
-                  leftTeam={leftTeam}
-                  rightTeam={rightTeam}
+                  leftTeam={leftTeam ?? undefined}
+                  rightTeam={rightTeam ?? undefined}
                   setLeftTeam={setLeftTeam}
                   setRightTeam={setRightTeam}
                 />
@@ -251,6 +395,12 @@ const SelectionDND = ({
   }
 
   function onDragEnd(event: DragEndEvent) {
+    if (dragOverFrameRef.current !== null) {
+      cancelAnimationFrame(dragOverFrameRef.current);
+      dragOverFrameRef.current = null;
+    }
+    processPendingDragOver();
+
     setActiveColumn(null);
     setActiveTeam(null);
 
@@ -291,51 +441,24 @@ const SelectionDND = ({
 
     const activeData = active.data.current;
     const overData = over.data.current;
+    if (!activeData || !overData) return;
 
-    const isActiveATeam = activeData?.type === "Team";
-    const isOverATeam = overData?.type === "Team";
+    // Collect the drag over event data instead of processing immediately
+    pendingDragOverRef.current = {
+      activeId,
+      overId,
+      activeData,
+      overData,
+    };
 
-    if (!isActiveATeam) return;
-
-    // Im dropping a Team over another Team
-    if (isActiveATeam && isOverATeam) {
-      const newTeams = [...teams];
-      const activeIndex = newTeams.findIndex((t: any) => t.id === activeId);
-      const overIndex = newTeams.findIndex((t: any) => t.id === overId);
-      const activeTeam = newTeams[activeIndex];
-      const overTeam = newTeams[overIndex];
-      if (
-        activeTeam &&
-        overTeam &&
-        activeTeam.columnId !== overTeam.columnId
-      ) {
-        activeTeam.columnId = overTeam.columnId;
-        const reorderedTeams = arrayMove(
-          newTeams,
-          activeIndex,
-          overIndex == 0 ? overIndex : overIndex - 1
-        );
-        setTeams(reorderedTeams);
-        return;
-      }
-
-      const reorderedTeams = arrayMove(newTeams, activeIndex, overIndex);
-      setTeams(reorderedTeams);
+    if (dragOverFrameRef.current !== null) {
+      return;
     }
 
-    const isOverAColumn = overData?.type === "Column";
-
-    // Im dropping a Team over a column
-    if (isActiveATeam && isOverAColumn) {
-      const newTeams = [...teams];
-      const activeIndex = newTeams.findIndex((t: any) => t.id === activeId);
-      const activeTeam = newTeams[activeIndex];
-      if (activeTeam) {
-        activeTeam.columnId = overId as ColumnId;
-        const reorderedTeams = arrayMove(newTeams, activeIndex, activeIndex);
-        setTeams(reorderedTeams);
-      }
-    }
+    dragOverFrameRef.current = requestAnimationFrame(() => {
+      dragOverFrameRef.current = null;
+      processPendingDragOver();
+    });
   }
 };
 

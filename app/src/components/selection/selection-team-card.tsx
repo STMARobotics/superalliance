@@ -109,8 +109,8 @@ export function TeamCard({
           : undefined,
       })}
     >
-      <CardHeader className="px-3 py-3 space-between flex flex-row border-secondary relative">
-        <span>
+      <CardHeader className="relative flex flex-row items-start gap-2 border-secondary px-3 py-3">
+        <span className="min-w-0 flex-1">
           {compareMode && (
             <>
               {leftTeam == team.id ? (
@@ -136,7 +136,7 @@ export function TeamCard({
             {team?.rank > 0 ? (
               <Badge
                 variant={"outline"}
-                className={`ml-auto font-semibold text-red-600 h-6 ${
+                className={`ml-auto h-6 shrink-0 whitespace-nowrap font-semibold text-red-600 ${
                   compareMode &&
                   (leftTeam == team.id || rightTeam == team.id) &&
                   "text-black"
