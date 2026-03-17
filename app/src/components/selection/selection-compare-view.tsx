@@ -24,6 +24,7 @@ const SelectionCompareView = ({
   statsDifference,
   side,
   opr,
+  moveTeamToColumn,
 }: {
   aggregation: any;
   pitForm: any;
@@ -31,6 +32,7 @@ const SelectionCompareView = ({
   statsDifference: any;
   side: any;
   opr: any;
+  moveTeamToColumn?: (teamId: string, columnId: string) => void;
 }) => {
   const averages = [
     {
@@ -155,6 +157,17 @@ const SelectionCompareView = ({
       statKey: "defendedAgainstPercentage",
     },
   ];
+
+  const handleMoveTeam = (columnId: string) => {
+    if (moveTeamToColumn && aggregation?._id) {
+      moveTeamToColumn(aggregation._id.toString(), columnId);
+      toast.success(`Team ${aggregation._id} moved to ${columnId.toUpperCase()}`);
+    }
+  };
+
+  const currentTeam = teams?.find((team: any) => team.id === aggregation?._id?.toString());
+  const currentColumnId = currentTeam?.columnId;
+
   return (
     <div className="flex flex-col justify-center items-center gap-4">
       <h2 className="text-3xl font-bold tracking-tight">
@@ -165,11 +178,42 @@ const SelectionCompareView = ({
         }
       </h2>
       <Tabs defaultValue="inspector" className="space-y-4 w-full h-full">
-        <TabsList>
-          <TabsTrigger value="inspector">Inspector</TabsTrigger>
-          <TabsTrigger value="pitform">Pit Form</TabsTrigger>
-          <TabsTrigger value="graphs">Graphs</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="inspector">Inspector</TabsTrigger>
+            <TabsTrigger value="pitform">Pit Form</TabsTrigger>
+            <TabsTrigger value="graphs">Graphs</TabsTrigger>
+          </TabsList>
+          
+          {moveTeamToColumn && (
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => handleMoveTeam('r1')}
+                variant={currentColumnId === 'r1' ? "default" : "outline"}
+                size="sm"
+                className="h-8"
+              >
+                R1
+              </Button>
+              <Button
+                onClick={() => handleMoveTeam('r2')}
+                variant={currentColumnId === 'r2' ? "default" : "outline"}
+                size="sm"
+                className="h-8"
+              >
+                R2
+              </Button>
+              <Button
+                onClick={() => handleMoveTeam('r3')}
+                variant={currentColumnId === 'r3' ? "default" : "outline"}
+                size="sm"
+                className="h-8"
+              >
+                R3
+              </Button>
+            </div>
+          )}
+        </div>
         <TabsContent value="inspector" className="space-y-4">
           <div>
             <div className="grid gap-4 grid-cols-2">

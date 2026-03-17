@@ -3,7 +3,7 @@ import {
   BoardContainer,
   type Column,
 } from "@/components/selection/selection-column";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Team, TeamCard } from "@/components/selection/selection-team-card";
 import {
   DndContext,
@@ -53,7 +53,8 @@ const defaultCols = [
 export type ColumnId = (typeof defaultCols)[number]["id"];
 
 const SelectionDND = ({
-  propTeams,
+  teams,
+  setTeams,
   setSelectedTeam,
   compareMode,
   setCompareMode,
@@ -62,7 +63,8 @@ const SelectionDND = ({
   setLeftTeam,
   setRightTeam,
 }: {
-  propTeams: any[];
+  teams: any[];
+  setTeams: (teams: any[]) => void;
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   compareMode: boolean;
   setCompareMode: (compareMode: boolean) => void;
@@ -71,15 +73,6 @@ const SelectionDND = ({
   setLeftTeam: (leftTeam: any) => void;
   setRightTeam: (rightTeam: any) => void;
 }) => {
-  const initialTeams: Team[] = propTeams.map((team: any) => {
-    return {
-      id: `${team.teamNumber}`,
-      columnId: "unsorted",
-      teamNumber: `${team.teamNumber}`,
-      teamName: `${team.teamName}`,
-      rank: `${team.teamRank}`,
-    };
-  });
 
   const { user } = useUser();
   const { selectedEvent } = useSuperAlliance();
@@ -87,27 +80,10 @@ const SelectionDND = ({
 
   const [columns, setColumns] = useState<any[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-  const [teams, setTeams] = useState<Team[]>(initialTeams);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-
   const [activeTeam, setActiveTeam] = useState<Team | null>(null);
-
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-
-  useEffect(() => {
-    setTeams(
-      propTeams.map((team: any) => {
-        return {
-          id: `${team.teamNumber}`,
-          columnId: "unsorted",
-          teamNumber: `${team.teamNumber}`,
-          teamName: `${team.teamName}`,
-          rank: `${team.teamRank}`,
-        };
-      })
-    );
-  }, [propTeams]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -317,47 +293,48 @@ const SelectionDND = ({
     const overData = over.data.current;
 
     const isActiveATeam = activeData?.type === "Team";
-    const isOverATeam = activeData?.type === "Team";
+    const isOverATeam = overData?.type === "Team";
 
     if (!isActiveATeam) return;
 
     // Im dropping a Team over another Team
     if (isActiveATeam && isOverATeam) {
-      setTeams((teams) => {
-        const activeIndex = teams.findIndex((t) => t.id === activeId);
-        const overIndex = teams.findIndex((t) => t.id === overId);
-        const activeTeam = teams[activeIndex];
-        const overTeam = teams[overIndex];
-        if (
-          activeTeam &&
-          overTeam &&
-          activeTeam.columnId !== overTeam.columnId
-        ) {
-          activeTeam.columnId = overTeam.columnId;
-          return arrayMove(
-            teams,
-            activeIndex,
-            overIndex == 0 ? overIndex : overIndex - 1
-          );
-        }
+      const newTeams = [...teams];
+      const activeIndex = newTeams.findIndex((t: any) => t.id === activeId);
+      const overIndex = newTeams.findIndex((t: any) => t.id === overId);
+      const activeTeam = newTeams[activeIndex];
+      const overTeam = newTeams[overIndex];
+      if (
+        activeTeam &&
+        overTeam &&
+        activeTeam.columnId !== overTeam.columnId
+      ) {
+        activeTeam.columnId = overTeam.columnId;
+        const reorderedTeams = arrayMove(
+          newTeams,
+          activeIndex,
+          overIndex == 0 ? overIndex : overIndex - 1
+        );
+        setTeams(reorderedTeams);
+        return;
+      }
 
-        return arrayMove(teams, activeIndex, overIndex);
-      });
+      const reorderedTeams = arrayMove(newTeams, activeIndex, overIndex);
+      setTeams(reorderedTeams);
     }
 
     const isOverAColumn = overData?.type === "Column";
 
     // Im dropping a Team over a column
     if (isActiveATeam && isOverAColumn) {
-      setTeams((teams) => {
-        const activeIndex = teams.findIndex((t) => t.id === activeId);
-        const activeTeam = teams[activeIndex];
-        if (activeTeam) {
-          activeTeam.columnId = overId as ColumnId;
-          return arrayMove(teams, activeIndex, activeIndex);
-        }
-        return teams;
-      });
+      const newTeams = [...teams];
+      const activeIndex = newTeams.findIndex((t: any) => t.id === activeId);
+      const activeTeam = newTeams[activeIndex];
+      if (activeTeam) {
+        activeTeam.columnId = overId as ColumnId;
+        const reorderedTeams = arrayMove(newTeams, activeIndex, activeIndex);
+        setTeams(reorderedTeams);
+      }
     }
   }
 };

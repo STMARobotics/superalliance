@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import SelectionCompareView from "./selection-compare-view";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { Button } from "@/components/ui/button";
 
 const round = (num: number, digits: number = 1) => {
   const factor = 100 ** digits;
@@ -18,6 +19,7 @@ const SelectionCompare = ({
   rightTeam,
   setLeftTeam,
   setRightTeam,
+  moveTeamToColumn,
 }: {
   compareMode?: boolean;
   setCompareMode: (compareMode: boolean) => void;
@@ -27,6 +29,7 @@ const SelectionCompare = ({
   rightTeam: any;
   setLeftTeam: (leftTeam: any) => void;
   setRightTeam: (rightTeam: any) => void;
+  moveTeamToColumn?: (teamId: string, columnId: string) => void;
 }) => {
   const [compareData, setCompareData] = useState<any>();
   const [pitFormData, setPitFormData] = useState<any>();
@@ -127,7 +130,7 @@ const SelectionCompare = ({
         }}
         title="Team Comparison"
         fullScreen
-        withCloseButton={true}
+        withCloseButton={false}
         zIndex={1000}
         radius={"lg"}
         styles={{
@@ -136,6 +139,20 @@ const SelectionCompare = ({
           },
         }}
       >
+        <div className="flex justify-end mb-4">
+          <Button
+            onClick={() => {
+              setLeftTeam(null);
+              setRightTeam(null);
+              setCompareData(null);
+              setPitFormData(null);
+              setStatsDifference(null);
+              setCompareMode(false);
+            }}
+          >
+            Close
+          </Button>
+        </div>
         <div className="flex flex-row py-2 w-full">
           <div className="w-[50%] px-4">
             {compareData?.left && statsDifference && (
@@ -147,6 +164,7 @@ const SelectionCompare = ({
                   statsDifference={statsDifference.left}
                   side={"left"}
                   opr={opr?.left}
+                  moveTeamToColumn={moveTeamToColumn}
                 />
               </>
             )}
@@ -161,6 +179,7 @@ const SelectionCompare = ({
                   statsDifference={statsDifference.right}
                   side={"right"}
                   opr={opr?.right}
+                  moveTeamToColumn={moveTeamToColumn}
                 />
               </>
             )}

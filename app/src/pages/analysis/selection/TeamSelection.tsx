@@ -9,6 +9,16 @@ import { Drawer, Modal, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 
+type Team = {
+  id: string;
+  columnId: string;
+  teamNumber: string;
+  teamName: string;
+  rank: string;
+};
+
+type ColumnId = "unsorted" | "r1" | "r2" | "r3";
+
 function TeamSelection() {
   const {
     selectedEvent,
@@ -25,6 +35,53 @@ function TeamSelection() {
   const [leftTeam, setLeftTeam] = useState<any>();
   const [rightTeam, setRightTeam] = useState<any>();
   const { getPitFormByTeam } = useSuperAllianceApi();
+  
+  const [teams, setTeams] = useState<Team[]>([]);
+  
+  // Initialize teams when eventTeams changes
+  useEffect(() => {
+    if (eventTeams) {
+      setTeams(
+        eventTeams.map((team: any) => ({
+          id: `${team.teamNumber}`,
+          columnId: "unsorted" as ColumnId,
+          teamNumber: `${team.teamNumber}`,
+          teamName: `${team.teamName}`,
+          rank: `${team.teamRank}`,
+        }))
+      );
+    }
+  }, [eventTeams]);
+  
+  // Function to move a team to a specific column at the top
+  const moveTeamToColumn = (teamId: string, columnId: string) => {
+    setTeams((currentTeams) => {
+      const teamIndex = currentTeams.findIndex((t) => t.id === teamId);
+      if (teamIndex === -1) return currentTeams;
+
+      const updatedTeams = [...currentTeams];
+      const teamToMove = { ...updatedTeams[teamIndex] };
+      teamToMove.columnId = columnId as ColumnId;
+      
+      // Remove from current position
+      updatedTeams.splice(teamIndex, 1);
+      
+      // Find position to insert at top of target column
+      const firstTeamInTargetColumn = updatedTeams.findIndex(
+        (t) => t.columnId === columnId
+      );
+      
+      if (firstTeamInTargetColumn === -1) {
+        // No teams in target column, add to end
+        updatedTeams.push(teamToMove);
+      } else {
+        // Insert at the beginning of target column
+        updatedTeams.splice(firstTeamInTargetColumn, 0, teamToMove);
+      }
+      
+      return updatedTeams;
+    });
+  };
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
@@ -49,7 +106,8 @@ function TeamSelection() {
       </h1>
       <div className="h-full flex justify-center items-center w-full">
             <SelectionDND
-              propTeams={eventTeams}
+              teams={teams}
+              setTeams={setTeams}
               setSelectedTeam={setSelectedTeam}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
@@ -59,7 +117,7 @@ function TeamSelection() {
               setRightTeam={setRightTeam}
             />
             <SelectionCompare
-              teams={eventTeams}
+              teams={teams}
               aggregation={eventAggregation}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
@@ -67,11 +125,12 @@ function TeamSelection() {
               rightTeam={rightTeam}
               setLeftTeam={setLeftTeam}
               setRightTeam={setRightTeam}
+              moveTeamToColumn={moveTeamToColumn}
             />
             {selectedTeam !== "" && eventAggregation && (
               <>
                 <SelectionTeamView
-                  teams={eventTeams}
+                  teams={teams}
                   aggregationData={
                     eventAggregation?.filter((team: any) => {
                       return team._id == Number(selectedTeam);
@@ -80,6 +139,7 @@ function TeamSelection() {
                   setSelectedTeam={setSelectedTeam}
                   pitFormData={pitFormData}
                   setFormsOpened={setFormListOpened}
+                  moveTeamToColumn={moveTeamToColumn}
                 />
                 <Modal
                   classNames={{
