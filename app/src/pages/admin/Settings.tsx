@@ -6,17 +6,12 @@ import { LoadingOverlay, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Settings } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
 function AdminSettings() {
-  const { events, appSettings, refreshSA  } = useSuperAlliance();
+  const { events, appSettings } = useSuperAlliance();
   const pathname = useLocation().pathname;
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-
-  useEffect(() => {
-    refreshSA!.appSettings();
-  }, []);
 
   return (
     <div className="flex flex-row h-full">

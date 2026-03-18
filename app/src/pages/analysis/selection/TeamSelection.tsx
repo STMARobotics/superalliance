@@ -5,9 +5,35 @@ import SelectionDND from "@/components/selection/selection-dnd";
 import SelectionTeamView from "@/components/selection/selection-team-view";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
+import type { UniqueIdentifier } from "@dnd-kit/core";
 import { Drawer, Modal, em } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+
+type Team = {
+  id: UniqueIdentifier;
+  columnId: ColumnId;
+  teamNumber: string;
+  teamName: string;
+  rank: string;
+};
+
+type EventTeamPayload = {
+  teamNumber: string | number;
+  teamName?: string;
+  teamRank?: string | number | null;
+};
+
+type AggregationPayload = {
+  _id: string | number;
+};
+
+type EventFormPayload = {
+  _id: string | number;
+  teamNumber: string | number;
+};
+
+type ColumnId = "unsorted" | "r1" | "r2" | "r3";
 
 function TeamSelection() {
   const {
@@ -17,14 +43,61 @@ function TeamSelection() {
     eventForms,
   } = useSuperAlliance();
   const [pitFormData, setPitFormData] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState<any>("");
-  const [selectedForm, setSelectedForm] = useState<any>("");
+  const [selectedTeam, setSelectedTeam] = useState<UniqueIdentifier | "">("");
+  const [selectedForm, setSelectedForm] = useState<string | number | "">("");
   const [formListOpened, setFormListOpened] = useState(false);
   const [formOpened, setFormOpened] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
-  const [leftTeam, setLeftTeam] = useState<any>();
-  const [rightTeam, setRightTeam] = useState<any>();
+  const [leftTeam, setLeftTeam] = useState<UniqueIdentifier | null | undefined>(undefined);
+  const [rightTeam, setRightTeam] = useState<UniqueIdentifier | null | undefined>(undefined);
   const { getPitFormByTeam } = useSuperAllianceApi();
+  
+  const [teams, setTeams] = useState<Team[]>([]);
+  
+  // Initialize teams when eventTeams changes
+  useEffect(() => {
+    if (eventTeams) {
+      setTeams(
+        eventTeams.map((team: EventTeamPayload) => ({
+        id: `${team.teamNumber}`,
+        columnId: "unsorted" as ColumnId,
+        teamNumber: `${team.teamNumber}`,
+        teamName: `${team.teamName ?? ""}`,
+        rank: `${team.teamRank ?? ""}`,
+        }))
+      );
+    }
+  }, [eventTeams]);
+  
+  // Function to move a team to a specific column at the top
+  const moveTeamToColumn = (teamId: string, columnId: string) => {
+    setTeams((currentTeams) => {
+      const teamIndex = currentTeams.findIndex((t) => t.id === teamId);
+      if (teamIndex === -1) return currentTeams;
+
+      const updatedTeams = [...currentTeams];
+      const teamToMove = { ...updatedTeams[teamIndex] };
+      teamToMove.columnId = columnId as ColumnId;
+      
+      // Remove from current position
+      updatedTeams.splice(teamIndex, 1);
+      
+      // Find position to insert at top of target column
+      const firstTeamInTargetColumn = updatedTeams.findIndex(
+        (t) => t.columnId === columnId
+      );
+      
+      if (firstTeamInTargetColumn === -1) {
+        // No teams in target column, add to end
+        updatedTeams.push(teamToMove);
+      } else {
+        // Insert at the beginning of target column
+        updatedTeams.splice(firstTeamInTargetColumn, 0, teamToMove);
+      }
+      
+      return updatedTeams;
+    });
+  };
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
@@ -32,7 +105,7 @@ function TeamSelection() {
     (async function () {
       setPitFormData(
         selectedTeam
-          ? await getPitFormByTeam(selectedEvent, selectedTeam).catch(() => null)
+          ? await getPitFormByTeam(selectedEvent, String(selectedTeam)).catch(() => null)
           : null
       );
     })();
@@ -49,7 +122,8 @@ function TeamSelection() {
       </h1>
       <div className="h-full flex justify-center items-center w-full">
             <SelectionDND
-              propTeams={eventTeams}
+              teams={teams}
+              setTeams={setTeams}
               setSelectedTeam={setSelectedTeam}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
@@ -59,7 +133,7 @@ function TeamSelection() {
               setRightTeam={setRightTeam}
             />
             <SelectionCompare
-              teams={eventTeams}
+              teams={teams}
               aggregation={eventAggregation}
               compareMode={compareMode}
               setCompareMode={setCompareMode}
@@ -67,19 +141,21 @@ function TeamSelection() {
               rightTeam={rightTeam}
               setLeftTeam={setLeftTeam}
               setRightTeam={setRightTeam}
+              moveTeamToColumn={moveTeamToColumn}
             />
             {selectedTeam !== "" && eventAggregation && (
               <>
                 <SelectionTeamView
-                  teams={eventTeams}
+                  teams={teams}
                   aggregationData={
-                    eventAggregation?.filter((team: any) => {
+                    eventAggregation?.filter((team: AggregationPayload) => {
                       return team._id == Number(selectedTeam);
                     })[0]
                   }
                   setSelectedTeam={setSelectedTeam}
                   pitFormData={pitFormData}
                   setFormsOpened={setFormListOpened}
+                  moveTeamToColumn={moveTeamToColumn}
                 />
                 <Modal
                   classNames={{
@@ -100,7 +176,7 @@ function TeamSelection() {
                   <FormList
                     teamsPage={false}
                     forms={eventForms?.filter(
-                      (form: any) => form.teamNumber == selectedTeam
+                      (form: EventFormPayload) => form.teamNumber == selectedTeam
                     )}
                     selectedForm={selectedForm}
                     setSelectedForm={setSelectedForm}
@@ -121,7 +197,7 @@ function TeamSelection() {
                   {selectedForm && (
                     <FormView
                       formData={
-                        eventForms.filter((form: any) => form._id == selectedForm)[0]
+                        eventForms.filter((form: EventFormPayload) => form._id == selectedForm)[0]
                       }
                     />
                   )}

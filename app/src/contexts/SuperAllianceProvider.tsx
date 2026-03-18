@@ -61,7 +61,7 @@ export function SuperAllianceProvider(props: any) {
           setEventTeams(
             eventTeams.filter((team: any) =>
               team.teamEvent.includes(selectedEvent)
-            )
+            ).sort .sort((a: any, b: any) => parseInt(a.teamNumber) - parseInt(b.teamNumber))
           );
           if (user?.publicMetadata.role === "admin") {
             const eventForms = await getForms(selectedEvent);
@@ -103,7 +103,7 @@ export function SuperAllianceProvider(props: any) {
     (async function () {
       if (selectedEvent && selectedEvent !== "none") {
         const eventTeams = await getTeams(appConfig.year, selectedEvent);
-        setEventTeams(eventTeams);
+        setEventTeams(eventTeams.sort((a: any, b: any) => parseInt(a.teamNumber) - parseInt(b.teamNumber)));
         if (user?.publicMetadata.role === "admin") {
           const eventForms = await getForms(selectedEvent);
           setEventForms(eventForms);

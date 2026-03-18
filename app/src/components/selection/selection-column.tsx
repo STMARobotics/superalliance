@@ -5,7 +5,15 @@ import { useMemo } from "react";
 import { Team, TeamCard } from "@/components/selection/selection-team-card";
 import { cva } from "class-variance-authority";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { IconListNumbers, IconHash } from "@tabler/icons-react";
 
 export interface Column {
   id: UniqueIdentifier;
@@ -24,8 +32,9 @@ interface BoardColumnProps {
   teams: Team[];
   isOverlay?: boolean;
   totalTeamCount: number;
+  onSortByNumber?: () => void;
+  onSortByRank?: () => void;
   setSelectedTeam?: (teamId: UniqueIdentifier) => void;
-  printMode?: boolean;
   compareMode?: boolean;
   leftTeam?: UniqueIdentifier;
   rightTeam?: UniqueIdentifier;
@@ -38,8 +47,9 @@ export function BoardColumn({
   teams,
   isOverlay,
   totalTeamCount,
+  onSortByNumber,
+  onSortByRank,
   setSelectedTeam,
-  printMode,
   compareMode,
   leftTeam,
   rightTeam,
@@ -67,9 +77,7 @@ export function BoardColumn({
   };
 
   const variants = cva(
-    `${
-      printMode ? "" : "h-[66vh] max-h-[66vh]"
-    } md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col shrink-0 snap-center`,
+    "h-[66vh] max-h-[66vh] md:w-[22vw] w-[250px] min-w-[150px] max-w-full bg-primary-foreground flex flex-col shrink-0 snap-center",
     {
       variants: {
         dragging: {
@@ -89,18 +97,54 @@ export function BoardColumn({
         dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
       })}
     >
-      <CardHeader className="p-4 font-semibold border-b-2 text-center flex flex-row space-between items-center">
-        <span className="m-auto">
-          {column.id == "r3" && totalTeamCount - 23 > 0
-            ? `${column.title} (${teams.length}/${totalTeamCount - 23})`
-            : `${column.title} (${teams.length})`}
-        </span>
+      <CardHeader className="border-b-2 p-4">
+        <div className="flex items-center gap-2 font-semibold">
+          <span className="flex-1 text-center">
+              {column.id == "r3" && totalTeamCount - 23 > 0
+                ? `${column.title} (${teams.length}/${totalTeamCount - 23})`
+                : `${column.title} (${teams.length})`}
+          </span>
+          {column.id === "unsorted" && !isOverlay && (
+            <TooltipProvider delayDuration={0}>
+              <div className="ml-auto flex items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={onSortByNumber}
+                      aria-label="Sort by team number"
+                    >
+                      <IconHash className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Sort by team number</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={onSortByRank}
+                      aria-label="Sort by rank"
+                    >
+                      <IconListNumbers className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Sort by rank</TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
+          )}
+        </div>
       </CardHeader>
       <ScrollArea>
         <CardContent
-          className={`flex grow flex-col gap-2 p-2 ${
-            printMode ? "mb-10" : ""
-          }`}
+          className={`flex grow flex-col gap-2 p-2`}
         >
           <SortableContext items={teamsIds}>
             {teams.map((team) => {
@@ -109,7 +153,6 @@ export function BoardColumn({
                   key={team.id}
                   team={team}
                   setSelectedTeam={setSelectedTeam!}
-                  printMode={printMode}
                   compareMode={compareMode}
                   leftTeam={leftTeam}
                   rightTeam={rightTeam}
@@ -127,10 +170,8 @@ export function BoardColumn({
 
 export function BoardContainer({
   children,
-  printMode,
 }: {
   children: React.ReactNode;
-  printMode: boolean;
 }) {
   const dndContext = useDndContext();
 
@@ -150,11 +191,7 @@ export function BoardContainer({
       })}
     >
       <div
-        className={`flex gap-4 ${
-          printMode
-            ? "items-start flex-row"
-            : "items-center flex-col md:flex-row"
-        } justify-center`}
+        className={"flex gap-4 items-center flex-col md:flex-row justify-center"}
       >
         {children}
       </div>

@@ -32,12 +32,14 @@ const SelectionTeamView = ({
   setSelectedTeam,
   pitFormData,
   setFormsOpened,
+  moveTeamToColumn,
 }: {
   teams: any;
   aggregationData: any;
   setSelectedTeam: (teamId: UniqueIdentifier) => void;
   pitFormData: any;
   setFormsOpened: any;
+  moveTeamToColumn?: (teamId: string, columnId: string) => void;
 }) => {
   const [mainOpened, setMainOpened] = useState(false);
   const [imageOpened, setImageOpened] = useState(false);
@@ -94,6 +96,7 @@ const SelectionTeamView = ({
           setCriticalsOpened={setCriticalsOpened}
           setCommentsOpened={setCommentsOpened}
           appSettings={appSettings}
+          moveTeamToColumn={moveTeamToColumn}
         />
       </Modal>
       <Modal
@@ -197,6 +200,7 @@ export const DataDisplay = ({
   setCriticalsOpened,
   setCommentsOpened,
   appSettings,
+  moveTeamToColumn,
 }: {
   teams: any;
   aggregationData: any;
@@ -209,6 +213,7 @@ export const DataDisplay = ({
   setCriticalsOpened: any;
   setCommentsOpened: any;
   appSettings: any;
+  moveTeamToColumn?: (teamId: string, columnId: string) => void;
 }) => {
   const averages = [
     { label: "Avg Total Fuel", value: aggregationData?.avgTotalFuel },
@@ -244,6 +249,16 @@ export const DataDisplay = ({
 
   const navigate = useNavigate();
 
+  const handleMoveTeam = (columnId: string) => {
+    if (moveTeamToColumn && aggregationData?._id) {
+      moveTeamToColumn(aggregationData._id.toString(), columnId);
+    }
+  };
+
+  // Find which column this team is currently in
+  const currentTeam = teams?.find((team: any) => team.id === aggregationData?._id?.toString());
+  const currentColumnId = currentTeam?.columnId;
+
   return (
     <div>
       <div className="flex items-center justify-between space-y-2 mb-3">
@@ -267,11 +282,45 @@ export const DataDisplay = ({
         </div>
       </div>
       <Tabs defaultValue="inspector" className="space-y-4 w-[85vw]">
-        <TabsList>
-          <TabsTrigger value="inspector">Inspector</TabsTrigger>
-          <TabsTrigger value="pitform">Pit Form</TabsTrigger>
-          <TabsTrigger value="graphs">Graphs</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between">
+          <TabsList>
+            <TabsTrigger value="inspector">Inspector</TabsTrigger>
+            <TabsTrigger value="pitform">Pit Form</TabsTrigger>
+            <TabsTrigger value="graphs">Graphs</TabsTrigger>
+          </TabsList>
+          
+          {/* Team Movement Buttons */}
+          {moveTeamToColumn ? (
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => handleMoveTeam('r1')}
+                variant={currentColumnId === 'r1' ? "default" : "outline"}
+                size="sm"
+                className="h-8"
+              >
+                R1
+              </Button>
+              <Button
+                onClick={() => handleMoveTeam('r2')}
+                variant={currentColumnId === 'r2' ? "default" : "outline"}
+                size="sm"
+                className="h-8"
+              >
+                R2
+              </Button>
+              <Button
+                onClick={() => handleMoveTeam('r3')}
+                variant={currentColumnId === 'r3' ? "default" : "outline"}
+                size="sm"
+                className="h-8"
+              >
+                R3
+              </Button>
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </div>
         <TabsContent
           value="inspector"
           className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"

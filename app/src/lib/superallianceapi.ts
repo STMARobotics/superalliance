@@ -153,15 +153,27 @@ export function useSuperAllianceApi() {
     }
   };
 
-  const getTeamSelection = async () => {
+  const getTeamSelection = async (eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection`
+        `${import.meta.env.VITE_API_URL}/api/teamSelection/${eventCode}`
       );
       const data = res.data;
       return data;
     } catch {
       throw new Error("Team Selection not found");
+    }
+  };
+
+  const saveTeamSelection = async (eventCode: string, teams: any[]) => {
+    try {
+      const res = await api.post(
+        `${import.meta.env.VITE_API_URL}/api/teamSelection/save/${eventCode}`,
+        { teams }
+      );
+      return res.data;
+    } catch {
+      throw new Error("Failed to save team selection");
     }
   };
 
@@ -191,6 +203,18 @@ export function useSuperAllianceApi() {
     }
   }
 
+  const exportTeamSelection = async (eventCode: string) => {
+    try {
+      const res = await api.get(
+        `${import.meta.env.VITE_API_URL}/api/teamSelection/${eventCode}/report`,
+        { responseType: 'blob' }
+      );
+      return res.data;
+    } catch {
+      throw new Error("Failed to export team selection");
+    }
+  };
+
   return {
     getForms,
     getTeams,
@@ -204,6 +228,8 @@ export function useSuperAllianceApi() {
     getBadComments,
     getAppSettings,
     getTeamSelection,
+    saveTeamSelection,
+    exportTeamSelection,
     getMatchData,
     getEventTeamRank,
     api

@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
+import { useEffect } from "react";
 
 const adminSettingsSchema = z.object({
   event: z.string({
@@ -43,14 +44,22 @@ function AdminSettingsForm({
   events: any;
   settings: Partial<SettingsFormValues>;
 }) {
+  const { setSelectedEvent, selectedEvent } = useSuperAlliance();
+  const { api } = useSuperAllianceApi();
+
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(adminSettingsSchema),
-    defaultValues: Object.keys(settings).length > 0 ? settings : defaultValues,
+    defaultValues: {
+      event: selectedEvent || (Object.keys(settings).length > 0 ? settings.event : defaultValues.event) || "none",
+    },
     mode: "onChange",
   });
 
-  const { setSelectedEvent } = useSuperAlliance();
-  const { api } = useSuperAllianceApi();
+  useEffect(() => {
+    if (selectedEvent) {
+      form.setValue("event", selectedEvent);
+    }
+  }, [selectedEvent, form]);
 
   function onSubmit(data: SettingsFormValues) {
     (async function () {
