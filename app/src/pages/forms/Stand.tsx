@@ -103,7 +103,8 @@ export default function StandFormChad() {
   ];
   const intakePosition = [
    "Ground",
-   "Human Player Station"
+   "Human Player Station",
+   "Depot"
   ]
 
   const form = useForm<StandFormValues>({

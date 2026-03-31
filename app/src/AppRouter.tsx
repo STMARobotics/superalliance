@@ -18,6 +18,7 @@ import TeamSelection from "./pages/analysis/selection/TeamSelection";
 import AdministrationSettings from "./pages/admin/Settings";
 import CommentsForm from "./pages/forms/Comments";
 import DataSorting from "./pages/data/sorting/ViewSorting";
+import DataFiltering from "./pages/data/filter/ViewFilter";
 import DataTeamProjections from "./pages/data/projections/ViewTeamProjections";
 import DataMiddlePath from "./pages/data/middle/ViewMiddlePath";
 import { useSuperAlliance } from "./contexts/SuperAllianceProvider";
@@ -187,6 +188,34 @@ function AppRouter() {
                   ) : (
                     <>
                       <DataSorting />
+                    </>
+                  )}
+                </AdminRoute>
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/login" />
+              </SignedOut>
+            </div>
+          }
+        />
+        <Route
+          path="/data/filter"
+          element={
+            <div className="h-[calc(100vh-3.6rem)] w-full">
+              <SignedIn>
+                <AdminRoute>
+                  {loading ? (
+                    <div>
+                      <LoadingOverlay
+                        visible={true}
+                        zIndex={1000}
+                        overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+                        loaderProps={{ color: "red", type: "bars" }}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <DataFiltering />
                     </>
                   )}
                 </AdminRoute>
