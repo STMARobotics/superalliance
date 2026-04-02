@@ -1,4 +1,3 @@
-
 {
   "name": "superalliance",
   "version": "2.0.0",
@@ -15,5 +14,8 @@
     "url": "https://github.com/STMARobotics/superalliance/issues"
   },
   "homepage": "https://github.com/STMARobotics/superalliance#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "primereact": "^10.9.7"
+  }
 }
