@@ -233,94 +233,52 @@ const StandFormAggregation = (eventId) => {
             $sum: "$totalTeleFuel",
           },
           matchTotalFuel: {
-            $push: {
-              $cond: [
-                { $ne: ["$totalFuel", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalFuel",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$totalFuel",
+                formId: "$_id",
             },
           },
           matchAutoFuel: {
-            $push: {
-              $cond: [
-                { $ne: ["$autoFuel", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalAutoFuel",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$totalAutoFuel",
+                formId: "$_id",
             },
           },
           matchTeleFuel: {
-            $push: {
-              $cond: [
-                { $ne: ["$teleFuel", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalTeleFuel",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$totalTeleFuel",
+                formId: "$_id",
             },
           },
           matchTotalScores: {
-            $push: {
-              $cond: [
-                { $ne: ["$totalScore", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$totalScore",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$totalScore",
+                formId: "$_id",
             },
           },
           matchAutoScores: {
-            $push: {
-              $cond: [
-                { $ne: ["$autoScore", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$autoScore",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$autoScore",
+                formId: "$_id",
             },
           },
           matchTeleScores: {
-            $push: {
-              $cond: [
-                { $ne: ["$teleScore", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$teleScore",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$teleScore",
+                formId: "$_id",
             },
           },
           matchRP: {
-            $push: {
-              $cond: [
-                { $ne: ["$rpEarned", 0] },
-                {
-                  matchNumber: "$matchNumber",
-                  score: "$rpEarned",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
+              $push: {
+                matchNumber: "$matchNumber",
+                score: "$rpEarned",
+                formId: "$_id",
             },
           },
           avgTotalScore: {
@@ -342,7 +300,7 @@ const StandFormAggregation = (eventId) => {
             $avg: "$totalTeleFuel",
           },
           avgAccuracy: {
-            $avg: "accuracy",
+            $avg: "$accuracy",
           },
           autoPercentage: {
             $avg:  { $multiply: ["$autoBoolean", 100]},
@@ -391,12 +349,6 @@ const StandFormAggregation = (eventId) => {
           },
           defendedAgainstPercentage: {
             $avg:  { $multiply: ["$defendedAgainstBoolean", 100]},
-          },
-          shallowClimbPercentage: {
-            $avg:  { $multiply: ["$shallowClimbBoolean", 100]},
-          },
-          deepClimbPercentage: {
-            $avg:  { $multiply: ["$deepClimbBoolean", 100]},
           },
           winPercentage: {
             $avg:  { $multiply: ["$winBoolean", 100]},
