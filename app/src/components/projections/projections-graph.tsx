@@ -11,6 +11,11 @@ const round = (num: number, digits: number = 1) => {
   return Math.round(num * factor) / factor;
 };
 
+const scaledStdDevPercent = (stdDev: number, average: number) => {
+  if (!average || average <= 0) return 0;
+  return (stdDev * 100) / average;
+};
+
 const formatNumber = (num: number) => {
   if (num > 100000) {
     return (
@@ -26,17 +31,35 @@ type ScatterData = {
   y: number;
   z: number;
   num: string; // to handle offseason
+  rawTeamNumber: string;
   labelInt: number;
+  color?: string;
+  marker?: {
+    lineColor?: string;
+    lineWidth?: number;
+    fillColor?: string;
+  };
+};
+
+const bubbleColor = (score: number) => {
+  const clamped = Math.max(0, Math.min(1, score));
+  const steepened = clamped ** 1.8;
+  const r = Math.round(255 - (255 - 34) * steepened);
+  const g = Math.round(197 * steepened);
+  const b = Math.round(94 * steepened);
+  return `rgb(${r}, ${g}, ${b})`;
 };
 
 const ProjectionsGraph = ({
   data,
   selectedStat,
+  highlightedTeam,
   selectedTeam,
   setSelectedTeam,
 }: {
   data: any[];
   selectedStat: any;
+  highlightedTeam: any;
   selectedTeam: any;
   setSelectedTeam: any;
 }) => {
@@ -56,19 +79,43 @@ const ProjectionsGraph = ({
     };
   }, []);
 
+  const isStandardDeviationView = selectedStat === "standardDeviation";
+
   const xAxis = {
-    label: selectedStat == "averageFuel" ? "Avg Auto Fuel" : "Total Auto Fuel",
-    accessor: (datum: any) =>
-      round(
-        datum[selectedStat == "averageFuel" ? "avgAutoFuel" : "totalAutoFuel"]
-      ),
+    label:
+      selectedStat == "averageFuel"
+        ? "Avg Auto Fuel"
+        : "StdDev Auto Fuel (%)",
+    accessor: (datum: any) => {
+      if (!isStandardDeviationView) {
+        return round(Number(datum?.avgAutoFuel ?? 0));
+      }
+
+      return round(
+        scaledStdDevPercent(
+          Number(datum?.stdDevAutoFuel ?? 0),
+          Number(datum?.avgAutoFuel ?? 0)
+        )
+      );
+    },
   };
   const yAxis = {
-    label: selectedStat == "averageFuel" ? "Avg Tele Fuel" : "Total Tele Fuel",
-    accessor: (datum: any) =>
-      round(
-        datum[selectedStat == "averageFuel" ? "avgTeleFuel" : "totalTeleFuel"]
-      ),
+    label:
+      selectedStat == "averageFuel"
+        ? "Avg Tele Fuel"
+        : "StdDev Tele Fuel (%)",
+    accessor: (datum: any) => {
+      if (!isStandardDeviationView) {
+        return round(Number(datum?.avgTeleFuel ?? 0));
+      }
+
+      return round(
+        scaledStdDevPercent(
+          Number(datum?.stdDevTeleFuel ?? 0),
+          Number(datum?.avgTeleFuel ?? 0)
+        )
+      );
+    },
   };
   const zAxis = { label: "Constant", accessor: (_datum: any) => 1 };
 
@@ -80,6 +127,7 @@ const ProjectionsGraph = ({
       y: yAxis.accessor(datum),
       z: zAxis.accessor(datum),
       num: formatNumber(datum._id),
+      rawTeamNumber: String(datum._id ?? ""),
       labelInt: 0,
     };
   });
@@ -127,8 +175,41 @@ const ProjectionsGraph = ({
     y: datum.y,
     z: datum.z,
     num: datum.num,
-    labelInt:
-      datum.x > xCutoff || datum.y > yCutoff || datum.z > zCutoff ? 1 : 0,
+    rawTeamNumber: datum.rawTeamNumber,
+    labelInt: (() => {
+      const selectedValue = String(highlightedTeam ?? "").trim();
+      const isSelectedTeam =
+        selectedValue.length > 0 &&
+        (selectedValue === datum.rawTeamNumber || selectedValue === datum.num);
+
+      return isSelectedTeam || datum.x > xCutoff || datum.y > yCutoff || datum.z > zCutoff
+        ? 1
+        : 0;
+    })(),
+    color: (() => {
+      const xRange = xMax - xMin || 1;
+      const yRange = yMax - yMin || 1;
+      const xNorm = (datum.x - xMin) / xRange;
+      const yNorm = (datum.y - yMin) / yRange;
+      const score = isStandardDeviationView
+        ? 1 - (xNorm + yNorm) / 2
+        : (xNorm + yNorm) / 2;
+      return bubbleColor(score);
+    })(),
+    marker: (() => {
+      const selectedValue = String(highlightedTeam ?? "").trim();
+      const isSelectedTeam =
+        selectedValue.length > 0 &&
+        (selectedValue === datum.rawTeamNumber || selectedValue === datum.num);
+
+      if (!isSelectedTeam) return undefined;
+
+      return {
+        lineColor: "#ffffff",
+        lineWidth: 3,
+        fillColor: "#fde047",
+      };
+    })(),
   }));
 
   const options: Highcharts.Options = {
@@ -153,6 +234,7 @@ const ProjectionsGraph = ({
       tickColor: "#fff",
       min: 0,
       max: xMax + 0.05 * (xMax - xMin),
+      reversed: isStandardDeviationView,
     },
     yAxis: {
       title: {
@@ -169,6 +251,7 @@ const ProjectionsGraph = ({
       tickColor: "#fff",
       min: 0,
       max: yMax + 0.05 * (yMax - yMin),
+      reversed: isStandardDeviationView,
       gridLineColor: "#5c5c5c",
       gridLineWidth: showGrid ? 1 : 0,
     },
@@ -231,7 +314,7 @@ const ProjectionsGraph = ({
       bubble: {
         minSize: zAxis.label === "Constant" ? 10 : 1,
         maxSize: zAxis.label === "Constant" ? 10 : 15,
-        color: "red",
+        color: undefined,
         point: {
           events: {
             click: (event: any) => {

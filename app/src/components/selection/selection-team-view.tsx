@@ -339,7 +339,7 @@ export const DataDisplay = ({
                     {aggregationData?.avgTotalFuel} Fuel
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalFuel} fuel across{" "}
+                    ±{aggregationData?.stdDevTotalFuel} std dev across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>

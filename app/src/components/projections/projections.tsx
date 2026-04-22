@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { FormNav } from "@/components/forms/form-nav";
 import { ArrowDownUp, FileDigit, Home, ScatterChart } from "lucide-react";
 import ProjectionsGraph from "./projections-graph";
-import { Select } from "@mantine/core";
+import { CloseButton, Select, TextInput } from "@mantine/core";
 
 export default function TeamProjections({
   forms,
@@ -31,7 +31,9 @@ export default function TeamProjections({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = useLocation().pathname;
-  const [stat, setStat] = useState<string | null>("averages");
+  const [stat, setStat] = useState<string | null>("averageFuel");
+  const [teamSearch, setTeamSearch] = useState("");
+  const [highlightedTeam, setHighlightedTeam] = useState("");
 
   useEffect(() => {
     console.log(stat);
@@ -105,23 +107,47 @@ export default function TeamProjections({
         <ResizableHandle withHandle />
         <ResizablePanel minSize={30} defaultSize={1095}>
           <div className="hidden h-full flex-1 flex-col space-y-4 p-8 md:flex">
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row justify-between items-center gap-4">
               <h2 className="text-3xl font-bold tracking-tight">
                 Team Projections
               </h2>
-              <Select
-                data={[
-                  { label: "Average Fuel", value: "averageFuel" },
-                  { label: "Totals", value: "totals" },
-                ]}
-                value={stat}
-                onChange={setStat}
-              />
+              <div className="flex items-center gap-3">
+                <TextInput
+                  placeholder="Find team #"
+                  value={teamSearch}
+                  onChange={(event) => {
+                    const numericValue = event.currentTarget.value.replace(/\D/g, "");
+                    setTeamSearch(numericValue);
+                    setHighlightedTeam(numericValue);
+                  }}
+                  rightSection={
+                    teamSearch ? (
+                      <CloseButton
+                        aria-label="Clear team search"
+                        onClick={() => {
+                          setTeamSearch("");
+                          setHighlightedTeam("");
+                        }}
+                      />
+                    ) : null
+                  }
+                  className="w-44"
+                />
+                <Select
+                  data={[
+                    { label: "Average Fuel", value: "averageFuel" },
+                    { label: "Standard Deviation", value: "standardDeviation" },
+                  ]}
+                  value={stat}
+                  onChange={setStat}
+                />
+              </div>
             </div>
             <Separator />
             <ProjectionsGraph
               selectedStat={stat}
               data={aggregation ?? []}
+              highlightedTeam={highlightedTeam}
               selectedTeam={selectedTeam}
               setSelectedTeam={setSelectedTeam}
             />

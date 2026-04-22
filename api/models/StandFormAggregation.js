@@ -98,11 +98,11 @@ const StandFormAggregation = (eventId) => {
         },
         accuracy: {
           $cond: {
-            if: {$eq:[{$add: ["$teleFuel", "$shotsMissed"]}, 0]},
+            if: { $eq: [{ $add: ["$teleFuel", "$shotsMissed"] }, 0] },
             then: 0,
-            else: {$divide: ["$teleFuel", {$add: ["$teleFuel", "$shotsMissed"]}]}
+            else: { $divide: ["$teleFuel", { $add: ["$teleFuel", "$shotsMissed"] }] }
+          },
         },
-      },   
         autoBoolean: {
           $cond: {
             if: "$auto",
@@ -208,269 +208,269 @@ const StandFormAggregation = (eventId) => {
     },
     {
       $group:
-        /**
-         * _id: The id of the group.
-         * fieldN: The first field name.
-         */
-        {
-          _id: "$teamNumber",
-          totalScore: {
-            $sum: "$totalScore",
-          },
-          totalAutoScore: {
-            $sum: "$autoScore",
-          },
-          totalTeleScore: {
-            $sum: "$teleScore",
-          },
-          totalFuel: {
-            $sum: "$totalFuel",
-          },
-          totalAutoFuel: {
-            $sum: "$totalAutoFuel",
-          },
-          totalTeleFuel: {
-            $sum: "$totalTeleFuel",
-          },
-          matchTotalFuel: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$totalFuel",
-                formId: "$_id",
-            },
-          },
-          matchAutoFuel: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$totalAutoFuel",
-                formId: "$_id",
-            },
-          },
-          matchTeleFuel: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$totalTeleFuel",
-                formId: "$_id",
-            },
-          },
-          matchTotalScores: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$totalScore",
-                formId: "$_id",
-            },
-          },
-          matchAutoScores: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$autoScore",
-                formId: "$_id",
-            },
-          },
-          matchTeleScores: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$teleScore",
-                formId: "$_id",
-            },
-          },
-          matchRP: {
-              $push: {
-                matchNumber: "$matchNumber",
-                score: "$rpEarned",
-                formId: "$_id",
-            },
-          },
-          avgTotalScore: {
-            $avg: "$totalScore",
-          },
-          avgAutoScore: {
-            $avg: "$autoScore",
-          },
-          avgTeleScore: {
-            $avg: "$teleScore",
-          },
-          avgTotalFuel: {
-            $avg: "$totalFuel",
-          },
-          avgAutoFuel: {
-            $avg: "$totalAutoFuel",
-          },
-          avgTeleFuel: {
-            $avg: "$totalTeleFuel",
-          },
-          avgAccuracy: {
-            $avg: "$accuracy",
-          },
-          autoPercentage: {
-            $avg:  { $multiply: ["$autoBoolean", 100]},
-          },
-          bumpPercentage: {
-            $avg:  { $multiply: ["$bumpBoolean", 100]},
-          },
-          trenchPercentage: {
-            $avg:  { $multiply: ["$trenchBoolean", 100]},
-          },
-          leftClimbLevelOnePercentage: {
-            $avg:  { $multiply: ["$leftClimbLevelOneBoolean", 100]},
-          },
-          centerClimbLevelOnePercentage: {
-            $avg:  { $multiply: ["$centerClimbLevelOneBoolean", 100]},
-          },
-          rightClimbLevelOnePercentage: {
-            $avg:  { $multiply: ["$rightClimbLevelOneBoolean", 100]},
-          },
-          leftClimbLevelTwoPercentage: {
-            $avg:  { $multiply: ["$leftClimbLevelTwoBoolean", 100]},
-          },
-          centerClimbLevelTwoPercentage: {
-            $avg:  { $multiply: ["$centerClimbLevelTwoBoolean", 100]},
-          },
-          rightClimbLevelTwoPercentage: {
-            $avg:  { $multiply: ["$rightClimbLevelTwoBoolean", 100]},
-          },
-          leftClimbLevelThreePercentage: {
-            $avg:  { $multiply: ["$leftClimbLevelThreeBoolean", 100]},
-          },
-          centerClimbLevelThreePercentage: {
-            $avg:  { $multiply: ["$centerClimbLevelThreeBoolean", 100]},
-          },
-          rightClimbLevelThreePercentage: {
-            $avg:  { $multiply: ["$rightClimbLevelThreeBoolean", 100]},
-          },
-          shuttlePercentage: {
-            $avg:  { $multiply: ["$shuttleBoolean", 100]},
-          },
-          moveWhileShootPercentage: {
-            $avg:  { $multiply: ["$moveWhileShootBoolean", 100]},
-          },
-          defensePercentage: {
-            $avg:  { $multiply: ["$defenseBoolean", 100]},
-          },
-          defendedAgainstPercentage: {
-            $avg:  { $multiply: ["$defendedAgainstBoolean", 100]},
-          },
-          winPercentage: {
-            $avg:  { $multiply: ["$winBoolean", 100]},
-          },
-          avgRP: {
-            $avg: "$rpEarned",
-          },
-          criticals: {
-            $push: {
-              $cond: [
-                { $ne: ["$criticals", []] },
-                {
-                  matchNumber: "$matchNumber",
-                  criticals: "$criticals",
-                  formId: "$_id",
-                },
-                "$$REMOVE",
-              ],
-            },
-          },
-          comments: {
-            $push: {
-              $cond: [
-                { $ne: ["$comments", ""] },
-                {
-                  matchNumber: "$matchNumber",
-                  comments: "$comments",
-                  formId: "$_id",
-                  usersName: "$usersName",
-                },
-                "$$REMOVE",
-              ],
-            },
-          },
-          criticalCount: {
-            $sum: "$criticalCount",
-          },
-          matchCount: {
-            $sum: 1,
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$teamNumber",
+        avgTotalScore: {
+          $avg: "$totalScore",
+        },
+        stdDevTotalScore: {
+          $stdDevSamp: "$totalScore",
+        },
+        avgAutoScore: {
+          $avg: "$autoScore",
+        },
+        stdDevAutoScore: {
+          $stdDevSamp: "$autoScore",
+        },
+        avgTeleScore: {
+          $avg: "$teleScore",
+        },
+        stdDevTeleScore: {
+          $stdDevSamp: "$teleScore",
+        },
+        avgTotalFuel: {
+          $avg: "$totalFuel",
+        },
+        stdDevTotalFuel: {
+          $stdDevSamp: "$totalFuel",
+        },
+        avgAutoFuel: {
+          $avg: "$totalAutoFuel",
+        },
+        stdDevAutoFuel: {
+          $stdDevSamp: "$totalAutoFuel",
+        },
+        avgTeleFuel: {
+          $avg: "$totalTeleFuel",
+        },
+        stdDevTeleFuel: {
+          $stdDevSamp: "$totalTeleFuel",
+        },
+        matchTotalFuel: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$totalFuel",
+            formId: "$_id",
           },
         },
+        matchAutoFuel: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$totalAutoFuel",
+            formId: "$_id",
+          },
+        },
+        matchTeleFuel: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$totalTeleFuel",
+            formId: "$_id",
+          },
+        },
+        matchTotalScores: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$totalScore",
+            formId: "$_id",
+          },
+        },
+        matchAutoScores: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$autoScore",
+            formId: "$_id",
+          },
+        },
+        matchTeleScores: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$teleScore",
+            formId: "$_id",
+          },
+        },
+        matchRP: {
+          $push: {
+            matchNumber: "$matchNumber",
+            score: "$rpEarned",
+            formId: "$_id",
+          },
+        },
+
+        avgAccuracy: {
+          $avg: "$accuracy",
+        },
+        autoPercentage: {
+          $avg: { $multiply: ["$autoBoolean", 100] },
+        },
+        bumpPercentage: {
+          $avg: { $multiply: ["$bumpBoolean", 100] },
+        },
+        trenchPercentage: {
+          $avg: { $multiply: ["$trenchBoolean", 100] },
+        },
+        leftClimbLevelOnePercentage: {
+          $avg: { $multiply: ["$leftClimbLevelOneBoolean", 100] },
+        },
+        centerClimbLevelOnePercentage: {
+          $avg: { $multiply: ["$centerClimbLevelOneBoolean", 100] },
+        },
+        rightClimbLevelOnePercentage: {
+          $avg: { $multiply: ["$rightClimbLevelOneBoolean", 100] },
+        },
+        leftClimbLevelTwoPercentage: {
+          $avg: { $multiply: ["$leftClimbLevelTwoBoolean", 100] },
+        },
+        centerClimbLevelTwoPercentage: {
+          $avg: { $multiply: ["$centerClimbLevelTwoBoolean", 100] },
+        },
+        rightClimbLevelTwoPercentage: {
+          $avg: { $multiply: ["$rightClimbLevelTwoBoolean", 100] },
+        },
+        leftClimbLevelThreePercentage: {
+          $avg: { $multiply: ["$leftClimbLevelThreeBoolean", 100] },
+        },
+        centerClimbLevelThreePercentage: {
+          $avg: { $multiply: ["$centerClimbLevelThreeBoolean", 100] },
+        },
+        rightClimbLevelThreePercentage: {
+          $avg: { $multiply: ["$rightClimbLevelThreeBoolean", 100] },
+        },
+        shuttlePercentage: {
+          $avg: { $multiply: ["$shuttleBoolean", 100] },
+        },
+        moveWhileShootPercentage: {
+          $avg: { $multiply: ["$moveWhileShootBoolean", 100] },
+        },
+        defensePercentage: {
+          $avg: { $multiply: ["$defenseBoolean", 100] },
+        },
+        defendedAgainstPercentage: {
+          $avg: { $multiply: ["$defendedAgainstBoolean", 100] },
+        },
+        winPercentage: {
+          $avg: { $multiply: ["$winBoolean", 100] },
+        },
+        avgRP: {
+          $avg: "$rpEarned",
+        },
+        criticals: {
+          $push: {
+            $cond: [
+              { $ne: ["$criticals", []] },
+              {
+                matchNumber: "$matchNumber",
+                criticals: "$criticals",
+                formId: "$_id",
+              },
+              "$$REMOVE",
+            ],
+          },
+        },
+        comments: {
+          $push: {
+            $cond: [
+              { $ne: ["$comments", ""] },
+              {
+                matchNumber: "$matchNumber",
+                comments: "$comments",
+                formId: "$_id",
+                usersName: "$usersName",
+              },
+              "$$REMOVE",
+            ],
+          },
+        },
+        criticalCount: {
+          $sum: "$criticalCount",
+        },
+        matchCount: {
+          $sum: 1,
+        },
+      },
     },
     {
-      $project:
+      $project: {
         /**
          * specifications: The fields to
          *   include or exclude.
          */
-        {
-          teamNumber: 1,
-          totalScore: { $round: ["$totalScore", 2] },
-          totalAutoScore: { $round: ["$totalAutoScore", 2] },
-          totalTeleScore: { $round: ["$totalTeleScore", 2] },
-          totalFuel: { $round: ["$totalFuel", 2] },
-          totalAutoFuel: { $round: ["$totalAutoFuel", 2] },
-          totalTeleFuel: { $round: ["$totalTeleFuel", 2] },
-          matchTotalFuel: {
-            $concatArrays: "$matchTotalFuel",
-          },
-          matchAutoFuel: {
-            $concatArrays: "$matchAutoFuel",
-          },
-          matchTeleFuel: {
-            $concatArrays: "$matchTeleFuel",
-          },
-          matchTotalScore: {
-            $concatArrays: "$matchTotalScores",
-          },
-          matchAutoScore: {
-            $concatArrays: "$matchAutoScores",
-          },
-          matchTeleScore: {
-            $concatArrays: "$matchTeleScores",
-          },
-          matchRP: {
-            $concatArrays: "$matchRP",
-          },
-          avgTotalScore: { $round: ["$avgTotalScore", 2] },
-          avgAutoScore: { $round: ["$avgAutoScore", 2] },
-          avgTeleScore: { $round: ["$avgTeleScore", 2] },
-          avgTotalFuel: { $round: ["$avgTotalFuel", 2] },
-          avgAutoFuel: { $round: ["$avgAutoFuel", 2] },
-          avgTeleFuel: { $round: ["$avgTeleFuel", 2] },
-          avgAccuracy: { $round: ["$avgAccuracy", 2] },
-          autoPercentage: { $round: ["$autoPercentage", 2] },
-          bumpPercentage: { $round: ["$bumpPercentage", 2] },
-          trenchPercentage: { $round: ["$trenchPercentage", 2] },
-          leftClimbLevelOnePercentage: { $round: ["$leftClimbLevelOnePercentage", 2] },
-          centerClimbLevelOnePercentage: { $round: ["$centerClimbLevelOnePercentage", 2] },
-          rightClimbLevelOnePercentage: { $round: ["$rightClimbLevelOnePercentage", 2] },
-          leftClimbLevelTwoPercentage: { $round: ["$leftClimbLevelTwoPercentage", 2] },
-          centerClimbLevelTwoPercentage: { $round: ["$centerClimbLevelTwoPercentage", 2] },
-          rightClimbLevelTwoPercentage: { $round: ["$rightClimbLevelTwoPercentage", 2] },
-          leftClimbLevelThreePercentage: { $round: ["$leftClimbLevelThreePercentage", 2] },
-          centerClimbLevelThreePercentage: { $round: ["$centerClimbLevelThreePercentage", 2] },
-          rightClimbLevelThreePercentage: { $round: ["$rightClimbLevelThreePercentage", 2] },
-          shuttlePercentage: { $round: ["$shuttlePercentage", 2] },
-          moveWhileShootPercentage: { $round: ["$moveWhileShootPercentage", 2] },
-          defensePercentage: { $round: ["$defensePercentage", 2] },
-          defendedAgainstPercentage: {
-            $round: ["$defendedAgainstPercentage", 2],
-          },
-          winPercentage: { $round: ["$winPercentage", 2] },
-          avgRP: { $round: ["$avgRP", 2] },
-          comments: {
-            $concatArrays: "$comments",
-          },
-          criticals: {
-            $concatArrays: "$criticals",
-          },
-          criticalCount: 1,
-          matchCount: 1,
+        teamNumber: "$_id",
+        stdDevTotalScore: { $round: ["$stdDevTotalScore", 2] },
+        stdDevAutoScore: { $round: ["$stdDevAutoScore", 2] },
+        stdDevTeleScore: { $round: ["$stdDevTeleScore", 2] },
+        stdDevTotalFuel: { $round: ["$stdDevTotalFuel", 2] },
+        stdDevAutoFuel: { $round: ["$stdDevAutoFuel", 2] },
+        stdDevTeleFuel: { $round: ["$stdDevTeleFuel", 2] },
+        matchTotalFuel: {
+          $concatArrays: "$matchTotalFuel",
         },
+        matchAutoFuel: {
+          $concatArrays: "$matchAutoFuel",
+        },
+        matchTeleFuel: {
+          $concatArrays: "$matchTeleFuel",
+        },
+        matchTotalScore: {
+          $concatArrays: "$matchTotalScores",
+        },
+        matchAutoScore: {
+          $concatArrays: "$matchAutoScores",
+        },
+        matchTeleScore: {
+          $concatArrays: "$matchTeleScores",
+        },
+        matchRP: {
+          $concatArrays: "$matchRP",
+        },
+        avgTotalScore: { $round: ["$avgTotalScore", 2] },
+        avgAutoScore: { $round: ["$avgAutoScore", 2] },
+        avgTeleScore: { $round: ["$avgTeleScore", 2] },
+        avgTotalFuel: { $round: ["$avgTotalFuel", 2] },
+        avgAutoFuel: { $round: ["$avgAutoFuel", 2] },
+        avgTeleFuel: { $round: ["$avgTeleFuel", 2] },
+        avgAccuracy: { $round: ["$avgAccuracy", 2] },
+        autoPercentage: { $round: ["$autoPercentage", 2] },
+        bumpPercentage: { $round: ["$bumpPercentage", 2] },
+        trenchPercentage: { $round: ["$trenchPercentage", 2] },
+        leftClimbLevelOnePercentage: { $round: ["$leftClimbLevelOnePercentage", 2] },
+        centerClimbLevelOnePercentage: { $round: ["$centerClimbLevelOnePercentage", 2] },
+        rightClimbLevelOnePercentage: { $round: ["$rightClimbLevelOnePercentage", 2] },
+        leftClimbLevelTwoPercentage: { $round: ["$leftClimbLevelTwoPercentage", 2] },
+        centerClimbLevelTwoPercentage: { $round: ["$centerClimbLevelTwoPercentage", 2] },
+        rightClimbLevelTwoPercentage: { $round: ["$rightClimbLevelTwoPercentage", 2] },
+        leftClimbLevelThreePercentage: { $round: ["$leftClimbLevelThreePercentage", 2] },
+        centerClimbLevelThreePercentage: { $round: ["$centerClimbLevelThreePercentage", 2] },
+        rightClimbLevelThreePercentage: { $round: ["$rightClimbLevelThreePercentage", 2] },
+        shuttlePercentage: { $round: ["$shuttlePercentage", 2] },
+        moveWhileShootPercentage: { $round: ["$moveWhileShootPercentage", 2] },
+        defensePercentage: { $round: ["$defensePercentage", 2] },
+        defendedAgainstPercentage: {
+          $round: ["$defendedAgainstPercentage", 2],
+        },
+        winPercentage: { $round: ["$winPercentage", 2] },
+        avgRP: { $round: ["$avgRP", 2] },
+        comments: {
+          $concatArrays: "$comments",
+        },
+        criticals: {
+          $concatArrays: "$criticals",
+        },
+        criticalCount: 1,
+        matchCount: 1,
+      },
     },
     {
       $sort:
-        /**
-         * Provide any number of field/order pairs.
-         */
-        {
-          _id: 1,
-        },
+      /**
+       * Provide any number of field/order pairs.
+       */
+      {
+        _id: 1,
+      },
     },
   ];
 

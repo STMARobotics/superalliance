@@ -51,6 +51,21 @@ const SelectionCompareView = ({
       statKey: "avgTeleFuel",
     },
     {
+      label: "StdDev Total Fuel",
+      value: aggregation?.stdDevTotalFuel,
+      statKey: "stdDevTotalFuel",
+    },
+    {
+      label: "StdDev Auto Fuel",
+      value: aggregation?.stdDevAutoFuel,
+      statKey: "stdDevAutoFuel",
+    },
+    {
+      label: "StdDev Tele Fuel",
+      value: aggregation?.stdDevTeleFuel,
+      statKey: "stdDevTeleFuel",
+    },
+    {
       label: "Avg Total Score",
       value: aggregation?.avgTotalScore,
       statKey: "avgTotalScore",
@@ -158,6 +173,66 @@ const SelectionCompareView = ({
     },
   ];
 
+  const formatDifference = (value: any) => {
+    if (typeof value !== "number" || Number.isNaN(value) || value === 0) {
+      return null;
+    }
+
+    return value > 0 ? `+${value}` : `${value}`;
+  };
+
+  const getBetterDifference = (statKey: string, invertColors: boolean = false) => {
+    const difference = statsDifference?.[statKey];
+    const formattedDifference = formatDifference(difference);
+
+    if (!formattedDifference) {
+      return null;
+    }
+
+    const isBetter = invertColors ? difference < 0 : difference > 0;
+
+    return isBetter ? formattedDifference : null;
+  };
+
+  const renderDifference = (
+    statKey: string,
+    options?: { invertColors?: boolean; className?: string }
+  ) => {
+    const formattedDifference = getBetterDifference(
+      statKey,
+      options?.invertColors ?? false
+    );
+
+    if (!formattedDifference) {
+      return null;
+    }
+
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full border border-green-500/40 bg-green-500/15 px-2 py-0.5 font-semibold leading-none text-green-500",
+          options?.className ?? "text-[0.75rem]"
+        )}
+      >
+        {formattedDifference}
+      </span>
+    );
+  };
+
+  const renderDifferenceChip = (statKey: string, invertColors: boolean = false) => {
+    const formattedDifference = getBetterDifference(statKey, invertColors);
+
+    if (!formattedDifference) {
+      return null;
+    }
+
+    return (
+      <span className="inline-flex items-center rounded-full border border-green-500/40 bg-green-500/15 px-1.5 py-0.5 text-[0.7rem] font-semibold leading-none text-green-500">
+        {formattedDifference}
+      </span>
+    );
+  };
+
   const handleMoveTeam = (columnId: string) => {
     if (moveTeamToColumn && aggregation?._id) {
       moveTeamToColumn(aggregation._id.toString(), columnId);
@@ -241,7 +316,7 @@ const SelectionCompareView = ({
                 </Card>
               )}
               <div className="flex flex-col justify-center items-center gap-4 w-full col-span-1">
-                <Card className="w-full">
+                <Card className="w-full min-h-36">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Average Fuel
@@ -250,20 +325,16 @@ const SelectionCompareView = ({
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
-                      {aggregation?.avgTotalFuel} Fuel{" "}
-                      {Math.sign(statsDifference.avgTotalFuel) == 1 ? (
-                        <>
-                          {" "}
-                          <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgTotalFuel}
-                          </span>
-                        </>
-                      ) : null}
+                      {aggregation?.avgTotalFuel} Fuel
+                      {renderDifference("avgTotalFuel", {
+                        className: "text-[1.2rem]",
+                      })}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalFuel} fuel across{" "}
-                      {aggregation?.matchCount} matches.
-                    </p>
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 min-h-8 text-xs text-muted-foreground">
+                      <span className="min-w-0">
+                        ±{aggregation?.stdDevTotalFuel} std dev
+                      </span>
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="w-full">
@@ -276,19 +347,15 @@ const SelectionCompareView = ({
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
                       {aggregation?.avgAutoFuel} Fuel
-                      {Math.sign(statsDifference.avgAutoFuel) == 1 ? (
-                        <>
-                          {" "}
-                          <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgAutoFuel}
-                          </span>
-                        </>
-                      ) : null}
+                      {renderDifference("avgAutoFuel", {
+                        className: "text-[1.2rem]",
+                      })}
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {aggregation?.totalAutoFuel} fuel across{" "}
-                      {aggregation?.matchCount} matches.
-                    </p>
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 min-h-8 text-xs text-muted-foreground">
+                      <span className="min-w-0">
+                        ±{aggregation?.stdDevAutoFuel} std dev
+                      </span>
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="w-full">
@@ -301,14 +368,10 @@ const SelectionCompareView = ({
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
                       {aggregation?.criticalCount}
-                      {Math.sign(statsDifference.criticalCount) == 1 ? (
-                        <>
-                          {" "}
-                          <span className="text-red-500 underline text-[1.2rem]">
-                            +{statsDifference.criticalCount}
-                          </span>
-                        </>
-                      ) : null}
+                      {renderDifference("criticalCount", {
+                        invertColors: true,
+                        className: "text-[1.2rem]",
+                      })}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Broke a Mechanism{" "}
@@ -332,14 +395,9 @@ const SelectionCompareView = ({
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
                       {aggregation?.avgRP} Points
-                      {Math.sign(statsDifference.avgRP) == 1 ? (
-                        <>
-                          {" "}
-                          <span className="text-green-500 underline text-[1.2rem]">
-                            +{statsDifference.avgRP}
-                          </span>
-                        </>
-                      ) : null}
+                      {renderDifference("avgRP", {
+                        className: "text-[1.2rem]",
+                      })}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       (Placeholder for ranking in event)
@@ -356,14 +414,9 @@ const SelectionCompareView = ({
                   <CardContent>
                     <div className="text-2xl font-bold flex justify-between">
                       {Number.parseFloat(opr).toFixed(2)}
-                      {Math.sign(statsDifference.teamOPR) == 1 ? (
-                        <>
-                          {" "}
-                          <span className="text-green-500 underline text-[1.2rem]">
-                            +{Number.parseFloat(statsDifference.teamOPR).toFixed(2)}
-                          </span>
-                        </>
-                      ) : null}
+                      {renderDifference("teamOPR", {
+                        className: "text-[1.2rem]",
+                      })}
                     </div>
                   </CardContent>
                 </Card>
@@ -414,17 +467,15 @@ const SelectionCompareView = ({
                         >
                           {item.label}
                           <span
-                            className={cn("text-background dark:text-white")}
+                            className={cn(
+                              "inline-flex items-center gap-2 text-background dark:text-white"
+                            )}
                           >
-                            {item.value}
-                            {Math.sign(statsDifference[item.statKey]) == 1 ? (
-                              <>
-                                {" "}
-                                <span className="text-green-500 underline text-[1rem]">
-                                  +{statsDifference[item.statKey]}
-                                </span>
-                              </>
-                            ) : null}
+                            {renderDifferenceChip(
+                              item.statKey,
+                              item.statKey.startsWith("stdDev")
+                            )}
+                            <span>{item.value}</span>
                           </span>
                         </div>
                       ))}
@@ -502,17 +553,15 @@ const SelectionCompareView = ({
                         >
                           {item.label}
                           <span
-                            className={cn("text-background dark:text-white")}
+                            className={cn(
+                              "inline-flex items-center gap-2 text-background dark:text-white"
+                            )}
                           >
-                            {item.value}
-                            {Math.sign(statsDifference[item.statKey]) == 1 ? (
-                              <>
-                                {" "}
-                                <span className="text-green-500 underline text-[1rem]">
-                                  +{statsDifference[item.statKey]}
-                                </span>
-                              </>
-                            ) : null}
+                            {renderDifferenceChip(
+                              item.statKey,
+                              item.statKey.startsWith("stdDev")
+                            )}
+                            <span>{item.value}</span>
                           </span>
                         </div>
                       ))}
