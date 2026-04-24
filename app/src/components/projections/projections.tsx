@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
@@ -34,10 +34,6 @@ export default function TeamProjections({
   const [stat, setStat] = useState<string | null>("averageFuel");
   const [teamSearch, setTeamSearch] = useState("");
   const [highlightedTeam, setHighlightedTeam] = useState("");
-
-  useEffect(() => {
-    console.log(stat);
-  }, []);
 
   return (
     <TooltipProvider delayDuration={0}>

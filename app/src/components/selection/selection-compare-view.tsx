@@ -54,16 +54,19 @@ const SelectionCompareView = ({
       label: "StdDev Total Fuel",
       value: aggregation?.stdDevTotalFuel,
       statKey: "stdDevTotalFuel",
+      lowerIsBetter: true,
     },
     {
       label: "StdDev Auto Fuel",
       value: aggregation?.stdDevAutoFuel,
       statKey: "stdDevAutoFuel",
+      lowerIsBetter: true,
     },
     {
       label: "StdDev Tele Fuel",
       value: aggregation?.stdDevTeleFuel,
       statKey: "stdDevTeleFuel",
+      lowerIsBetter: true,
     },
     {
       label: "Avg Total Score",
@@ -85,6 +88,7 @@ const SelectionCompareView = ({
       label: "Total Crits",
       value: aggregation?.criticalCount,
       statKey: "criticalCount",
+      lowerIsBetter: true,
     },
     {
       label: "Win %",
@@ -219,6 +223,14 @@ const SelectionCompareView = ({
     );
   };
 
+  const formatStdDevValue = (value: unknown) => {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return `±${value} std dev`;
+    }
+
+    return "— std dev";
+  };
+
   const renderDifferenceChip = (statKey: string, invertColors: boolean = false) => {
     const formattedDifference = getBetterDifference(statKey, invertColors);
 
@@ -332,7 +344,7 @@ const SelectionCompareView = ({
                     </div>
                     <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 min-h-8 text-xs text-muted-foreground">
                       <span className="min-w-0">
-                        ±{aggregation?.stdDevTotalFuel} std dev
+                        {formatStdDevValue(aggregation?.stdDevTotalFuel)}
                       </span>
                     </div>
                   </CardContent>
@@ -353,7 +365,7 @@ const SelectionCompareView = ({
                     </div>
                     <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 min-h-8 text-xs text-muted-foreground">
                       <span className="min-w-0">
-                        ±{aggregation?.stdDevAutoFuel} std dev
+                        {formatStdDevValue(aggregation?.stdDevAutoFuel)}
                       </span>
                     </div>
                   </CardContent>
@@ -473,7 +485,7 @@ const SelectionCompareView = ({
                           >
                             {renderDifferenceChip(
                               item.statKey,
-                              item.statKey.startsWith("stdDev")
+                              item.lowerIsBetter ?? false
                             )}
                             <span>{item.value}</span>
                           </span>
@@ -559,7 +571,7 @@ const SelectionCompareView = ({
                           >
                             {renderDifferenceChip(
                               item.statKey,
-                              item.statKey.startsWith("stdDev")
+                              item.lowerIsBetter ?? false
                             )}
                             <span>{item.value}</span>
                           </span>
