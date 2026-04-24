@@ -109,7 +109,7 @@ export function SortingFilterPanel({
 
       {addedColumns.map((id) => {
         const col = ALL_COLUMNS.find((c) => c.id === id)!;
-        const [min, max, hasAny, hasNone] = getFilterValue(id);
+        const [min, max] = getFilterValue(id);
         return (
           <div key={id} className="space-y-1">
             <div className="flex items-center justify-between">
