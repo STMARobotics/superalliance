@@ -28,6 +28,7 @@ pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
     idealAuto: data.idealAuto,
     strongestValue: data.strongestValue,
     weakestValue: data.weakestValue,
+    contactInfo: data.contactInfo,
     extraComments: data.extraComments,
   });
 

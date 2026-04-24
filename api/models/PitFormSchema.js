@@ -18,6 +18,7 @@ const PitFormSchema = new Schema(
     idealAuto: String,
     strongestValue: String,
     weakestValue: String,
+    contactInfo: String,
     extraComments: String,
   },
   { timestamps: true }
