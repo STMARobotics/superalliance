@@ -28,7 +28,7 @@ const ALL_COLUMNS: FilterableColumn[] = [
   { id: "trenchPercentage", label: "Trench %", hasAnyToggle: true },
   { id: "shuttlePercentage", label: "Shuttle %", hasAnyToggle: true },
   { id: "moveWhileShootPercentage", label: "Move & Shoot %", hasAnyToggle: true },
-  { id: "defensePercentage", label: "Defense %" },
+  { id: "defensePercentage", label: "Defense %", hasAnyToggle: true },
   { id: "defendedAgainstPercentage", label: "Defended Against %" },
 ];
 
