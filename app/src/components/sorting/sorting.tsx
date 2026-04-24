@@ -12,8 +12,10 @@ import { Separator } from "@/components/ui/separator";
 import { FormNav } from "@/components/forms/form-nav";
 import { ArrowDownUp, FileDigit, Home, ScatterChart } from "lucide-react";
 import { SortingTeamsTable } from "@/components/sorting/sorting-table";
+import { SortingFilterPanel } from "@/components/sorting/sorting-filter-panel";
 import { columns } from "@/components/sorting/sorting-columns";
 import { ScrollArea } from "@mantine/core";
+import { ColumnFiltersState } from "@tanstack/react-table";
 
 export default function Sorting({
   forms,
@@ -31,6 +33,7 @@ export default function Sorting({
   selectedTeam: any;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const pathname = useLocation().pathname;
   return (
     <TooltipProvider delayDuration={0}>
@@ -96,6 +99,15 @@ export default function Sorting({
               },
             ]}
           />
+          {!isCollapsed && (
+            <>
+              <Separator />
+              <SortingFilterPanel
+                columnFilters={columnFilters}
+                onColumnFiltersChange={setColumnFilters}
+              />
+            </>
+          )}
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel minSize={30} defaultSize={1095}>
@@ -108,6 +120,8 @@ export default function Sorting({
                   columns={columns}
                   setSelectedTeam={setSelectedTeam}
                   selectedTeam={selectedTeam}
+                  columnFilters={columnFilters}
+                  onColumnFiltersChange={setColumnFilters}
                 />
               </ScrollArea>
             )}

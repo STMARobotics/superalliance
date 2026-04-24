@@ -1,8 +1,18 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/sorting/sorting-column-header";
 import { DataTableRowActions } from "@/components/sorting/sorting-row-actions";
+
+const numberRangeFilter: FilterFn<any> = (row, columnId, value) => {
+  const [min, max, hasAny, hasNone] = value as [number | undefined, number | undefined, boolean | undefined, boolean | undefined];
+  const v = row.getValue<number>(columnId);
+  if (hasAny && v <= 0) return false;
+  if (hasNone && v > 0) return false;
+  if (min !== undefined && v < min) return false;
+  if (max !== undefined && v > max) return false;
+  return true;
+};
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -14,6 +24,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "avgTotalFuel",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Average Total Fuel" />
     ),
@@ -23,6 +35,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "avgAutoFuel",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Average Auto Fuel" />
     ),
@@ -32,6 +46,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "avgTeleFuel",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Average Tele Fuel" />
     ),
@@ -41,6 +57,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "criticalCount",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Total Crits" />
     ),
@@ -50,6 +68,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "avgRP",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Average RP" />
     ),
@@ -57,6 +77,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "winPercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Win Percentage" />
     ),
@@ -66,6 +88,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "autoPercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Auto Percentage" />
     ),
@@ -75,6 +99,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "bumpPercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Bump Percentage" />
     ),
@@ -84,6 +110,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "trenchPercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Trench Percentage" />
     ),
@@ -93,6 +121,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "shuttlePercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Shuttle Percentage" />
     ),
@@ -102,6 +132,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "moveWhileShootPercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Move While Shoot" />
     ),
@@ -111,6 +143,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "defensePercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Defense Percentage" />
     ),
@@ -120,6 +154,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "defendedAgainstPercentage",
+    filterFn: numberRangeFilter,
+    enableColumnFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}

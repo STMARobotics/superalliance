@@ -79,6 +79,7 @@ export default function PitForm() {
       idealAuto: "",
       strongestValue: "",
       weakestValue: "",
+      contactInfo: "",
       extraComments: "",    },
 
     validate: {
@@ -311,6 +312,18 @@ export default function PitForm() {
           maxLength={750}
           autosize
           {...pitForm.getInputProps("weakestValue")}
+        />
+         <Textarea
+          label="Team contact information"
+          placeholder="Type some text here."
+          className="pb-4"
+          description={
+            "Make sure contact is over 18 years old"
+          }
+          
+          maxLength={750}
+          autosize
+          {...pitForm.getInputProps("contactInfo")}
         />
 
         <Textarea

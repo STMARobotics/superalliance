@@ -117,6 +117,15 @@ const PitFormView = ({
                         value={pitFormData?.weakestValue}
                         readOnly
                       />
+                       <Textarea
+                        placeholder="Description..."
+                        label="Contact Info"
+                        description="Teams contact information"
+                        autosize
+                        minRows={1}
+                        value={pitFormData?.contactInfo}
+                        readOnly
+                      />
         
                       <Textarea
                         placeholder="Description..."
