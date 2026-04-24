@@ -3,10 +3,13 @@
 import * as React from "react";
 import {
   ColumnDef,
+  ColumnFiltersState,
+  OnChangeFn,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -25,6 +28,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   setSelectedTeam: (teamId: any) => void;
   selectedTeam: string;
+  columnFilters: ColumnFiltersState;
+  onColumnFiltersChange: OnChangeFn<ColumnFiltersState>;
 }
 
 export function SortingTeamsTable<TData, TValue>({
@@ -32,6 +37,8 @@ export function SortingTeamsTable<TData, TValue>({
   data,
   setSelectedTeam,
   selectedTeam,
+  columnFilters,
+  onColumnFiltersChange,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -53,13 +60,16 @@ export function SortingTeamsTable<TData, TValue>({
       sorting,
       columnVisibility,
       rowSelection,
+      columnFilters,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnFiltersChange,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   return (
