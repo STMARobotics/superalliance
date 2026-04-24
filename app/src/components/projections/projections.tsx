@@ -136,6 +136,7 @@ export default function TeamProjections({
                   ]}
                   value={stat}
                   onChange={setStat}
+                  allowDeselect={false}
                 />
               </div>
             </div>
