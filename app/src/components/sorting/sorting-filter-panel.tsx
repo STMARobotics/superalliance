@@ -20,15 +20,15 @@ const ALL_COLUMNS: FilterableColumn[] = [
   { id: "avgTotalFuel", label: "Avg Total Fuel" },
   { id: "avgAutoFuel", label: "Avg Auto Fuel" },
   { id: "avgTeleFuel", label: "Avg Tele Fuel" },
-  { id: "criticalCount", label: "Total Crits", hasNoneToggle: true },
+  { id: "criticalCount", label: "Total Crits"},
   { id: "avgRP", label: "Avg RP" },
   { id: "winPercentage", label: "Win %" },
   { id: "autoPercentage", label: "Auto %" },
-  { id: "bumpPercentage", label: "Bump %", hasAnyToggle: true },
-  { id: "trenchPercentage", label: "Trench %", hasAnyToggle: true },
-  { id: "shuttlePercentage", label: "Shuttle %", hasAnyToggle: true },
-  { id: "moveWhileShootPercentage", label: "Move & Shoot %", hasAnyToggle: true },
-  { id: "defensePercentage", label: "Defense %", hasAnyToggle: true },
+  { id: "bumpPercentage", label: "Bump %"},
+  { id: "trenchPercentage", label: "Trench %" },
+  { id: "shuttlePercentage", label: "Shuttle %"},
+  { id: "moveWhileShootPercentage", label: "Move & Shoot %" },
+  { id: "defensePercentage", label: "Defense %"},
   { id: "defendedAgainstPercentage", label: "Defended Against %" },
 ];
 
@@ -84,16 +84,6 @@ export function SortingFilterPanel({
     );
   }
 
-  function handleHasAny(id: string, checked: boolean) {
-    const [curMin, curMax, , curHasNone] = getFilterValue(id);
-    updateFilter(id, [curMin, curMax, checked || undefined, curHasNone]);
-  }
-
-  function handleHasNone(id: string, checked: boolean) {
-    const [curMin, curMax, curHasAny] = getFilterValue(id);
-    updateFilter(id, [curMin, curMax, curHasAny, checked || undefined]);
-  }
-
   const activeCount = columnFilters.length;
 
   return (
@@ -131,28 +121,6 @@ export function SortingFilterPanel({
                 <X size={12} />
               </button>
             </div>
-            {col.hasAnyToggle && (
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={!!hasAny}
-                  onChange={(e) => handleHasAny(id, e.target.checked)}
-                  className="h-3 w-3 accent-primary"
-                />
-                <span className="text-xs text-muted-foreground">Has any (&gt; 0)</span>
-              </label>
-            )}
-            {col.hasNoneToggle && (
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={!!hasNone}
-                  onChange={(e) => handleHasNone(id, e.target.checked)}
-                  className="h-3 w-3 accent-primary"
-                />
-                <span className="text-xs text-muted-foreground">Has none (= 0)</span>
-              </label>
-            )}
             <div className="flex gap-1">
               <input
                 type="number"
