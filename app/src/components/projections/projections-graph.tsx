@@ -15,14 +15,18 @@ const scaledStdDevPercent = (
   stdDev: number | null,
   average: number | null
 ) => {
-  if (
-    stdDev === null ||
-    average === null ||
-    !Number.isFinite(stdDev) ||
-    !Number.isFinite(average) ||
-    average <= 0
-  ) {
+  // Null stdDev = insufficient data (< 2 matches)
+  if (stdDev === null || average === null) {
     return null;
+  }
+
+  if (!Number.isFinite(stdDev) || !Number.isFinite(average)) {
+    return null;
+  }
+
+  // If average is 0, return 0% (no variation to express as percentage)
+  if (average === 0) {
+    return 0;
   }
 
   return (stdDev * 100) / average;
