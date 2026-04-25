@@ -1,4 +1,4 @@
-name: Workflow to deploy SuperAlliance API to AWS Lambda & API Gateway
+name: SuperAlliance API
 on:
   push:
     branches:

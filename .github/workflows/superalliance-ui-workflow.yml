@@ -1,4 +1,4 @@
-name: Workflow to deploy SuperAlliance UI to S3
+name: SuperAlliance UI
 on:
   push:
     branches:
