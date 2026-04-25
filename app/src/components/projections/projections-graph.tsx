@@ -11,6 +11,33 @@ const round = (num: number, digits: number = 1) => {
   return Math.round(num * factor) / factor;
 };
 
+const scaledStdDevPercent = (
+  stdDev: number | null,
+  average: number | null
+) => {
+  // Null stdDev = insufficient data (< 2 matches)
+  if (stdDev === null || average === null) {
+    return null;
+  }
+
+  if (!Number.isFinite(stdDev) || !Number.isFinite(average)) {
+    return null;
+  }
+
+  // If average is 0, return 0% (no variation to express as percentage)
+  if (average === 0) {
+    return 0;
+  }
+
+  return (stdDev * 100) / average;
+};
+
+const toFiniteNumber = (value: unknown): number | null => {
+  if (value === null || value === undefined) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
 const formatNumber = (num: number) => {
   if (num > 100000) {
     return (
@@ -26,17 +53,35 @@ type ScatterData = {
   y: number;
   z: number;
   num: string; // to handle offseason
+  rawTeamNumber: string;
   labelInt: number;
+  color?: string;
+  marker?: {
+    lineColor?: string;
+    lineWidth?: number;
+    fillColor?: string;
+  };
+};
+
+const bubbleColor = (score: number) => {
+  const clamped = Math.max(0, Math.min(1, score));
+  const steepened = clamped ** 1.8;
+  const r = Math.round(255 - (255 - 34) * steepened);
+  const g = Math.round(197 * steepened);
+  const b = Math.round(94 * steepened);
+  return `rgb(${r}, ${g}, ${b})`;
 };
 
 const ProjectionsGraph = ({
   data,
   selectedStat,
+  highlightedTeam,
   selectedTeam,
   setSelectedTeam,
 }: {
   data: any[];
   selectedStat: any;
+  highlightedTeam: any;
   selectedTeam: any;
   setSelectedTeam: any;
 }) => {
@@ -56,69 +101,70 @@ const ProjectionsGraph = ({
     };
   }, []);
 
-  const xAxis = {
-    label: selectedStat == "averageFuel" ? "Avg Auto Fuel" : "Total Auto Fuel",
-    accessor: (datum: any) =>
-      round(
-        datum[selectedStat == "averageFuel" ? "avgAutoFuel" : "totalAutoFuel"]
-      ),
-  };
-  const yAxis = {
-    label: selectedStat == "averageFuel" ? "Avg Tele Fuel" : "Total Tele Fuel",
-    accessor: (datum: any) =>
-      round(
-        datum[selectedStat == "averageFuel" ? "avgTeleFuel" : "totalTeleFuel"]
-      ),
-  };
-  const zAxis = { label: "Constant", accessor: (_datum: any) => 1 };
+  const isStandardDeviationView = selectedStat === "standardDeviation";
+
+  const xAxisLabel =
+    selectedStat == "averageFuel" ? "Avg Auto Fuel" : "StdDev Auto Fuel (%)";
+  const yAxisLabel =
+    selectedStat == "averageFuel" ? "Avg Tele Fuel" : "StdDev Tele Fuel (%)";
+  const zAxisLabel = "Constant";
 
   /** Maps team num to hex color code */
 
-  const scatterData: ScatterData[] = data.map((datum) => {
-    return {
-      x: xAxis.accessor(datum),
-      y: yAxis.accessor(datum),
-      z: zAxis.accessor(datum),
-      num: formatNumber(datum._id),
-      labelInt: 0,
-    };
-  });
+  const scatterData: ScatterData[] = data
+    .map((datum) => {
+      if (isStandardDeviationView) {
+        const avgAutoFuel = toFiniteNumber(datum?.avgAutoFuel);
+        const avgTeleFuel = toFiniteNumber(datum?.avgTeleFuel);
+        const stdDevAutoFuel = toFiniteNumber(datum?.stdDevAutoFuel);
+        const stdDevTeleFuel = toFiniteNumber(datum?.stdDevTeleFuel);
+        const stdDevAutoPercent = scaledStdDevPercent(stdDevAutoFuel, avgAutoFuel);
+        const stdDevTelePercent = scaledStdDevPercent(stdDevTeleFuel, avgTeleFuel);
+
+        if (stdDevAutoPercent === null || stdDevTelePercent === null) {
+          return null;
+        }
+
+        return {
+          x: round(stdDevAutoPercent),
+          y: round(stdDevTelePercent),
+          z: 1,
+          num: formatNumber(datum._id),
+          rawTeamNumber: String(datum._id ?? ""),
+          labelInt: 0,
+        };
+      }
+
+      return {
+        x: round(Number(datum?.avgAutoFuel ?? 0)),
+        y: round(Number(datum?.avgTeleFuel ?? 0)),
+        z: 1,
+        num: formatNumber(datum._id),
+        rawTeamNumber: String(datum._id ?? ""),
+        labelInt: 0,
+      };
+    })
+    .filter((datum): datum is ScatterData => datum !== null);
+
+  const getCutoff = (values: number[]) => {
+    if (values.length === 0) return 0;
+    const sorted = [...values].sort((a, b) => b - a);
+    const cutoffIndex = Math.min(50, sorted.length - 1);
+    return sorted[cutoffIndex] ?? 0;
+  };
+
+  const xCutoff = getCutoff(scatterData.map((datum) => datum.x));
+  const yCutoff = getCutoff(scatterData.map((datum) => datum.y));
+  const zCutoff = getCutoff(scatterData.map((datum) => datum.z));
 
   const xs = scatterData.map((datum) => datum.x);
   const ys = scatterData.map((datum) => datum.y);
-  const zs = scatterData.map((datum) => datum.z);
-  const len = Math.min(50, xs.length - 1);
-  const xCutoff = xs.sort((a, b) => b - a)[len];
-  const yCutoff = ys.sort((a, b) => b - a)[len];
-  const zCutoff = zs.sort((a, b) => b - a)[len];
+  const xMin = xs.length > 0 ? Math.min(0, ...xs) : 0;
+  const yMin = ys.length > 0 ? Math.min(0, ...ys) : 0;
+  const xMax = xs.length > 0 ? Math.max(...xs) : 1;
+  const yMax = ys.length > 0 ? Math.max(...ys) : 1;
 
-  const xMin = Math.min(Math.min(...xs), 0);
-  const yMin = Math.min(Math.min(...ys), 0);
-
-  const xMax = Math.max(...xs);
-  const yMax = Math.max(...ys);
-
-  const minSum = Math.min(xMin + yMin, 0);
-  const maxSum = Math.max(xMax + yMax, 0);
-
-  const numLines = 20; // 10% each, with 50% buffer on each side
-  const values = Array.from(Array(numLines + 1).keys()).map(
-    (i) => minSum + (maxSum - minSum) * ((i - 5) / 10)
-  );
-
-  const lineSeries: any =
-    xAxis?.label === "Auto" && yAxis?.label === "Teleop"
-      ? values.map((value) => ({
-          type: "line",
-          name: value.toString(),
-          data: [
-            [value - 2 * yMax, 2 * yMax],
-            [2 * xMax, value - 2 * xMax],
-          ],
-          enableMouseTracking: false,
-          color: "rgba(0, 0, 0, 0.15)",
-        }))
-      : [];
+  const lineSeries: any = [];
 
   const showGrid = lineSeries.length === 0;
 
@@ -127,8 +173,41 @@ const ProjectionsGraph = ({
     y: datum.y,
     z: datum.z,
     num: datum.num,
-    labelInt:
-      datum.x > xCutoff || datum.y > yCutoff || datum.z > zCutoff ? 1 : 0,
+    rawTeamNumber: datum.rawTeamNumber,
+    labelInt: (() => {
+      const selectedValue = String(highlightedTeam ?? "").trim();
+      const isSelectedTeam =
+        selectedValue.length > 0 &&
+        (selectedValue === datum.rawTeamNumber || selectedValue === datum.num);
+
+      return isSelectedTeam || datum.x > xCutoff || datum.y > yCutoff || datum.z > zCutoff
+        ? 1
+        : 0;
+    })(),
+    color: (() => {
+      const xRange = xMax - xMin || 1;
+      const yRange = yMax - yMin || 1;
+      const xNorm = (datum.x - xMin) / xRange;
+      const yNorm = (datum.y - yMin) / yRange;
+      const score = isStandardDeviationView
+        ? 1 - (xNorm + yNorm) / 2
+        : (xNorm + yNorm) / 2;
+      return bubbleColor(score);
+    })(),
+    marker: (() => {
+      const selectedValue = String(highlightedTeam ?? "").trim();
+      const isSelectedTeam =
+        selectedValue.length > 0 &&
+        (selectedValue === datum.rawTeamNumber || selectedValue === datum.num);
+
+      if (!isSelectedTeam) return undefined;
+
+      return {
+        lineColor: "#ffffff",
+        lineWidth: 3,
+        fillColor: "#fde047",
+      };
+    })(),
   }));
 
   const options: Highcharts.Options = {
@@ -140,7 +219,7 @@ const ProjectionsGraph = ({
     },
     xAxis: {
       title: {
-        text: xAxis["label"],
+        text: xAxisLabel,
         style: {
           color: "#fff",
         },
@@ -152,11 +231,12 @@ const ProjectionsGraph = ({
       },
       tickColor: "#fff",
       min: 0,
-      max: xMax + 0.05 * (xMax - xMin),
+      max: xMax + 0.05 * Math.max(xMax - xMin, 1),
+      reversed: isStandardDeviationView,
     },
     yAxis: {
       title: {
-        text: yAxis["label"],
+        text: yAxisLabel,
         style: {
           color: "#fff",
         },
@@ -168,7 +248,8 @@ const ProjectionsGraph = ({
       },
       tickColor: "#fff",
       min: 0,
-      max: yMax + 0.05 * (yMax - yMin),
+      max: yMax + 0.05 * Math.max(yMax - yMin, 1),
+      reversed: isStandardDeviationView,
       gridLineColor: "#5c5c5c",
       gridLineWidth: showGrid ? 1 : 0,
     },
@@ -177,15 +258,8 @@ const ProjectionsGraph = ({
       headerFormat: "<table>",
       pointFormat:
         '<tr><th colspan="2"><h3>{point.num}</h3></th></tr>' +
-        (xAxis.label !== "Constant"
-          ? `<tr><th>${xAxis.label}:</th><td>{point.x}</td></tr>`
-          : "") +
-        (yAxis.label !== "Constant"
-          ? `<tr><th>${yAxis.label}:</th><td>{point.y}</td></tr>`
-          : "") +
-        (zAxis.label !== "Constant"
-          ? `<tr><th>${zAxis.label}:</th><td>{point.z}</td></tr>`
-          : ""),
+        `<tr><th>${xAxisLabel}:</th><td>{point.x}</td></tr>` +
+        `<tr><th>${yAxisLabel}:</th><td>{point.y}</td></tr>`,
       footerFormat: "</table>",
       followPointer: true,
     },
@@ -229,9 +303,9 @@ const ProjectionsGraph = ({
         },
       },
       bubble: {
-        minSize: zAxis.label === "Constant" ? 10 : 1,
-        maxSize: zAxis.label === "Constant" ? 10 : 15,
-        color: "red",
+        minSize: zAxisLabel === "Constant" ? 10 : 1,
+        maxSize: zAxisLabel === "Constant" ? 10 : 15,
+        color: undefined,
         point: {
           events: {
             click: (event: any) => {

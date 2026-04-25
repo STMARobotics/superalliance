@@ -77,6 +77,9 @@ const SelectionCompare = ({
       "avgTotalFuel",
       "avgAutoFuel",
       "avgTeleFuel",
+      "stdDevTotalFuel",
+      "stdDevAutoFuel",
+      "stdDevTeleFuel",
       "avgTotalScore",
       "avgAutoScore",
       "avgTeleScore",
@@ -101,14 +104,19 @@ const SelectionCompare = ({
       "defendedAgainstPercentage",
     ];
 
+    const numericDiff = (a: any, b: any) => {
+      if (typeof a !== "number" || typeof b !== "number") return null;
+      return round(a - b);
+    };
+
     const data = {
       left: stats.reduce(function (map: any, stat: any) {
-        map[stat] = round(compareData?.left[stat] - compareData?.right[stat]);
+        map[stat] = numericDiff(compareData?.left[stat], compareData?.right[stat]);
         map["teamOPR"] = round(opr?.left - opr?.right);
         return map;
       }, {}),
       right: stats.reduce(function (map: any, stat: any) {
-        map[stat] = round(compareData?.right[stat] - compareData?.left[stat]);
+        map[stat] = numericDiff(compareData?.right[stat], compareData?.left[stat]);
         map["teamOPR"] = round(opr?.right - opr?.left);
         return map;
       }, {}),

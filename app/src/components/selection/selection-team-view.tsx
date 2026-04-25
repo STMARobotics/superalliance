@@ -26,6 +26,14 @@ import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
 
+const formatStdDevValue = (value: unknown) => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return `±${value}`;
+  }
+
+  return "—";
+};
+
 const SelectionTeamView = ({
   teams,
   aggregationData,
@@ -339,7 +347,7 @@ export const DataDisplay = ({
                     {aggregationData?.avgTotalFuel} Fuel
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {aggregationData?.totalFuel} fuel across{" "}
+                    {formatStdDevValue(aggregationData?.stdDevTotalFuel)} std dev across{" "}
                     {aggregationData?.matchCount} matches.
                   </p>
                 </CardContent>

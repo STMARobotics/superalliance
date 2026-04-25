@@ -1,8 +1,12 @@
-name: Workflow to deploy SuperAlliance UI to S3
+name: SuperAlliance UI
 on:
   push:
     branches:
       - main
+    paths:
+      - 'app/**'
+      - '.github/workflows/superalliance-ui-workflow.yml'
+  pull_request:
     paths:
       - 'app/**'
       - '.github/workflows/superalliance-ui-workflow.yml'
@@ -22,10 +26,6 @@ jobs:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
 
-    strategy:
-      matrix:
-        node-version: [24]
-
     steps:
       - uses: actions/checkout@v5
 
@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: app/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: app
 
       - name: Build
@@ -45,12 +45,14 @@ jobs:
         working-directory: app
 
       - name: Configure AWS Credentials
+        if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v5.1.0
         with:
           role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync to AWS S3
+        if: github.event_name != 'pull_request'
         run: |
           aws s3 sync \
           app/dist \
@@ -60,4 +62,5 @@ jobs:
           --cache-control "public, max-age=1200, s-maxage=86400, must-revalidate"
 
       - name: Invalidate Cloudfront Cache
+        if: github.event_name != 'pull_request'
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths '/*'
