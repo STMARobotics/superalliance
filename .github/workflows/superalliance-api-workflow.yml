@@ -6,6 +6,10 @@ on:
     paths:
       - 'api/**'
       - '.github/workflows/superalliance-api-workflow.yml'
+  pull_request:
+    paths:
+      - 'api/**'
+      - '.github/workflows/superalliance-api-workflow.yml'
   workflow_dispatch: # this enables you to manually trigger the build
   
 jobs:
@@ -13,15 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      CI: false
 
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
-
-    strategy:
-      matrix:
-        node-version: [24]
 
     steps:
       - uses: actions/checkout@v5
@@ -33,24 +32,27 @@ jobs:
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
 
-      - name: Install Claudia.js
-        run: npm install claudia -g
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: api
 
       - name: Run tests
         run: npm run test
         working-directory: api
 
+      - name: Install Claudia.js
+        if: github.event_name != 'pull_request'
+        run: npm install claudia -g
+
       - name: Configure AWS Credentials
+        if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v5.1.0
         with:
           role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy
+        if: github.event_name != 'pull_request'
         run: |
           claudia update \
             --runtime nodejs22.x \
