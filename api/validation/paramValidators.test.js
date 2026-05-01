@@ -170,9 +170,9 @@ describe('matchNumber schema', () => {
     expect(result.data).toBe(42);
   });
 
-  test('rejects 0, 101, non-numeric', () => {
+  test('rejects 0, 1001, non-numeric', () => {
     expect(matchNumberSchema.safeParse(0).success).toBe(false);
-    expect(matchNumberSchema.safeParse(101).success).toBe(false);
+    expect(matchNumberSchema.safeParse(1001).success).toBe(false);
     expect(matchNumberSchema.safeParse('abc').success).toBe(false);
   });
 });
