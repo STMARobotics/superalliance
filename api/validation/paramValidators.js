@@ -26,7 +26,7 @@ const matchNumberSchema = z
   .coerce.number()
   .int()
   .min(1, { message: 'matchNumber must be >= 1' })
-  .max(100, { message: 'matchNumber must be <= 100' });
+  .max(1000, { message: 'matchNumber must be <= 1000' });
 
 const formIdSchema = z
   .string()
