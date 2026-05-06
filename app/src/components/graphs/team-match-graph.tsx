@@ -4,9 +4,25 @@ import { useEffect, useState } from "react";
 import { Select } from "@mantine/core";
 import LineChart from "@/components/graphs/team-match-line-graph";
 
-const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
-  const [yAxis, setYAxis] = useState("matchTotalFuel");
+type TeamMatchGraphProps = {
+  aggregation: any;
+  selectedMetric?: string;
+  hideSelector?: boolean;
+  yMin?: number | "auto";
+  yMax?: number | "auto";
+};
+
+const TeamMatchGraph = ({
+  aggregation,
+  selectedMetric,
+  hideSelector = false,
+  yMin,
+  yMax,
+}: TeamMatchGraphProps) => {
+  const [localYAxis, setLocalYAxis] = useState("matchTotalFuel");
   const [lineData, setLineData] = useState<any[]>([]);
+
+  const yAxis = selectedMetric ?? localYAxis;
 
   useEffect(() => {
     setLineData([
@@ -22,7 +38,7 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
             })) || [],
       },
     ]);
-  }, [yAxis]);
+  }, [aggregation, yAxis]);
 
   const yAxisOptions = [
     { value: "matchTotalFuel", label: "Total Fuel" },
@@ -36,20 +52,22 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
 
   return (
     <div className="w-full flex flex-col">
-      <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
-        <Select
-          className="shrink-0 w-auto h-10 text-sm mr-2"
-          data={yAxisOptions}
-          onChange={(e: any) => setYAxis(e)}
-          value={yAxis}
-          allowDeselect={false}
-          styles={{
-            dropdown: {
-              zIndex: 10001,
-            },
-          }}
-        />
-      </div>
+      {!hideSelector && (
+        <div className="md:w-4/5 mx-auto flex flex-row justify-center mb-4">
+          <Select
+            className="shrink-0 w-auto h-10 text-sm mr-2"
+            data={yAxisOptions}
+            onChange={(value) => value && setLocalYAxis(value)}
+            value={yAxis}
+            allowDeselect={false}
+            styles={{
+              dropdown: {
+                zIndex: 10001,
+              },
+            }}
+          />
+        </div>
+      )}
       <div className="flex">
         {lineData.length > 0 && (
           <LineChart
@@ -59,6 +77,8 @@ const TeamMatchGraph = ({ aggregation }: { aggregation: any }) => {
               yAxisOptions.filter((option: any) => option.value == yAxis)[0]
                 .label
             }
+            yMin={yMin}
+            yMax={yMax}
           />
         )}
       </div>

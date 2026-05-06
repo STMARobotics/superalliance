@@ -27,14 +27,15 @@ const TeamMatchLineGraph = ({
     return acc;
   }, {});
 
-  const finalYMin = yMin
-    ? yMin
-    : yAxis.toLowerCase().includes("rp")
-    ? -1 / 3
-    : yAxis.includes("Norm")
-    ? 1200
-    : 0;
-  const finalYMax = yMax ? yMax : data.length === 0 ? 1 : "auto";
+  const finalYMin =
+    yMin !== undefined
+      ? yMin
+      : yAxis.toLowerCase().includes("rp")
+      ? -1 / 3
+      : yAxis.includes("Norm")
+      ? 1200
+      : 0;
+  const finalYMax = yMax !== undefined ? yMax : data.length === 0 ? 1 : "auto";
 
   return (
     <div className="w-full h-[500px] flex">

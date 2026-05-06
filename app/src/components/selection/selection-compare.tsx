@@ -5,6 +5,11 @@ import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import SelectionCompareView from "./selection-compare-view";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select } from "@mantine/core";
+
+const compareTabs = ["inspector", "pitform", "graphs"] as const;
+type CompareTab = (typeof compareTabs)[number];
 
 const round = (num: number, digits: number = 1) => {
   const factor = 100 ** digits;
@@ -31,12 +36,49 @@ const SelectionCompare = ({
   setRightTeam: (rightTeam: any) => void;
   moveTeamToColumn?: (teamId: string, columnId: string) => void;
 }) => {
+  const [activeTab, setActiveTab] = useState<CompareTab>("inspector");
+  const [selectedGraphMetric, setSelectedGraphMetric] = useState("matchTotalFuel");
   const [compareData, setCompareData] = useState<any>();
   const [pitFormData, setPitFormData] = useState<any>();
   const [statsDifference, setStatsDifference] = useState<any>();
   const [opr, setOPRData] = useState<any>();
   const { appSettings } = useSuperAlliance();
   const { getPitFormByTeam, getOPRData } = useSuperAllianceApi();
+
+  const handleTabChange = (value: string) => {
+    if (compareTabs.includes(value as CompareTab)) {
+      setActiveTab(value as CompareTab);
+    }
+  };
+
+  const graphMetricOptions = [
+    { value: "matchTotalFuel", label: "Total Fuel" },
+    { value: "matchAutoFuel", label: "Auto Fuel" },
+    { value: "matchTeleFuel", label: "Teleop Fuel" },
+    { value: "matchTotalScore", label: "Total Score" },
+    { value: "matchAutoScore", label: "Auto Score" },
+    { value: "matchTeleScore", label: "Teleop Score" },
+    { value: "matchRP", label: "Ranking Points" },
+  ];
+
+  const getGraphScale = (metric: string) => {
+    const leftScores = (compareData?.left?.[metric] ?? []).map((match: any) =>
+      Number(match?.score)
+    );
+    const rightScores = (compareData?.right?.[metric] ?? []).map((match: any) =>
+      Number(match?.score)
+    );
+    const allScores = [...leftScores, ...rightScores].filter((score) =>
+      Number.isFinite(score)
+    );
+
+    const yMin = metric === "matchRP" ? -1 / 3 : 0;
+    const yMax = allScores.length ? Math.max(1, ...allScores) : 1;
+
+    return { yMin, yMax };
+  };
+
+  const sharedGraphScale = getGraphScale(selectedGraphMetric);
 
   const handleSubmit = () => {
     (async function () {
@@ -134,6 +176,8 @@ const SelectionCompare = ({
           setCompareData(null);
           setPitFormData(null);
           setStatsDifference(null);
+          setActiveTab("inspector");
+          setSelectedGraphMetric("matchTotalFuel");
           setCompareMode(false);
         }}
         title="Team Comparison"
@@ -155,11 +199,36 @@ const SelectionCompare = ({
               setCompareData(null);
               setPitFormData(null);
               setStatsDifference(null);
+              setActiveTab("inspector");
+              setSelectedGraphMetric("matchTotalFuel");
               setCompareMode(false);
             }}
           >
             Close
           </Button>
+        </div>
+        <div className="flex justify-between items-center mb-4 px-4 gap-4">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-auto">
+            <TabsList>
+              <TabsTrigger value="inspector">Inspector</TabsTrigger>
+              <TabsTrigger value="pitform">Pit Form</TabsTrigger>
+              <TabsTrigger value="graphs">Graphs</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {activeTab === "graphs" && (
+            <Select
+              className="w-52"
+              data={graphMetricOptions}
+              onChange={(value) => value && setSelectedGraphMetric(value)}
+              value={selectedGraphMetric}
+              allowDeselect={false}
+              styles={{
+                dropdown: {
+                  zIndex: 10001,
+                },
+              }}
+            />
+          )}
         </div>
         <div className="flex flex-row py-2 w-full">
           <div className="w-[50%] px-4">
@@ -173,6 +242,9 @@ const SelectionCompare = ({
                   side={"left"}
                   opr={opr?.left}
                   moveTeamToColumn={moveTeamToColumn}
+                  activeTab={activeTab}
+                  selectedGraphMetric={selectedGraphMetric}
+                  sharedGraphScale={sharedGraphScale}
                 />
               </>
             )}
@@ -188,6 +260,9 @@ const SelectionCompare = ({
                   side={"right"}
                   opr={opr?.right}
                   moveTeamToColumn={moveTeamToColumn}
+                  activeTab={activeTab}
+                  selectedGraphMetric={selectedGraphMetric}
+                  sharedGraphScale={sharedGraphScale}
                 />
               </>
             )}

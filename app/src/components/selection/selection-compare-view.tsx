@@ -1,5 +1,5 @@
-import { Image } from "@mantine/core";
-import { TabsContent, TabsTrigger, Tabs, TabsList } from "@/components/ui/tabs";
+import { Drawer, Image, Modal } from "@mantine/core";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -16,6 +16,11 @@ import { IconRobot } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import PitFormView from "../pit-form-view";
 import TeamMatchGraph from "@/components/graphs/team-match-graph";
+import SelectionComments from "@/components/selection/selection-view-comments";
+import SelectionCriticals from "@/components/selection/selection-view-criticals";
+import FormList from "@/components/forms/form-list";
+import FormView from "@/components/form-view";
+import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 
 const SelectionCompareView = ({
   aggregation,
@@ -25,6 +30,9 @@ const SelectionCompareView = ({
   side,
   opr,
   moveTeamToColumn,
+  activeTab,
+  selectedGraphMetric,
+  sharedGraphScale,
 }: {
   aggregation: any;
   pitForm: any;
@@ -33,7 +41,21 @@ const SelectionCompareView = ({
   side: any;
   opr: any;
   moveTeamToColumn?: (teamId: string, columnId: string) => void;
+  activeTab: "inspector" | "pitform" | "graphs";
+  selectedGraphMetric: string;
+  sharedGraphScale: { yMin: number; yMax: number };
 }) => {
+  const [imageOpened, setImageOpened] = useState(false);
+  const [criticalsOpened, setCriticalsOpened] = useState(false);
+  const [commentsOpened, setCommentsOpened] = useState(false);
+  const [formsOpened, setFormsOpened] = useState(false);
+  const [selectedForm, setSelectedForm] = useState<string | number | "">("");
+  const { appSettings, eventForms, selectedEvent } = useSuperAlliance();
+
+  const teamForms = (eventForms ?? []).filter(
+    (form: any) => Number(form?.teamNumber) === Number(aggregation?._id)
+  );
+
   const averages = [
     {
       label: "Avg Fuel",
@@ -264,44 +286,39 @@ const SelectionCompareView = ({
             .teamName
         }
       </h2>
-      <Tabs defaultValue="inspector" className="space-y-4 w-full h-full">
-        <div className="flex justify-between items-center">
-          <TabsList>
-            <TabsTrigger value="inspector">Inspector</TabsTrigger>
-            <TabsTrigger value="pitform">Pit Form</TabsTrigger>
-            <TabsTrigger value="graphs">Graphs</TabsTrigger>
-          </TabsList>
-          
-          {moveTeamToColumn && (
+      <div className="space-y-4 w-full h-full">
+        {moveTeamToColumn && (
+          <div className="flex justify-end items-center">
             <div className="flex items-center gap-2">
               <Button
-                onClick={() => handleMoveTeam('r1')}
-                variant={currentColumnId === 'r1' ? "default" : "outline"}
+                onClick={() => handleMoveTeam("r1")}
+                variant={currentColumnId === "r1" ? "default" : "outline"}
                 size="sm"
                 className="h-8"
               >
                 R1
               </Button>
               <Button
-                onClick={() => handleMoveTeam('r2')}
-                variant={currentColumnId === 'r2' ? "default" : "outline"}
+                onClick={() => handleMoveTeam("r2")}
+                variant={currentColumnId === "r2" ? "default" : "outline"}
                 size="sm"
                 className="h-8"
               >
                 R2
               </Button>
               <Button
-                onClick={() => handleMoveTeam('r3')}
-                variant={currentColumnId === 'r3' ? "default" : "outline"}
+                onClick={() => handleMoveTeam("r3")}
+                variant={currentColumnId === "r3" ? "default" : "outline"}
                 size="sm"
                 className="h-8"
               >
                 R3
               </Button>
             </div>
-          )}
-        </div>
-        <TabsContent value="inspector" className="space-y-4">
+          </div>
+        )}
+        {activeTab === "inspector" && (
+          <div className="space-y-4">
           <div>
             <div className="grid gap-4 grid-cols-2">
               {side == "left" && (
@@ -505,7 +522,7 @@ const SelectionCompareView = ({
                       onClick={() => {
                         if (!pitForm?.robotImage)
                           return toast.error("No Image Found!");
-                        // setImageOpened(true);
+                        setImageOpened(true);
                       }}
                       className="w-full h-14 text-lg font-bold"
                     >
@@ -516,7 +533,7 @@ const SelectionCompareView = ({
                       onClick={() => {
                         if (aggregation?.comments.length == 0)
                           return toast.error("No Comments Found!");
-                        // setCommentsOpened(true);
+                        setCommentsOpened(true);
                       }}
                       className="w-full h-14 text-lg font-bold"
                     >
@@ -524,7 +541,10 @@ const SelectionCompareView = ({
                       View Comments
                     </Button>
                     <Button
-                      // onClick={() => setFormsOpened(true)}
+                      onClick={() => {
+                        if (!teamForms.length) return toast.error("No Forms Found!");
+                        setFormsOpened(true);
+                      }}
                       className="w-full h-14 text-lg font-bold"
                     >
                       <ClipboardList className="mr-2 h-6 w-6" />
@@ -534,12 +554,28 @@ const SelectionCompareView = ({
                       onClick={() => {
                         if (aggregation?.criticals.length == 0)
                           return toast.error("No Criticals Found!");
-                        // setCriticalsOpened(true);
+                        setCriticalsOpened(true);
                       }}
                       className="w-full h-14 text-lg font-bold bg-red-500 hover:bg-red-700 text-white"
                     >
                       <XCircle className="mr-2 h-6 w-6" />
                       View Criticals
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        window.open(
+                          `https://beta.thebluealliance.com/team/${aggregation?._id}/#2026${appSettings?.event}`,
+                          "_blank"
+                        );
+                      }}
+                      className="w-full h-14 text-lg font-bold"
+                    >
+                      <img
+                        src="/images/tba.svg"
+                        alt="The Blue Alliance"
+                        className="w-6 h-6 mr-2 invert"
+                      />
+                      View on The Blue Alliance
                     </Button>
                   </div>
                 </CardContent>
@@ -583,21 +619,25 @@ const SelectionCompareView = ({
               )}
             </div>
           </div>
-        </TabsContent>
-        <TabsContent
-          value="pitform"
-          className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"
-        >
+          </div>
+        )}
+        {activeTab === "pitform" && (
+          <div className="space-y-4 w-[calc(100%-1rem)] h-[72vh]">
           <PitFormView
             pitFormData={pitForm}
           />
-        </TabsContent>
-        <TabsContent
-          value="graphs"
-          className="space-y-4 w-[calc(100%-1rem)] h-[72vh]"
-        >
+          </div>
+        )}
+        {activeTab === "graphs" && (
+          <div className="space-y-4 w-[calc(100%-1rem)] h-[72vh]">
           {aggregation?.length !== 0 ? (
-            <TeamMatchGraph aggregation={aggregation} />
+            <TeamMatchGraph
+              aggregation={aggregation}
+              selectedMetric={selectedGraphMetric}
+              hideSelector
+              yMin={sharedGraphScale.yMin}
+              yMax={sharedGraphScale.yMax}
+            />
           ) : (
             <div className="flex justify-center items-center">
               <h1 className="text-3xl font-bold tracking-tight text-center">
@@ -605,8 +645,137 @@ const SelectionCompareView = ({
               </h1>
             </div>
           )}
-        </TabsContent>
-      </Tabs>
+          </div>
+        )}
+      </div>
+
+      <Modal
+        classNames={{
+          content: "bg-[#18181b]",
+          header: "bg-[#18181b]",
+        }}
+        opened={imageOpened}
+        withCloseButton={false}
+        onClose={() => setImageOpened(false)}
+        radius={"lg"}
+        size={"auto"}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        zIndex={1200}
+        centered
+      >
+        <Card className="h-[85vh] w-[45vw] flex justify-center items-center">
+          {pitForm?.robotImage ? (
+            <Image fit="contain" radius={"md"} mah={"100%"} src={`${pitForm?.robotImage}`} />
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              <h1 className="text-3xl font-bold tracking-tight text-center">No Image Found!</h1>
+            </div>
+          )}
+        </Card>
+      </Modal>
+
+      <Drawer
+        classNames={{
+          content: "bg-[#18181b]",
+          header: "bg-[#18181b]",
+        }}
+        opened={criticalsOpened}
+        withCloseButton={true}
+        title={"Criticals"}
+        onClose={() => setCriticalsOpened(false)}
+        radius={"md"}
+        position="right"
+        size={"md"}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        zIndex={1200}
+      >
+        {aggregation?.criticals?.length > 0 && (
+          <SelectionCriticals
+            criticals={aggregation?.criticals?.sort(
+              (a: any, b: any) => a.matchNumber - b.matchNumber
+            )}
+            selectedEvent={appSettings?.event}
+          />
+        )}
+      </Drawer>
+
+      <Drawer
+        classNames={{
+          content: "bg-[#18181b]",
+          header: "bg-[#18181b]",
+        }}
+        opened={commentsOpened}
+        withCloseButton={true}
+        title={"Comments"}
+        onClose={() => setCommentsOpened(false)}
+        radius={"md"}
+        position="right"
+        size={"md"}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        zIndex={1200}
+      >
+        {aggregation?.comments?.length > 0 && (
+          <SelectionComments
+            selectedEvent={appSettings?.event}
+            comments={aggregation?.comments?.sort(
+              (a: any, b: any) => a.matchNumber - b.matchNumber
+            )}
+          />
+        )}
+      </Drawer>
+
+      <Modal
+        classNames={{
+          content: "bg-[#18181b]",
+          header: "bg-[#18181b]",
+        }}
+        opened={formsOpened}
+        onClose={() => setFormsOpened(false)}
+        title={"Forms"}
+        radius={"lg"}
+        size={"xl"}
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        zIndex={1200}
+        centered
+      >
+        <FormList
+          teamsPage={false}
+          forms={teamForms}
+          selectedForm={selectedForm}
+          setSelectedForm={setSelectedForm}
+          selectedEvent={selectedEvent}
+        />
+      </Modal>
+
+      <Drawer
+        offset={8}
+        radius={"md"}
+        opened={!!selectedForm}
+        position="right"
+        onClose={() => {
+          setSelectedForm("");
+        }}
+        title="Form View"
+        zIndex={1200}
+      >
+        {selectedForm && (
+          <FormView
+            formData={teamForms.filter((form: any) => form._id == selectedForm)[0]}
+          />
+        )}
+      </Drawer>
     </div>
   );
 };
