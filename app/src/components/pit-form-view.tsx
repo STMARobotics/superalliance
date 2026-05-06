@@ -1,146 +1,150 @@
-import { Accordion, Group, TextInput, Textarea } from "@mantine/core";
+import { TextInput, Textarea } from "@mantine/core";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ReactNode } from "react";
+
+const ReadOnlyField = ({
+  label,
+  description,
+  value,
+  multiline = false,
+}: {
+  label: string;
+  description: string;
+  value: string;
+  multiline?: boolean;
+}) => {
+  return (
+    <Card className="h-full">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">{label}</CardTitle>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </CardHeader>
+      <CardContent>
+        {multiline ? (
+          <Textarea value={value} readOnly autosize minRows={2} />
+        ) : (
+          <TextInput value={value} readOnly />
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+const SectionCard = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-2xl">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{children}</div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const PitFormView = ({
   pitFormData,
 }: {
   pitFormData: any;
 }) => {
+  const boolToYesNo = (value: unknown) => (value ? "Yes" : "No");
+
   return (
     <div>
       {pitFormData ? (
-        <Accordion
-                defaultValue={["mechanical"]}
-                pt={10}
-                multiple
-                variant="contained"
-              >
-                <Accordion.Item value="mechanical">
-                  <Accordion.Control>Mechanical/Electrical</Accordion.Control>
-                  <Accordion.Panel>
-                    <Group p={12}>
-                      <TextInput
-                        label="Protected Electronics"
-                        description="Were the electronics protected?"
-                        value={pitFormData?.protectedElectronics ? "Yes" : "No"}
-                        readOnly
-                      />
+        <div className="space-y-4 pt-3">
+          <SectionCard title="Mechanical/Electrical">
+            <ReadOnlyField
+              label="Protected Electronics"
+              description="Were the electronics protected?"
+              value={boolToYesNo(pitFormData?.protectedElectronics)}
+            />
+            <ReadOnlyField
+              label="Battery Secured"
+              description="How was the battery secured?"
+              value={boolToYesNo(pitFormData?.batterySecured)}
+            />
+            <ReadOnlyField
+              label="High Center Of Mass"
+              description="Does the robot have a high center of mass?"
+              value={boolToYesNo(pitFormData?.highCenterOfMass)}
+            />
+          </SectionCard>
 
-                      <Textarea
-                        label="Battery Secured"
-                        description="How was the battery secured?"
-                        value={pitFormData?.batterySecured ? "Yes" : "No"}
-                        readOnly
-                      />
+          <SectionCard title="Driveteam/Competition">
+            <ReadOnlyField
+              label="Pickup Ground"
+              description="Did the robot pickup from the ground?"
+              value={boolToYesNo(pitFormData?.pickupGround)}
+            />
+            <ReadOnlyField
+              label="Pickup Source"
+              description="Did the robot pickup from a source?"
+              value={boolToYesNo(pitFormData?.pickupSource)}
+            />
+            <ReadOnlyField
+              label="Pickup Other"
+              description="Did the robot pickup by other means?"
+              value={boolToYesNo(pitFormData?.pickupOther)}
+            />
+            {pitFormData?.pickupOther && (
+              <ReadOnlyField
+                label="Pickup Other Explain"
+                description="Explain other."
+                value={pitFormData?.pickupOtherExplain || "-"}
+                multiline
+              />
+            )}
+            <ReadOnlyField
+              label="Ideal Auto"
+              description="Ideal auto?"
+              value={pitFormData?.idealAuto || "-"}
+              multiline
+            />
+          </SectionCard>
 
-                      <Textarea
-                        label="High Center Of Mass"
-                        description="Does the robot have a high center of mass?"
-                        value={pitFormData?.highCenterOfMass ? "Yes" : "No"}
-                        readOnly
-                      />
-                    </Group>
-                  </Accordion.Panel>
-                </Accordion.Item>
-                <Accordion.Item value="driveteam">
-                  <Accordion.Control>Driveteam/Competition</Accordion.Control>
-                  <Accordion.Panel>
-                    <Group p={12}>
+          <SectionCard title="General">
+            <ReadOnlyField
+              label="Strongest Value"
+              description="Strongest value on robot?"
+              value={pitFormData?.strongestValue || "-"}
+              multiline
+            />
+            <ReadOnlyField
+              label="Weakest Value"
+              description="Weakest value on robot?"
+              value={pitFormData?.weakestValue || "-"}
+              multiline
+            />
+            <ReadOnlyField
+              label="Contact Info"
+              description="Team contact information"
+              value={pitFormData?.contactInfo || "-"}
+              multiline
+            />
+            <ReadOnlyField
+              label="Extra Comments"
+              description="Any extra comments?"
+              value={pitFormData?.extraComments || "-"}
+              multiline
+            />
+          </SectionCard>
 
-                    
-                      <TextInput
-                        label="Pickup Ground"
-                        description="Did the robot pickup from the ground?"
-                        value={pitFormData?.pickupGround ? "Yes" : "No"}
-                        readOnly
-                      />
-        
-                      <TextInput
-                        label="Pickup Source"
-                        description="Did the robot pickup from a source?"
-                        value={pitFormData?.pickupSource ? "Yes" : "No"}
-                        readOnly
-                      />
-        
-                      <TextInput
-                        label="Pickup Other"
-                        description="Did the robot pickup by other means?"
-                        value={pitFormData?.pickupOther ? "Yes" : "No"}
-                        readOnly
-                      />
-        
-                      {pitFormData?.pickupOther && (
-                        <Textarea
-                          placeholder="Description..."
-                          label="Pickup Other Explain"
-                          description="Explain 'other'."
-                          autosize
-                          minRows={1}
-                          value={pitFormData?.pickupOtherExplain}
-                          readOnly
-                        />
-                      )}
-        
-                      <Textarea
-                        placeholder="Description..."
-                        label="Ideal Auto"
-                        description="Ideal auto?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.idealAuto}
-                        readOnly
-                      />
-
-                    </Group>
-                  </Accordion.Panel>
-                </Accordion.Item>
-                <Accordion.Item value="general">
-                  <Accordion.Control>General</Accordion.Control>
-                  <Accordion.Panel>
-                    <Group p={12}>
-        
-                      <Textarea
-                        placeholder="Description..."
-                        label="Strongest Value"
-                        description="Strongest value on robot?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.strongestValue}
-                        readOnly
-                      />
-        
-                      <Textarea
-                        placeholder="Description..."
-                        label="Weakest Value"
-                        description="Weakest value on robot?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.weakestValue}
-                        readOnly
-                      />
-                       <Textarea
-                        placeholder="Description..."
-                        label="Contact Info"
-                        description="Teams contact information"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.contactInfo}
-                        readOnly
-                      />
-        
-                      <Textarea
-                        placeholder="Description..."
-                        label="Extra Comments"
-                        description="Any extra comments?"
-                        autosize
-                        minRows={1}
-                        value={pitFormData?.extraComments}
-                        readOnly
-                      />
-
-                    </Group>
-                  </Accordion.Panel>
-                </Accordion.Item>
-              </Accordion>
+          <SectionCard title="Submission Details">
+            <ReadOnlyField
+              label="Submitted By"
+              description="Scout/user who submitted this pit form"
+              value={pitFormData?.usersName || "Unknown"}
+            />
+          </SectionCard>
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-full">
           <h1 className="text-4xl font-bold">No pit form found!</h1>
