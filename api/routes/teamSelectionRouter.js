@@ -6,6 +6,8 @@ const TeamSelectionSchema = require("../models/TeamSelectionSchema");
 const mongoose = require("mongoose");
 const { requireAuth, getAuth } = require("@clerk/express");
 
+const UTF8_BOM = '\uFEFF';
+
 teamSelectionRouter.post("/api/teamSelection/save/:eventCode", requireAuth(), async (req, res) => {
   const auth = getAuth(req);
   const userRole = auth.sessionClaims?.data?.role;
@@ -126,8 +128,11 @@ teamSelectionRouter.get("/api/teamSelection/:eventCode/report", requireAuth(), a
       csvContent += escapedRow.join(',') + '\n';
     }
 
+    // Excel often assumes ANSI for CSV unless a UTF-8 BOM is present.
+    csvContent = UTF8_BOM + csvContent;
+
     // Set appropriate headers for CSV download
-    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="team-selection-${eventCode}-${new Date().toISOString().split('T')[0]}.csv"`);
     
     return res.send(csvContent);
