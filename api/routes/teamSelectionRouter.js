@@ -5,10 +5,11 @@ const teamSelectionRouter = Router();
 const TeamSelectionSchema = require("../models/TeamSelectionSchema");
 const mongoose = require("mongoose");
 const { requireAuth, getAuth } = require("@clerk/express");
+const axios = require("axios");
 
 const UTF8_BOM = '\uFEFF';
 
-teamSelectionRouter.post("/api/teamSelection/save/:eventCode", requireAuth(), async (req, res) => {
+teamSelectionRouter.post("/api/teamSelection/:year/:eventCode", requireAuth(), async (req, res) => {
   const auth = getAuth(req);
   const userRole = auth.sessionClaims?.data?.role;
 
@@ -36,7 +37,7 @@ teamSelectionRouter.post("/api/teamSelection/save/:eventCode", requireAuth(), as
   }
 });
 
-teamSelectionRouter.get("/api/teamSelection/:eventCode", requireAuth(), async (req, res) => {
+teamSelectionRouter.get("/api/teamSelection/:year/:eventCode", requireAuth(), async (req, res) => {
   const auth = getAuth(req);
   const userRole = auth.sessionClaims?.data?.role;
 
@@ -44,7 +45,7 @@ teamSelectionRouter.get("/api/teamSelection/:eventCode", requireAuth(), async (r
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
   
-  const { eventCode } = req.params;
+  const { eventCode, year } = req.params;
   
   // Get the latest selection for this event
   const selection = await TeamSelectionSchema
@@ -52,10 +53,29 @@ teamSelectionRouter.get("/api/teamSelection/:eventCode", requireAuth(), async (r
     .sort({ updatedAt: -1 }); // Latest first
     
   if (!selection) return res.send({});
+
+  // Refresh the event rank data
+  const statusesResponse = await axios
+    .get(`https://www.thebluealliance.com/api/v3/event/${year}${eventCode}/teams/statuses`, {
+      method: "GET",
+      headers: {
+        "X-TBA-Auth-Key": `${process.env.TBA_KEY}`,
+        accept: "application/json",
+      },
+    })
+    .catch(() => "Error");
+  
+  if (statusesResponse === "Error") return res.send(selection);
+
+  selection.teams.forEach(team => {
+    const status = statusesResponse.data[`frc${team.teamNumber}`];
+    team.rank = status?.qual?.ranking?.rank || team.rank;
+  });
+
   return res.send(selection);
 });
 
-teamSelectionRouter.get("/api/teamSelection/:eventCode/report", requireAuth(), async (req, res) => {
+teamSelectionRouter.get("/api/teamSelection/:year/:eventCode/report", requireAuth(), async (req, res) => {
   const auth = getAuth(req);
   const userRole = auth.sessionClaims?.data?.role;
 

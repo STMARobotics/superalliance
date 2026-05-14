@@ -21,6 +21,7 @@ import SelectionCriticals from "@/components/selection/selection-view-criticals"
 import FormList from "@/components/forms/form-list";
 import FormView from "@/components/form-view";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
+import { appConfig } from "@/config/app";
 
 const SelectionCompareView = ({
   aggregation,
@@ -564,7 +565,7 @@ const SelectionCompareView = ({
                     <Button
                       onClick={() => {
                         window.open(
-                          `https://beta.thebluealliance.com/team/${aggregation?._id}/#2026${appSettings?.event}`,
+                          `https://beta.thebluealliance.com/team/${aggregation?._id}/#${appConfig?.year}${appSettings?.event}`,
                           "_blank"
                         );
                       }}

@@ -153,10 +153,10 @@ export function useSuperAllianceApi() {
     }
   };
 
-  const getTeamSelection = async (eventCode: string) => {
+  const getTeamSelection = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection/${eventCode}`
+        `${import.meta.env.VITE_API_URL}/api/teamSelection/${year}/${eventCode}`
       );
       const data = res.data;
       return data;
@@ -165,10 +165,10 @@ export function useSuperAllianceApi() {
     }
   };
 
-  const saveTeamSelection = async (eventCode: string, teams: any[]) => {
+  const saveTeamSelection = async (year: string, eventCode: string, teams: any[]) => {
     try {
       const res = await api.post(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection/save/${eventCode}`,
+        `${import.meta.env.VITE_API_URL}/api/teamSelection/${year}/${eventCode}`,
         { teams }
       );
       return res.data;
@@ -203,10 +203,10 @@ export function useSuperAllianceApi() {
     }
   }
 
-  const exportTeamSelection = async (eventCode: string) => {
+  const exportTeamSelection = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection/${eventCode}/report`,
+        `${import.meta.env.VITE_API_URL}/api/teamSelection/${year}/${eventCode}/report`,
         { responseType: 'blob' }
       );
       return res.data;

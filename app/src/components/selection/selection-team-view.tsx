@@ -25,6 +25,7 @@ import TeamMatchGraph from "@/components/graphs/team-match-graph";
 import SelectionComments from "@/components/selection/selection-view-comments";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
+import { appConfig } from "@/config/app";
 
 const formatStdDevValue = (value: unknown) => {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -536,7 +537,7 @@ export const DataDisplay = ({
                     </Button>
                     <Button
                       onClick={() => {
-                        window.open(`https://beta.thebluealliance.com/team/${aggregationData?._id}/#2026${appSettings?.event}`, "_blank");
+                        window.open(`https://beta.thebluealliance.com/team/${aggregationData?._id}/#${appConfig?.year}${appSettings?.event}`, "_blank");
                       }}
                       className="w-full h-14 text-lg font-bold"
                     >

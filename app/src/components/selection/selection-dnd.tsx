@@ -35,6 +35,7 @@ import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import { useMediaQuery } from "@mantine/hooks";
 import { em } from "@mantine/core";
+import { appConfig } from "@/config/app";
 
 const defaultCols = [
   {
@@ -238,7 +239,7 @@ const SelectionDND = ({
   const getApiSelection = () => {
     (async function () {
       try {
-        const data = await getTeamSelection(selectedEvent);
+        const data = await getTeamSelection(appConfig.year, selectedEvent);
         toast.success("Team Selection retrieved successfully!");
         const teams = data.teams || [];
         setTeams(teams);
@@ -251,7 +252,7 @@ const SelectionDND = ({
   const saveSelection = () => {
     (async function () {
       try {
-        await saveTeamSelection(selectedEvent!, teams);
+        await saveTeamSelection(appConfig.year, selectedEvent!, teams);
         toast.success("Team Selection saved successfully!");
       } catch {
         toast.error("The team selections failed to save.");
@@ -263,10 +264,10 @@ const SelectionDND = ({
     (async function () {
       try {
         // Save current selection so we export the latest data
-        await saveTeamSelection(selectedEvent!, teams);
+        await saveTeamSelection(appConfig.year, selectedEvent!, teams);
         
         // Export the saved data
-        const blob = await exportTeamSelection(selectedEvent!);
+        const blob = await exportTeamSelection(appConfig.year, selectedEvent!);
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

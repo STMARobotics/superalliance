@@ -29,7 +29,7 @@ describe('teamSelectionRouter report export (integration)', () => {
       }),
     });
 
-    const res = await request(app).get('/api/teamSelection/TEST/report');
+    const res = await request(app).get('/api/teamSelection/2026/TEST/report');
 
     expect(res.status).toBe(200);
     expect(res.headers['content-type']).toContain('text/csv; charset=utf-8');
