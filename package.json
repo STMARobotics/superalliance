@@ -15,7 +15,7 @@
     "lint": "npm run lint -w app"
   },
   "devDependencies": {
-    "concurrently": "^9.2.3"
+    "concurrently": "^10.0.3"
   },
   "repository": {
     "type": "git",
@@ -27,5 +27,11 @@
     "url": "https://github.com/STMARobotics/superalliance/issues"
   },
   "homepage": "https://github.com/STMARobotics/superalliance#readme",
-  "description": ""
+  "description": "",
+  "allowScripts": {
+    "@clerk/shared@3.47.7": true
+  },
+  "dependencies": {
+    "@icons-pack/react-simple-icons": "^13.13.0"
+  }
 }
