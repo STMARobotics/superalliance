@@ -1,5 +1,5 @@
 {
-  "name": "superalliance",
+  "name": "superalliance-app",
   "version": "1.0.0",
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "main": "postcss.config.js",
@@ -76,9 +76,6 @@
     "ts-node": "^10.9.2",
     "vaul": "^1.1.2",
     "zod": "^4.3.6"
-  },
-  "overrides": {
-    "serialize-javascript": "^7.0.5"
   },
   "scripts": {
     "dev": "vite",

@@ -22,25 +22,18 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
     * HTTPS: `git clone https://github.com/STMARobotics/superalliance.git` 
     * SSH: `git clone git@github.com:STMARobotics/superalliance.git`
 
-2. Set up the frontend application
-    * Open a terminal and navigate to the `app` directory, then run the following commands:
-        * `npm update`
-        * `npm install`
-    * Create a file named `.env.local` and put the following configuration values in it:
+2. Install dependencies for all packages (run from the root directory):
+    * `npm install`
+
+3. Set up environment variables for the frontend:
+    * Create a file named `app/.env.local` and put the following configuration values in it:
         ```
         VITE_CLERK_PUBLISHABLE_KEY=<get_value_from_admin>
         VITE_API_URL=http://localhost:3000
         ```
-    * `npm run dev` to start the application
 
-3. Set up the API application
-
-    💡 TIP: In VS Code, you can use the [JavaScript Debug Terminal](https://code.visualstudio.com/docs/nodejs/nodejs-debugging) to run the app so you can set breakpoints and debug the API.
-
-    * Open a terminal and navigate to the `api` directory, then run the following commands:
-        * `npm update`
-        * `npm install`
-    * Create a file named `.env` and put the following configuration values in it:
+4. Set up environment variables for the backend API:
+    * Create a file named `api/.env` and put the following configuration values in it:
         ```
         TBA_KEY=<get_value_from_admin>
         MONGODB_URI=<get_value_from_admin>
@@ -54,9 +47,13 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
       1) Log in to the [AWS access portal](https://d-9067879019.awsapps.com/start) with your stmarobotics.org Google account
       2) Choose _Access keys_
       3) Configure your access keys with an environment variable or credentials file
-    * `npm run dev` to start the application
 
-## Helper Scripts 
+5. Start the development servers:
 
-### `/pre-init.sh`
-This script initializes a laptop for development by ensuring that npm & node.js is installed, installs neccessary packages for`api` & `app`, and builds the client application. 
+    ```bash
+    npm run dev
+    ```
+    The app will be available at `http://localhost:5173`
+    The API will be available at `http://localhost:3000`
+
+    💡 TIP: In VS Code, you can use the [JavaScript Debug Terminal](https://code.visualstudio.com/docs/nodejs/nodejs-debugging) to run the API so you can set breakpoints and debug. 

@@ -1,9 +1,21 @@
-
 {
   "name": "superalliance",
   "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "app",
+    "api"
+  ],
   "scripts": {
-    "pre-init": "./pre-init.sh"
+    "dev": "concurrently \"npm run dev -w app\" \"npm run dev -w api\"",
+    "dev:app": "npm run dev -w app",
+    "dev:api": "npm run dev -w api",
+    "build": "npm run build -w app",
+    "test": "npm run test -w api",
+    "lint": "npm run lint -w app"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.3"
   },
   "repository": {
     "type": "git",
