@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const { yearSchema, eventCodeSchema, teamNumberSchema } = require("../validation/paramValidators");
 
 const teamSelectionRouter = Router();
 
@@ -17,8 +18,26 @@ teamSelectionRouter.post("/api/teamSelection/:year/:eventCode", requireAuth(), a
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
   
-  const { eventCode } = req.params;
   const { teams } = req.body;
+  const validatedYear = yearSchema.safeParse(req.params.year);
+  const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+
+  if (!validatedYear.success) {
+    return res.status(400).json({ 
+      error: "Invalid year",
+      details: validatedYear.error.issues.map((e) => e.message)
+    });
+  }
+
+  if (!validatedEventCode.success) {
+    return res.status(400).json({ 
+      error: "Invalid eventCode",
+      details: validatedEventCode.error.issues.map((e) => e.message)
+    });
+  }
+
+  const year = validatedYear.data;
+  const eventCode = validatedEventCode.data;
   const userId = auth.userId || "Unknown";
 
   try {
@@ -45,8 +64,26 @@ teamSelectionRouter.get("/api/teamSelection/:year/:eventCode", requireAuth(), as
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
   
-  const { eventCode, year } = req.params;
+  const validatedYear = yearSchema.safeParse(req.params.year);
+  const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
   
+  if (!validatedYear.success) {
+    return res.status(400).json({ 
+      error: "Invalid year",
+      details: validatedYear.error.issues.map((e) => e.message)
+    });
+  }
+  
+  if (!validatedEventCode.success) {
+    return res.status(400).json({ 
+      error: "Invalid eventCode",
+      details: validatedEventCode.error.issues.map((e) => e.message)
+    });
+  }
+
+  const year = validatedYear.data;
+  const eventCode = validatedEventCode.data;
+
   // Get the latest selection for this event
   const selection = await TeamSelectionSchema
     .findOne({ eventCode })
@@ -83,7 +120,25 @@ teamSelectionRouter.get("/api/teamSelection/:year/:eventCode/report", requireAut
     return res.status(403).json({ error: "Forbidden: Admins only" });
   }
 
-  const { eventCode } = req.params;
+  const validatedYear = yearSchema.safeParse(req.params.year);
+  const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
+  
+  if (!validatedYear.success) {
+    return res.status(400).json({ 
+      error: "Invalid year",
+      details: validatedYear.error.issues.map((e) => e.message)
+    });
+  }
+  
+  if (!validatedEventCode.success) {
+    return res.status(400).json({ 
+      error: "Invalid eventCode",
+      details: validatedEventCode.error.issues.map((e) => e.message)
+    });
+  }
+
+  const year = validatedYear.data;
+  const eventCode = validatedEventCode.data;
   
   try {
     // Get the latest selection for this event
