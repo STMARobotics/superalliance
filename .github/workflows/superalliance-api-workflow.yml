@@ -44,7 +44,7 @@ jobs:
 
       - name: Configure AWS Credentials
         if: github.event_name != 'pull_request'
-        uses: aws-actions/configure-aws-credentials@v5.1.0
+        uses: aws-actions/configure-aws-credentials@v6.2.1
         with:
           role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
