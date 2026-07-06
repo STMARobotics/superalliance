@@ -10,7 +10,8 @@ import {
   Modal,
   AspectRatio,
 } from "@mantine/core";
-import { Link, Youtube } from "lucide-react";
+import { Link } from "lucide-react";
+import { SiYoutube } from "@icons-pack/react-simple-icons";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -111,7 +112,7 @@ const SelectionComments = ({
                       onClick={() => {
                         handleYoutube(match.matchNumber);
                       }}
-                      rightSection={<Youtube size={12} />}
+                      rightSection={<SiYoutube size={12} />}
                       size="xs"
                     >
                       Video

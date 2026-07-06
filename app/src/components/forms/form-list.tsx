@@ -3,7 +3,7 @@ import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { cn } from "@/lib/utils";
 import { AspectRatio, Badge, Button, Modal } from "@mantine/core";
 import { formatDistanceToNow } from "date-fns";
-import { Youtube } from "lucide-react";
+import { SiYoutube } from "@icons-pack/react-simple-icons"
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -94,7 +94,7 @@ function FormList({
                   }}
                   size="xs"
                 >
-                  <Youtube size={14} />
+                  <SiYoutube size={14} />
                 </Button>
               </div>
             </div>
