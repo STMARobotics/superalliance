@@ -60,7 +60,7 @@
     "highcharts": "^13.0.0",
     "highcharts-react-official": "^3.2.3",
     "jotai": "^2.20.1",
-    "lucide-react": "^1.22.0",
+    "lucide-react": "^1.23.0",
     "mongoose": "^9.7.3",
     "postcss-load-config": "^6.0.1",
     "react": "^19.2.7",
