@@ -15,11 +15,15 @@ const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
 const mongoConnectPromise = require('./mongo-connect');
 let connection = null;
 
-exports.handler = (event, context) => {
-  getConnection();
-  awsServerlessExpress.proxy(server, event, context);
-}
+exports.handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  await getConnection();
+  return awsServerlessExpress.proxy(server, event, context, 'PROMISE').promise;
+};
 
 async function getConnection() {
-  connection = await mongoConnectPromise;
+  if (!connection) {
+    connection = await mongoConnectPromise;
+  }
+  return connection;
 }
