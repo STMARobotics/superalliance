@@ -13,3 +13,7 @@ updates:
       all-dependencies:
         patterns:
           - "*"
+    # Allow patch and minor, but block major version updates automatically
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
