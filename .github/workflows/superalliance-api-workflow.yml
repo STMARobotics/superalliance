@@ -23,10 +23,10 @@ jobs:
       contents: read  # This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Set up Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: 'npm'
@@ -44,7 +44,7 @@ jobs:
 
       - name: Configure AWS Credentials
         if: github.event_name != 'pull_request'
-        uses: aws-actions/configure-aws-credentials@v6.2.1
+        uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
           role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
