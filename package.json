@@ -15,7 +15,7 @@
     "lint": "npm run lint -w app"
   },
   "devDependencies": {
-    "concurrently": "^10.0.3"
+    "concurrently": "^10.0.4"
   },
   "repository": {
     "type": "git",
