@@ -11,23 +11,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1093.0",
-    "@aws-sdk/s3-request-presigner": "^3.1093.0",
-    "@clerk/express": "^2.1.44",
+    "@aws-sdk/client-s3": "^3.1121.0",
+    "@aws-sdk/s3-request-presigner": "^3.1121.0",
+    "@clerk/express": "^2.1.64",
     "aws-serverless-express": "^3.4.0",
     "aws4": "^1.13.2",
-    "axios": "^1.18.1",
+    "axios": "^1.20.0",
     "body-parser": "^2.3.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.8.0",
-    "zod": "^4.4.3"
+    "mongoose": "^9.9.4",
+    "zod": "^4.5.2"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.5.0",
+    "@faker-js/faker": "^10.6.0",
     "nodemon": "^3.1.14",
-    "jest": "^30.4.2",
+    "jest": "^30.5.0",
     "supertest": "^7.2.2"
   }
 }
