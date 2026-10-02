@@ -1,6 +1,7 @@
 // Bypass Clerk auth in tests
 jest.mock('@clerk/express', () => ({
-  requireAuth: () => (req, res, next) => next(),
+  clerkMiddleware: () => (req, res, next) => next(),
+  getAuth: () => ({ userId: 'test-user', sessionClaims: { public_metadata: { role: 'admin' } } }),
 }));
 
 const request = require('supertest');

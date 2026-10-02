@@ -1,7 +1,7 @@
 jest.mock('@clerk/express', () => ({
-  requireAuth: () => (req, res, next) => next(),
+  clerkMiddleware: () => (req, res, next) => next(),
   getAuth: () => ({
-    sessionClaims: { data: { role: 'admin' } },
+    sessionClaims: { public_metadata: { role: 'admin' }, data: { role: 'admin' } },
     userId: 'test-user',
   }),
 }));
