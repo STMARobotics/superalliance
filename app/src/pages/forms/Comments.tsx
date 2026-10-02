@@ -1,5 +1,5 @@
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 import {
   Affix,
   Button,

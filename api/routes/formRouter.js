@@ -4,10 +4,10 @@ const formRouter = Router();
 
 const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
-const { requireAuth, getAuth } = require("@clerk/express");
+const { requireAuth, requireAdmin } = require("../middleware/auth");
 const { formIdSchema, eventCodeSchema } = require("../validation/paramValidators");
 
-formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
+formRouter.get("/api/form/stand/:formId", requireAuth, async (req, res) => {
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
     return res.status(400).json({
@@ -24,12 +24,7 @@ formRouter.get("/api/form/stand/:formId", requireAuth(), async (req, res) => {
   return res.send(data[0]);
 });
 
-formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => {
-  const userRole = getAuth(req).sessionClaims?.data?.role;
-  if (userRole !== "admin") {
-    return res.status(403).json({ error: "Forbidden: Admins only" });
-  }
-
+formRouter.delete("/api/form/stand/:formId", requireAdmin, async (req, res) => {
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
     return res.status(400).json({
@@ -48,7 +43,7 @@ formRouter.delete("/api/form/stand/:formId", requireAuth(), async (req, res) => 
     .catch((err) => res.status(500).json({ error: err.message }));
 });
 
-formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) => {
+formRouter.get("/api/forms/stand/:eventCode", requireAuth, async (req, res) => {
   const validated = eventCodeSchema.safeParse(req.params.eventCode);
   if (!validated.success) {
     return res.status(400).json({
@@ -65,7 +60,7 @@ formRouter.get("/api/forms/stand/:eventCode", requireAuth(), async (req, res) =>
   return res.send(forms);
 });
 
-formRouter.post("/api/form/stand/submit", requireAuth(), async (req, res) => {
+formRouter.post("/api/form/stand/submit", requireAuth, async (req, res) => {
   const data = req.body;
   const sendForm = await new StandFormSchema({
     _id: new mongoose.Types.ObjectId(),

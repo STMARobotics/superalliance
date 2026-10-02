@@ -13,7 +13,7 @@ import {
   RadioGroup
 } from "@mantine/core";
 import { useForm, isNotEmpty } from "@mantine/form";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 import { IconArrowUp } from "@tabler/icons-react";
 import { useWindowScroll } from "@mantine/hooks";
 import { toast } from "sonner";

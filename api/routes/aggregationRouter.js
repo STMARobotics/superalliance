@@ -5,10 +5,10 @@ const aggregationRouter = Router();
 const mongoose = require("mongoose");
 const axios = require("axios");
 const StandFormAggregation = require("../models/StandFormAggregation");
-const { requireAuth } = require("@clerk/express");
+const { requireAuth } = require("../middleware/auth");
 const { eventIdSchema } = require("../validation/paramValidators");
 
-aggregationRouter.get("/api/aggregation/event/:eventId", requireAuth(), async (req, res) => {
+aggregationRouter.get("/api/aggregation/event/:eventId", requireAuth, async (req, res) => {
   const validated = eventIdSchema.safeParse(req.params.eventId);
   if (!validated.success) {
     return res.status(400).json({ 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 
 export function useSuperAllianceApi() {
   const { getToken } = useAuth();
@@ -8,7 +8,7 @@ export function useSuperAllianceApi() {
   });
 
   api.interceptors.request.use(async (config) => {
-    const token = await getToken({template: "API"});
+    const token = await getToken();
     if (token) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;

@@ -6,10 +6,11 @@ const pitFormRouter = Router();
 
 const PitFormSchema = require("../models/PitFormSchema");
 const mongoose = require("mongoose");
-const { requireAuth, getAuth } = require("@clerk/express");
+const { requireAuth } = require("../middleware/auth");
+const { getAuth } = require("@clerk/express");
 const { pitImageUploadSchema, eventCodeSchema, teamNumberSchema, ACCEPTED_IMAGE_TYPES } = require("../validation/paramValidators");
 
-pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
+pitFormRouter.post("/api/form/pit/submit", requireAuth, async (req, res) => {
   const data = req.body;
   const sendForm = await new PitFormSchema({
     _id: new mongoose.Types.ObjectId(),
@@ -46,7 +47,7 @@ pitFormRouter.post("/api/form/pit/submit", requireAuth(), async (req, res) => {
   return res.send("Submitted Form!");
 });
 
-pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (req, res) => {
+pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth, async (req, res) => {
   const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
   const validatedTeamNumber = teamNumberSchema.safeParse(req.params.teamNumber);
   
@@ -76,7 +77,7 @@ pitFormRouter.get("/api/form/pit/:eventCode/:teamNumber", requireAuth(), async (
 });
 
 // Create a signed URL for uploading robot pit images to S3
-pitFormRouter.post("/api/form/pit/image-upload", requireAuth(), async (req, res) => {
+pitFormRouter.post("/api/form/pit/image-upload", requireAuth, async (req, res) => {
   const validated = pitImageUploadSchema.safeParse(req.body);
   if (!validated.success) {
     return res.status(400).json({

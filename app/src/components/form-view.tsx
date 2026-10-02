@@ -2,7 +2,7 @@ import { Checkbox, MultiSelect, TextInput, Textarea } from "@mantine/core";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 
 const FormView = ({ formData }: { formData: any }) => {
   const { eventTeams } = useSuperAlliance();

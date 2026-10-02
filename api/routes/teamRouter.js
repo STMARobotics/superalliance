@@ -6,9 +6,9 @@ const teamRouter = Router();
 const StandFormSchema = require("../models/StandFormSchema");
 const mongoose = require("mongoose");
 const axios = require("axios");
-const { requireAuth } = require("@clerk/express");
+const { requireAuth } = require("../middleware/auth");
 
-teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
+teamRouter.get("/api/team/:teamNumber", requireAuth, async (req, res) => {
   const validated = teamNumberSchema.safeParse(req.params.teamNumber);
   if (!validated.success) {
     return res.status(400).json({ 
@@ -30,7 +30,7 @@ teamRouter.get("/api/team/:teamNumber", requireAuth(), async (req, res) => {
   return res.send(response.data);
 });
 
-teamRouter.get("/api/teams/:year/:eventCode", requireAuth(), async (req, res) => {
+teamRouter.get("/api/teams/:year/:eventCode", requireAuth, async (req, res) => {
   const validatedYear = yearSchema.safeParse(req.params.year);
   const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
   

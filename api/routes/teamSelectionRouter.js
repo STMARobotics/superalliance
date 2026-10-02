@@ -5,19 +5,13 @@ const teamSelectionRouter = Router();
 
 const TeamSelectionSchema = require("../models/TeamSelectionSchema");
 const mongoose = require("mongoose");
-const { requireAuth, getAuth } = require("@clerk/express");
+const { requireAuth, requireAdmin } = require("../middleware/auth");
+const { getAuth } = require("@clerk/express");
 const axios = require("axios");
 
 const UTF8_BOM = '\uFEFF';
 
-teamSelectionRouter.post("/api/teamSelection/:year/:eventCode", requireAuth(), async (req, res) => {
-  const auth = getAuth(req);
-  const userRole = auth.sessionClaims?.data?.role;
-
-  if (userRole !== "admin") {
-    return res.status(403).json({ error: "Forbidden: Admins only" });
-  }
-  
+teamSelectionRouter.post("/api/teamSelection/:year/:eventCode", requireAdmin, async (req, res) => {
   const { teams } = req.body;
   const validatedYear = yearSchema.safeParse(req.params.year);
   const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
@@ -56,14 +50,7 @@ teamSelectionRouter.post("/api/teamSelection/:year/:eventCode", requireAuth(), a
   }
 });
 
-teamSelectionRouter.get("/api/teamSelection/:year/:eventCode", requireAuth(), async (req, res) => {
-  const auth = getAuth(req);
-  const userRole = auth.sessionClaims?.data?.role;
-
-  if (userRole !== "admin") {
-    return res.status(403).json({ error: "Forbidden: Admins only" });
-  }
-  
+teamSelectionRouter.get("/api/teamSelection/:year/:eventCode", requireAdmin, async (req, res) => {
   const validatedYear = yearSchema.safeParse(req.params.year);
   const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
   
@@ -112,14 +99,7 @@ teamSelectionRouter.get("/api/teamSelection/:year/:eventCode", requireAuth(), as
   return res.send(selection);
 });
 
-teamSelectionRouter.get("/api/teamSelection/:year/:eventCode/report", requireAuth(), async (req, res) => {
-  const auth = getAuth(req);
-  const userRole = auth.sessionClaims?.data?.role;
-
-  if (userRole !== "admin") {
-    return res.status(403).json({ error: "Forbidden: Admins only" });
-  }
-
+teamSelectionRouter.get("/api/teamSelection/:year/:eventCode/report", requireAdmin, async (req, res) => {
   const validatedYear = yearSchema.safeParse(req.params.year);
   const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
   

@@ -4,10 +4,10 @@ const commentRouter = Router();
 
 const CommentFormSchema = require("../models/CommentFormSchema");
 const mongoose = require("mongoose");
-const { requireAuth } = require("@clerk/express");
+const { requireAuth } = require("../middleware/auth");
 const { formIdSchema, commentSubmitSchema } = require("../validation/paramValidators");
 
-commentRouter.get("/api/form/comments/:formId", requireAuth(), async (req, res) => {
+commentRouter.get("/api/form/comments/:formId", requireAuth, async (req, res) => {
   const validated = formIdSchema.safeParse(req.params.formId);
   if (!validated.success) {
     return res.status(400).json({ 
@@ -24,14 +24,14 @@ commentRouter.get("/api/form/comments/:formId", requireAuth(), async (req, res) 
   return res.send(data[0]);
 });
 
-commentRouter.get("/api/forms/comments", requireAuth(), async (req, res) => {
+commentRouter.get("/api/forms/comments", requireAuth, async (req, res) => {
   const forms = await CommentFormSchema.find({}).sort({
     _id: -1,
   });
   return res.send(forms);
 });
 
-commentRouter.post("/api/form/comments/submit", requireAuth(), async (req, res) => {
+commentRouter.post("/api/form/comments/submit", requireAuth, async (req, res) => {
   const validated = commentSubmitSchema.safeParse(req.body);
   if (!validated.success) {
     return res.status(400).json({

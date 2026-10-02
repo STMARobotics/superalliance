@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
-import { useAuth, useUser } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/react";
 
 export function MainNav() {
   const pathname = useLocation().pathname;

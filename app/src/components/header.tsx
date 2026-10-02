@@ -5,11 +5,7 @@ import { MobileNav } from "@/components/mobile-nav";
 import { Icons } from "./icons";
 import { Link } from "react-router-dom";
 import { LoginButton } from "@/components/login-button";
-import {
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/clerk-react";
+import { Show, UserButton } from "@clerk/react";
 
 const Header = () => {
   return (
@@ -24,12 +20,12 @@ const Header = () => {
         </div>
         <div className="flex-1 items-center justify-between space-x-2 md:justify-end hidden sm:flex">
           <nav className="flex items-center gap-2">
-            <SignedIn>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
-            <SignedOut>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+            <Show when="signed-out">
               <LoginButton />
-            </SignedOut>
+            </Show>
           </nav>
         </div>
       </div>

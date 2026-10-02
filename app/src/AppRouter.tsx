@@ -7,7 +7,7 @@ import {
 import Home from "./pages/client/Home";
 import Header from "./components/header";
 import SignInPage from "./pages/handlers/login/page";
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
+import { Show, useUser } from "@clerk/react";
 import StandForm from "./pages/forms/Stand";
 import NotFound from "./pages/NotFound";
 import DataStandForm from "./pages/data/form/stand/ViewForm";
@@ -47,12 +47,12 @@ function AppRouter() {
           path="/new/stand"
           element={
             <>
-              <SignedIn>
+              <Show when="signed-in">
                 <StandForm />
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </>
           }
         />
@@ -60,12 +60,12 @@ function AppRouter() {
           path="/new/comments"
           element={
             <>
-              <SignedIn>
+              <Show when="signed-in">
                 <CommentsForm />
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </>
           }
         />
@@ -73,12 +73,12 @@ function AppRouter() {
           path="/new/pit"
           element={
             <>
-              <SignedIn>
+              <Show when="signed-in">
                 <PitForm />
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </>
           }
         />
@@ -87,14 +87,14 @@ function AppRouter() {
           path="/data/form/stand/:formId"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   <DataStandForm />
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -102,14 +102,14 @@ function AppRouter() {
           path="/data"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   <Navigate to="/data/forms" />
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -117,7 +117,7 @@ function AppRouter() {
           path="/data/forms"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   {loading ? (
                     <div>
@@ -134,10 +134,10 @@ function AppRouter() {
                     </>
                   )}
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -145,7 +145,7 @@ function AppRouter() {
           path="/data/teams"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   {loading ? (
                     <div>
@@ -162,10 +162,10 @@ function AppRouter() {
                     </>
                   )}
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -173,7 +173,7 @@ function AppRouter() {
           path="/data/sorting"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   {loading ? (
                     <div>
@@ -190,10 +190,10 @@ function AppRouter() {
                     </>
                   )}
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -201,7 +201,7 @@ function AppRouter() {
           path="/data/team/projections"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   {loading ? (
                     <div>
@@ -218,10 +218,10 @@ function AppRouter() {
                     </>
                   )}
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -229,14 +229,14 @@ function AppRouter() {
           path="/data/team/middlepath"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   <DataMiddlePath />
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -245,14 +245,14 @@ function AppRouter() {
           path="/analysis"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   <Navigate to="/analysis/selection" />
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -260,7 +260,7 @@ function AppRouter() {
           path="/analysis/selection"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full relative">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   {loading ? (
                     <div>
@@ -277,10 +277,10 @@ function AppRouter() {
                     </>
                   )}
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -289,14 +289,14 @@ function AppRouter() {
           path="/admin"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   <Navigate to="/admin/settings" />
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />
@@ -304,14 +304,14 @@ function AppRouter() {
           path="/admin/settings"
           element={
             <div className="h-[calc(100vh-3.6rem)] w-full">
-              <SignedIn>
+              <Show when="signed-in">
                 <AdminRoute>
                   <AdministrationSettings />
                 </AdminRoute>
-              </SignedIn>
-              <SignedOut>
+              </Show>
+              <Show when="signed-out">
                 <Navigate to="/login" />
-              </SignedOut>
+              </Show>
             </div>
           }
         />

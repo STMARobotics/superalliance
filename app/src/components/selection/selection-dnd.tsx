@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Scale, Download, CloudDownload, CloudUpload } from "lucide-react";
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { useSuperAlliance } from "@/contexts/SuperAllianceProvider.tsx";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 import { toast } from "sonner";
 import { useMediaQuery } from "@mantine/hooks";
 import { em } from "@mantine/core";

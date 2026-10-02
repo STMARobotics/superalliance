@@ -4,6 +4,7 @@ const express = require("express");
 const fs = require("node:fs");
 const path = require("node:path");
 var cors = require("cors");
+const { clerkMiddleware } = require("@clerk/express");
 
 const environment = process.env.ENVIRONMENT || "local";
 
@@ -14,7 +15,7 @@ const corsOptions = {
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error("Not allowed by CORS"));
   },
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  optionsSuccessStatus: 200,
 };
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(cors(corsOptions));
 app.options("/^\/api\/.*$/", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(clerkMiddleware());
 app.use(aggregationRouter);
 app.use(eventRouter);
 app.use(formRouter);

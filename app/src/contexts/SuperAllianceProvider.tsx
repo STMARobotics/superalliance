@@ -3,7 +3,7 @@
 import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { createContext, useContext, useEffect, useState } from "react";
 import { appConfig } from "@/config/app";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 
 type SuperAllianceContextProps = {
   events?: any;

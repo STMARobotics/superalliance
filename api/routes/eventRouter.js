@@ -4,7 +4,7 @@ const eventRouter = Router();
 
 const mongoose = require("mongoose");
 const axios = require("axios");
-const { requireAuth } = require("@clerk/express");
+const { requireAuth } = require("../middleware/auth");
 const {
   yearSchema,
   eventCodeSchema,
@@ -14,7 +14,7 @@ const {
 
 eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/data",
-  requireAuth(),
+  requireAuth,
   async (req, res) => {
     try {
       const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
@@ -60,7 +60,7 @@ eventRouter.get(
 
 eventRouter.get(
   "/api/event/:eventCode/team/:teamNumber/rank",
-  requireAuth(),
+  requireAuth,
   async (req, res) => {
     try {
       const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
@@ -106,7 +106,7 @@ eventRouter.get(
 
 eventRouter.get(
   "/api/event/:eventCode/opr",
-  requireAuth(),
+  requireAuth,
   async (req, res) => {
     try {
       const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
@@ -143,7 +143,7 @@ eventRouter.get(
 
 eventRouter.get(
   "/api/event/:eventCode/match/:matchNumber/teams",
-  requireAuth(),
+  requireAuth,
   async (req, res) => {
     try {
       const validatedEventCode = eventCodeSchema.safeParse(req.params.eventCode);
@@ -195,7 +195,7 @@ eventRouter.get(
   }
 );
 
-eventRouter.get("/api/listEvents/:team/:year", requireAuth(), async (req, res) => {
+eventRouter.get("/api/listEvents/:team/:year", requireAuth, async (req, res) => {
   const validatedTeam = teamNumberSchema.safeParse(req.params.team);
   const validatedYear = yearSchema.safeParse(req.params.year);
   

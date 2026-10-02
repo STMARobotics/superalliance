@@ -9,12 +9,7 @@ import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-} from "@clerk/clerk-react";
+import { Show, UserButton, useUser } from "@clerk/react";
 import { LoginButton } from "./login-button";
 
 export function MobileNav() {
@@ -98,14 +93,14 @@ export function MobileNav() {
           </ScrollArea>
         </SheetContent>
       </Sheet>
-      <SignedIn>
+      <Show when="signed-in">
         <div className="px-0 py-0 pt-0.5">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
-      </SignedIn>
-      <SignedOut>
+      </Show>
+      <Show when="signed-out">
         <LoginButton />
-      </SignedOut>
+      </Show>
     </div>
   );
 }
