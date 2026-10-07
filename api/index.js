@@ -28,6 +28,7 @@ const aggregationRouter = require("./routes/aggregationRouter");
 const settingsRouter = require("./routes/settingsRouter");
 const commentRouter = require("./routes/commentRouter");
 const teamSelectionRouter = require("./routes/teamSelectionRouter");
+const aiRouter = require("./routes/aiRouter");
 app.use(cors(corsOptions));
 app.options("/^\/api\/.*$/", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -41,5 +42,6 @@ app.use(pitFormRouter);
 app.use(teamRouter);
 app.use(settingsRouter);
 app.use(teamSelectionRouter);
+app.use(aiRouter);
 
 module.exports = app;

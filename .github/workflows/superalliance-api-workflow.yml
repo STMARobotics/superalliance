@@ -38,21 +38,33 @@ jobs:
       - name: Run tests
         run: npm run test -w api
 
+      - name: Extract and Sanitize Branch Name
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+        id: extract_branch
+        run: |
+          # Replace non-alphanumeric chars (slashes, dots, etc.) with hyphens and convert to lowercase
+          SANITIZED_BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9-]/-/g' | tr '[:upper:]' '[:lower:]')
+          echo "branch=$SANITIZED_BRANCH" >> $GITHUB_OUTPUT
+
       - name: Install Claudia.js
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
         run: npm install claudia -g
 
       - name: Configure AWS Credentials
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
         uses: aws-actions/configure-aws-credentials@v6.3.0
         with:
           role-to-assume: arn:aws:iam::738044534240:role/superalliance-api-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
         run: |
+          STAGE_NAME="${{ steps.extract_branch.outputs.branch }}"
+          echo "Deploying stage: $STAGE_NAME"
+
           claudia update \
+            --version "$STAGE_NAME" \
             --runtime nodejs24.x \
             --region ${{ env.AWS_REGION }} \
             --set-env CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }},CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }},MONGODB_URI='${{ secrets.MONGODB_URI }}',ROBOT_IMAGE_BUCKET=${{ secrets.ROBOT_IMAGE_BUCKET }},ROBOT_IMAGE_DISTRO=${{ secrets.ROBOT_IMAGE_DISTRO }},TBA_KEY=${{ secrets.TBA_KEY }},CORS_ORIGINS='${{ secrets.CORS_ORIGINS }}'
