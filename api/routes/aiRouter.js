@@ -6,7 +6,7 @@ const StandFormSchema = require("../models/StandFormSchema");
 const SuperAllianceConfig = require("../models/SuperAllianceConfig");
 
 const aiRouter = Router();
-const modelId = process.env.BEDROCK_MODEL_ID || "amazon.nova-micro-v1:0";
+const modelId = process.env.BEDROCK_MODEL_ID || "us.amazon.nova-micro-v1:0";
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION || "us-east-2" });
 const allowedStages = new Set([
   "$addFields", "$bucket", "$bucketAuto", "$count", "$facet", "$group", "$limit",
