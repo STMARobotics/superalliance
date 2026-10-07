@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { useAuth, useUser } from "@clerk/react";
+import { Sparkles } from "lucide-react";
 
 export function MainNav() {
   const pathname = useLocation().pathname;
@@ -67,6 +68,20 @@ export function MainNav() {
               )}
             >
               Data
+            </Link>
+            <Link
+              to="/admin/ai-scouting"
+              aria-label="AI Scouting Assistant"
+              title="AI Scouting Assistant"
+              className={cn(
+                "inline-flex items-center gap-1.5 transition-colors hover:text-foreground/80",
+                pathname?.startsWith("/admin/ai-scouting")
+                  ? "text-foreground"
+                  : "text-foreground/60"
+              )}
+            >
+              <Sparkles aria-hidden="true" className="h-4 w-4" />
+              <span>AI Scouting</span>
             </Link>
             <Link
               to="/analysis"

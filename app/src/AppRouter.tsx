@@ -16,6 +16,7 @@ import DataTeams from "./pages/data/teams/ViewTeams";
 import PitForm from "./pages/forms/Pit";
 import TeamSelection from "./pages/analysis/selection/TeamSelection";
 import AdministrationSettings from "./pages/admin/Settings";
+import AIScouting from "./pages/admin/AIScouting";
 import CommentsForm from "./pages/forms/Comments";
 import DataSorting from "./pages/data/sorting/ViewSorting";
 import DataTeamProjections from "./pages/data/projections/ViewTeamProjections";
@@ -307,6 +308,21 @@ function AppRouter() {
               <Show when="signed-in">
                 <AdminRoute>
                   <AdministrationSettings />
+                </AdminRoute>
+              </Show>
+              <Show when="signed-out">
+                <Navigate to="/login" />
+              </Show>
+            </div>
+          }
+        />
+        <Route
+          path="/admin/ai-scouting"
+          element={
+            <div className="h-[calc(100vh-3.6rem)] w-full">
+              <Show when="signed-in">
+                <AdminRoute>
+                  <AIScouting />
                 </AdminRoute>
               </Show>
               <Show when="signed-out">

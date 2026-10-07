@@ -1,54 +1,34 @@
 const { Router } = require("express");
-const { BedrockRuntimeClient, InvokeModelCommand } = require("@aws-sdk/client-bedrock-runtime");
+const {
+  BedrockRuntimeClient,
+  InvokeModelCommand,
+} = require("@aws-sdk/client-bedrock-runtime");
 const { requireAdmin } = require("../middleware/auth");
-const PitFormSchema = require("../models/PitFormSchema");
 const StandFormSchema = require("../models/StandFormSchema");
 const SuperAllianceConfig = require("../models/SuperAllianceConfig");
 
 const aiRouter = Router();
-const modelId = process.env.BEDROCK_MODEL_ID || "us.amazon.nova-micro-v1:0";
-const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION || "us-east-2" });
-const allowedStages = new Set([
-  "$addFields", "$bucket", "$bucketAuto", "$count", "$facet", "$group", "$limit",
-  "$lookup", "$match", "$project", "$replaceRoot", "$replaceWith", "$set", "$skip",
-  "$sort", "$sortByCount", "$unwind", "$unset",
-]);
-const forbiddenOperators = new Set(["$accumulator", "$function", "$where", "$out", "$merge"]);
 
-function describeSchema(collection, model) {
-  const fields = Object.entries(model.schema.paths)
-    .filter(([name]) => name !== "_id" && name !== "__v")
-    .map(([name, schemaType]) => `${name}:${schemaType.instance.toLowerCase()}`);
-  return `${collection}: ${fields.join(", ")}`;
-}
+// Primary model for complex MQL generation (Nova Pro)
+const modelId = process.env.BEDROCK_MODEL_ID || "us.amazon.nova-pro-v1:0";
+
+// Cheaper model for text summarization (Nova Lite)
+const summaryModelId =
+  process.env.BEDROCK_SUMMARY_MODEL_ID || "us.amazon.nova-lite-v1:0";
+
+const bedrock = new BedrockRuntimeClient({
+  region: process.env.AWS_REGION || "us-east-2",
+});
 
 function getSchemaDescription() {
-  return [
-    "MongoDB schema (generated from the application's Mongoose models):",
-    describeSchema("STAND_FORMS (source marker _aiFormSource=stand)", StandFormSchema),
-    describeSchema("PIT_FORMS (source marker _aiFormSource=pit)", PitFormSchema),
-  ].join("\n");
+  const fields = Object.entries(StandFormSchema.schema.paths)
+    .filter(([name]) => name !== "_id" && name !== "__v")
+    .map(([name, schemaType]) => `  - ${name}:${schemaType.instance}`);
+  return `STAND_FORMS Collection Fields:\n${fields.join("\n")}`;
 }
 
-function constrainLookupsToEvent(pipeline, activeEvent) {
-  for (const stage of pipeline) {
-    if (stage.$lookup) {
-      const lookupPipeline = stage.$lookup.pipeline || [];
-      lookupPipeline.unshift({ $match: { event: activeEvent } });
-      constrainLookupsToEvent(lookupPipeline, activeEvent);
-      stage.$lookup.pipeline = lookupPipeline;
-    }
-
-    if (stage.$facet) {
-      for (const subPipeline of Object.values(stage.$facet)) {
-        constrainLookupsToEvent(subPipeline, activeEvent);
-      }
-    }
-  }
-}
-
-function buildModelRequest(prompt, maxTokens) {
-  if (modelId.startsWith("anthropic.")) {
+function buildModelRequest(targetModel, prompt, maxTokens) {
+  if (targetModel.startsWith("anthropic.")) {
     return {
       anthropic_version: "bedrock-2023-05-31",
       max_tokens: maxTokens,
@@ -63,131 +43,150 @@ function buildModelRequest(prompt, maxTokens) {
   };
 }
 
-async function invokeBedrock(prompt, maxTokens) {
-  const response = await bedrock.send(new InvokeModelCommand({
-    modelId,
-    contentType: "application/json",
-    accept: "application/json",
-    body: JSON.stringify(buildModelRequest(prompt, maxTokens)),
-  }));
+async function invokeBedrock(prompt, maxTokens, targetModel = modelId) {
+  const response = await bedrock.send(
+    new InvokeModelCommand({
+      modelId: targetModel,
+      contentType: "application/json",
+      accept: "application/json",
+      body: JSON.stringify(buildModelRequest(targetModel, prompt, maxTokens)),
+    }),
+  );
   const payload = JSON.parse(new TextDecoder().decode(response.body));
 
-  if (modelId.startsWith("anthropic.")) {
-    return payload.content?.filter((part) => part.type === "text").map((part) => part.text).join("\n");
+  if (targetModel.startsWith("anthropic.")) {
+    return payload.content
+      ?.filter((p) => p.type === "text")
+      .map((p) => p.text)
+      .join("\n");
   }
 
-  return payload.output?.message?.content?.map((part) => part.text || "").join("\n");
-}
-
-function validatePipeline(pipeline) {
-  if (!Array.isArray(pipeline) || pipeline.length === 0 || pipeline.length > 20) {
-    throw new Error("Pipeline must contain between 1 and 20 stages");
-  }
-
-  for (const stage of pipeline) {
-    if (!stage || typeof stage !== "object" || Array.isArray(stage)) {
-      throw new Error("Every pipeline stage must be an object");
-    }
-
-    const keys = Object.keys(stage);
-    if (keys.length !== 1 || !allowedStages.has(keys[0])) {
-      throw new Error("Pipeline contains an unsupported stage");
-    }
-
-    if (keys[0] === "$limit" && (!Number.isInteger(stage.$limit) || stage.$limit < 1 || stage.$limit > 100)) {
-      throw new Error("Pipeline limit must be an integer from 1 to 100");
-    }
-
-    if (keys[0] === "$lookup") {
-      if (!stage.$lookup || !["PIT_FORMS", "STAND_FORMS"].includes(stage.$lookup.from)) {
-        throw new Error("Lookup is restricted to scouting collections");
-      }
-      if (stage.$lookup.pipeline) validatePipeline(stage.$lookup.pipeline);
-    }
-
-    if (keys[0] === "$facet") {
-      for (const subPipeline of Object.values(stage.$facet || {})) {
-        validatePipeline(subPipeline);
-      }
-    }
-
-    inspectForForbiddenOperators(stage[keys[0]]);
-  }
-
-  if (!pipeline.some((stage) => Object.hasOwn(stage, "$limit"))) {
-    pipeline.push({ $limit: 100 });
-  }
-}
-
-function inspectForForbiddenOperators(value) {
-  if (!value || typeof value !== "object") return;
-
-  for (const [key, nestedValue] of Object.entries(value)) {
-    if (forbiddenOperators.has(key)) throw new Error("Pipeline contains a forbidden operator");
-    inspectForForbiddenOperators(nestedValue);
-  }
+  return payload.output?.message?.content?.map((p) => p.text || "").join("\n");
 }
 
 aiRouter.post("/api/ai/query", requireAdmin, async (req, res) => {
-  const userPrompt = req.body?.userPrompt;
-  if (typeof userPrompt !== "string" || userPrompt.trim().length === 0 || userPrompt.length > 2000) {
-    return res.status(400).json({ error: "userPrompt must be a non-empty string of at most 2000 characters" });
+  const { userPrompt, event: requestedEvent } = req.body || {};
+  if (typeof userPrompt !== "string" || !userPrompt.trim()) {
+    return res.status(400).json({ error: "Invalid userPrompt" });
+  }
+  if (userPrompt.trim().length > 2000) {
+    return res
+      .status(400)
+      .json({ error: "userPrompt exceeds the 2000 character limit" });
   }
 
   try {
     const appSettings = await SuperAllianceConfig.findOne({}).lean();
-    const activeEvent = appSettings?.event;
-    if (typeof activeEvent !== "string" || !activeEvent || activeEvent === "none") {
-      return res.status(409).json({ error: "No active event is configured" });
+    const queryEvent = requestedEvent?.trim() || appSettings?.event;
+    if (!queryEvent || queryEvent === "none") {
+      return res.status(409).json({ error: "No active event configured" });
     }
 
-    const pipelineText = await invokeBedrock(
-      `You generate safe MongoDB aggregation pipelines for FIRST Robotics Competition scouting.\n${getSchemaDescription()}\n` +
-      `The input stream contains documents from both collections for active event ${JSON.stringify(activeEvent)}. ` +
-      `Use _aiFormSource=stand for stand-form questions, _aiFormSource=pit for pit-form questions, ` +
-      `and both sources only when the question needs both. For questions requiring facts from both forms, ` +
-      `group by teamNumber and use conditional accumulators to test each condition against its own _aiFormSource; ` +
-      `then return only teams satisfying both conditions. PitForm has no structured drivetrain field, so search ` +
-      `its relevant string fields case-insensitively for terms such as "swerve" and do not infer unrecorded facts. ` +
-      `Because unioned form documents have different fields, wrap potentially missing values in $ifNull before ` +
-      `string operators such as $regexMatch. ` +
-      `For cross-form comparisons, $lookup may use only PIT_FORMS or STAND_FORMS. ` +
-      `Never use write stages, JavaScript operators, or any collection not listed. Return ONLY a valid JSON array ` +
-      `of aggregation stages, with no markdown or explanation. Keep results concise and include a $limit of at most 100.\n` +
-      `User question: ${userPrompt.trim()}`,
-      900,
-    );
-    const pipeline = JSON.parse(pipelineText);
-    validatePipeline(pipeline);
-    constrainLookupsToEvent(pipeline, activeEvent);
-    pipeline.unshift(
-      { $match: { event: activeEvent } },
-      { $addFields: { _aiFormSource: "stand" } },
-      {
-        $unionWith: {
-          coll: "PIT_FORMS",
-          pipeline: [
-            { $match: { event: activeEvent } },
-            { $addFields: { _aiFormSource: "pit" } },
-          ],
-        },
-      },
+    // 1. MQL Generation System Prompt (Runs on Nova Pro)
+    const mqlSystemPrompt = `You are an expert MongoDB Query Generator for FRC Scouting Data.
+Your task is to produce MongoDB Aggregation Pipelines that directly answer the user's question.
+
+${getSchemaDescription()}
+
+CRITICAL FORMAT RULES:
+1. Return strictly an ARRAY OF PIPELINES (an array of arrays of pipeline stages).
+   Example for a single query: [ [ {"$group": ...}, {"$sort": ...} ] ]
+   Example for a multi-part query: [ [ {"$group": ...} ], [ {"$match": ...} ] ]
+2. Output ONLY the raw JSON array. Do NOT include conversational greetings or extra commentary.
+3. Do NOT include $match on event code; express backend will inject event matching safely.
+4. Use $sum for a requested total and $avg for a requested average.
+
+QUERY DESIGN RULES:
+1. Multi-Team Comparisons (e.g. "Compare 254 and 7028"): You MUST return dedicated, separate pipeline arrays for EACH team mentioned so data is isolated. Never combine multiple compared teams into a single $in match pipeline.
+2. Consistency & Standard Deviation: When users ask about "consistency", "spread", "variance", or "standard deviation", use {"$stdDevSamp": "$metricField"} inside the $group stage alongside $avg. Name the output field "stdDev" or "stdDevPoints".
+3. Qualitative Issues & Criticals: For EACH team queried, return two distinct sub-pipelines:
+   - Pipeline A: Filter {"teamNumber": X, "criticals": {"$not": {"$size": 0}}} to get matchNumber, teamNumber, criticals, comments.
+   - Pipeline B: Filter {"teamNumber": X} with {"$count": "totalMatches"} to get exact total matches played by team X.
+4. Field "criticals" is an Array of strings/objects. Check non-empty with {"$not": {"$size": 0}} or {"$exists": true, "$ne": []}.
+5. Leaderboards/Rankings: Group by "teamNumber" and default to per-match averages ($avg) unless total sum is explicitly requested. Always preserve "teamNumber" in $group/_id output.
+
+User Question: ${userPrompt.trim()}`;
+
+    const rawMql = await invokeBedrock(mqlSystemPrompt, 1200, modelId);
+
+    let cleanMql = rawMql.trim();
+    if (cleanMql.startsWith("```")) {
+      cleanMql = cleanMql
+        .replace(/^```(json)?/, "")
+        .replace(/```$/, "")
+        .trim();
+    }
+
+    // Extract JSON Array using regex to drop any leading/trailing prose
+    const jsonMatch = cleanMql.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error("Model response did not contain a JSON array");
+    }
+
+    let parsedMql = JSON.parse(jsonMatch[0]);
+
+    // Normalize: Handle both single pipeline [...] and array of pipelines [[...], [...]]
+    let pipelines = [];
+    if (Array.isArray(parsedMql) && parsedMql.length > 0) {
+      pipelines = Array.isArray(parsedMql[0]) ? parsedMql : [parsedMql];
+    } else {
+      throw new Error("Generated MQL is not a valid array of pipelines");
+    }
+
+    // Inject event match stage safely into every pipeline
+    if (queryEvent !== "all") {
+      const eventFilter = { event: queryEvent.trim() };
+      pipelines = pipelines.map((pipeline) => [
+        { $match: eventFilter },
+        ...pipeline,
+      ]);
+    }
+
+    console.log(`Executing ${pipelines.length} MQL Pipelines in parallel...`);
+
+    // Execute all generated pipelines concurrently with query metadata
+    const combinedResults = await Promise.all(
+      pipelines.map(async (pipeline, idx) => {
+        console.log(`Pipeline ${idx + 1}:`, JSON.stringify(pipeline, null, 2));
+        const data = await StandFormSchema.aggregate(pipeline)
+          .option({ maxTimeMS: 10000, allowDiskUse: false })
+          .exec();
+        return {
+          pipelineIndex: idx + 1,
+          pipelineQuery: pipeline,
+          returnedRecords: data,
+        };
+      }),
     );
 
-    const results = await StandFormSchema.aggregate(pipeline)
-      .option({ maxTimeMS: 10000, allowDiskUse: false })
-      .exec();
+    // 2. Summarization System Prompt
     const answer = await invokeBedrock(
-      `Summarize these FIRST Robotics Competition scouting results for a drive team or alliance strategist. ` +
-      `Be factual, distinguish missing data from negative performance, and do not invent conclusions. ` +
-      `Return a concise plain-language answer.\nQuestion: ${userPrompt.trim()}\nResults: ${JSON.stringify(results)}`,
-      700,
+      `Summarize these FRC scouting query results for an alliance selection strategist.
+Answer directly, factually, and concisely based ONLY on the provided query results. Address all parts of the user's question clearly.
+
+STRICT DATA ATTRIBUTION & FORMATTING RULES:
+1. DATA ATTRIBUTION: Look at 'pipelineQuery' AND 'teamNumber' inside returnedRecords for each pipeline. NEVER cross-attribute Match numbers or critical details from team A's pipeline to team B!
+2. FOR QUALITATIVE ISSUES (criticals, breakdowns, notes): Match documents directly to the team identified in that specific pipeline. Report the exact incident count and total matches played, then list specific match numbers (e.g. "Team 254 had 1 critical issue across 11 matches: 'Mechanism Broke' in Match 82.").
+3. NEVER calculate, fabricate, or report a "critical incident rate" percentage for qualitative issues.
+4. FOR CONSISTENCY & STANDARD DEVIATION: Lower standard deviation values indicate higher consistency. Report standard deviation values rounded to 1 decimal place (e.g., "Std Dev: 12.4").
+5. FOR PRE-AGGREGATED METRICS: Only convert rates to percentages if the pipeline explicitly calculates a boolean average (e.g., winRate: 0.7 -> 70%).
+6. Round average numerical scoring metrics (like fuel or points) to 1 decimal place.
+
+Question: ${userPrompt.trim()}
+Results: ${JSON.stringify(combinedResults)}`,
+      800,
+      summaryModelId,
     );
 
-    return res.json({ answer: answer || "No scouting insight could be generated from these results." });
+    return res.json({ answer: answer || "No insight generated." });
   } catch (error) {
-    console.error("AI scouting query failed:", error.message);
-    return res.status(502).json({ error: "Unable to complete the scouting query" });
+    console.error("MQL Scouting execution failed:", error.message);
+    return res
+      .status(502)
+      .json({
+        error: "Failed to evaluate scouting query",
+        details: error.message,
+      });
   }
 });
 

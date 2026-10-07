@@ -81,84 +81,62 @@ describe('AI scouting query validation', () => {
     expect(response.status).toBe(400);
   });
 
-  test('scopes the primary query and joined forms to the persisted active event', async () => {
+  test('uses the selected event and generates a team-level average aggregate', async () => {
     mockBedrockSend
       .mockResolvedValueOnce(bedrockTextResponse(JSON.stringify([
-        {
-          $lookup: {
-            from: 'PIT_FORMS',
-            localField: 'teamNumber',
-            foreignField: 'teamNumber',
-            as: 'pitForms',
-          },
-        },
-        { $group: { _id: '$teamNumber', records: { $sum: 1 } } },
+        { $group: { _id: '$teamNumber', averageTeleFuel: { $avg: '$teleFuel' } } },
+        { $sort: { averageTeleFuel: -1 } },
+        { $limit: 5 },
+        { $project: { _id: 0, teamNumber: '$_id', averageTeleFuel: 1 } },
       ])))
-      .mockResolvedValueOnce(bedrockTextResponse('Teams with scouting records were reviewed.'));
+      .mockResolvedValueOnce(bedrockTextResponse('These are the top teams by average teleop fuel per match.'));
 
     const response = await request(app)
       .post('/api/ai/query')
-      .send({ userPrompt: 'Which teams have pit data?' });
+      .send({ userPrompt: 'Top 5 by average teleop fuel', event: 'OTHER_EVENT' });
 
     expect(response.status).toBe(200);
-    expect(response.body.answer).toBe('Teams with scouting records were reviewed.');
+    expect(response.body.answer).toContain('average');
     const pipeline = mockAggregate.mock.calls[0][0];
-    expect(pipeline[0]).toEqual({ $match: { event: 'TEST_EVENT' } });
-    expect(pipeline[2].$unionWith).toEqual({
-      coll: 'PIT_FORMS',
-      pipeline: [
-        { $match: { event: 'TEST_EVENT' } },
-        { $addFields: { _aiFormSource: 'pit' } },
-      ],
-    });
-    expect(pipeline.find((stage) => stage.$lookup).$lookup.pipeline[0])
-      .toEqual({ $match: { event: 'TEST_EVENT' } });
+    expect(pipeline[0]).toEqual({ $match: { event: 'OTHER_EVENT' } });
+    expect(pipeline[1].$group._id).toBe('$teamNumber');
+    expect(pipeline[1].$group.averageTeleFuel).toEqual({ $avg: '$teleFuel' });
+    expect(pipeline.some((stage) => stage.$unionWith || stage.$lookup)).toBe(false);
+    const generationPrompt = JSON.parse(mockBedrockSend.mock.calls[0][0].body).messages[0].content[0].text;
+    expect(generationPrompt).toContain('Use $sum for a requested total and $avg for a requested average');
+    expect(generationPrompt).not.toContain('PIT_FORMS');
     expect(mockAggregateOption).toHaveBeenCalledWith({ maxTimeMS: 10000, allowDiskUse: false });
   });
 
-  test('can correlate pit-form text and stand-form climb data by team', async () => {
-    const teamCorrelation = {
-      $group: {
-        _id: '$teamNumber',
-        hasSwerve: {
-          $max: {
-            $cond: [
-              {
-                $and: [
-                  { $eq: ['$_aiFormSource', 'pit'] },
-                  { $regexMatch: { input: { $ifNull: ['$strongestValue', ''] }, regex: 'swerve', options: 'i' } },
-                ],
-              },
-              1,
-              0,
-            ],
-          },
-        },
-        hasClimbed: {
-          $max: {
-            $cond: [
-              { $and: [{ $eq: ['$_aiFormSource', 'stand'] }, { $eq: ['$didClimb', true] }] },
-              1,
-              0,
-            ],
-          },
-        },
-      },
-    };
+  test('queries all events without applying an event match', async () => {
     mockBedrockSend
       .mockResolvedValueOnce(bedrockTextResponse(JSON.stringify([
-        teamCorrelation,
-        { $match: { hasSwerve: 1, hasClimbed: 1 } },
-        { $project: { _id: 0, teamNumber: '$_id' } },
+        {
+          $group: { _id: '$teamNumber', totalTeleFuel: { $sum: '$teleFuel' } },
+        },
       ])))
-      .mockResolvedValueOnce(bedrockTextResponse('Team 1234 has matching pit and climb records.'));
+      .mockResolvedValueOnce(bedrockTextResponse('These are total teleop fuel scores across all events.'));
 
     const response = await request(app)
       .post('/api/ai/query')
-      .send({ userPrompt: 'Find teams who have swerve drive and also climbed at least once' });
+      .send({ userPrompt: 'Total teleop fuel by team', event: 'all' });
 
     expect(response.status).toBe(200);
-    expect(response.body.answer).toContain('Team 1234');
-    expect(mockAggregate.mock.calls[0][0]).toContainEqual(teamCorrelation);
+    expect(response.body.answer).toContain('total');
+    expect(mockAggregate.mock.calls[0][0][0].$group).toBeDefined();
+    expect(mockAggregate.mock.calls[0][0][0].$match).toBeUndefined();
+  });
+
+  test('defaults to the configured event when none is selected', async () => {
+    mockBedrockSend
+      .mockResolvedValueOnce(bedrockTextResponse(JSON.stringify([{ $count: 'teams' }])))
+      .mockResolvedValueOnce(bedrockTextResponse('Counted teams at the active event.'));
+
+    const response = await request(app)
+      .post('/api/ai/query')
+      .send({ userPrompt: 'How many teams are there?' });
+
+    expect(response.status).toBe(200);
+    expect(mockAggregate.mock.calls[0][0][0]).toEqual({ $match: { event: 'TEST_EVENT' } });
   });
 });

@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Show, UserButton, useUser } from "@clerk/react";
 import { LoginButton } from "./login-button";
+import { Sparkles } from "lucide-react";
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
@@ -80,6 +81,12 @@ export function MobileNav() {
                 <>
                 <MobileLink href={"/data"} onOpenChange={setOpen}>
                   Data
+                </MobileLink>
+                <MobileLink href="/admin/ai-scouting" onOpenChange={setOpen}>
+                  <span className="inline-flex items-center gap-2">
+                    <Sparkles aria-hidden="true" className="h-4 w-4" />
+                    AI Scouting
+                  </span>
                 </MobileLink>
                 <MobileLink href={"/analysis"} onOpenChange={setOpen}>
                   Analysis
