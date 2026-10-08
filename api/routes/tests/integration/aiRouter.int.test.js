@@ -104,8 +104,58 @@ describe('AI scouting query validation', () => {
     expect(pipeline.some((stage) => stage.$unionWith || stage.$lookup)).toBe(false);
     const generationPrompt = JSON.parse(mockBedrockSend.mock.calls[0][0].body).messages[0].content[0].text;
     expect(generationPrompt).toContain('Use $sum for a requested total and $avg for a requested average');
+    expect(generationPrompt).toContain('"$type": "array", "$ne": []');
+    expect(generationPrompt).toContain('Do NOT include markdown fences, comments, trailing commas');
+    expect(JSON.parse(mockBedrockSend.mock.calls[0][0].body).inferenceConfig.max_new_tokens).toBe(2500);
     expect(generationPrompt).not.toContain('PIT_FORMS');
     expect(mockAggregateOption).toHaveBeenCalledWith({ maxTimeMS: 10000, allowDiskUse: false });
+  });
+
+  test('repairs malformed pipeline JSON once using the parse error', async () => {
+    const malformedJson = '[{"$count": "teams"}';
+    mockBedrockSend
+      .mockResolvedValueOnce(bedrockTextResponse(malformedJson))
+      .mockResolvedValueOnce(bedrockTextResponse('[{"$count":"teams"}]'))
+      .mockResolvedValueOnce(bedrockTextResponse('Counted teams.'));
+
+    const response = await request(app)
+      .post('/api/ai/query')
+      .send({ userPrompt: 'How many teams are there?' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.answer).toBe('Counted teams.');
+    expect(mockBedrockSend).toHaveBeenCalledTimes(3);
+    const repairPrompt = JSON.parse(mockBedrockSend.mock.calls[1][0].body).messages[0].content[0].text;
+    expect(repairPrompt).toContain('Your previous response could not be parsed or executed');
+    expect(repairPrompt).toContain('Expected');
+    expect(repairPrompt).toContain(JSON.stringify(malformedJson));
+    expect(mockAggregate).toHaveBeenCalledTimes(1);
+  });
+
+  test('repairs a pipeline once using the MongoDB execution error', async () => {
+    mockBedrockSend
+      .mockResolvedValueOnce(
+        bedrockTextResponse('[{"$project":{"criticalCount":{"$size":"$criticals"}}}]'),
+      )
+      .mockResolvedValueOnce(bedrockTextResponse('[{"$project":{"criticalCount":{"$size":{"$cond":[{"$isArray":"$criticals"},"$criticals",[]]}}}}]'))
+      .mockResolvedValueOnce(bedrockTextResponse('Counted criticals.'));
+    mockAggregateExec
+      .mockRejectedValueOnce(
+        new Error('The argument to $size must be an array, but was of type: int'),
+      )
+      .mockResolvedValueOnce([{ criticalCount: 0 }]);
+
+    const response = await request(app)
+      .post('/api/ai/query')
+      .send({ userPrompt: 'Count criticals' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.answer).toBe('Counted criticals.');
+    expect(mockBedrockSend).toHaveBeenCalledTimes(3);
+    const repairPrompt = JSON.parse(mockBedrockSend.mock.calls[1][0].body).messages[0].content[0].text;
+    expect(repairPrompt).toContain('The argument to $size must be an array');
+    expect(repairPrompt).toContain('$isArray');
+    expect(mockAggregate).toHaveBeenCalledTimes(2);
   });
 
   test('queries all events without applying an event match', async () => {

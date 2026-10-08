@@ -64,6 +64,87 @@ async function invokeBedrock(prompt, maxTokens, targetModel = modelId) {
   return payload.output?.message?.content?.map((p) => p.text || "").join("\n");
 }
 
+function parseMqlPipelines(rawMql) {
+  if (typeof rawMql !== "string" || !rawMql.trim()) {
+    throw new Error("Model response was empty");
+  }
+
+  let cleanMql = rawMql.trim();
+  const codeFenceMatch = cleanMql.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  if (codeFenceMatch) {
+    cleanMql = codeFenceMatch[1].trim();
+  }
+
+  const parsedMql = JSON.parse(cleanMql);
+  if (!Array.isArray(parsedMql) || parsedMql.length === 0) {
+    throw new Error("Generated MQL is not a non-empty array");
+  }
+
+  const pipelines = Array.isArray(parsedMql[0]) ? parsedMql : [parsedMql];
+  if (
+    pipelines.some(
+      (pipeline) =>
+        !Array.isArray(pipeline) ||
+        pipeline.length === 0 ||
+        pipeline.some(
+          (stage) =>
+            stage === null ||
+            typeof stage !== "object" ||
+            Array.isArray(stage) ||
+            Object.keys(stage).length !== 1 ||
+            !Object.keys(stage)[0].startsWith("$"),
+        ),
+    )
+  ) {
+    throw new Error(
+      "Generated MQL must contain non-empty pipelines of single-operator stages",
+    );
+  }
+
+  return pipelines;
+}
+
+function addEventFilter(pipelines, queryEvent) {
+  if (queryEvent === "all") {
+    return pipelines;
+  }
+
+  const eventFilter = { event: queryEvent.trim() };
+  return pipelines.map((pipeline) => [{ $match: eventFilter }, ...pipeline]);
+}
+
+async function executePipelines(pipelines) {
+  const results = await Promise.allSettled(
+    pipelines.map(async (pipeline, idx) => {
+      const data = await StandFormSchema.aggregate(pipeline)
+        .option({ maxTimeMS: 10000, allowDiskUse: false })
+        .exec();
+      return {
+        pipelineIndex: idx + 1,
+        pipelineQuery: pipeline,
+        returnedRecords: data,
+      };
+    }),
+  );
+
+  const failure = results.find((result) => result.status === "rejected");
+  if (failure) {
+    throw failure.reason;
+  }
+
+  return results.map((result) => result.value);
+}
+
+function buildMqlRepairPrompt(systemPrompt, previousOutput, failure) {
+  return `${systemPrompt}
+
+Your previous response could not be parsed or executed as a MongoDB aggregation pipeline.
+Failure: ${failure.message}
+Previous response (JSON-encoded text): ${JSON.stringify(previousOutput)}
+
+Correct the response to address the original question. Return only the complete, valid JSON array of pipelines. Do not include markdown fences or commentary.`;
+}
+
 aiRouter.post("/api/ai/query", requireAdmin, async (req, res) => {
   const { userPrompt, event: requestedEvent } = req.body || {};
   if (typeof userPrompt !== "string" || !userPrompt.trim()) {
@@ -92,7 +173,7 @@ CRITICAL FORMAT RULES:
 1. Return strictly an ARRAY OF PIPELINES (an array of arrays of pipeline stages).
    Example for a single query: [ [ {"$group": ...}, {"$sort": ...} ] ]
    Example for a multi-part query: [ [ {"$group": ...} ], [ {"$match": ...} ] ]
-2. Output ONLY the raw JSON array. Do NOT include conversational greetings or extra commentary.
+2. Output ONLY one complete, valid JSON array. Do NOT include markdown fences, comments, trailing commas, or conversational text. Check that every string, object, and array is correctly closed and that the JSON parses before responding.
 3. Do NOT include $match on event code; express backend will inject event matching safely.
 4. Use $sum for a requested total and $avg for a requested average.
 
@@ -100,61 +181,29 @@ QUERY DESIGN RULES:
 1. Multi-Team Comparisons (e.g. "Compare 254 and 7028"): You MUST return dedicated, separate pipeline arrays for EACH team mentioned so data is isolated. Never combine multiple compared teams into a single $in match pipeline.
 2. Consistency & Standard Deviation: When users ask about "consistency", "spread", "variance", or "standard deviation", use {"$stdDevSamp": "$metricField"} inside the $group stage alongside $avg. Name the output field "stdDev" or "stdDevPoints".
 3. Qualitative Issues & Criticals: For EACH team queried, return two distinct sub-pipelines:
-   - Pipeline A: Filter {"teamNumber": X, "criticals": {"$not": {"$size": 0}}} to get matchNumber, teamNumber, criticals, comments.
+   - Pipeline A: Filter {"teamNumber": X, "criticals": {"$type": "array", "$ne": []}} to get matchNumber, teamNumber, criticals, comments.
    - Pipeline B: Filter {"teamNumber": X} with {"$count": "totalMatches"} to get exact total matches played by team X.
-4. Field "criticals" is an Array of strings/objects. Check non-empty with {"$not": {"$size": 0}} or {"$exists": true, "$ne": []}.
+4. Field "criticals" is an Array of strings/objects. In a $match query, check for non-empty values with {"$type": "array", "$ne": []}; do not use $size in query predicates. In an aggregation expression, guard $size with $isArray, for example {"$cond": [{"$isArray": "$criticals"}, {"$size": "$criticals"}, 0]}.
 5. Leaderboards/Rankings: Group by "teamNumber" and default to per-match averages ($avg) unless total sum is explicitly requested. Always preserve "teamNumber" in $group/_id output.
 
 User Question: ${userPrompt.trim()}`;
 
-    const rawMql = await invokeBedrock(mqlSystemPrompt, 1200, modelId);
+    let rawMql = await invokeBedrock(mqlSystemPrompt, 2500, modelId);
+    let combinedResults;
 
-    let cleanMql = rawMql.trim();
-    if (cleanMql.startsWith("```")) {
-      cleanMql = cleanMql
-        .replace(/^```(json)?/, "")
-        .replace(/```$/, "")
-        .trim();
+    try {
+      const pipelines = parseMqlPipelines(rawMql);
+      combinedResults = await executePipelines(
+        addEventFilter(pipelines, queryEvent),
+      );
+    } catch (error) {
+      const repairPrompt = buildMqlRepairPrompt(mqlSystemPrompt, rawMql, error);
+      rawMql = await invokeBedrock(repairPrompt, 2500, modelId);
+      const repairedPipelines = parseMqlPipelines(rawMql);
+      combinedResults = await executePipelines(
+        addEventFilter(repairedPipelines, queryEvent),
+      );
     }
-
-    // Extract JSON Array using regex to drop any leading/trailing prose
-    const jsonMatch = cleanMql.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      throw new Error("Model response did not contain a JSON array");
-    }
-
-    let parsedMql = JSON.parse(jsonMatch[0]);
-
-    // Normalize: Handle both single pipeline [...] and array of pipelines [[...], [...]]
-    let pipelines = [];
-    if (Array.isArray(parsedMql) && parsedMql.length > 0) {
-      pipelines = Array.isArray(parsedMql[0]) ? parsedMql : [parsedMql];
-    } else {
-      throw new Error("Generated MQL is not a valid array of pipelines");
-    }
-
-    // Inject event match stage safely into every pipeline
-    if (queryEvent !== "all") {
-      const eventFilter = { event: queryEvent.trim() };
-      pipelines = pipelines.map((pipeline) => [
-        { $match: eventFilter },
-        ...pipeline,
-      ]);
-    }
-
-    // Execute all generated pipelines concurrently with query metadata
-    const combinedResults = await Promise.all(
-      pipelines.map(async (pipeline, idx) => {
-        const data = await StandFormSchema.aggregate(pipeline)
-          .option({ maxTimeMS: 10000, allowDiskUse: false })
-          .exec();
-        return {
-          pipelineIndex: idx + 1,
-          pipelineQuery: pipeline,
-          returnedRecords: data,
-        };
-      }),
-    );
 
     // 2. Summarization System Prompt
     const answer = await invokeBedrock(
@@ -172,7 +221,7 @@ STRICT DATA ATTRIBUTION & FORMATTING RULES:
 
 Question: ${userPrompt.trim()}
 Results: ${JSON.stringify(combinedResults)}`,
-      800,
+      1500,
       summaryModelId,
     );
 
