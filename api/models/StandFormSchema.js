@@ -20,12 +20,12 @@ const StandFormSchema = new Schema(
     climbPosition: String,
     climbLevel: String,
     backClimb: Boolean,
-  centerClimbLevelOne: Boolean,
-  sideClimbLevelOne: Boolean,
-  centerClimbLevelTwo: Boolean,
-  sideClimbLevelTwo: Boolean,
-  centerClimbLevelThree: Boolean,
-  sideClimbLevelThree: Boolean,
+    centerClimbLevelOne: Boolean,
+    sideClimbLevelOne: Boolean,
+    centerClimbLevelTwo: Boolean,
+    sideClimbLevelTwo: Boolean,
+    centerClimbLevelThree: Boolean,
+    sideClimbLevelThree: Boolean,
     criticals: Array,
     comments: String,
     strategy: String,
@@ -36,7 +36,7 @@ const StandFormSchema = new Schema(
     moveWhileShoot: Boolean,
     win: Boolean,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = model("StandForm", StandFormSchema, "STAND_FORMS");

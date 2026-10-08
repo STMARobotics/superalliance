@@ -43,7 +43,7 @@ The workflow for deploying the API is defined in `superalliance-api-workflow.yml
         AWS_REGION=us-east-2
         ROBOT_IMAGE_BUCKET=super-alliance-robot-images
         ```
-    * In order to upload pit forms with images:
+    * In order to upload pit forms with images and run AI Scouting with AWS Bedrock:
       1) Log in to the [AWS access portal](https://d-9067879019.awsapps.com/start) with your stmarobotics.org Google account
       2) Choose _Access keys_
       3) Configure your access keys with an environment variable or credentials file

@@ -142,12 +142,9 @@ User Question: ${userPrompt.trim()}`;
       ]);
     }
 
-    console.log(`Executing ${pipelines.length} MQL Pipelines in parallel...`);
-
     // Execute all generated pipelines concurrently with query metadata
     const combinedResults = await Promise.all(
       pipelines.map(async (pipeline, idx) => {
-        console.log(`Pipeline ${idx + 1}:`, JSON.stringify(pipeline, null, 2));
         const data = await StandFormSchema.aggregate(pipeline)
           .option({ maxTimeMS: 10000, allowDiskUse: false })
           .exec();
@@ -165,12 +162,13 @@ User Question: ${userPrompt.trim()}`;
 Answer directly, factually, and concisely based ONLY on the provided query results. Address all parts of the user's question clearly.
 
 STRICT DATA ATTRIBUTION & FORMATTING RULES:
-1. DATA ATTRIBUTION: Look at 'pipelineQuery' AND 'teamNumber' inside returnedRecords for each pipeline. NEVER cross-attribute Match numbers or critical details from team A's pipeline to team B!
-2. FOR QUALITATIVE ISSUES (criticals, breakdowns, notes): Match documents directly to the team identified in that specific pipeline. Report the exact incident count and total matches played, then list specific match numbers (e.g. "Team 254 had 1 critical issue across 11 matches: 'Mechanism Broke' in Match 82.").
-3. NEVER calculate, fabricate, or report a "critical incident rate" percentage for qualitative issues.
-4. FOR CONSISTENCY & STANDARD DEVIATION: Lower standard deviation values indicate higher consistency. Report standard deviation values rounded to 1 decimal place (e.g., "Std Dev: 12.4").
-5. FOR PRE-AGGREGATED METRICS: Only convert rates to percentages if the pipeline explicitly calculates a boolean average (e.g., winRate: 0.7 -> 70%).
-6. Round average numerical scoring metrics (like fuel or points) to 1 decimal place.
+1. OUTPUT FORMAT: Respond strictly in clean, well-formatted Markdown. Do NOT wrap the entire response in markdown code blocks (\`\`\`markdown or \`\`\`).
+2. DATA ATTRIBUTION: Look at 'pipelineQuery' AND 'teamNumber' inside returnedRecords for each pipeline. NEVER cross-attribute Match numbers or critical details from team A's pipeline to team B!
+3. FOR QUALITATIVE ISSUES (criticals, breakdowns, notes): Match documents directly to the team identified in that specific pipeline. Report the exact incident count and total matches played, then list specific match numbers (e.g. "Team 254 had 1 critical issue across 11 matches: 'Mechanism Broke' in Match 82.").
+4. NEVER calculate, fabricate, or report a "critical incident rate" percentage for qualitative issues.
+5. FOR CONSISTENCY & STANDARD DEVIATION: Lower standard deviation values indicate higher consistency. Report standard deviation values rounded to 1 decimal place (e.g., "Std Dev: 12.4").
+6. FOR PRE-AGGREGATED METRICS: Only convert rates to percentages if the pipeline explicitly calculates a boolean average (e.g., winRate: 0.7 -> 70%).
+7. Round average numerical scoring metrics (like fuel or points) to 1 decimal place.
 
 Question: ${userPrompt.trim()}
 Results: ${JSON.stringify(combinedResults)}`,
@@ -181,12 +179,10 @@ Results: ${JSON.stringify(combinedResults)}`,
     return res.json({ answer: answer || "No insight generated." });
   } catch (error) {
     console.error("MQL Scouting execution failed:", error.message);
-    return res
-      .status(502)
-      .json({
-        error: "Failed to evaluate scouting query",
-        details: error.message,
-      });
+    return res.status(502).json({
+      error: "Failed to evaluate scouting query",
+      details: error.message,
+    });
   }
 });
 
