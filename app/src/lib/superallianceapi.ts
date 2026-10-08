@@ -153,6 +153,18 @@ export function useSuperAllianceApi() {
     }
   };
 
+  const queryScoutingAssistant = async (userPrompt: string, event: string) => {
+    try {
+      const res = await api.post(`${import.meta.env.VITE_API_URL}/api/ai/query`, { userPrompt, event });
+      return res.data.answer as string;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || "The scouting query failed.");
+      }
+      throw new Error("The scouting query failed.");
+    }
+  };
+
   const getTeamSelection = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
@@ -227,6 +239,7 @@ export function useSuperAllianceApi() {
     getEventAggregation,
     getBadComments,
     getAppSettings,
+    queryScoutingAssistant,
     getTeamSelection,
     saveTeamSelection,
     exportTeamSelection,

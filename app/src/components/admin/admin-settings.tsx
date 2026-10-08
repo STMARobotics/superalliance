@@ -44,7 +44,7 @@ function AdminSettingsForm({
   events: any;
   settings: Partial<SettingsFormValues>;
 }) {
-  const { setSelectedEvent, selectedEvent } = useSuperAlliance();
+  const { setSelectedEvent, selectedEvent, refreshSA } = useSuperAlliance();
   const { api } = useSuperAllianceApi();
 
   const form = useForm<SettingsFormValues>({
@@ -63,19 +63,18 @@ function AdminSettingsForm({
 
   function onSubmit(data: SettingsFormValues) {
     (async function () {
-      await api
-        .post(`${import.meta.env.VITE_API_URL}/api/settings/app/save`, data)
-        .then(function () {
-          toast.success("Settings saved successfully!");
-        })
-        .catch(function () {
-          toast.error("The settings failed to save. Please contact an admin!");
-        });
-      setSelectedEvent(data.event);
+      try {
+        await api.post(`${import.meta.env.VITE_API_URL}/api/settings/app/save`, data);
+        toast.success("Settings saved successfully!");
+        setSelectedEvent(data.event);
+        refreshSA?.appSettings();
+      } catch {
+        toast.error("The settings failed to save. Please contact an admin!");
+      }
     })();
   }
   return (
-    <div className="space-y-6 p-10 pb-16 md:block w-full">
+    <div className="mx-auto max-w-4xl space-y-6 px-4 py-6 sm:px-8 sm:py-10 md:block w-full">
       <div className="space-y-0.5">
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="text-muted-foreground">
