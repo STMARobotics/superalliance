@@ -5,7 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@mantine/core";
 import { LoaderCircle, Send, Sparkles } from "lucide-react";
 import { FormEvent, useState } from "react";
-import ReactMarkdown from "react-markdown"; // <--- Add this import
+import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
 
 function AIScouting() {
   const { appSettings, events } = useSuperAlliance();
@@ -119,7 +120,30 @@ function AIScouting() {
             </h3>
             
             <div className="text-sm text-foreground sm:text-base space-y-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 [&_strong]:font-bold">
-              <ReactMarkdown>{answer}</ReactMarkdown>
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  table: ({ node, ...props }) => (
+                    <div className="my-4 overflow-x-auto rounded-lg border border-neutral-800">
+                      <table className="w-full text-left text-sm text-neutral-200 border-collapse" {...props} />
+                    </div>
+                  ),
+                  thead: ({ node, ...props }) => (
+                    <thead className="bg-neutral-900 border-b border-neutral-800 text-xs font-semibold uppercase text-neutral-400" {...props} />
+                  ),
+                  tr: ({ node, ...props }) => (
+                    <tr className="border-b border-neutral-800/60 transition-colors hover:bg-neutral-900/50" {...props} />
+                  ),
+                  th: ({ node, ...props }) => (
+                    <th className="px-4 py-3 font-semibold text-amber-400" {...props} />
+                  ),
+                  td: ({ node, ...props }) => (
+                    <td className="px-4 py-3 align-top whitespace-normal" {...props} />
+                  ),
+                }}
+              >
+            {answer}
+          </ReactMarkdown>
             </div>
           </section>
         )}
