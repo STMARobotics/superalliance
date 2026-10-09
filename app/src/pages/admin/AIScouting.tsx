@@ -4,7 +4,7 @@ import { useSuperAllianceApi } from "@/lib/superallianceapi";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@mantine/core";
 import { LoaderCircle, Send, Sparkles } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { SubmitEvent, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 
@@ -27,7 +27,19 @@ function AIScouting() {
     eventOptions.push({ event_code: activeEvent, short_name: activeEventName });
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault(); // Prevent standard newline insertion
+      
+      // Check form submit constraints (non-empty & not already loading)
+      if (prompt.trim() && !isLoading) {
+        // Dispatch submit event directly to the parent form element
+        event.currentTarget.form?.requestSubmit();
+      }
+    }
+  };
+
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!prompt.trim() || isLoading) return;
 
@@ -75,6 +87,7 @@ function AIScouting() {
             id="scouting-prompt"
             value={prompt}
             onChange={(event) => setPrompt(event.currentTarget.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Which teams at this event have never climbed?"
             minRows={4}
             maxRows={10}
