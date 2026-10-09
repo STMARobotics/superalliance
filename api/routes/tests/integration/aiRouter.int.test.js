@@ -13,7 +13,7 @@ jest.mock('@clerk/express', () => ({
 }));
 jest.mock('@aws-sdk/client-bedrock-runtime', () => ({
   BedrockRuntimeClient: jest.fn(() => ({ send: mockBedrockSend })),
-  InvokeModelCommand: jest.fn((input) => input),
+  ConverseCommand: jest.fn((input) => input),
 }));
 jest.mock('../../../models/SuperAllianceConfig', () => ({ findOne: mockSettingsFindOne }));
 
@@ -33,9 +33,7 @@ const app = require('../../../index');
 
 function bedrockTextResponse(text) {
   return {
-    body: new TextEncoder().encode(JSON.stringify({
-      output: { message: { content: [{ text }] } },
-    })),
+    output: { message: { content: [{ text }] } },
   };
 }
 
@@ -102,11 +100,11 @@ describe('AI scouting query validation', () => {
     expect(pipeline[1].$group._id).toBe('$teamNumber');
     expect(pipeline[1].$group.averageTeleFuel).toEqual({ $avg: '$teleFuel' });
     expect(pipeline.some((stage) => stage.$unionWith || stage.$lookup)).toBe(false);
-    const generationPrompt = JSON.parse(mockBedrockSend.mock.calls[0][0].body).messages[0].content[0].text;
+    const generationPrompt = mockBedrockSend.mock.calls[0][0].system[0].text;
     expect(generationPrompt).toContain('Use $sum for a requested total and $avg for a requested average');
     expect(generationPrompt).toContain('"$type": "array", "$ne": []');
     expect(generationPrompt).toContain('Do NOT include markdown fences, comments, trailing commas');
-    expect(JSON.parse(mockBedrockSend.mock.calls[0][0].body).inferenceConfig.max_new_tokens).toBe(2500);
+    expect(mockBedrockSend.mock.calls[0][0].inferenceConfig.maxTokens).toBe(2500);
     expect(generationPrompt).not.toContain('PIT_FORMS');
     expect(mockAggregateOption).toHaveBeenCalledWith({ maxTimeMS: 10000, allowDiskUse: false });
   });
@@ -125,7 +123,7 @@ describe('AI scouting query validation', () => {
     expect(response.status).toBe(200);
     expect(response.body.answer).toBe('Counted teams.');
     expect(mockBedrockSend).toHaveBeenCalledTimes(3);
-    const repairPrompt = JSON.parse(mockBedrockSend.mock.calls[1][0].body).messages[0].content[0].text;
+    const repairPrompt = mockBedrockSend.mock.calls[1][0].system[0].text;
     expect(repairPrompt).toContain('Your previous response could not be parsed or executed');
     expect(repairPrompt).toContain('Expected');
     expect(repairPrompt).toContain(JSON.stringify(malformedJson));
@@ -152,7 +150,7 @@ describe('AI scouting query validation', () => {
     expect(response.status).toBe(200);
     expect(response.body.answer).toBe('Counted criticals.');
     expect(mockBedrockSend).toHaveBeenCalledTimes(3);
-    const repairPrompt = JSON.parse(mockBedrockSend.mock.calls[1][0].body).messages[0].content[0].text;
+    const repairPrompt = mockBedrockSend.mock.calls[1][0].system[0].text;
     expect(repairPrompt).toContain('The argument to $size must be an array');
     expect(repairPrompt).toContain('$isArray');
     expect(mockAggregate).toHaveBeenCalledTimes(2);

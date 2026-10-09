@@ -4,25 +4,27 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Home from "./pages/client/Home";
+import { lazy, Suspense } from "react";
 import Header from "./components/header";
-import SignInPage from "./pages/handlers/login/page";
 import { Show, useUser } from "@clerk/react";
-import StandForm from "./pages/forms/Stand";
-import NotFound from "./pages/NotFound";
-import DataStandForm from "./pages/data/form/stand/ViewForm";
-import DataForms from "./pages/data/forms/ViewForms";
-import DataTeams from "./pages/data/teams/ViewTeams";
-import PitForm from "./pages/forms/Pit";
-import TeamSelection from "./pages/analysis/selection/TeamSelection";
-import AdministrationSettings from "./pages/admin/Settings";
-import AIScouting from "./pages/admin/AIScouting";
-import CommentsForm from "./pages/forms/Comments";
-import DataSorting from "./pages/data/sorting/ViewSorting";
-import DataTeamProjections from "./pages/data/projections/ViewTeamProjections";
-import DataMiddlePath from "./pages/data/middle/ViewMiddlePath";
 import { useSuperAlliance } from "./contexts/SuperAllianceProvider";
 import { LoadingOverlay } from "@mantine/core";
+
+const Home = lazy(() => import("./pages/client/Home"));
+const SignInPage = lazy(() => import("./pages/handlers/login/page"));
+const StandForm = lazy(() => import("./pages/forms/Stand"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const DataStandForm = lazy(() => import("./pages/data/form/stand/ViewForm"));
+const DataForms = lazy(() => import("./pages/data/forms/ViewForms"));
+const DataTeams = lazy(() => import("./pages/data/teams/ViewTeams"));
+const PitForm = lazy(() => import("./pages/forms/Pit"));
+const TeamSelection = lazy(() => import("./pages/analysis/selection/TeamSelection"));
+const AdministrationSettings = lazy(() => import("./pages/admin/Settings"));
+const AIScouting = lazy(() => import("./pages/admin/AIScouting"));
+const CommentsForm = lazy(() => import("./pages/forms/Comments"));
+const DataSorting = lazy(() => import("./pages/data/sorting/ViewSorting"));
+const DataTeamProjections = lazy(() => import("./pages/data/projections/ViewTeamProjections"));
+const DataMiddlePath = lazy(() => import("./pages/data/middle/ViewMiddlePath"));
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
@@ -38,7 +40,19 @@ function AppRouter() {
     <Router>
       {/* HEADER */}
       <Header />
-      <Routes>
+      <Suspense
+        fallback={
+          <div className="h-[calc(100vh-3.6rem)] w-full">
+            <LoadingOverlay
+              visible={true}
+              zIndex={1000}
+              overlayProps={{ radius: "sm", blur: 2, bg: "#000000" }}
+              loaderProps={{ color: "red", type: "bars" }}
+            />
+          </div>
+        }
+      >
+        <Routes>
         {/* CLIENT ROUTES */}
         <Route index element={<Home />} />
         <Route path="/login" element={<SignInPage />} />
@@ -333,7 +347,8 @@ function AppRouter() {
         />
         {/* 404 ROUTES */}
         <Route path="*" element={<NotFound />} />
-      </Routes>
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
