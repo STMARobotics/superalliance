@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const {
   BedrockRuntimeClient,
-  InvokeModelCommand,
+  ConverseCommand,
 } = require("@aws-sdk/client-bedrock-runtime");
 const { requireAdmin } = require("../middleware/auth");
 const StandFormSchema = require("../models/StandFormSchema");
@@ -9,12 +9,11 @@ const SuperAllianceConfig = require("../models/SuperAllianceConfig");
 
 const aiRouter = Router();
 
-// Primary model for complex MQL generation (Nova Pro)
-const modelId = process.env.BEDROCK_MODEL_ID || "us.amazon.nova-pro-v1:0";
+// Primary model for complex MQL generation
+const mqlModelId = process.env.BEDROCK_MQL_MODEL_ID || "us.amazon.nova-pro-v1:0";
 
-// Cheaper model for text summarization (Nova Lite)
-const summaryModelId =
-  process.env.BEDROCK_SUMMARY_MODEL_ID || "us.amazon.nova-lite-v1:0";
+// Cheaper model for text summarization
+const summaryModelId = process.env.BEDROCK_SUMMARY_MODEL_ID || "deepseek.v3-v1:0";
 
 const bedrock = new BedrockRuntimeClient({
   region: process.env.AWS_REGION || "us-east-2",
@@ -27,41 +26,39 @@ function getSchemaDescription() {
   return `STAND_FORMS Collection Fields:\n${fields.join("\n")}`;
 }
 
-function buildModelRequest(targetModel, prompt, maxTokens) {
-  if (targetModel.startsWith("anthropic.")) {
-    return {
-      anthropic_version: "bedrock-2023-05-31",
-      max_tokens: maxTokens,
-      messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
-    };
+async function invokeBedrock({
+  systemText,
+  userText,
+  maxTokens,
+  targetModel = mqlModelId,
+}) {
+
+  // Check if model supports Bedrock Prompt Caching
+  const supportsCaching =
+    targetModel.includes("nova-") || targetModel.includes("claude-3-5");
+
+  const systemBlock = [{ text: systemText }];
+  if (supportsCaching) {
+    systemBlock.push({ cachePoint: { type: "default" } });
   }
 
-  return {
-    schemaVersion: "messages-v1",
-    messages: [{ role: "user", content: [{ text: prompt }] }],
-    inferenceConfig: { max_new_tokens: maxTokens, temperature: 0.1 },
-  };
-}
+  const command = new ConverseCommand({
+    modelId: targetModel,
+    system: systemBlock,
+    messages: [
+      {
+        role: "user",
+        content: [{ text: userText }],
+      },
+    ],
+    inferenceConfig: {
+      maxTokens: maxTokens,
+      temperature: 0.1,
+    },
+  });
 
-async function invokeBedrock(prompt, maxTokens, targetModel = modelId) {
-  const response = await bedrock.send(
-    new InvokeModelCommand({
-      modelId: targetModel,
-      contentType: "application/json",
-      accept: "application/json",
-      body: JSON.stringify(buildModelRequest(targetModel, prompt, maxTokens)),
-    }),
-  );
-  const payload = JSON.parse(new TextDecoder().decode(response.body));
-
-  if (targetModel.startsWith("anthropic.")) {
-    return payload.content
-      ?.filter((p) => p.type === "text")
-      .map((p) => p.text)
-      .join("\n");
-  }
-
-  return payload.output?.message?.content?.map((p) => p.text || "").join("\n");
+  const response = await bedrock.send(command);
+  return response.output?.message?.content?.map((c) => c.text || "").join("\n");
 }
 
 function parseMqlPipelines(rawMql) {
@@ -164,7 +161,7 @@ aiRouter.post("/api/ai/query", requireAdmin, async (req, res) => {
     }
 
     // 1. MQL Generation System Prompt (Runs on Nova Pro)
-    const mqlSystemPrompt = `You are an expert MongoDB Query Generator for FRC Scouting Data.
+    const staticMqlSystemPrompt = `You are an expert MongoDB Query Generator for FRC Scouting Data.
 Your task is to produce MongoDB Aggregation Pipelines that directly answer the user's question.
 
 ${getSchemaDescription()}
@@ -184,11 +181,15 @@ QUERY DESIGN RULES:
    - Pipeline A: Filter {"teamNumber": X, "criticals": {"$type": "array", "$ne": []}} to get matchNumber, teamNumber, criticals, comments.
    - Pipeline B: Filter {"teamNumber": X} with {"$count": "totalMatches"} to get exact total matches played by team X.
 4. Field "criticals" is an Array of strings/objects. In a $match query, check for non-empty values with {"$type": "array", "$ne": []}; do not use $size in query predicates. In an aggregation expression, guard $size with $isArray, for example {"$cond": [{"$isArray": "$criticals"}, {"$size": "$criticals"}, 0]}.
-5. Leaderboards/Rankings: Group by "teamNumber" and default to per-match averages ($avg) unless total sum is explicitly requested. Always preserve "teamNumber" in $group/_id output.
+5. Leaderboards/Rankings: Group by "teamNumber" and default to per-match averages ($avg) unless total sum is explicitly requested. Always preserve "teamNumber" in $group/_id output.`;
 
-User Question: ${userPrompt.trim()}`;
+    let rawMql = await invokeBedrock({
+      systemText: staticMqlSystemPrompt,
+      userText: `User Question: ${userPrompt.trim()}`,
+      maxTokens: 2500,
+      targetModel: mqlModelId,
+    });
 
-    let rawMql = await invokeBedrock(mqlSystemPrompt, 2500, modelId);
     let combinedResults;
 
     try {
@@ -197,8 +198,13 @@ User Question: ${userPrompt.trim()}`;
         addEventFilter(pipelines, queryEvent),
       );
     } catch (error) {
-      const repairPrompt = buildMqlRepairPrompt(mqlSystemPrompt, rawMql, error);
-      rawMql = await invokeBedrock(repairPrompt, 2500, modelId);
+      const repairPrompt = buildMqlRepairPrompt(staticMqlSystemPrompt, rawMql, error);
+      rawMql = await invokeBedrock({
+        systemText: repairPrompt,
+        userText: `User Question: ${userPrompt.trim()}`,
+        maxTokens: 2500,
+        targetModel: mqlModelId,
+      });
       const repairedPipelines = parseMqlPipelines(rawMql);
       combinedResults = await executePipelines(
         addEventFilter(repairedPipelines, queryEvent),
@@ -206,8 +212,7 @@ User Question: ${userPrompt.trim()}`;
     }
 
     // 2. Summarization System Prompt
-    const answer = await invokeBedrock(
-      `Summarize these FRC scouting query results for an alliance selection strategist.
+    const staticSummarySystemPrompt = `Summarize these FRC scouting query results for an alliance selection strategist.
 Answer directly, factually, and concisely based ONLY on the provided query results. Address all parts of the user's question clearly.
 
 STRICT DATA ATTRIBUTION & FORMATTING RULES:
@@ -218,12 +223,23 @@ STRICT DATA ATTRIBUTION & FORMATTING RULES:
 5. FOR CONSISTENCY & STANDARD DEVIATION: Lower standard deviation values indicate higher consistency. Report standard deviation values rounded to 1 decimal place (e.g., "Std Dev: 12.4").
 6. FOR PRE-AGGREGATED METRICS: Only convert rates to percentages if the pipeline explicitly calculates a boolean average (e.g., winRate: 0.7 -> 70%).
 7. Round average numerical scoring metrics (like fuel or points) to 1 decimal place.
+8. NUMERIC COMPARISON ACCURACY: Double-check all mathematical comparisons (<, >, equal) in narrative text before generating.
+   - Example: 3 is GREATER than 2. If Team A has 3 incidents and Team B has 2 incidents, Team B has fewer critical issues, NOT Team A.
+   
+CHAIN-OF-THOUGHT COUNTING INSTRUCTION:
+Before formatting your output, internally evaluate the data in two steps:
+1. First, identify and count the total individual items requested (e.g., sum up every distinct critical incident across all matches).
+2. Second, count the unique matches containing those items.
 
-Question: ${userPrompt.trim()}
-Results: ${JSON.stringify(combinedResults)}`,
-      1500,
-      summaryModelId,
-    );
+Only AFTER completing both counts should you write your intro sentence:
+"Team [Number] had [Total Items] critical issues across [Unique Matches] matches."`;
+
+    const answer = await invokeBedrock({
+      systemText: staticSummarySystemPrompt,
+      userText: `Question: ${userPrompt.trim()}\nResults: ${JSON.stringify(combinedResults)}`,
+      maxTokens: 1500,
+      targetModel: summaryModelId,
+    });
 
     return res.json({ answer: answer || "No insight generated." });
   } catch (error) {
