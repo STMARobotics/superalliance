@@ -66,6 +66,7 @@ jobs:
           claudia update \
             --version "$STAGE_NAME" \
             --runtime nodejs24.x \
+            --arch arm64 \
             --region ${{ env.AWS_REGION }} \
             --set-env CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }},CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }},MONGODB_URI='${{ secrets.MONGODB_URI }}',ROBOT_IMAGE_BUCKET=${{ secrets.ROBOT_IMAGE_BUCKET }},ROBOT_IMAGE_DISTRO=${{ secrets.ROBOT_IMAGE_DISTRO }},TBA_KEY=${{ secrets.TBA_KEY }},CORS_ORIGINS='${{ secrets.CORS_ORIGINS }}'
         working-directory: api
