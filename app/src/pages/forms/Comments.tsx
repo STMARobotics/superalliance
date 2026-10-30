@@ -80,7 +80,7 @@ export default function CommentsForm() {
       ...values,
     };
     await api
-      .post(`${import.meta.env.VITE_API_URL}/api/form/comments/submit`, struct)
+      .post(`/form/comments/submit`, struct)
       .then(function () {
         toast.success("The form has been submitted successfully!");
         navigate("/");

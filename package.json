@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "app",
-    "api"
+    "api",
+    "cdk"
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev -w app\" \"npm run dev -w api\"",
@@ -12,7 +13,12 @@
     "dev:api": "npm run dev -w api",
     "build": "npm run build -w app",
     "test": "npm run test -w api",
-    "lint": "npm run lint -w app"
+    "lint": "npm run lint -w app",
+    "cdk:build": "npm run build -w cdk",
+    "cdk:test": "npm run test -w cdk",
+    "cdk:synth": "npm run synth -w cdk",
+    "cdk:diff": "npm run diff -w cdk",
+    "cdk:deploy": "npm run deploy -w cdk"
   },
   "devDependencies": {
     "concurrently": "^10.0.6"

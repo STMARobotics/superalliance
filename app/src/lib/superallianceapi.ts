@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useAuth } from "@clerk/react";
+import { appConfig } from "@/config/app";
 
 export function useSuperAllianceApi() {
   const { getToken } = useAuth();
   const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: appConfig.apiUrl,
   });
 
   api.interceptors.request.use(async (config) => {
@@ -19,7 +20,7 @@ export function useSuperAllianceApi() {
   const getForms = async (eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/forms/stand/${eventCode}`
+        `/forms/stand/${eventCode}`
       );
       const data = res.data;
       return data;
@@ -31,7 +32,7 @@ export function useSuperAllianceApi() {
   const getTeams = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/teams/${year}/${eventCode}`
+        `/teams/${year}/${eventCode}`
       );
       const data = res.data;
       return data;
@@ -43,7 +44,7 @@ export function useSuperAllianceApi() {
   const getEvents = async (team: string, year: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/listEvents/${team}/${year}`
+        `/listEvents/${team}/${year}`
       );
       const data = res.data;
       return data;
@@ -58,9 +59,7 @@ export function useSuperAllianceApi() {
   ) => {
     try {
       const res = await api.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/event/${eventCode}/match/${matchNumber}/teams`
+        `/event/${eventCode}/match/${matchNumber}/teams`
       );
       const data = res.data;
       return data;
@@ -72,7 +71,7 @@ export function useSuperAllianceApi() {
   const getOPRData = async (eventCode: string, team: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/event/${eventCode}/opr`
+        `/event/${eventCode}/opr`
       );
       const data = res.data.oprs[`frc${team}`];
       return data;
@@ -84,7 +83,7 @@ export function useSuperAllianceApi() {
   const getFormById = async (id: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/form/stand/${id}`
+        `/form/stand/${id}`
       );
       const data = res.data;
       return data;
@@ -96,7 +95,7 @@ export function useSuperAllianceApi() {
   const getPitFormByTeam = async (eventCode: string, team: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/form/pit/${eventCode}/${team}`
+        `/form/pit/${eventCode}/${team}`
       );
       const data = res.data;
       return data;
@@ -108,7 +107,7 @@ export function useSuperAllianceApi() {
   const getTotalAggregation = async () => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/aggregation/all`
+        `/aggregation/all`
       );
       const data = res.data;
       return data;
@@ -120,7 +119,7 @@ export function useSuperAllianceApi() {
   const getEventAggregation = async (eventId: String) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/aggregation/event/${eventId}`
+        `/aggregation/event/${eventId}`
       );
       const data = res.data;
       return data;
@@ -132,7 +131,7 @@ export function useSuperAllianceApi() {
   const getBadComments = async () => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/forms/comments`
+        `/forms/comments`
       );
       const data = res.data;
       return data;
@@ -144,7 +143,7 @@ export function useSuperAllianceApi() {
   const getAppSettings = async () => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/settings/app`
+        `/settings/app`
       );
       const data = res.data;
       return data;
@@ -155,7 +154,7 @@ export function useSuperAllianceApi() {
 
   const queryScoutingAssistant = async (userPrompt: string, event: string) => {
     try {
-      const res = await api.post(`${import.meta.env.VITE_API_URL}/api/ai/query`, { userPrompt, event });
+      const res = await api.post(`/ai/query`, { userPrompt, event });
       return res.data.answer as string;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -168,7 +167,7 @@ export function useSuperAllianceApi() {
   const getTeamSelection = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection/${year}/${eventCode}`
+        `/teamSelection/${year}/${eventCode}`
       );
       const data = res.data;
       return data;
@@ -180,7 +179,7 @@ export function useSuperAllianceApi() {
   const saveTeamSelection = async (year: string, eventCode: string, teams: any[]) => {
     try {
       const res = await api.post(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection/${year}/${eventCode}`,
+        `/teamSelection/${year}/${eventCode}`,
         { teams }
       );
       return res.data;
@@ -192,9 +191,7 @@ export function useSuperAllianceApi() {
   const getMatchData = async (eventCode: string, matchNumber: number) => {
     try {
       const res = await api.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/event/${eventCode}/match/${matchNumber}/data`
+        `/event/${eventCode}/match/${matchNumber}/data`
       );
       const data = res.data;
       return data;
@@ -206,7 +203,7 @@ export function useSuperAllianceApi() {
   const getEventTeamRank = async (eventCode: string, team: any) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/event/${eventCode}/team/${team}/rank`
+        `/event/${eventCode}/team/${team}/rank`
       );
       const data = res.data.qual.ranking.rank;
       return data;
@@ -218,7 +215,7 @@ export function useSuperAllianceApi() {
   const exportTeamSelection = async (year: string, eventCode: string) => {
     try {
       const res = await api.get(
-        `${import.meta.env.VITE_API_URL}/api/teamSelection/${year}/${eventCode}/report`,
+        `/teamSelection/${year}/${eventCode}/report`,
         { responseType: 'blob' }
       );
       return res.data;

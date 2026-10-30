@@ -93,7 +93,7 @@ export default function PitForm() {
       let formExists = true;
       try {
         await api.get(
-          `${import.meta.env.VITE_API_URL}/api/form/pit/${values?.event}/${values?.teamNumber}`)
+          `/form/pit/${values?.event}/${values?.teamNumber}`)
       } catch (err: any) {
         if (err.response?.status === 404) {
           formExists = false;
@@ -107,7 +107,7 @@ export default function PitForm() {
 
       // Get signed S3 URL from backend
       const { data: s3Data } = await api.post(
-        `${import.meta.env.VITE_API_URL}/api/form/pit/image-upload`,
+        `/form/pit/image-upload`,
         {
           "year": appConfig?.year,
           "eventCode": values?.event,
@@ -130,7 +130,7 @@ export default function PitForm() {
         ...values,
       };
       await api
-        .post(`${import.meta.env.VITE_API_URL}/api/form/pit/submit`, struct)
+        .post(`/form/pit/submit`, struct)
         .then(function () {
           toast.success("The form has been submitted successfully!");
           navigate("/");

@@ -64,7 +64,7 @@ function AdminSettingsForm({
   function onSubmit(data: SettingsFormValues) {
     (async function () {
       try {
-        await api.post(`${import.meta.env.VITE_API_URL}/api/settings/app/save`, data);
+        await api.post(`/settings/app/save`, data);
         toast.success("Settings saved successfully!");
         setSelectedEvent(data.event);
         refreshSA?.appSettings();

@@ -156,7 +156,7 @@ export default function StandFormChad() {
       ...values,
     };
     await api
-      .post(`${import.meta.env.VITE_API_URL}/api/form/stand/submit`, struct)
+      .post(`/form/stand/submit`, struct)
       .then(function () {
         toast.success("The form has been submitted successfully!");
         navigate("/");

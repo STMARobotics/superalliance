@@ -8,16 +8,6 @@ const { clerkMiddleware } = require("@clerk/express");
 
 const environment = process.env.ENVIRONMENT || "local";
 
-const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173").split(",").map(o => o.trim()).filter(Boolean);
-
-const corsOptions = {
-  origin(origin, cb) {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error("Not allowed by CORS"));
-  },
-  optionsSuccessStatus: 200,
-};
-
 const app = express();
 const bodyParser = require("body-parser");
 const eventRouter = require("./routes/eventRouter");
@@ -29,8 +19,22 @@ const settingsRouter = require("./routes/settingsRouter");
 const commentRouter = require("./routes/commentRouter");
 const teamSelectionRouter = require("./routes/teamSelectionRouter");
 const aiRouter = require("./routes/aiRouter");
-app.use(cors(corsOptions));
-app.options("/^\/api\/.*$/", cors());
+if (environment === "local") {
+  const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173")
+    .split(",")
+    .map(o => o.trim())
+    .filter(Boolean);
+  const corsOptions = {
+    origin(origin, cb) {
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error("Not allowed by CORS"));
+    },
+    optionsSuccessStatus: 200,
+  };
+
+  app.use(cors(corsOptions));
+  app.options("/^\/api\/.*$/", cors());
+}
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(clerkMiddleware());

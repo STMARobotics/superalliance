@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules/
 app/dist
 app/dist-ssr
+cdk/cdk.out
 *.local
 .env
 
